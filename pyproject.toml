@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68.0", "setuptools-scm>=8.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hormuz-pipeline"
+version = "0.1.0"
+description = "Agentic AI orchestration framework for multi-model crisis scenario analysis"
+requires-python = ">=3.11"
+dependencies = [
+    "langchain>=0.3.0",
+    "langchain-core>=0.3.0",
+    "pydantic>=2.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+]
+adapters = [
+    "openpyxl>=3.1",
+    "pandas>=2.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
