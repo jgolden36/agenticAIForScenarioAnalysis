@@ -1,0 +1,38 @@
+# Crisis Description: Strait of Hormuz Closure (February 2026)
+#
+# This file provides the structured crisis description input to Module 1.
+
+crisis_name: "Closure of the Strait of Hormuz"
+crisis_date: "2026-02"
+
+description: |
+  In February 2026, the Strait of Hormuz — the world's most critical oil and
+  LNG chokepoint — is closed to commercial shipping following a military
+  escalation between Iran and a US/Israel coalition. The closure disrupts
+  approximately 21% of global oil supply and 25% of global LNG trade. Qatar,
+  the world's largest LNG exporter, is effectively blockaded. The disruption
+  also threatens Persian Gulf desalination plants serving tens of millions of
+  people and approximately 30% of global helium supply.
+
+key_actors:
+  - Iran
+  - United States
+  - Israel
+  - Gulf Cooperation Council states (Saudi Arabia, UAE, Qatar, Kuwait, Bahrain, Oman)
+  - China (major energy importer)
+  - European Union (LNG-dependent)
+  - India (oil import-dependent)
+
+commodities_affected:
+  - Crude oil (21 mb/d transit through Strait)
+  - LNG (Qatar: ~80 Mt/yr, 25% of global trade)
+  - Helium (~30% of global supply from Qatar)
+  - Fertilizers (natural gas feedstock disruption)
+  - Desalinated water (Persian Gulf coastal infrastructure)
+  - Semiconductors (helium dependency in fab processes)
+
+timeline_context: |
+  The crisis occurs in the context of sustained US-Iran tensions following
+  the collapse of nuclear negotiations, Iranian nuclear breakout concerns,
+  and escalating proxy conflicts across the region. The immediate trigger
+  involves Iranian mining of the Strait and attacks on commercial shipping.

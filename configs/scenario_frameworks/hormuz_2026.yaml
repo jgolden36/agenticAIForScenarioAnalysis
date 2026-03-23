@@ -1,0 +1,69 @@
+# Scenario Framework: Strait of Hormuz Closure (February 2026)
+#
+# Follows the Schwartz scenario planning methodology.
+
+focal_issue:
+  description: >
+    What are the multi-dimensional economic, strategic, and humanitarian
+    consequences of a closure of the Strait of Hormuz, and how do outcomes
+    vary based on the duration and scope of the conflict?
+  time_horizon: "1 month to 2 years"
+
+key_factors:
+  - name: "OPEC spare capacity"
+    description: "Available spare oil production capacity to offset disruption"
+    category: "supply"
+  - name: "Strategic Petroleum Reserve levels"
+    description: "SPR availability for emergency release in major consuming nations"
+    category: "supply"
+  - name: "LNG contract structure"
+    description: "Mix of long-term vs spot LNG contracts affecting price transmission"
+    category: "market_structure"
+  - name: "Desalination infrastructure vulnerability"
+    description: "Physical exposure of coastal desalination plants to conflict"
+    category: "infrastructure"
+  - name: "Shipping insurance markets"
+    description: "War risk premium dynamics and coverage availability"
+    category: "market_structure"
+  - name: "Rerouting capacity"
+    description: "Pipeline and alternative maritime route capacity (e.g., Cape of Good Hope)"
+    category: "logistics"
+
+driving_forces:
+  - name: "Energy transition momentum"
+    description: "Pace of renewable energy deployment and fossil fuel demand trajectory"
+    dimension: "technological"
+  - name: "Great power competition"
+    description: "US-China strategic rivalry and its impact on crisis response coordination"
+    dimension: "political"
+  - name: "Global inflation dynamics"
+    description: "Pre-existing inflationary pressures and central bank policy space"
+    dimension: "economic"
+  - name: "Climate change"
+    description: "Water stress amplification in already water-scarce Gulf region"
+    dimension: "environmental"
+  - name: "Regional demographics"
+    description: "Gulf state population growth and water/food demand trends"
+    dimension: "social"
+
+predetermined_elements:
+  - name: "Strait significance"
+    description: "The Strait of Hormuz handles ~21% of global oil and ~25% of global LNG trade"
+  - name: "Qatar helium dominance"
+    description: "Qatar supplies ~30% of global helium; disruption affects semiconductor and medical sectors"
+  - name: "Desalination dependence"
+    description: "Gulf states depend critically on desalination for freshwater"
+  - name: "Limited pipeline bypass"
+    description: "Only partial pipeline bypass capacity exists (e.g., Saudi East-West pipeline)"
+
+scenario_matrix:
+  uncertainty_x:
+    name: "Duration and resolution"
+    description: "How quickly is the Strait reopened to commercial shipping?"
+    pole_low: "Swift resolution (4-6 weeks)"
+    pole_high: "Prolonged closure (3-6+ months)"
+  uncertainty_y:
+    name: "Scope of escalation"
+    description: "Does the conflict remain contained or escalate regionally?"
+    pole_low: "Contained conflict (Iran-US/Israel axis only)"
+    pole_high: "Escalated conflict (broader regional actors, infrastructure destruction)"

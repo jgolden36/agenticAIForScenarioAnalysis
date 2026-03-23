@@ -1,0 +1,25 @@
+# Default pipeline configuration
+
+llm:
+  provider: "anthropic"
+  model: null  # Uses provider default
+  temperature: 0.0
+
+execution:
+  max_parallel_models: 4
+  default_timeout_seconds: 3600
+  retry_failed_models: false
+  capture_stderr: true
+
+output:
+  base_dir: "data"
+  inputs_dir: "data/inputs"
+  outputs_dir: "data/outputs"
+  reports_dir: "data/reports"
+
+consistency:
+  price_tolerance_pct: 20.0
+  quantity_tolerance_pct: 15.0
+  flag_on_missing_model: true
+
+num_scenarios: 4
