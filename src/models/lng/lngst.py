@@ -24,7 +24,8 @@ from __future__ import annotations
 from typing import Any
 
 from src.common.types import AnalyticalLevel, CommoditySystem
-from src.models.base import ModelAdapter, ModelOutput, ValidationResult
+from src.models.adapters.excel_adapter import CellMapping, ExcelAdapter, ExcelConfig
+from src.models.base import ModelOutput, ValidationResult
 
 # Parameters required by this model. Each entry is (name, description, unit).
 _REQUIRED_PARAMS: list[tuple[str, str, str]] = [
@@ -54,20 +55,24 @@ _REQUIRED_PARAMS: list[tuple[str, str, str]] = [
 _REQUIRED_PARAM_NAMES: frozenset[str] = frozenset(p[0] for p in _REQUIRED_PARAMS)
 
 
-class LNGSTAdapter(ModelAdapter):
+class LNGSTAdapter(ExcelAdapter):
     """Adapter for the LNG Spreadsheet Tool (LNGST).
+
+    Inherits from ExcelAdapter for openpyxl/xlwings-based workbook I/O.
+    Supports both headless openpyxl (cached values only, no recalculation)
+    and xlwings (full Excel recalculation, VBA macro support).
 
     Simulates scenario-level LNG trade flow adjustments driven by Persian Gulf
     export reductions and spot price shocks. LNGST operates at the scenario
     level (not time-step resolution) and is particularly useful for rapid
-    cross-scenario comparison. Required parameters capture the export loss
-    fractions for the two primary Gulf LNG exporters, the spot price response,
-    and the disruption timeline.
+    cross-scenario comparison.
 
-    Note: the real implementation requires openpyxl (or xlwings) to interface
-    with the Excel workbook. If the workbook relies on VBA macros, a live Excel
-    installation accessible via COM automation will also be needed.
+    WARNING: openpyxl cannot recalculate formulas — if the workbook uses
+    formula chains, use xlwings (requires Excel installed, Windows/macOS only).
     """
+
+    def __init__(self, config: ExcelConfig | None = None) -> None:
+        super().__init__(config)
 
     @property
     def model_id(self) -> str:
@@ -89,6 +94,35 @@ class LNGSTAdapter(ModelAdapter):
             "paths under Strait of Hormuz closure scenarios affecting Qatari and UAE "
             "exports."
         )
+
+    @property
+    def input_mappings(self) -> list[CellMapping]:
+        """Map scenario parameters to workbook input cells.
+
+        These cell references are placeholders — update to match
+        the actual LNGST workbook structure once obtained.
+        """
+        return [
+            CellMapping(sheet="Inputs", cell="B4", param_name="qatar_export_reduction_pct"),
+            CellMapping(sheet="Inputs", cell="B5", param_name="uae_export_reduction_pct"),
+            CellMapping(sheet="Inputs", cell="B6", param_name="spot_price_multiplier"),
+            CellMapping(sheet="Inputs", cell="B7", param_name="disruption_duration_months"),
+        ]
+
+    @property
+    def output_mappings(self) -> list[CellMapping]:
+        """Map workbook output cells to result variables.
+
+        These cell references are placeholders — update to match
+        the actual LNGST workbook structure once obtained.
+        """
+        return [
+            CellMapping(sheet="Outputs", cell="C12", param_name="lng_price_usd_mmbtu"),
+            CellMapping(sheet="Outputs", cell="C13", param_name="supply_shortfall_bcm"),
+            CellMapping(sheet="Outputs", cell="C14", param_name="henry_hub_price"),
+            CellMapping(sheet="Outputs", cell="C15", param_name="ttf_price"),
+            CellMapping(sheet="Outputs", cell="C16", param_name="jkm_price"),
+        ]
 
     def validate_inputs(self, params: dict[str, Any]) -> ValidationResult:
         """Check that all required parameters are present and within plausible ranges.
@@ -187,26 +221,19 @@ class LNGSTAdapter(ModelAdapter):
     def execute(self, inputs: Any) -> ModelOutput:
         """Execute the LNG Spreadsheet Tool.
 
-        Args:
-            inputs: Translated inputs from translate_inputs.
-
-        Raises:
-            NotImplementedError: This stub is not yet integrated with the LNGST
-                Excel workbook. Integration requires: (1) the LNGST .xlsx
-                workbook file, (2) openpyxl installed (for formula-only
-                workbooks) or xlwings + a licensed Excel installation (for
-                workbooks relying on VBA macros), (3) a cell-range mapping that
-                identifies which cells correspond to each input parameter and
-                output variable, and (4) a post-calculation read step to
-                extract results after Excel recalculates.
+        When an ExcelConfig is provided, the ExcelAdapter base class handles
+        workbook I/O (openpyxl or xlwings). Until the actual LNGST workbook
+        is available, raises NotImplementedError.
         """
+        if self._config is not None:
+            return super().execute(inputs)
+
         raise NotImplementedError(
             "LNGSTAdapter.execute is not yet implemented. "
-            "Integration requires the LNGST Excel workbook, the openpyxl library "
-            "(pip install openpyxl) for programmatic cell access, and a mapping of "
-            "scenario parameters to named cell ranges within the workbook. If the "
-            "workbook uses VBA macros, xlwings and a local Excel installation are "
-            "also required. Obtain the workbook from the model's custodian."
+            "Provide an ExcelConfig with the workbook path to enable execution. "
+            "The ExcelAdapter base class handles openpyxl (headless) or xlwings "
+            "(full recalculation) based on config. Update input_mappings and "
+            "output_mappings once the actual workbook cell layout is known."
         )
 
     def parse_outputs(self, raw: Any) -> ModelOutput:

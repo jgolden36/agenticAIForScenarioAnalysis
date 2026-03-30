@@ -10,6 +10,7 @@ requires-python = ">=3.11"
 dependencies = [
     "langchain>=0.3.0",
     "langchain-core>=0.3.0",
+    "langgraph>=0.3.0",
     "pydantic>=2.0",
     "pyyaml>=6.0",
 ]
@@ -22,6 +23,19 @@ dev = [
 adapters = [
     "openpyxl>=3.1",
     "pandas>=2.0",
+]
+julia = [
+    "juliacall>=0.9.20",
+]
+gams = [
+    "gamsapi[transfer]>=52.0",
+]
+excel = [
+    "openpyxl>=3.1",
+    "xlwings>=0.32",
+]
+r = [
+    "rpy2>=3.5",
 ]
 
 [tool.setuptools.packages.find]

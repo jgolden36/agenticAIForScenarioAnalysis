@@ -19,7 +19,8 @@ from __future__ import annotations
 from typing import Any
 
 from src.common.types import AnalyticalLevel, CommoditySystem
-from src.models.base import ModelAdapter, ModelOutput, ValidationResult
+from src.models.adapters.gams_adapter import GAMSAdapter, GAMSConfig
+from src.models.base import ModelOutput, ValidationResult
 
 _REQUIRED_PARAMS = [
     "natural_gas_price_change_pct",
@@ -28,8 +29,11 @@ _REQUIRED_PARAMS = [
 ]
 
 
-class WorldFertilizerAdapter(ModelAdapter):
+class WorldFertilizerAdapter(GAMSAdapter):
     """Adapter for the World Fertilizer Model market-equilibrium model.
+
+    Inherits from GAMSAdapter for GAMS Control API execution with
+    GamsWorkspace/GamsJob orchestration and convergence checking.
 
     The World Fertilizer Model solves for equilibrium fertilizer prices and
     trade flows under supply and cost shocks. The Strait of Hormuz closure
@@ -37,7 +41,13 @@ class WorldFertilizerAdapter(ModelAdapter):
     natural gas feedstock, disrupting nitrogen fertilizer production in Qatar,
     Iran, Saudi Arabia, and UAE; and (2) higher natural gas prices globally,
     raising the marginal cost of nitrogen fertilizer production worldwide.
+
+    IMPORTANT: GamsWorkspace is NOT thread-safe. The GAMSAdapter base class
+    allocates isolated temp directories for each execution.
     """
+
+    def __init__(self, config: GAMSConfig | None = None) -> None:
+        super().__init__(config)
 
     @property
     def model_id(self) -> str:
@@ -114,47 +124,80 @@ class WorldFertilizerAdapter(ModelAdapter):
 
         return ValidationResult(valid=len(errors) == 0, errors=errors, warnings=warnings)
 
-    def translate_inputs(self, params: dict[str, Any]) -> Any:
-        """Pass parameters through; real implementation formats World Fertilizer Model inputs.
+    def populate_database(self, db: Any, params: dict[str, Any]) -> None:
+        """Inject scenario parameters into the GAMS database.
+
+        Creates GAMS parameters for natural gas price shock, Middle East
+        production loss, and disruption duration. The real implementation
+        should match the .gms file's expected parameter names exactly.
 
         Args:
+            db: A gams.GamsDatabase instance.
             params: Validated parameter dictionary.
+        """
+        gas_param = db.add_parameter("natural_gas_price_change_pct", 0)
+        gas_param.add_record().value = params["natural_gas_price_change_pct"]
+
+        prod_param = db.add_parameter("middle_east_production_loss_pct", 0)
+        prod_param.add_record().value = params["middle_east_production_loss_pct"]
+
+        dur_param = db.add_parameter("disruption_duration_months", 0)
+        dur_param.add_record().value = params["disruption_duration_months"]
+
+    def extract_results(self, out_db: Any) -> dict[str, Any]:
+        """Extract equilibrium prices and trade flows from GAMS output.
+
+        Args:
+            out_db: The output GamsDatabase from job execution.
 
         Returns:
-            The parameter dictionary unchanged (passthrough for stub).
+            Dict with fertilizer prices (N, P, K) and trade flow data.
         """
+        results: dict[str, Any] = {}
+
+        # Extract equilibrium prices by nutrient type
+        if "equilibrium_price" in out_db:
+            for rec in out_db["equilibrium_price"]:
+                results[f"price_{rec.keys[0]}"] = rec.level
+
+        # Extract trade flows if available
+        if "trade_flow" in out_db:
+            flows = {}
+            for rec in out_db["trade_flow"]:
+                key = f"{rec.keys[0]}_{rec.keys[1]}" if len(rec.keys) > 1 else rec.keys[0]
+                flows[key] = rec.level
+            results["trade_flows"] = flows
+
+        # Extract aggregate price index
+        if "fertilizer_price_index" in out_db:
+            for rec in out_db["fertilizer_price_index"]:
+                results["fertilizer_price_index"] = rec.level
+
+        return results
+
+    def translate_inputs(self, params: dict[str, Any]) -> Any:
         return params
 
     def execute(self, inputs: Any) -> ModelOutput:
-        """Execute the World Fertilizer Model — not yet implemented.
+        """Execute the World Fertilizer Model.
 
-        Args:
-            inputs: Translated inputs from translate_inputs.
-
-        Raises:
-            NotImplementedError: World Fertilizer Model integration is pending.
-                Real implementation must invoke the model's execution environment,
-                supply natural gas price and Middle East production loss parameters,
-                and collect equilibrium fertilizer price and trade flow outputs.
+        When a GAMSConfig is provided, the GAMSAdapter base class handles
+        workspace creation, parameter injection, solver execution, convergence
+        checking, and result extraction. Until then, raises NotImplementedError.
         """
+        if self._config is not None:
+            return super().execute(inputs)
+
         raise NotImplementedError(
             "WorldFertilizerAdapter.execute is not yet implemented. "
-            "Real integration requires: (1) access to the World Fertilizer Model codebase "
-            "and its execution environment, (2) parameterizing natural gas price shocks and "
-            "Middle East production capacity losses, (3) invoking the model for the specified "
-            "disruption duration, and (4) collecting equilibrium fertilizer prices (N, P, K) "
-            "and regional trade flow outputs."
+            "Provide a GAMSConfig to enable execution via the GAMS Control API. "
+            "Requirements: (1) GAMS system installation with matching gamsapi version, "
+            "(2) the World Fertilizer Model .gms file, (3) CONOPT solver license."
         )
 
     def parse_outputs(self, raw: Any) -> ModelOutput:
-        """Pass raw outputs through; real implementation parses World Fertilizer Model results.
-
-        Args:
-            raw: Raw output from execute (passthrough for stub).
-
-        Returns:
-            The raw value wrapped in a ModelOutput (passthrough for stub).
-        """
+        if isinstance(raw, ModelOutput):
+            return raw
         return ModelOutput(
             model_id=self.model_id,
             outputs=raw if isinstance(raw, dict) else {"raw": raw},

@@ -1,0 +1,121 @@
+# Cross-model consistency rules (declarative configuration)
+#
+# Each rule defines a pair of models that should produce compatible
+# values for a given output variable. If the deviation between the
+# two model outputs exceeds the tolerance threshold, a ConsistencyFlag
+# is raised during synthesis (Module 4).
+#
+# Fields:
+#   model_a:     Model ID of the first model
+#   model_b:     Model ID of the second model
+#   variable_a:  Output variable name in model_a
+#   variable_b:  Output variable name in model_b
+#   tolerance_pct: Maximum allowed percentage deviation (symmetric)
+#   description: Human-readable explanation of why these should agree
+
+rules:
+  # --- Oil price predictions ---
+  - model_a: bornstein_krusell_rebelo
+    model_b: poles_jrc
+    variable_a: oil_price_usd
+    variable_b: oil_price_usd
+    tolerance_pct: 20.0
+    description: >
+      Structural GE and partial equilibrium oil models should produce
+      oil price predictions within the same range for a given scenario.
+
+  - model_a: bornstein_krusell_rebelo
+    model_b: fed_oil
+    variable_a: oil_price_usd
+    variable_b: oil_price_usd
+    tolerance_pct: 25.0
+    description: >
+      The structural GE oil model and the Fed workhorse oil model
+      should produce comparable oil price estimates.
+
+  # --- LNG price predictions ---
+  - model_a: ggm
+    model_b: lngst
+    variable_a: lng_price_usd_mmbtu
+    variable_b: lng_price_usd_mmbtu
+    tolerance_pct: 20.0
+    description: >
+      Global Gas Model optimization and LNG Spreadsheet Tool should
+      produce comparable LNG price predictions.
+
+  # --- Helium price predictions ---
+  - model_a: world_helium_model
+    model_b: argonne_abm
+    variable_a: helium_price_usd
+    variable_b: helium_price_usd
+    tolerance_pct: 30.0
+    description: >
+      Market equilibrium and agent-based helium models should produce
+      prices in the same range. Higher tolerance due to ABM stochasticity.
+
+  # --- Agricultural price indices ---
+  - model_a: capri
+    model_b: magpie
+    variable_a: crop_price_index
+    variable_b: crop_price_index
+    tolerance_pct: 15.0
+    description: >
+      Agricultural partial equilibrium and optimization models should
+      produce comparable crop price index changes.
+
+  - model_a: world_fertilizer
+    model_b: gtap
+    variable_a: fertilizer_price_index
+    variable_b: fertilizer_price_index
+    tolerance_pct: 20.0
+    description: >
+      World Fertilizer Model and GTAP CGE should agree on direction
+      and approximate magnitude of fertilizer price changes.
+
+  # --- CGE cross-validation ---
+  - model_a: opencge
+    model_b: pycge
+    variable_a: gdp_impact_pct
+    variable_b: gdp_impact_pct
+    tolerance_pct: 10.0
+    description: >
+      Two Python CGE implementations should produce very similar
+      GDP impact estimates given the same shock inputs.
+
+  - model_a: mpsge_jl
+    model_b: opencge
+    variable_a: gdp_impact_pct
+    variable_b: gdp_impact_pct
+    tolerance_pct: 20.0
+    description: >
+      Julia and Python CGE models should produce GDP impacts in
+      the same range, allowing for structural differences.
+
+  - model_a: mpsge_jl
+    model_b: miragrodep
+    variable_a: trade_impact_pct
+    variable_b: trade_impact_pct
+    tolerance_pct: 25.0
+    description: >
+      MPSGE.jl and MIRAGRODEP CGE models should agree on trade
+      impact direction and approximate magnitude.
+
+  # --- Energy sector ---
+  - model_a: nems
+    model_b: nrel
+    variable_a: electricity_price_change_pct
+    variable_b: electricity_price_change_pct
+    tolerance_pct: 15.0
+    description: >
+      NEMS and NREL energy models should agree on electricity
+      price change direction and approximate magnitude.
+
+  # --- Shipping and rerouting ---
+  - model_a: aisdb
+    model_b: ais_project
+    variable_a: transit_time_increase_pct
+    variable_b: transit_time_increase_pct
+    tolerance_pct: 15.0
+    description: >
+      AIS-based shipping models should produce comparable estimates
+      of transit time increases from Strait closure rerouting.
