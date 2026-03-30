@@ -3,11 +3,18 @@
 Implements substantive checks between models that should produce
 compatible results. Flags contradictions that exceed configurable
 tolerance thresholds.
+
+Rules can be defined in two ways:
+1. Declarative YAML config (configs/consistency_rules.yaml) — preferred
+2. Hardcoded DEFAULT_RULES below — fallback when no YAML is available
 """
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
+
+import yaml
 
 from src.common.logging import get_logger
 from src.common.types import Scenario
@@ -16,10 +23,9 @@ from src.pipeline.state import ConsistencyFlag, ModelExecutionResult
 
 logger = get_logger(__name__)
 
-# Defines which pairs of models should agree on which variables,
-# and the expected relationship. Each entry specifies:
-#   (model_a, model_b, variable_in_a, variable_in_b, description)
-CONSISTENCY_RULES: list[dict[str, str]] = [
+# Default rules (used when no YAML config is available).
+# Prefer loading from configs/consistency_rules.yaml via load_rules_from_yaml().
+DEFAULT_RULES: list[dict[str, Any]] = [
     {
         "model_a": "bornstein_krusell_rebelo",
         "model_b": "poles_jrc",
@@ -63,6 +69,63 @@ CONSISTENCY_RULES: list[dict[str, str]] = [
         "description": "Energy models should agree on electricity price direction",
     },
 ]
+
+# Module-level cache for loaded rules
+_loaded_rules: list[dict[str, Any]] | None = None
+
+
+def load_rules_from_yaml(path: str | Path | None = None) -> list[dict[str, Any]]:
+    """Load consistency rules from a YAML configuration file.
+
+    The YAML file should contain a top-level 'rules' key with a list of
+    rule dicts, each containing: model_a, model_b, variable_a, variable_b,
+    tolerance_pct, and description.
+
+    Args:
+        path: Path to the YAML file. If None, looks for
+              configs/consistency_rules.yaml relative to project root.
+
+    Returns:
+        List of rule dicts. Falls back to DEFAULT_RULES if file not found.
+    """
+    global _loaded_rules
+
+    if path is None:
+        # Try to find the config relative to this file
+        project_root = Path(__file__).parent.parent.parent
+        path = project_root / "configs" / "consistency_rules.yaml"
+
+    path = Path(path)
+    if not path.exists():
+        logger.info(f"No consistency rules YAML at {path}; using default rules")
+        return DEFAULT_RULES
+
+    with open(path) as f:
+        data = yaml.safe_load(f) or {}
+
+    rules = data.get("rules", [])
+    if not rules:
+        logger.warning(f"Consistency rules YAML at {path} has no rules; using defaults")
+        return DEFAULT_RULES
+
+    logger.info(f"Loaded {len(rules)} consistency rules from {path}")
+    _loaded_rules = rules
+    return rules
+
+
+def get_consistency_rules(yaml_path: str | Path | None = None) -> list[dict[str, Any]]:
+    """Get consistency rules, loading from YAML if available.
+
+    Uses cached rules if already loaded.
+    """
+    global _loaded_rules
+    if _loaded_rules is not None:
+        return _loaded_rules
+    return load_rules_from_yaml(yaml_path)
+
+
+# Keep backward-compatible alias
+CONSISTENCY_RULES = DEFAULT_RULES
 
 
 def _compute_deviation_pct(value_a: float, value_b: float) -> float:
@@ -113,7 +176,9 @@ def check_consistency(
         r.model_id: r for r in results if r.outputs
     }
 
-    for rule in CONSISTENCY_RULES:
+    rules = get_consistency_rules()
+
+    for rule in rules:
         model_a_id = rule["model_a"]
         model_b_id = rule["model_b"]
 
@@ -141,7 +206,8 @@ def check_consistency(
             continue
 
         deviation = _compute_deviation_pct(val_a, val_b)
-        tolerance = config.price_tolerance_pct
+        # Per-rule tolerance from YAML, falling back to config default
+        tolerance = rule.get("tolerance_pct", config.price_tolerance_pct)
 
         if deviation > tolerance:
             flag = ConsistencyFlag(

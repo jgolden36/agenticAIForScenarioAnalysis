@@ -19,27 +19,29 @@ from __future__ import annotations
 from typing import Any
 
 from src.common.types import AnalyticalLevel, CommoditySystem
-from src.models.base import ModelAdapter, ModelOutput, ValidationResult
+from src.models.adapters.anylogic_adapter import AnyLogicAdapter, AnyLogicConfig
+from src.models.base import ModelOutput, ValidationResult
 
 
-class ArgonneABMAdapter(ModelAdapter):
-    """Adapter stub for the Argonne Helium ABM (AnyLogic-based).
+class ArgonneABMAdapter(AnyLogicAdapter):
+    """Adapter for the Argonne Helium ABM (AnyLogic-based).
+
+    Inherits from AnyLogicAdapter for subprocess-based execution of
+    exported standalone Java applications with multiple stochastic
+    replications and statistical aggregation.
 
     Real implementation requirements:
-    - AnyLogic runtime environment (AnyLogic Professional or the AnyLogic
-      Cloud CLI export). AnyLogic models can be exported as standalone Java
-      JAR files for headless CLI execution.
-    - Licensed copy of the Argonne Helium ABM model file (.alp or exported
-      JAR). Contact Argonne National Laboratory (Energy Systems Division)
-      for access.
-    - AnyLogic CLI invocation pattern:
-        java -jar argonne_helium_abm.jar --param supply_shock_pct=<val> ...
-      (exact parameter passing mechanism depends on the exported model's
-      experiment configuration; verify with Argonne.)
-    - Baseline agent population data: producer counts, capacity distributions,
-      contract structures, and end-user demand profiles for the current market.
-    - Java runtime (JRE 11+) on the execution host.
+    - AnyLogic Professional license (for export to standalone JAR)
+    - Licensed copy of the Argonne Helium ABM model file
+    - Java runtime (JRE 11+) on the execution host
+    - Baseline agent population data for calibration
+
+    NOTE: ABMs are inherently stochastic. The AnyLogicAdapter base class
+    runs multiple replications (configurable) and aggregates results.
     """
+
+    def __init__(self, config: AnyLogicConfig | None = None) -> None:
+        super().__init__(config)
 
     @property
     def model_id(self) -> str:
@@ -165,77 +167,87 @@ class ArgonneABMAdapter(ModelAdapter):
 
         return ValidationResult(valid=len(errors) == 0, errors=errors, warnings=warnings)
 
-    def translate_inputs(self, params: dict[str, Any]) -> Any:
-        """Pass parameters through unchanged.
+    def build_cli_args(self, params: dict[str, Any]) -> list[str]:
+        """Build CLI arguments for the Argonne Helium ABM.
 
-        The real implementation will serialize these to AnyLogic CLI arguments
-        or an experiment configuration file compatible with the exported JAR.
-
-        Example target format (subject to confirmation with Argonne):
-            {
-                "supply_shock_pct": 28.5,
-                "disruption_duration_months": 4.0,
-                "demand_response_elasticity": -0.15,
-                "random_seed": 42,
-                "num_replications": 50
-            }
+        Maps pipeline parameters to the AnyLogic model's CLI interface.
+        The exact format depends on the exported model's experiment config.
 
         Args:
             params: Validated parameter dictionary.
 
         Returns:
-            The parameter dictionary, passed through unmodified.
+            List of CLI arguments (e.g., ['--param', 'supply_shock_pct=28.5']).
         """
+        args = []
+        for key in ("supply_shock_pct", "disruption_duration_months", "demand_response_elasticity"):
+            if key in params:
+                args.extend(["--param", f"{key}={params[key]}"])
+        return args
+
+    def aggregate_replications(self, replication_results: list[dict[str, Any]]) -> dict[str, Any]:
+        """Aggregate results across stochastic replications.
+
+        Computes mean and standard deviation for numeric outputs.
+
+        Args:
+            replication_results: List of result dicts from individual runs.
+
+        Returns:
+            Aggregated dict with mean/std for each numeric variable.
+        """
+        if not replication_results:
+            return {}
+
+        # Collect all numeric keys
+        all_keys = set()
+        for result in replication_results:
+            for key, val in result.items():
+                if isinstance(val, (int, float)):
+                    all_keys.add(key)
+
+        aggregated: dict[str, Any] = {}
+        for key in sorted(all_keys):
+            values = [r[key] for r in replication_results if key in r and isinstance(r[key], (int, float))]
+            if values:
+                mean = sum(values) / len(values)
+                variance = sum((v - mean) ** 2 for v in values) / len(values) if len(values) > 1 else 0
+                std = variance ** 0.5
+                aggregated[key] = mean
+                aggregated[f"{key}_std"] = std
+                aggregated[f"{key}_n"] = len(values)
+
+        # Preserve the last replication's non-numeric fields
+        for key, val in replication_results[-1].items():
+            if key not in aggregated and not isinstance(val, (int, float)):
+                aggregated[key] = val
+
+        return aggregated
+
+    def translate_inputs(self, params: dict[str, Any]) -> Any:
         return params
 
     def execute(self, inputs: Any) -> ModelOutput:
-        """Execute the Argonne Helium ABM via the AnyLogic CLI.
+        """Execute the Argonne Helium ABM with stochastic replications.
 
-        Not yet implemented. Requires AnyLogic runtime and access to the
-        Argonne Helium ABM exported JAR or model file.
-
-        Real implementation steps:
-        1. Serialize inputs to AnyLogic experiment parameters (CLI flags or
-           JSON config, depending on the exported model's interface).
-        2. Invoke the JAR via subprocess:
-               java -jar argonne_helium_abm.jar [params]
-        3. Collect stdout/stderr; parse AnyLogic's simulation output (CSV
-           or database export, depending on model configuration).
-        4. Aggregate across replications (ABMs are stochastic; run N
-           replications and summarize the distribution of outcomes).
-        5. Pass aggregated output to parse_outputs.
-
-        Args:
-            inputs: Translated inputs from translate_inputs.
-
-        Raises:
-            NotImplementedError: Until the AnyLogic model is integrated.
+        When an AnyLogicConfig is provided, the AnyLogicAdapter base class
+        handles subprocess execution, multiple replications, and statistical
+        aggregation. Until then, raises NotImplementedError.
         """
+        if self._config is not None:
+            return super().execute(inputs)
+
         raise NotImplementedError(
-            "ArgonneABMAdapter.execute is a stub. Real implementation requires: "
-            "(1) AnyLogic Professional runtime or exported JAR of the Argonne Helium "
-            "ABM (contact Argonne National Laboratory, Energy Systems Division, for "
-            "access); (2) Java runtime (JRE 11+) on the execution host; (3) "
-            "documentation of the AnyLogic CLI parameter-passing interface for this "
-            "specific model export; (4) baseline agent population calibration data "
-            "(producer capacities, contract structures, end-user demand profiles). "
-            "Note: AnyLogic ABMs are stochastic — plan for multiple replications "
-            "and statistical aggregation of outputs."
+            "ArgonneABMAdapter.execute is not yet implemented. "
+            "Provide an AnyLogicConfig to enable execution via exported JAR. "
+            "Requirements: (1) AnyLogic Professional exported JAR, "
+            "(2) JRE 11+, (3) calibrated agent population data."
         )
 
     def parse_outputs(self, raw: Any) -> ModelOutput:
-        """Pass raw model output through unchanged.
-
-        The real implementation will parse AnyLogic's output (CSV time-series
-        or database export) and extract: spot price trajectory, allocation
-        by end-user category, inventory levels across distribution chain,
-        number of agent stockout events, and demand rationing volume by sector.
-        Stochastic outputs should be summarized as mean ± std across replications.
-
-        Args:
-            raw: Raw output from execute.
-
-        Returns:
-            The raw output, passed through as-is in this stub.
-        """
-        return raw
+        if isinstance(raw, ModelOutput):
+            return raw
+        return ModelOutput(
+            model_id=self.model_id,
+            outputs=raw if isinstance(raw, dict) else {"raw": raw},
+        )

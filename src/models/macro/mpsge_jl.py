@@ -15,7 +15,7 @@ Real implementation requirements:
 - Julia installation (>=1.9) with MPSGE.jl and JuMP packages
 - GTAP database (version 10 or later) in Julia-readable format (GTAPinGAMS or CSV)
 - Calibration scripts mapping GTAP sectors to pipeline commodity categories
-- Julia subprocess interface or PyJulia (juliacall) for Python invocation
+- juliacall (preferred) or Julia subprocess for Python invocation
 - MPSGE model file (.jl) encoding the trade and production structure
 """
 
@@ -24,7 +24,8 @@ from __future__ import annotations
 from typing import Any
 
 from src.common.types import AnalyticalLevel, CommoditySystem
-from src.models.base import ModelAdapter, ModelOutput, ValidationResult
+from src.models.adapters.julia_adapter import JuliaAdapter, JuliaConfig
+from src.models.base import ModelOutput, ValidationResult
 
 # Parameters that must be present for MPSGE.jl to run
 REQUIRED_PARAMS = frozenset(
@@ -37,16 +38,21 @@ REQUIRED_PARAMS = frozenset(
 )
 
 
-class MPSGEJLAdapter(ModelAdapter):
+class MPSGEJLAdapter(JuliaAdapter):
     """Adapter for MPSGE.jl general equilibrium model with GTAP data.
+
+    Inherits from JuliaAdapter for juliacall in-process execution with
+    zero-copy NumPy array transfer. Falls back to subprocess if juliacall
+    is unavailable.
 
     MPSGE.jl models the long-run general equilibrium response to commodity
     price shocks originating from the Strait of Hormuz closure. Using GTAP
     multi-region social accounting data, it traces factor reallocation,
-    terms-of-trade effects, and welfare changes across trading blocs. In
-    this pipeline it provides the long-run trade and welfare baseline against
-    which scenario-specific structural shifts are measured.
+    terms-of-trade effects, and welfare changes across trading blocs.
     """
+
+    def __init__(self, config: JuliaConfig | None = None) -> None:
+        super().__init__(config)
 
     @property
     def model_id(self) -> str:
@@ -68,6 +74,10 @@ class MPSGEJLAdapter(ModelAdapter):
             "factor reallocation, terms-of-trade shifts, and multi-region welfare changes "
             "from sustained commodity price shocks under Strait of Hormuz closure scenarios."
         )
+
+    @property
+    def julia_function_name(self) -> str:
+        return "solve_mpsge"
 
     def validate_inputs(self, params: dict[str, Any]) -> ValidationResult:
         """Validate MPSGE.jl input parameters.
@@ -155,68 +165,67 @@ class MPSGEJLAdapter(ModelAdapter):
 
         return ValidationResult(valid=len(errors) == 0, errors=errors, warnings=warnings)
 
-    def translate_inputs(self, params: dict[str, Any]) -> Any:
-        """Pass parameters through without transformation.
+    def translate_inputs_for_julia(self, params: dict[str, Any]) -> dict[str, Any]:
+        """Convert parameters to Julia-compatible keyword arguments.
 
-        The real implementation would serialize params into a Julia Dict or
-        a JSON file consumed by the MPSGE.jl model script, overriding the
-        calibrated benchmark equilibrium price vectors and trade cost parameters.
+        The real implementation would structure these as the shock vectors
+        and elasticity parameters expected by the MPSGE.jl solve function.
 
         Args:
             params: Validated parameter dictionary.
 
         Returns:
-            The parameter dictionary unchanged.
+            Dict of keyword arguments for the Julia solve_mpsge function.
         """
-        return params
+        return {
+            "oil_price_shock_pct": params["oil_price_shock_pct"],
+            "trade_disruption_spec": params["trade_disruption_spec"],
+            "commodity_price_shocks": params["commodity_price_shocks"],
+            "disruption_duration_months": params["disruption_duration_months"],
+        }
+
+    def translate_inputs(self, params: dict[str, Any]) -> Any:
+        """Delegate to translate_inputs_for_julia."""
+        return self.translate_inputs_for_julia(params)
 
     def execute(self, inputs: Any) -> ModelOutput:
         """Execute the MPSGE.jl general equilibrium model.
 
-        Not yet implemented. The real implementation will:
-        1. Serialize input parameters into a Julia-readable configuration
-           (JSON file or Julia Dict literal)
-        2. Invoke the MPSGE.jl model script via Julia subprocess or juliacall
-           (PyJulia), passing the configuration path as an argument
-        3. Monitor Julia process output for convergence diagnostics
-        4. Parse output JSON/CSV files containing welfare changes, trade flow
-           adjustments, and sectoral reallocation results by GTAP region
-        5. Return structured ModelOutput for long-run strategic synthesis
+        Not yet implemented. When a JuliaConfig is provided, the JuliaAdapter
+        base class handles execution via juliacall (in-process, zero-copy
+        array transfer) or subprocess fallback. Until then, raises
+        NotImplementedError.
 
-        Note: Julia startup time (~10–30 seconds for JIT compilation) should
-        be accounted for in pipeline timeout settings. Consider using a
-        persistent Julia session (DaemonMode.jl) to amortize startup costs
-        across multiple scenario runs.
+        The real implementation will:
+        1. Call solve_mpsge() via juliacall with shock vectors as NumPy arrays
+        2. Receive welfare changes, trade flows, and sectoral results zero-copy
+        3. Parse into structured ModelOutput for long-run strategic synthesis
 
-        Args:
-            inputs: Translated inputs from translate_inputs.
-
-        Raises:
-            NotImplementedError: Always, until the real MPSGE.jl integration is built.
+        Note: Import juliacall BEFORE torch to avoid libstdc++ conflicts.
+        Use PackageCompiler.jl sysimages to eliminate JIT latency.
         """
+        if self._config is not None:
+            return super().execute(inputs)
+
         raise NotImplementedError(
             "MPSGEJLAdapter.execute() is not yet implemented. "
-            "Real implementation requires: (1) a Julia installation (>=1.9) with the "
-            "MPSGE.jl and JuMP packages, (2) the GTAP database (v10+) in GTAPinGAMS "
-            "or CSV format with calibration scripts mapping GTAP sectors to pipeline "
-            "commodity categories, (3) a Julia subprocess interface (via subprocess module) "
-            "or juliacall (PyJulia) for Python-to-Julia invocation, and (4) a MPSGE model "
-            "file (.jl) encoding the trade and production structure for Hormuz scenarios. "
-            "Account for Julia JIT compilation time (~10–30 seconds) in pipeline timeouts."
+            "Provide a JuliaConfig to enable execution via juliacall or subprocess. "
+            "Requirements: (1) Julia >=1.9 with MPSGE.jl and JuMP packages, "
+            "(2) GTAP database v10+ with calibration scripts, "
+            "(3) juliacall (pip install juliacall) or Julia subprocess. "
+            "Consider custom sysimages via PackageCompiler.jl to eliminate JIT latency."
         )
 
     def parse_outputs(self, raw: Any) -> ModelOutput:
-        """Pass raw MPSGE.jl output through without transformation.
+        """Parse MPSGE.jl output into standardized ModelOutput.
 
-        The real implementation would parse Julia output files (JSON or CSV)
-        into the standardized ModelOutput schema, extracting equivalent variation
-        welfare changes by region, bilateral trade flow adjustments, and sectoral
-        output changes by GTAP region and commodity.
-
-        Args:
-            raw: Raw output from execute.
-
-        Returns:
-            The raw output unchanged (passthrough for stub).
+        The real implementation extracts equivalent variation welfare changes
+        by region, bilateral trade flow adjustments, and sectoral output
+        changes from the Julia result dict.
         """
-        return raw
+        if isinstance(raw, ModelOutput):
+            return raw
+        return ModelOutput(
+            model_id=self.model_id,
+            outputs=raw if isinstance(raw, dict) else {"raw": raw},
+        )
