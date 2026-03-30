@@ -1,0 +1,15 @@
+*--------------------------------------
+*	SETS
+*--------------------------------------
+*dset accepts duplicate entries
+
+*--------------------------------------
+*	PARAMETERS
+*--------------------------------------
+par= cap_p_cal	Rng= ProdCapCalib	rdim=1	cdim=1 
+par= cost_p_cal	Rng= ProdCostCalib	rdim=1 	cdim=2 
+par= pr_cal	Rng= PriceCalib		rdim=1	cdim=1 
+par= l_glob	Rng= GlobalLoss		rdim=1
+
+
+

@@ -1,0 +1,2 @@
+par=rep_IAMC 	    rng=GAMS_dump!A1  rDim=4 cDim=1
+par=rep_IAMC_supply rng=GAMS_dump2!A1 rDim=4 cDim=1

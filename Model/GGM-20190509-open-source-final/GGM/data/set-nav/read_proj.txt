@@ -1,0 +1,6 @@
+*--------------------------------------
+*	PARAMETERS
+*--------------------------------------
+par= dat_proj_eu	rng= SETNav_EU_scenarios rdim=4	cdim=2
+par= dat_proj_weo	rng= WEO_ROW_scenarios	 rdim=4	cdim=2
+par= dat_d		rng= Cons_seasons	 rdim=1 cdim=1

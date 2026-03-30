@@ -1,0 +1,4 @@
+par=rep_cal_rgn 	rng=cal_rgn!A2 	rDim=3 cDim=2
+par=rep_cal_cn  	rng=cal_cn!A4  	rDim=4 cDim=2
+par=rep_mass_bal   	rng=mass_bal!A2 rDim=6 cDim=2
+

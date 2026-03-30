@@ -1,0 +1,21 @@
+*-----------------------------------------------------
+*	SETS
+*-----------------------------------------------------
+set= A		Rng= Arcs	rdim=1
+dset= CN 	Rng= Countries 	rdim=1
+set= D 		Rng= Seasons 	rdim=1
+set= K		Rng= Sectors	rdim=1
+set= N		Rng= Nodes	rdim=1
+set= R 		Rng= Resources 	rdim=1
+dset= Rgn	Rng= Regions 	rdim=1
+set= W		Rng= Storages	rdim=1
+set= Y		Rng= Years 	rdim=1
+*------------------------------------------------------
+*	PARAMETERS
+*------------------------------------------------------
+par= dat_a	rng= ArcsData		rdim=3	cdim=1
+par= dat_mp	rng= MarketPower	rdim=1  cdim=1
+par= dat_n	rng= NodesData		rdim=3	cdim=2
+par= dat_oth	Rng= Other		rdim=1
+par= dat_w	rng= StorageData 	rdim=3  cdim=2
+par= dist_v	rng= LNGDistances	rdim=1  cdim=1

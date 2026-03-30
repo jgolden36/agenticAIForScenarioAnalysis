@@ -1,0 +1,6 @@
+*QCP
+*barqcpepcomp = 1e-7 (default)
+barqcpepcomp = 1e-8
+
+*QP
+*barepcomp = 1e-8 (default)

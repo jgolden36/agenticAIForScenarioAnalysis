@@ -1,0 +1,3 @@
+par=rep_geo_map 	rng=rep_geo_map!A1      rDim=3 cDim=2
+par=rep_geo_trade 	rng=rep_geo_map_flow!A1 rDim=5 cDim=1
+
