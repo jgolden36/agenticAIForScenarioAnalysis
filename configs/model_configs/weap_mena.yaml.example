@@ -1,0 +1,35 @@
+# WEAP-MENA (Stockholm Environment Institute) configuration template.
+#
+# WEAP is commercial software requiring a licensed install on a Windows host.
+# The repository ships only Models/Water/Install_WEAP.exe (the SEI installer);
+# the application itself and a study file must be supplied separately.
+#
+# To activate the adapter:
+#
+#   1. On a Windows host, install WEAP from Models/Water/Install_WEAP.exe with a
+#      valid SEI licence.
+#   2. Build (or obtain) a WEAP-MENA study file (.weap) covering the Persian
+#      Gulf region.
+#   3. Copy this file to configs/model_configs/weap_mena.yaml and edit paths.
+#   4. Re-build the model registry:
+#        from src.models.registry import build_default_registry
+#        registry = build_default_registry(config_dir="configs/model_configs")
+#
+# Note: even with the YAML in place the adapter's execute() will raise
+# NotImplementedError until the COM-automation / subprocess driver is written
+# inside src/models/water/weap.py. It will, however, validate that all paths
+# below exist before raising, so you'll know if the config is correct.
+
+weap_executable: "C:/Program Files (x86)/WEAP/weap.exe"
+study_path: "C:/Users/Public/WEAP Areas/MENA/MENA.weap"
+
+scenario_branch_name: "HormuzCrisis"
+
+result_export_path: "data/outputs/weap_mena"
+
+# Drive WEAP via win32com.client.Dispatch('WEAP.WEAPApplication') if True;
+# fall back to subprocess invocation of weap.exe if False. Only relevant once
+# the execute() driver is implemented.
+use_com_automation: true
+
+timeout_seconds: 3600

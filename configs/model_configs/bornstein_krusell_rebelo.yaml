@@ -1,0 +1,53 @@
+# Bornstein-Krusell-Rebelo World Equilibrium Oil Model Configuration
+#
+# Required to actually run:
+#   - GNU Octave 6.0+ (`octave-cli` on PATH or set `octave_executable`).
+#   - Dynare 4.6.2+ installed in an Octave-compatible location.
+#     `dynare_path` must point at the directory containing `dynare.m`
+#     (typically `/usr/lib/dynare/matlab` on Linux, `/usr/local/dynare/<ver>/matlab`
+#     on macOS, or `C:/dynare/4.6.2/matlab` on Windows).
+#   - The replication package vendored at `replication_files_dir`
+#     (already present in this repo under
+#     Models/Oil/WorldEquilibriumOilModel/Replication Files).
+#   - A pre-computed `calibration_parameters.mat` produced by running
+#     `GMM_main.m` once for the chosen section. The published
+#     replication package does NOT ship this artefact — it is the output
+#     of the GMM estimation step described in Section 5 of the paper.
+#     Either let the adapter look for it inside
+#     <section>/dynare_codes/, or pass an explicit path via
+#     `calibration_mat_path`.
+
+octave_executable: "octave-cli"
+dynare_path: "/usr/lib/dynare/matlab"
+
+replication_files_dir: "Models/Oil/WorldEquilibriumOilModel/Replication Files"
+
+# Section to run. Default is the non-OPEC supply-shock IRFs (Section 5),
+# which is the natural fit for a Hormuz-class disruption.
+# Other valid sections (see SECTION_MOD_MAP in
+# src/models/oil/bornstein_krusell_rebelo.py for the full list):
+#   - "Section 3/benchmark_model"
+#   - "Section 4/fracking_TD"
+#   - "Section 5/cartel_deviations"
+#   - "Section 5/sup_and_inv_shocks_to_non_opec"
+#   - "Section 5/cost_shocks"
+#   - "Section 5/investment_shocks"
+section: "Section 5/supply_shocks_to_non_opec"
+
+# mod_file is derived from section by default; override only when running
+# a non-canonical .mod file inside the chosen section.
+# mod_file: "World_Economy_Cartel_nonopec_shocks"
+
+# Default IRF horizon (quarters). The adapter uses
+# max(this, ceil(disruption_duration_months / 3)) at runtime.
+irf_horizon_quarters: 20
+
+# Subprocess timeout (seconds). A typical Section 5 IRF run takes 5-15
+# minutes including Dynare preprocessing; allow 30 min headroom.
+timeout_seconds: 1800
+
+keep_working_copy: false
+
+# Optional explicit override of the calibration_parameters.mat path.
+# Uncomment and set after running GMM_main.m once.
+# calibration_mat_path: "Models/Oil/WorldEquilibriumOilModel/Replication Files/Section 5/supply_shocks_to_non_opec/dynare_codes/calibration_parameters.mat"

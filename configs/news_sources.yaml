@@ -1,0 +1,82 @@
+# Configuration for the temporal news-driven re-analysis pipeline.
+#
+# This file is consumed by:
+#   - slurm/scripts/build_weekly_brief.py
+#   - slurm/jobs/weekly_news_pipeline.job
+#
+# The driver loops weekly between two dates, fetches articles and
+# government indicators from every enabled source, and feeds the
+# merged set to the LLM summariser. The summariser produces a
+# structured weekly brief that augments the baseline crisis
+# description for that week's pipeline rerun.
+
+# ----- Crisis metadata used in the summariser prompt -----------------
+crisis:
+  name: "Closure of the Strait of Hormuz"
+  date: "2026-02"
+
+# ----- Boolean query passed to every source --------------------------
+# Each adapter does best-effort interpretation of the boolean
+# operators; sources that don't support them treat this as a bag of
+# keywords. Keep it broad enough to capture related events
+# (desalination, helium, LNG, fertilizer) but narrow enough to avoid
+# generic Iran/Middle East noise.
+query: >
+  ("Strait of Hormuz" OR "Hormuz closure" OR "Hormuz blockade")
+  OR ("Persian Gulf" AND (oil OR LNG OR shipping OR tanker OR mine OR escort))
+  OR (Qatar AND (LNG OR helium OR blockade))
+  OR ("Iran" AND ("oil exports" OR "missile strike" OR "naval mine"))
+  OR ("Bab el-Mandeb")
+  OR ("desalination" AND "Gulf")
+
+# ----- Source adapters -----------------------------------------------
+# Order matters: the aggregator queries them in sequence and dedups by
+# (URL, title+date). Put the source most likely to have rich coverage
+# first; EIA last because it returns indicators rather than narrative.
+#
+# Each entry passes its remaining fields straight to the adapter
+# constructor. To enable a source, set its API key in the environment
+# (the env-var name is shown next to each block) and uncomment the
+# entry.
+sources:
+  # ---- NewsData.io --------------------------------------------------
+  # env: NEWSDATA_API_KEY  (https://newsdata.io)
+  # The free tier does not support /archive (>48h back); the adapter
+  # auto-falls back to /latest when /archive returns 403/426. For the
+  # full Feb 15 - April 10 window you'll want a paid tier.
+  - name: newsdata.io
+    language: en
+    # country: "us,gb,ae,sa,qa,ir"
+    # category: "world,politics,business"
+
+  # ---- GNews --------------------------------------------------------
+  # env: GNEWS_API_KEY     (https://gnews.io)
+  # The free tier returns ~10 articles/request and only the last 24h
+  # for historical search. Essential / Pro plans support full date
+  # ranges.
+  - name: gnews
+    language: en
+
+  # ---- NewsAPI.org --------------------------------------------------
+  # env: NEWSAPI_ORG_API_KEY  (https://newsapi.org)
+  # Developer plan caps history at 30 days. For the back-fill use a
+  # Business plan or rely on NewsAPI.ai / EIA instead.
+  - name: newsapi.org
+    language: en
+
+  # ---- NewsAPI.ai (Event Registry) ----------------------------------
+  # env: NEWSAPI_AI_API_KEY   (https://newsapi.ai)
+  # Best historical coverage of the four article sources; tier-based
+  # rate limits.
+  # - name: newsapi.ai
+  #   language: eng
+
+  # ---- EIA Open Data ------------------------------------------------
+  # env: EIA_API_KEY       (https://www.eia.gov/opendata/register.php)
+  # Free, no historical limit. Returns numeric indicators (WTI, Brent,
+  # crude stocks, Henry Hub gas) as `NewsArticle` rows so the LLM can
+  # cite them alongside text articles.
+  - name: eia
+    # series:
+    #   - {id: "PET.RWTC.W",  label: "WTI",   unit: "USD/bbl", route: "petroleum/pri/spt"}
+    #   - {id: "PET.RBRTE.W", label: "Brent", unit: "USD/bbl", route: "petroleum/pri/spt"}

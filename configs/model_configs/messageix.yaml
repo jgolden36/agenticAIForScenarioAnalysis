@@ -1,0 +1,42 @@
+# MESSAGEix Configuration
+#
+# Required to actually run:
+#   - `pip install message-ix ixmp` (or `pip install hormuz-pipeline[energy]`).
+#   - A Java runtime for ixmp's default JDBC backend (HSQLDB ships with
+#     ixmp), OR a configured Postgres/Oracle backend.
+#   - GAMS on PATH for the MESSAGE solve (the GAMS_HOME env var is
+#     honored by ixmp). MESSAGE does not currently support open-source
+#     solvers — a GAMS license is required.
+#   - The MESSAGEix source repo vendored at `messageix_dir`
+#     (https://github.com/iiasa/message_ix) — primarily for tutorial
+#     baselines and example scenarios.
+#   - An ixmp Platform registered as `platform_name` (default `local`),
+#     containing the baseline scenario identified by
+#     `baseline_model` / `baseline_scenario`.
+
+messageix_dir: "Models/Energy/MESSAGEix"
+
+platform_name: "local"
+
+baseline_model: "Westeros Electrified"
+baseline_scenario: "baseline"
+# baseline_version: 1   # uncomment to pin a specific version
+
+target_model: "Hormuz Disruption"
+solve_model: "MESSAGE"
+
+output_dir: "data/outputs/messageix"
+
+# Solve timeout (seconds). Westeros tutorial solves in seconds; a global
+# MESSAGEix-GLOBIOM solve can take 30+ minutes per scenario.
+timeout_seconds: 14400
+
+keep_clone_after_run: true
+
+# Mapping from pipeline fuel labels to MESSAGE 'commodity' set members.
+# Override for non-Westeros baselines (e.g., the MESSAGEix-GLOBIOM uses
+# 'crudeoil', 'gas', 'LNG' literally).
+fuel_to_commodity:
+  oil: "crudeoil"
+  gas: "gas"
+  lng: "LNG"

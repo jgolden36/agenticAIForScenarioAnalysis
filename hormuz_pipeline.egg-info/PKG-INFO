@@ -1,0 +1,44 @@
+Metadata-Version: 2.4
+Name: hormuz-pipeline
+Version: 0.1.0
+Summary: Agentic AI orchestration framework for multi-model crisis scenario analysis
+Requires-Python: >=3.11
+Requires-Dist: langchain>=0.3.0
+Requires-Dist: langchain-core>=0.3.0
+Requires-Dist: langgraph>=0.3.0
+Requires-Dist: pydantic>=2.0
+Requires-Dist: pyyaml>=6.0
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.23; extra == "dev"
+Provides-Extra: adapters
+Requires-Dist: openpyxl>=3.1; extra == "adapters"
+Requires-Dist: pandas>=2.0; extra == "adapters"
+Provides-Extra: julia
+Requires-Dist: juliacall>=0.9.20; extra == "julia"
+Provides-Extra: gams
+Requires-Dist: gamsapi[transfer]>=52.0; extra == "gams"
+Provides-Extra: excel
+Requires-Dist: openpyxl>=3.1; extra == "excel"
+Requires-Dist: xlwings>=0.32; extra == "excel"
+Provides-Extra: r
+Requires-Dist: rpy2>=3.5; extra == "r"
+Provides-Extra: macro
+Requires-Dist: ogcore>=0.13.0; extra == "macro"
+Requires-Dist: ogusa>=0.13.0; extra == "macro"
+Requires-Dist: dask[distributed]>=2024.1.0; extra == "macro"
+Requires-Dist: cge-modeling>=0.4.0; extra == "macro"
+Requires-Dist: openpyxl>=3.1; extra == "macro"
+Requires-Dist: pandas>=2.0; extra == "macro"
+Provides-Extra: water
+Requires-Dist: netCDF4>=1.6; extra == "water"
+Requires-Dist: xarray>=2024.1; extra == "water"
+Provides-Extra: energy
+Requires-Dist: otoole>=1.0; extra == "energy"
+Requires-Dist: message-ix>=3.7; extra == "energy"
+Requires-Dist: ixmp>=3.7; extra == "energy"
+Requires-Dist: temoa-energysystem>=0.1; extra == "energy"
+Requires-Dist: pyomo>=6.7; extra == "energy"
+Requires-Dist: pandas>=2.0; extra == "energy"
+Provides-Extra: wandb
+Requires-Dist: wandb>=0.16; extra == "wandb"

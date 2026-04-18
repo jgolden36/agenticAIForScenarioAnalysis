@@ -1,0 +1,30 @@
+# OSeMOSYS Configuration
+#
+# Required to actually run:
+#   - GLPK installation (provides `glpsol`) on PATH, OR
+#   - CBC installation if `solver` is set to `cbc`.
+#   - The otoole CLI (`pip install otoole`).
+#   - The OSeMOSYS source repo vendored at `osemosys_dir`
+#     (https://github.com/OSeMOSYS/OSeMOSYS).
+#   - A baseline OSeMOSYS dataset (CSV-per-parameter layout under
+#     `baseline_data_dir`) and matching otoole `config.yaml`.
+
+osemosys_dir: "Models/Energy/OSeMOSYS"
+model_file: "osemosys.txt"
+
+baseline_data_dir: "data/osemosys/baseline"
+otoole_config: "data/osemosys/baseline/config.yaml"
+input_format: "csv"
+
+output_dir: "data/outputs/osemosys"
+
+solver: "glpk"
+glpsol_executable: "glpsol"
+cbc_executable: "cbc"
+otoole_executable: "otoole"
+
+# Per-phase subprocess timeout (seconds). Real OSeMOSYS solves of a
+# global model can take 30 minutes to several hours.
+timeout_seconds: 7200
+
+keep_working_copy: false

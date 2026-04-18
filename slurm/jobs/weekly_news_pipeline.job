@@ -1,0 +1,512 @@
+#!/bin/bash
+# ==================================================================
+# Hormuz Crisis Analysis Pipeline - Temporal (Weekly) News Driver
+#
+# Demonstrates the framework's value for *rapid re-analysis as new
+# information arrives*. Each iteration of the inner loop:
+#
+#   1. Pulls the past week's news + EIA indicators (NewsData.io,
+#      GNews, NewsAPI.org / .ai, EIA Open Data) for a specific
+#      historical week.
+#   2. Has the LLM summarise that week's intelligence into a
+#      structured brief and writes a per-week
+#      configs/crisis_descriptions/hormuz_2026_weekly/<date>.yaml.
+#   3. Re-runs the full Algorithm 1 pipeline (scenarios -> parameter
+#      extraction -> model execution -> synthesis) under a unique
+#      HORMUZ_RUN_ID="weekly_<date>" so every week's analysis is
+#      preserved alongside the others for cross-week comparison.
+#
+# Default backfill window: 2026-02-15 .. 2026-04-10  (Saturday -> Friday)
+# Default cadence:         every 7 days (weekly)
+#
+# All outputs land under:
+#   data/news/<date>/                    raw articles + report + brief text
+#   configs/crisis_descriptions/hormuz_2026_weekly/<date>.yaml
+#   data/pipeline_state/weekly_<date>_*  per-week state files
+#   data/reports/weekly_<date>_*         per-week synthesis reports
+#   slurm/logs/weekly_news_pipeline-<jobid>/<date>/
+#
+# ------------------------------------------------------------------
+# Submission examples
+# ------------------------------------------------------------------
+#   # Default 8-week backfill, EIA-only (no commercial keys needed):
+#   export EIA_API_KEY=...
+#   sbatch slurm/jobs/weekly_news_pipeline.job
+#
+#   # Custom date range:
+#   export HORMUZ_WEEKLY_START=2026-03-01
+#   export HORMUZ_WEEKLY_END=2026-04-10
+#   sbatch slurm/jobs/weekly_news_pipeline.job
+#
+#   # Add commercial news sources for richer briefs:
+#   export NEWSDATA_API_KEY=...
+#   export GNEWS_API_KEY=...
+#   export NEWSAPI_ORG_API_KEY=...
+#   sbatch slurm/jobs/weekly_news_pipeline.job
+#
+#   # Use a cloud LLM instead of the local vLLM sidecar:
+#   export PIPELINE_LLM_PROVIDER=anthropic
+#   export ANTHROPIC_API_KEY=sk-ant-...
+#   export HORMUZ_USE_VLLM=0
+#   sbatch --gpus-per-node=1 slurm/jobs/weekly_news_pipeline.job
+#
+#   # Brief-only mode: build all weekly briefs but skip pipeline reruns
+#   # (useful for inspecting summariser output before committing GPU time):
+#   export HORMUZ_WEEKLY_SKIP_PIPELINE=1
+#   sbatch --gpus-per-node=1 --time=04:00:00 slurm/jobs/weekly_news_pipeline.job
+#
+# ------------------------------------------------------------------
+# SBATCH directives
+# ------------------------------------------------------------------
+#SBATCH --job-name=hormuz-weekly
+#SBATCH --partition=suny
+#SBATCH --account=suny
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gpus-per-node=2
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=128G
+#SBATCH --time=7-00:00:00
+#SBATCH --output=slurm/logs/weekly_news_pipeline-%j.out
+#SBATCH --error=slurm/logs/weekly_news_pipeline-%j.err
+#SBATCH --mail-type=END,FAIL
+# Walltime budgeted for ~9 weeks * full pipeline. If only running the
+# brief-builder (HORMUZ_WEEKLY_SKIP_PIPELINE=1), drop --time to 04:00:00
+# at submission with `sbatch --time=04:00:00 ...`.
+
+set -uo pipefail
+
+# ------------------------------------------------------------------
+# Resolve project root + common helpers (same pattern as
+# empire_ai_alpha.job).
+# ------------------------------------------------------------------
+PROJECT_ROOT="${SLURM_SUBMIT_DIR:-$(pwd)}"
+cd "$PROJECT_ROOT"
+
+# shellcheck source=./_common.sh
+source "${PROJECT_ROOT}/slurm/jobs/_common.sh"
+
+STAGE_PREFIX="weekly_news"
+
+# ------------------------------------------------------------------
+# Weekly backfill window (defaults span the full Hormuz crisis).
+# ------------------------------------------------------------------
+HORMUZ_WEEKLY_START="${HORMUZ_WEEKLY_START:-2026-02-15}"
+HORMUZ_WEEKLY_END="${HORMUZ_WEEKLY_END:-2026-04-10}"
+HORMUZ_WEEKLY_STEP_DAYS="${HORMUZ_WEEKLY_STEP_DAYS:-7}"
+HORMUZ_WEEKLY_SKIP_PIPELINE="${HORMUZ_WEEKLY_SKIP_PIPELINE:-0}"
+
+# Sources / baseline / output configs.
+HORMUZ_NEWS_CONFIG="${HORMUZ_NEWS_CONFIG:-${PROJECT_ROOT}/configs/news_sources.yaml}"
+HORMUZ_BASELINE_CRISIS="${HORMUZ_BASELINE_CRISIS:-${PROJECT_ROOT}/configs/crisis_descriptions/hormuz_2026.yaml}"
+HORMUZ_WEEKLY_CRISIS_DIR="${HORMUZ_WEEKLY_CRISIS_DIR:-${PROJECT_ROOT}/configs/crisis_descriptions/hormuz_2026_weekly}"
+HORMUZ_NEWS_DATA_DIR="${HORMUZ_NEWS_DATA_DIR:-${PROJECT_ROOT}/data/news}"
+
+mkdir -p "$HORMUZ_WEEKLY_CRISIS_DIR" "$HORMUZ_NEWS_DATA_DIR"
+mkdir -p "${PROJECT_ROOT}/slurm/logs"
+mkdir -p "${PROJECT_ROOT}/data/pipeline_state/manifests"
+mkdir -p "${PROJECT_ROOT}/data/inputs" "${PROJECT_ROOT}/data/outputs" "${PROJECT_ROOT}/data/reports"
+
+# Master log dir for the whole batch (shared across weeks).
+BATCH_LOG_DIR="${PROJECT_ROOT}/slurm/logs/weekly_news_pipeline-${SLURM_JOB_ID:-local}"
+mkdir -p "$BATCH_LOG_DIR"
+export HORMUZ_LOG_DIR="$BATCH_LOG_DIR"
+
+# Pipeline + LLM defaults (same as empire_ai_alpha.job).
+export HORMUZ_CONDA_ENV="${HORMUZ_CONDA_ENV:-hormuz}"
+export HORMUZ_CONFIG="${HORMUZ_CONFIG:-${PROJECT_ROOT}/slurm/config/pipeline_cluster.yaml}"
+export HORMUZ_AUTO_APPROVE=1   # SLURM cannot prompt; HITL is auto-approved.
+
+echo "================================================================"
+echo "  Hormuz Pipeline - Weekly News Driver"
+echo "================================================================"
+echo "  Job ID:          ${SLURM_JOB_ID:-N/A}"
+echo "  Node:            $(hostname -f 2>/dev/null || hostname)"
+echo "  Partition:       ${SLURM_JOB_PARTITION:-suny}"
+echo "  Window:          ${HORMUZ_WEEKLY_START} .. ${HORMUZ_WEEKLY_END} (step=${HORMUZ_WEEKLY_STEP_DAYS}d)"
+echo "  Skip pipeline?   ${HORMUZ_WEEKLY_SKIP_PIPELINE} (1 = brief-only)"
+echo "  News config:     ${HORMUZ_NEWS_CONFIG}"
+echo "  Baseline YAML:   ${HORMUZ_BASELINE_CRISIS}"
+echo "  Per-week YAMLs:  ${HORMUZ_WEEKLY_CRISIS_DIR}"
+echo "  News artefacts:  ${HORMUZ_NEWS_DATA_DIR}"
+echo "  Batch log dir:   ${BATCH_LOG_DIR}"
+echo "  Conda env:       ${HORMUZ_CONDA_ENV}"
+echo "  Config:          ${HORMUZ_CONFIG}"
+echo "  Started at:      $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+echo "================================================================"
+
+# ------------------------------------------------------------------
+# Modules + conda environment (best-effort; fatal if conda activation
+# fails because nothing in the loop will work without it).
+# ------------------------------------------------------------------
+module purge 2>/dev/null || true
+module load anaconda3 2>/dev/null || echo "[module] anaconda3 not available; relying on PATH"
+module load cuda/12.4 2>/dev/null || module load cuda 2>/dev/null || echo "[module] no cuda module loaded"
+module load cudnn/9.0 2>/dev/null || echo "[module] no cudnn module loaded"
+
+if ! hormuz_activate_conda "${HORMUZ_CONDA_ENV}"; then
+    record_bash_failure "${STAGE_PREFIX}_setup" 1 \
+        "hormuz_activate_conda failed for env '${HORMUZ_CONDA_ENV}' on $(hostname)"
+    echo "[fatal] cannot activate conda env '${HORMUZ_CONDA_ENV}'; aborting."
+    exit 1
+fi
+
+record_runtime_inventory "${STAGE_PREFIX}_setup"
+
+# ------------------------------------------------------------------
+# Required at-least-one-source check. The aggregator silently skips
+# sources that fail to initialise, but it's much more helpful to fail
+# fast at submission time when *no* source has a key set.
+# ------------------------------------------------------------------
+KEYS_PRESENT=0
+for VAR in EIA_API_KEY NEWSDATA_API_KEY GNEWS_API_KEY NEWSAPI_ORG_API_KEY NEWSAPI_AI_API_KEY; do
+    if [[ -n "${!VAR:-}" ]]; then
+        echo "[news] $VAR is set"
+        KEYS_PRESENT=$((KEYS_PRESENT + 1))
+    fi
+done
+if [[ $KEYS_PRESENT -eq 0 ]]; then
+    echo "[fatal] No news/EIA API keys present in the environment. Set at"
+    echo "        least one of: EIA_API_KEY (free), NEWSDATA_API_KEY,"
+    echo "        GNEWS_API_KEY, NEWSAPI_ORG_API_KEY, NEWSAPI_AI_API_KEY"
+    echo "        and resubmit. EIA Open Data is the easiest free option:"
+    echo "          https://www.eia.gov/opendata/register.php"
+    exit 1
+fi
+
+# ------------------------------------------------------------------
+# Optional vLLM sidecar (started ONCE, shared across all weeks).
+# ------------------------------------------------------------------
+HORMUZ_USE_VLLM="${HORMUZ_USE_VLLM:-1}"
+PIPELINE_LLM_PROVIDER="${PIPELINE_LLM_PROVIDER:-vllm}"
+export PIPELINE_LLM_PROVIDER
+
+VLLM_PID=""
+cleanup_vllm() {
+    if [[ -n "$VLLM_PID" ]] && kill -0 "$VLLM_PID" 2>/dev/null; then
+        echo "[vllm] stopping sidecar (pid=$VLLM_PID)"
+        kill "$VLLM_PID" 2>/dev/null || true
+        sleep 2
+        kill -9 "$VLLM_PID" 2>/dev/null || true
+    fi
+}
+trap cleanup_vllm EXIT TERM INT
+
+if [[ "$HORMUZ_USE_VLLM" == "1" && "$PIPELINE_LLM_PROVIDER" == "vllm" ]]; then
+    if ! python -c "import vllm" 2>/dev/null; then
+        record_bash_failure "${STAGE_PREFIX}_vllm" 1 \
+            "vllm not installed in conda env '${HORMUZ_CONDA_ENV}'"
+        echo "[fatal] vllm not installed. Try: pip install vllm"
+        echo "        Or rerun with HORMUZ_USE_VLLM=0 + a cloud provider."
+        exit 1
+    fi
+
+    VLLM_MODEL="${HORMUZ_VLLM_MODEL:-meta-llama/Llama-3.1-8B-Instruct}"
+    VLLM_PORT="${HORMUZ_VLLM_PORT:-8000}"
+    VLLM_TP_SIZE="${HORMUZ_VLLM_TP_SIZE:-1}"
+    VLLM_DTYPE="${HORMUZ_VLLM_DTYPE:-auto}"
+    VLLM_MAX_LEN="${HORMUZ_VLLM_MAX_LEN:-8192}"
+    VLLM_GPUS="${HORMUZ_VLLM_GPUS:-0}"
+
+    NODE_HOST="$(hostname -f 2>/dev/null || hostname)"
+    VLLM_LOG="${BATCH_LOG_DIR}/vllm.log"
+
+    echo "[vllm] starting sidecar on ${NODE_HOST}:${VLLM_PORT}"
+    echo "       model=${VLLM_MODEL} tp=${VLLM_TP_SIZE} dtype=${VLLM_DTYPE} gpus=${VLLM_GPUS}"
+    echo "       log:   ${VLLM_LOG}"
+
+    CUDA_VISIBLE_DEVICES="$VLLM_GPUS" \
+        python -m vllm.entrypoints.openai.api_server \
+            --model "${VLLM_MODEL}" \
+            --port "${VLLM_PORT}" \
+            --host 0.0.0.0 \
+            --tensor-parallel-size "${VLLM_TP_SIZE}" \
+            --dtype "${VLLM_DTYPE}" \
+            --max-model-len "${VLLM_MAX_LEN}" \
+            > "$VLLM_LOG" 2>&1 &
+    VLLM_PID=$!
+    echo "[vllm] pid=${VLLM_PID}"
+
+    if [[ -n "${SLURM_GPUS_ON_NODE:-}" && "${SLURM_GPUS_ON_NODE}" -gt 1 ]]; then
+        REST=$(seq -s, 1 $((SLURM_GPUS_ON_NODE - 1)))
+        export CUDA_VISIBLE_DEVICES="$REST"
+        echo "[gpu] pipeline driver sees CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES}"
+    else
+        export CUDA_VISIBLE_DEVICES=""
+        echo "[gpu] single GPU on node; pipeline driver runs CPU-only."
+    fi
+
+    export PIPELINE_LLM_BASE_URL="http://${NODE_HOST}:${VLLM_PORT}/v1"
+    export PIPELINE_LLM_MODEL="${VLLM_MODEL}"
+
+    VLLM_WAIT_SECS="${HORMUZ_VLLM_WAIT_SECS:-1800}"
+    echo "[vllm] waiting up to ${VLLM_WAIT_SECS}s for ${PIPELINE_LLM_BASE_URL}/models"
+    deadline=$(( $(date +%s) + VLLM_WAIT_SECS ))
+    until curl -fsS "${PIPELINE_LLM_BASE_URL}/models" >/dev/null 2>&1; do
+        if ! kill -0 "$VLLM_PID" 2>/dev/null; then
+            record_bash_failure "${STAGE_PREFIX}_vllm" 1 \
+                "vLLM exited before becoming healthy; see ${VLLM_LOG}"
+            echo "[fatal] vLLM died during startup. Tail of log:"
+            tail -n 40 "$VLLM_LOG" || true
+            exit 1
+        fi
+        if [[ $(date +%s) -ge $deadline ]]; then
+            record_bash_failure "${STAGE_PREFIX}_vllm" 1 \
+                "vLLM did not become healthy within ${VLLM_WAIT_SECS}s"
+            echo "[fatal] vLLM health check timed out. Tail of log:"
+            tail -n 40 "$VLLM_LOG" || true
+            exit 1
+        fi
+        sleep 10
+    done
+    echo "[vllm] healthy at ${PIPELINE_LLM_BASE_URL}"
+else
+    echo "[vllm] sidecar disabled (HORMUZ_USE_VLLM=${HORMUZ_USE_VLLM}, provider=${PIPELINE_LLM_PROVIDER})"
+    case "$PIPELINE_LLM_PROVIDER" in
+        anthropic)
+            : "${ANTHROPIC_API_KEY:?PIPELINE_LLM_PROVIDER=anthropic but ANTHROPIC_API_KEY is unset}"
+            ;;
+        openai)
+            : "${OPENAI_API_KEY:?PIPELINE_LLM_PROVIDER=openai but OPENAI_API_KEY is unset}"
+            ;;
+    esac
+fi
+
+# ------------------------------------------------------------------
+# Helper: enumerate Saturday-anchored week starts in [start, end].
+# Uses python (already on PATH via the conda env) so we don't depend
+# on GNU date's `--date` extension or BSD `date -j`.
+# ------------------------------------------------------------------
+enumerate_weeks() {
+    local s="$1" e="$2" step="$3"
+    python - <<PY
+from datetime import date, timedelta
+import sys
+s = date.fromisoformat("${s}")
+e = date.fromisoformat("${e}")
+step = timedelta(days=int("${step}"))
+cur = s
+while cur < e:
+    nxt = min(cur + step, e)
+    print(f"{cur.isoformat()} {nxt.isoformat()}")
+    cur = nxt
+PY
+}
+
+# ------------------------------------------------------------------
+# Helper: run a manifest-driven stage as a serial loop on this node.
+# Identical to the helper in empire_ai_alpha.job; copied verbatim so
+# this job is self-contained.
+# ------------------------------------------------------------------
+run_manifest_loop() {
+    local stage="$1"
+    local script="$2"
+    local count_file="$3"
+
+    if [[ ! -f "$count_file" ]]; then
+        record_bash_failure "$stage" 1 "Manifest count file not found: $count_file"
+        echo "[fatal] expected manifest count file at $count_file"
+        return 1
+    fi
+
+    local n
+    n="$(tr -d '[:space:]' < "$count_file")"
+    if [[ -z "$n" || "$n" -le 0 ]]; then
+        echo "[$stage] manifest is empty (count=$n); nothing to do."
+        return 0
+    fi
+
+    echo "[$stage] dispatching ${n} task(s) serially on this node"
+    local i rc
+    for (( i=0; i<n; i++ )); do
+        export SLURM_ARRAY_TASK_ID="$i"
+        echo "--- [$stage] task ${i}/${n} ----------------------------"
+        safe_python "$stage" 1 -- python "$script"
+        rc=$?
+        if [[ $rc -ne 0 ]]; then
+            echo "[$stage] task $i exited $rc; continuing."
+        fi
+    done
+    unset SLURM_ARRAY_TASK_ID
+    echo "[$stage] loop complete (${n} task(s))"
+    return 0
+}
+
+# ------------------------------------------------------------------
+# Helper: run the full Modules 1..4 pipeline for a single week.
+# The week's run_id is `weekly_<date>` and the weekly crisis YAML
+# is exposed via HORMUZ_CRISIS_DESCRIPTION (read by run_scenarios.py).
+# ------------------------------------------------------------------
+run_pipeline_for_week() {
+    local week_start="$1"
+    local week_end="$2"
+    local crisis_yaml="$3"
+
+    local week_tag="${week_start//-/}"   # YYYYMMDD
+    export HORMUZ_RUN_ID="weekly_${week_tag}"
+    export HORMUZ_CRISIS_DESCRIPTION="$crisis_yaml"
+
+    local week_log_dir="${BATCH_LOG_DIR}/${week_start}"
+    mkdir -p "$week_log_dir"
+    export HORMUZ_LOG_DIR="$week_log_dir"
+
+    echo ""
+    echo "============================================================"
+    echo "  Pipeline for week ${week_start} .. ${week_end}"
+    echo "  HORMUZ_RUN_ID:           ${HORMUZ_RUN_ID}"
+    echo "  HORMUZ_CRISIS_DESCRIPTION: ${HORMUZ_CRISIS_DESCRIPTION}"
+    echo "  Per-week log dir:        ${HORMUZ_LOG_DIR}"
+    echo "============================================================"
+
+    # --- Module 1: Scenario Generation ----------------------------
+    safe_python "${STAGE_PREFIX}_${week_tag}_01_scenarios" 0 -- \
+        python slurm/scripts/run_scenarios.py
+    local rc=$?
+    if [[ $rc -ne 0 ]]; then
+        echo "[week ${week_start}] scenarios failed (rc=$rc); skipping rest of week."
+        return $rc
+    fi
+
+    # --- Dispatch parameter manifest ------------------------------
+    safe_python "${STAGE_PREFIX}_${week_tag}_dispatch_params" 0 -- \
+        python slurm/scripts/dispatch_models.py parameters --run-id "${HORMUZ_RUN_ID}"
+    rc=$?
+    if [[ $rc -ne 0 ]]; then
+        echo "[week ${week_start}] parameter dispatch failed (rc=$rc); skipping."
+        return $rc
+    fi
+    local PARAM_COUNT_FILE="${PROJECT_ROOT}/data/pipeline_state/manifests/${HORMUZ_RUN_ID}_parameters_count.txt"
+
+    # --- Module 2: Parameter Extraction ---------------------------
+    run_manifest_loop "${STAGE_PREFIX}_${week_tag}_02_parameters" \
+        "slurm/scripts/run_parameters.py" "$PARAM_COUNT_FILE"
+
+    # --- Dispatch model manifest ----------------------------------
+    safe_python "${STAGE_PREFIX}_${week_tag}_dispatch_models" 0 -- \
+        python slurm/scripts/dispatch_models.py models --run-id "${HORMUZ_RUN_ID}"
+    rc=$?
+    if [[ $rc -ne 0 ]]; then
+        echo "[week ${week_start}] model dispatch failed (rc=$rc); skipping."
+        return $rc
+    fi
+    local MODELS_COUNT_FILE="${PROJECT_ROOT}/data/pipeline_state/manifests/${HORMUZ_RUN_ID}_models_count.txt"
+
+    # --- Module 3: Model Execution --------------------------------
+    unset HORMUZ_MANIFEST_NAME
+    run_manifest_loop "${STAGE_PREFIX}_${week_tag}_03_models" \
+        "slurm/scripts/run_model.py" "$MODELS_COUNT_FILE"
+
+    # --- Module 4: Synthesis --------------------------------------
+    BASH_FAILURE_COUNT=$(ls -1 \
+        "${PROJECT_ROOT}/data/pipeline_state/${HORMUZ_RUN_ID}_"*"_bash_failure_"*.json \
+        2>/dev/null | wc -l | tr -d ' ')
+    export HORMUZ_BASH_FAILURE_COUNT="${BASH_FAILURE_COUNT:-0}"
+    safe_python "${STAGE_PREFIX}_${week_tag}_04_synthesis" 0 -- \
+        python slurm/scripts/run_synthesis.py
+    rc=$?
+    echo "[week ${week_start}] synthesis exit=${rc}"
+    return $rc
+}
+
+# ==================================================================
+#  Main loop: enumerate weeks, build brief, optionally run pipeline.
+# ==================================================================
+PREVIOUS_BRIEF=""
+TOTAL_WEEKS=0
+SUCCESSFUL_BRIEFS=0
+SUCCESSFUL_PIPELINES=0
+FAILED_PIPELINES=0
+
+while read -r WEEK_START WEEK_END; do
+    [[ -z "$WEEK_START" ]] && continue
+    TOTAL_WEEKS=$((TOTAL_WEEKS + 1))
+
+    WEEK_TAG="${WEEK_START//-/}"   # YYYYMMDD
+    WEEK_NEWS_DIR="${HORMUZ_NEWS_DATA_DIR}/${WEEK_START}"
+    mkdir -p "$WEEK_NEWS_DIR"
+    CRISIS_YAML="${HORMUZ_WEEKLY_CRISIS_DIR}/${WEEK_START}.yaml"
+    BRIEF_TXT="${WEEK_NEWS_DIR}/brief.txt"
+    ARTICLES_JSON="${WEEK_NEWS_DIR}/articles.json"
+    REPORT_JSON="${WEEK_NEWS_DIR}/report.json"
+
+    echo ""
+    echo "############################################################"
+    echo "#  Week ${WEEK_START} .. ${WEEK_END}"
+    echo "############################################################"
+
+    # ---- Step 1: build the weekly brief + per-week crisis YAML ----
+    BRIEF_ARGS=(
+        --week-start "$WEEK_START"
+        --week-end   "$WEEK_END"
+        --baseline   "$HORMUZ_BASELINE_CRISIS"
+        --output     "$CRISIS_YAML"
+        --sources-config "$HORMUZ_NEWS_CONFIG"
+        --pipeline-config "$HORMUZ_CONFIG"
+        --brief-out    "$BRIEF_TXT"
+        --articles-out "$ARTICLES_JSON"
+        --report-out   "$REPORT_JSON"
+    )
+    if [[ -n "$PREVIOUS_BRIEF" && -f "$PREVIOUS_BRIEF" ]]; then
+        BRIEF_ARGS+=( --previous-brief "$PREVIOUS_BRIEF" )
+    fi
+
+    safe_python "${STAGE_PREFIX}_${WEEK_TAG}_brief" 1 -- \
+        python slurm/scripts/build_weekly_brief.py "${BRIEF_ARGS[@]}"
+    BRIEF_RC=$?
+    if [[ $BRIEF_RC -ne 0 ]]; then
+        echo "[week ${WEEK_START}] brief builder exited ${BRIEF_RC}; skipping week."
+        continue
+    fi
+    if [[ ! -f "$CRISIS_YAML" ]]; then
+        echo "[week ${WEEK_START}] expected crisis YAML not found at ${CRISIS_YAML}; skipping."
+        continue
+    fi
+    SUCCESSFUL_BRIEFS=$((SUCCESSFUL_BRIEFS + 1))
+    PREVIOUS_BRIEF="$BRIEF_TXT"
+
+    # ---- Step 2: re-run the pipeline (unless brief-only mode) -----
+    if [[ "$HORMUZ_WEEKLY_SKIP_PIPELINE" == "1" ]]; then
+        echo "[week ${WEEK_START}] HORMUZ_WEEKLY_SKIP_PIPELINE=1; brief saved at"
+        echo "                     ${CRISIS_YAML}"
+        continue
+    fi
+
+    if run_pipeline_for_week "$WEEK_START" "$WEEK_END" "$CRISIS_YAML"; then
+        SUCCESSFUL_PIPELINES=$((SUCCESSFUL_PIPELINES + 1))
+    else
+        FAILED_PIPELINES=$((FAILED_PIPELINES + 1))
+    fi
+
+done < <(enumerate_weeks "$HORMUZ_WEEKLY_START" "$HORMUZ_WEEKLY_END" "$HORMUZ_WEEKLY_STEP_DAYS")
+
+# ==================================================================
+#  Summary
+# ==================================================================
+echo ""
+echo "================================================================"
+echo "  Hormuz weekly news pipeline complete"
+echo "  Window:                   ${HORMUZ_WEEKLY_START} .. ${HORMUZ_WEEKLY_END}"
+echo "  Weeks attempted:          ${TOTAL_WEEKS}"
+echo "  Briefs built:             ${SUCCESSFUL_BRIEFS}"
+if [[ "$HORMUZ_WEEKLY_SKIP_PIPELINE" == "1" ]]; then
+    echo "  Pipeline reruns:          skipped (HORMUZ_WEEKLY_SKIP_PIPELINE=1)"
+else
+    echo "  Pipeline reruns OK:       ${SUCCESSFUL_PIPELINES}"
+    echo "  Pipeline reruns failed:   ${FAILED_PIPELINES}"
+fi
+echo "  Per-week crisis YAMLs:    ${HORMUZ_WEEKLY_CRISIS_DIR}"
+echo "  News artefacts:           ${HORMUZ_NEWS_DATA_DIR}"
+echo "  Per-week run state:       ${PROJECT_ROOT}/data/pipeline_state/weekly_*"
+echo "  Per-week reports:         ${PROJECT_ROOT}/data/reports/weekly_*"
+echo "  Batch log dir:            ${BATCH_LOG_DIR}"
+echo "  Finished at:              $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+echo "================================================================"
+
+# Exit non-zero only if every pipeline attempt failed (and we tried at
+# least one). Brief-only runs always exit zero on completion.
+if [[ "$HORMUZ_WEEKLY_SKIP_PIPELINE" != "1" \
+      && "$SUCCESSFUL_PIPELINES" -eq 0 \
+      && "$FAILED_PIPELINES" -gt 0 ]]; then
+    exit 1
+fi
+exit 0

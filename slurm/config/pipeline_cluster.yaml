@@ -1,0 +1,76 @@
+# Pipeline configuration overrides for GPU cluster execution.
+# Inherits defaults from configs/model_configs/default.yaml
+# and overrides settings appropriate for HPC environments.
+
+llm:
+  # Default cluster route: local vLLM on a GPU node.
+  # The endpoint URL is taken from PIPELINE_LLM_BASE_URL at runtime
+  # (set by submit_pipeline.sh, populated either manually or by the
+  # 00_vllm.sbatch sidecar). Override provider via PIPELINE_LLM_PROVIDER
+  # to switch back to "anthropic" / "openai" / "bedrock" when an API
+  # key is exported and outbound HTTPS is reachable.
+  provider: "vllm"
+  model: "meta-llama/Llama-3.1-70B-Instruct"
+  base_url: null   # filled from PIPELINE_LLM_BASE_URL env var
+  temperature: 0.0
+  max_concurrency: 8
+
+execution:
+  max_parallel_models: 16
+  default_timeout_seconds: 21600  # 6 hours
+  retry_failed_models: true
+  max_retries: 2
+  capture_stderr: true
+  worker_type: "thread"  # "process" for CPU-bound Python-native models
+  cpu_threads_per_model: 4
+  srun_enabled: false
+  gpu:
+    available_devices: []  # Auto-detect from CUDA_VISIBLE_DEVICES
+    memory_per_device_gb: 0.0  # Auto-detect
+    reserve_for_llm: 0
+
+output:
+  base_dir: "data"
+  inputs_dir: "data/inputs"
+  outputs_dir: "data/outputs"
+  reports_dir: "data/reports"
+
+consistency:
+  price_tolerance_pct: 20.0
+  quantity_tolerance_pct: 15.0
+  flag_on_missing_model: true
+
+num_scenarios: 4
+
+# Optional Weights & Biases integration. The pipeline gracefully
+# no-ops when wandb is not installed, WANDB_DISABLED=true, or
+# HORMUZ_WANDB_DISABLED=true. See src/common/wandb_logger.py for the
+# full activation rules.
+#
+# These values are read by the SLURM driver job
+# (slurm/jobs/empire_ai_alpha.job) and exported into each stage's
+# environment so wandb's own env-var resolution sees them. Override
+# any of them by exporting the corresponding env var before
+# `sbatch ...`.
+wandb:
+  enabled: true                    # set false to fully disable
+  project: "hormuz-pipeline"       # WANDB_PROJECT
+  entity: null                     # WANDB_ENTITY (e.g. your team / username)
+  # Run grouping: every stage and every per-task model run within one
+  # pipeline invocation share `group=HORMUZ_RUN_ID`, so the W&B UI's
+  # group view shows the whole pipeline as a single logical run.
+  group_from_run_id: true
+  # Open one W&B run per parameter-extraction / model-execution task.
+  # Disable to keep only the scenarios + synthesis runs (the synthesis
+  # run still aggregates everything into tables).
+  log_per_task: true
+  # On compute nodes without outbound HTTPS (typical for Empire AI
+  # Alpha), set "offline" here. The driver job will export
+  # WANDB_MODE=offline so wandb buffers locally; sync from a login
+  # node afterwards with `wandb sync slurm/logs/<run_id>/wandb/*`.
+  mode: "offline"                  # online | offline | disabled
+  # Tags applied to every run from this pipeline.
+  tags:
+    - "hormuz"
+    - "scenario-analysis"
+    - "empire-ai-alpha"

@@ -1,0 +1,65 @@
+# CWatM (Community Water Model, IIASA) configuration template.
+#
+# CWatM is NOT bundled with this repository. To activate the adapter:
+#
+#   1. git clone https://github.com/iiasa/CWatM Models/Water/CWatM
+#   2. Create a Python venv with CWatM's dependencies:
+#        numpy scipy netCDF4 gdal rasterio pyproj
+#      and install CWatM (`pip install -e Models/Water/CWatM`).
+#   3. Download a regional input dataset (Persian Gulf bundle, Rhine sample, or
+#      one of the global ISIMIP forcings) from the IIASA CWatM data portal.
+#      Place it under data_path below.
+#   4. Copy this file to configs/model_configs/cwatm.yaml and edit paths.
+#   5. Re-build the model registry:
+#        from src.models.registry import build_default_registry
+#        registry = build_default_registry(config_dir="configs/model_configs")
+
+# Required: directory containing run_cwatm.py (or cwatm.py)
+cwatm_root: "Models/Water/CWatM"
+
+# Required: a CWatM INI settings file pointing at your forcing data and
+# output specification.
+baseline_settings_path: "Models/Water/CWatM/settings/settings_persian_gulf.ini"
+
+# Required: directory containing the NetCDF forcing/static input files
+# referenced by the settings file above.
+data_path: "Models/Water/CWatM/data"
+
+# Per-scenario output subdirectories will be created here:
+#   <output_dir>/scenario_<scenario_id>/*.nc
+output_dir: "data/outputs/cwatm"
+
+# Python interpreter that has CWatM and its deps installed. Use the absolute
+# path of a dedicated venv to avoid polluting the orchestrator's environment.
+python_executable: "python"
+
+# CWatM entry script. Newer versions ship 'run_cwatm.py'; legacy versions
+# expose 'cwatm.py'.
+entry_point: "run_cwatm.py"
+
+timeout_seconds: 14400
+keep_working_copy: false
+omp_num_threads: 1
+
+# Extra environment variables for GDAL / PROJ on systems where they don't
+# resolve from the venv automatically. Leave the values empty to skip.
+extra_env: {}
+# Example:
+# extra_env:
+#   GDAL_DATA: "/usr/share/gdal"
+#   PROJ_LIB: "/usr/share/proj"
+
+# CWatM settings keys to scale by (1 + water_demand_change_pct/100).
+# Defaults match the canonical IIASA CWatM 1.x settings naming.
+demand_keys:
+  - "domesticDemandMultiplier"
+  - "industryDemandMultiplier"
+  - "irrigationDemandMultiplier"
+  - "livestockDemandMultiplier"
+
+# CWatM settings keys to scale by the supply_infrastructure_status multiplier
+# (intact=1.0, partially_damaged=0.6, severely_damaged=0.25, destroyed=0.0).
+infra_keys:
+  - "desalinationCapacity"
+  - "useWaterTransfers"
+  - "reservoirReleaseFactor"

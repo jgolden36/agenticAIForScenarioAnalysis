@@ -1,0 +1,15 @@
+# MAgPIE Configuration
+# Uncomment and adjust r_script_path if your project layout differs.
+
+r_script_path: "src/models/fertilizer/magpie_bridge.R"
+r_executable: "Rscript"
+timeout_seconds: 14400  # MAgPIE runs can take several hours
+extra_args: ["--vanilla"]
+
+# If MAgPIE's renv library is at a custom path, set it here:
+# r_libs_path: "Models/Fertilizer/magpie-master/magpie-master/renv/library"
+
+# Environment variable pointing to MAgPIE model root:
+# Set MAGPIE_ROOT in your environment, or the bridge script will
+# try common relative paths from the project root.
+# magpie_root: "Models/Fertilizer/magpie-master/magpie-master"

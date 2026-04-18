@@ -1,0 +1,102 @@
+# Cluster configuration for the Hormuz crisis analysis pipeline.
+# Adjust partitions, modules, and resource limits to match your cluster.
+
+cluster:
+  name: "hormuz-pipeline"
+  account: null  # Set to your SLURM account, or null for default
+
+partitions:
+  gpu: "gpu"         # Partition with GPU nodes (for LLM inference + ML models)
+  cpu: "batch"       # General CPU partition (GAMS, Julia, R, spreadsheet models)
+  highmem: "highmem" # High-memory partition (CGE solvers, large datasets)
+
+modules:
+  # Environment modules to load via `module load`. Set empty list if not used.
+  base:
+    - "anaconda3"
+  gpu:
+    - "cuda/12.4"
+    - "cudnn/9.0"
+  gams:
+    - "gams/53"
+  julia:
+    - "julia/1.11"
+  r:
+    - "R/4.4"
+  java:
+    - "java/17"
+
+conda:
+  env_name: "hormuz"
+  python_version: "3.11"
+
+resources:
+  # Module 1: Scenario generation (LLM calls)
+  scenarios:
+    partition: "gpu"
+    gpus: 1
+    cpus: 8
+    mem_gb: 64
+    time: "02:00:00"
+
+  # Module 2: Parameter extraction (LLM calls, array job)
+  parameters:
+    partition: "gpu"
+    gpus: 1
+    cpus: 4
+    mem_gb: 32
+    time: "01:00:00"
+
+  # Module 3: CPU model execution (GAMS, Julia CGE, R, spreadsheets)
+  models_cpu:
+    partition: "batch"
+    cpus: 8
+    mem_gb: 32
+    time: "06:00:00"
+
+  # Module 3: GPU model execution (ML forecasting, LoRA inference)
+  models_gpu:
+    partition: "gpu"
+    gpus: 1
+    cpus: 8
+    mem_gb: 64
+    time: "04:00:00"
+
+  # Module 4: Synthesis (LLM calls)
+  synthesis:
+    partition: "gpu"
+    gpus: 1
+    cpus: 8
+    mem_gb: 64
+    time: "02:00:00"
+
+  # Environment setup (one-time, CPU only)
+  setup:
+    partition: "batch"
+    cpus: 4
+    mem_gb: 16
+    time: "01:00:00"
+
+paths:
+  project_root: null  # Auto-detected from SLURM_SUBMIT_DIR
+  state_dir: "data/pipeline_state"
+  logs_dir: "slurm/logs"
+  manifests_dir: "data/pipeline_state/manifests"
+
+notifications:
+  mail_type: "END,FAIL"
+  mail_user: null  # Set to your email address
+
+# Pipeline execution settings overrides for cluster mode
+pipeline_overrides:
+  execution:
+    max_parallel_models: 16  # Higher parallelism on cluster
+    default_timeout_seconds: 21600  # 6 hours per model
+    retry_failed_models: true
+    capture_stderr: true
+  # Cluster runs are non-interactive by definition: SLURM jobs cannot
+  # pause to wait for analyst input, and submit_pipeline.sh chains
+  # every stage with afterok dependencies in a single submission.
+  # Auto-approve is therefore the default; HITL gating belongs to
+  # local runs of the LangGraph orchestrator (`python -m src.pipeline.graph`).
+  auto_approve_checkpoints: true

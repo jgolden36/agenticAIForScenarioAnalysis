@@ -1,0 +1,587 @@
+#!/bin/bash
+# ==================================================================
+# Hormuz Crisis Analysis Pipeline — Empire AI Alpha Driver Job
+#
+# Single self-contained SLURM batch script for the Empire AI Alpha
+# cluster (Flatiron-hosted, SUNY allocation; reachable at
+# alpha.empire-ai.org). Targets Stony Brook / SUNY users, who run on
+# the `suny` partition. See:
+#   https://docs.ccr.buffalo.edu/en/latest/howto/empireai/
+#   https://empireai.freshdesk.com/en/support/solutions/articles/157000168778-slurm-partitions-queues-
+#
+# Why one job instead of the multi-stage chain in submit_pipeline.sh?
+#   * Alpha enforces MaxJobsPU=30 and MaxSubmitPU=200. The default
+#     per-stage chain submits ~150 array tasks for parameter
+#     extraction + ~150 for model execution, which collides with both
+#     limits. A single driver job with an internal task loop sidesteps
+#     this entirely while still exploiting the node's GPUs.
+#   * Alpha uses --gpus-per-node=N (not --gres=gpu:N) and the SUNY-
+#     wide `suny` partition, which differs from the generic
+#     batch/gpu/highmem partition assumptions in slurm/config/cluster.yaml.
+#   * Co-locating vLLM and the pipeline driver on one multi-GPU node
+#     avoids the second job submission for the LLM sidecar and removes
+#     the cross-node networking dance.
+#
+# Pipeline executed (Algorithm 1 in the paper):
+#   00.  (optional) launch local vLLM on GPU 0
+#   01.  Module 1 — scenario generation
+#   --   dispatch parameter manifest
+#   02.  Module 2 — parameter extraction (loop over manifest)
+#   --   dispatch model manifests
+#   03.  Module 3 — model execution    (loop over manifest)
+#   04.  Module 4 — synthesis
+#
+# All HITL checkpoints are auto-approved; for interactive review run
+# `python -m src.pipeline.graph` locally instead.
+#
+# ------------------------------------------------------------------
+# Submission examples
+# ------------------------------------------------------------------
+#   # Default: 2 GPUs, vLLM sidecar on GPU 0, full pipeline.
+#   cd /mnt/home/$USER/agenticAIForScenarioAnalysis
+#   sbatch slurm/jobs/empire_ai_alpha.job
+#
+#   # Use a cloud LLM instead of local vLLM (saves 1 GPU, needs key):
+#   export PIPELINE_LLM_PROVIDER=anthropic
+#   export ANTHROPIC_API_KEY=sk-ant-...
+#   export HORMUZ_USE_VLLM=0
+#   sbatch --gpus-per-node=1 slurm/jobs/empire_ai_alpha.job
+#
+#   # Larger model on 4 GPUs with tensor parallelism:
+#   export HORMUZ_VLLM_MODEL=meta-llama/Llama-3.1-70B-Instruct
+#   export HORMUZ_VLLM_TP_SIZE=4
+#   sbatch --gpus-per-node=4 slurm/jobs/empire_ai_alpha.job
+#
+# ------------------------------------------------------------------
+# SBATCH directives
+# ------------------------------------------------------------------
+#SBATCH --job-name=hormuz-pipeline
+#SBATCH --partition=suny
+#SBATCH --account=suny
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gpus-per-node=2
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=128G
+#SBATCH --time=3-00:00:00
+#SBATCH --output=slurm/logs/empire_ai_alpha-%j.out
+#SBATCH --error=slurm/logs/empire_ai_alpha-%j.err
+#SBATCH --mail-type=END,FAIL
+# Note: Alpha's `suny` partition uses `--gpus-per-node=N`, NOT
+# `--gres=gpu:N` (the latter is documented for some legacy CCR
+# clusters but not Alpha). Max walltime on `suny` is 7 days
+# (--time=7-00:00:00). Default is 1 hour, so always set explicitly.
+# Submit with `sbatch --mail-user=you@stonybrook.edu ...` to receive
+# completion notifications.
+#
+# Logging layout (relative to the project root, i.e. SLURM_SUBMIT_DIR):
+#   slurm/logs/empire_ai_alpha-<jobid>.out   driver stdout (SBATCH)
+#   slurm/logs/empire_ai_alpha-<jobid>.err   driver stderr (SBATCH)
+#   slurm/logs/<run_id>/                     per-run sink for everything else:
+#       driver-<jobid>.out / .err            symlinks to the SBATCH files
+#       vllm.log                             vLLM sidecar stdout+stderr
+#       runtime-*-<job>-<task>.json          per-stage runtime inventories
+#                                            (written by _common.sh)
+# The SBATCH driver log paths must be set at submission time (before
+# this script runs), so they live at the top of slurm/logs/. Modern
+# slurmd auto-creates that parent directory. Everything else is
+# routed into the per-run subfolder once HORMUZ_RUN_ID is known, so
+# log artefacts stay grouped by run.
+
+set -uo pipefail
+
+# ------------------------------------------------------------------
+# Resolve project root and source common helpers.
+# ------------------------------------------------------------------
+PROJECT_ROOT="${SLURM_SUBMIT_DIR:-$(pwd)}"
+cd "$PROJECT_ROOT"
+
+# shellcheck source=./_common.sh
+source "${PROJECT_ROOT}/slurm/jobs/_common.sh"
+
+STAGE_PREFIX="empire_ai_alpha"
+
+# ------------------------------------------------------------------
+# Run identification + state directories.
+# ------------------------------------------------------------------
+export HORMUZ_RUN_ID="${HORMUZ_RUN_ID:-$(date -u +%Y%m%d_%H%M%S)}"
+export HORMUZ_CONDA_ENV="${HORMUZ_CONDA_ENV:-hormuz}"
+export HORMUZ_CONFIG="${HORMUZ_CONFIG:-${PROJECT_ROOT}/slurm/config/pipeline_cluster.yaml}"
+export HORMUZ_AUTO_APPROVE=1   # SLURM cannot prompt; HITL is auto-approved.
+
+# Empire AI conventions: home is small/no quota for now, scratch is
+# the right place for run artefacts (see EAI storage docs). Default
+# state dir falls back to scratch when available.
+EAI_SCRATCH_DEFAULT=""
+if [[ -d "/mnt/lustre/suny/${USER}" ]]; then
+    EAI_SCRATCH_DEFAULT="/mnt/lustre/suny/${USER}/hormuz/${HORMUZ_RUN_ID}"
+fi
+export HORMUZ_RUN_SCRATCH="${HORMUZ_RUN_SCRATCH:-$EAI_SCRATCH_DEFAULT}"
+
+mkdir -p "${PROJECT_ROOT}/slurm/logs"
+mkdir -p "${PROJECT_ROOT}/data/pipeline_state/manifests"
+mkdir -p "${PROJECT_ROOT}/data/inputs" "${PROJECT_ROOT}/data/outputs" "${PROJECT_ROOT}/data/reports"
+if [[ -n "$HORMUZ_RUN_SCRATCH" ]]; then
+    mkdir -p "$HORMUZ_RUN_SCRATCH"
+fi
+
+# ------------------------------------------------------------------
+# Per-run log directory. Everything written *during* this job (vLLM,
+# runtime inventories, bash failure records that come from
+# _common.sh) is routed in here so each pipeline run owns a tidy
+# folder that can be tarred up or shipped off the cluster as a unit.
+#
+# We override HORMUZ_LOG_DIR (originally set by _common.sh to point
+# at slurm/logs/ flat) so that record_runtime_inventory and
+# record_bash_failure deposit their JSON files into the per-run
+# subfolder. Those helpers re-read $HORMUZ_LOG_DIR on every call,
+# so post-source overrides take effect.
+# ------------------------------------------------------------------
+RUN_LOG_DIR="${PROJECT_ROOT}/slurm/logs/${HORMUZ_RUN_ID}"
+mkdir -p "$RUN_LOG_DIR"
+export HORMUZ_LOG_DIR="$RUN_LOG_DIR"
+
+# Symlink the SBATCH driver out/err into the per-run folder for
+# convenience. The SBATCH paths themselves are fixed by the
+# directives above (SLURM resolves them before this script runs),
+# but a symlink under the run dir gives a single jumping-off point.
+SBATCH_OUT="${PROJECT_ROOT}/slurm/logs/empire_ai_alpha-${SLURM_JOB_ID:-local}.out"
+SBATCH_ERR="${PROJECT_ROOT}/slurm/logs/empire_ai_alpha-${SLURM_JOB_ID:-local}.err"
+if [[ -n "${SLURM_JOB_ID:-}" ]]; then
+    ln -sf "$SBATCH_OUT" "${RUN_LOG_DIR}/driver-${SLURM_JOB_ID}.out" 2>/dev/null || true
+    ln -sf "$SBATCH_ERR" "${RUN_LOG_DIR}/driver-${SLURM_JOB_ID}.err" 2>/dev/null || true
+fi
+
+# ------------------------------------------------------------------
+# Weights & Biases configuration.
+#
+# The pipeline gracefully no-ops when wandb is unavailable, so this
+# block is best-effort: missing keys / packages just disable W&B
+# logging instead of failing the job. See src/common/wandb_logger.py
+# for the activation rules.
+#
+# Empire AI Alpha compute nodes generally cannot reach wandb.ai over
+# HTTPS, so the safe default is offline mode: wandb buffers runs to
+# disk under WANDB_DIR and they are sync'd from a login node
+# afterwards via `wandb sync slurm/logs/<run_id>/wandb/*`.
+#
+# Override any of these by exporting the var before `sbatch ...`:
+#     export WANDB_PROJECT=hormuz-pipeline
+#     export WANDB_ENTITY=stonybrook-yourteam
+#     export WANDB_MODE=online            # if outbound HTTPS works
+#     export WANDB_API_KEY=...            # required when MODE=online
+#     export HORMUZ_WANDB_LOG_PER_TASK=0  # silence per-task runs
+# ------------------------------------------------------------------
+export WANDB_PROJECT="${WANDB_PROJECT:-hormuz-pipeline}"
+export WANDB_RUN_GROUP="${WANDB_RUN_GROUP:-${HORMUZ_RUN_ID}}"
+export WANDB_MODE="${WANDB_MODE:-offline}"
+
+# ╔════════════════════════════════════════════════════════════════╗
+# ║  W&B API KEY — PUT YOUR KEY HERE (or use one of the safer       ║
+# ║  alternatives listed below). The job is resolved in this order: ║
+# ║                                                                  ║
+# ║   1. WANDB_API_KEY already exported in the shell that ran        ║
+# ║      `sbatch` (e.g. via ~/.bashrc, a module file, `wandb login`, ║
+# ║      or `export WANDB_API_KEY=... && sbatch ...`). PREFERRED.    ║
+# ║                                                                  ║
+# ║   2. A key file at ~/.wandb_api_key, or at the path given by     ║
+# ║      $WANDB_API_KEY_FILE. Mode 600 is checked. PREFERRED for     ║
+# ║      headless cluster runs.                                      ║
+# ║                                                                  ║
+# ║   3. The inline literal on the WANDB_API_KEY_INLINE line below.  ║
+# ║      ONLY use this in a private clone of the repo — `.job` files ║
+# ║      are tracked by git and committing a key would leak it.      ║
+# ║                                                                  ║
+# ║  When a key is found AND WANDB_MODE was left at the default      ║
+# ║  ("offline"), the job auto-flips to "online" so you actually     ║
+# ║  see runs in the wandb.ai UI. Force one or the other by          ║
+# ║  exporting WANDB_MODE explicitly before submission.              ║
+# ╚════════════════════════════════════════════════════════════════╝
+
+# === EDIT BELOW ONLY IF USING OPTION 3 ===
+# Paste your key inside the quotes (40-character hex string from
+# https://wandb.ai/authorize). Leave empty to use option 1 or 2.
+WANDB_API_KEY_INLINE="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"
+# ==========================================
+
+# Option 2: load from a file if present.
+WANDB_API_KEY_FILE="${WANDB_API_KEY_FILE:-${HOME}/.wandb_api_key}"
+
+if [[ -z "${WANDB_API_KEY:-}" ]]; then
+    if [[ -n "$WANDB_API_KEY_INLINE" ]]; then
+        export WANDB_API_KEY="$WANDB_API_KEY_INLINE"
+        echo "[wandb] using inline WANDB_API_KEY_INLINE (consider moving to" \
+             "$WANDB_API_KEY_FILE to keep secrets out of the .job file)"
+    elif [[ -r "$WANDB_API_KEY_FILE" ]]; then
+        # Sanity-check file permissions: 600 or 400 only. Anything more
+        # permissive is a leak risk on shared filesystems like
+        # /mnt/home and /mnt/lustre/suny.
+        perms=$(stat -c '%a' "$WANDB_API_KEY_FILE" 2>/dev/null || \
+                stat -f '%Lp' "$WANDB_API_KEY_FILE" 2>/dev/null || echo "?")
+        if [[ "$perms" != "600" && "$perms" != "400" && "$perms" != "?" ]]; then
+            echo "[wandb] WARNING: $WANDB_API_KEY_FILE has permissions ${perms};" \
+                 "tighten with: chmod 600 $WANDB_API_KEY_FILE"
+        fi
+        # Read the first non-empty, non-comment line.
+        WANDB_API_KEY=$(grep -v '^[[:space:]]*#' "$WANDB_API_KEY_FILE" | \
+                        sed '/^[[:space:]]*$/d' | head -n1 | tr -d '[:space:]')
+        if [[ -n "$WANDB_API_KEY" ]]; then
+            export WANDB_API_KEY
+            echo "[wandb] loaded WANDB_API_KEY from $WANDB_API_KEY_FILE"
+        fi
+    fi
+fi
+
+# Auto-promote to online mode IF the user provided a key AND didn't
+# explicitly set WANDB_MODE before sbatch. We detect "explicit" by
+# looking for WANDB_MODE in --export'd vars; here a simple heuristic
+# works: if WANDB_MODE is still our default "offline" but a key is
+# present, the user almost certainly wants online tracking.
+if [[ -n "${WANDB_API_KEY:-}" && "$WANDB_MODE" == "offline" \
+      && -z "${HORMUZ_WANDB_FORCE_OFFLINE:-}" ]]; then
+    export WANDB_MODE="online"
+    echo "[wandb] WANDB_API_KEY detected; auto-switching WANDB_MODE=online." \
+         "Set HORMUZ_WANDB_FORCE_OFFLINE=1 to keep offline mode anyway."
+fi
+
+# Pin wandb's local cache + run dir under the per-run logs folder so
+# every artefact for this pipeline run is colocated and easy to ship.
+export WANDB_DIR="${WANDB_DIR:-${RUN_LOG_DIR}}"
+export WANDB_CACHE_DIR="${WANDB_CACHE_DIR:-${RUN_LOG_DIR}/wandb-cache}"
+export WANDB_CONFIG_DIR="${WANDB_CONFIG_DIR:-${RUN_LOG_DIR}/wandb-config}"
+mkdir -p "$WANDB_DIR" "$WANDB_CACHE_DIR" "$WANDB_CONFIG_DIR"
+# Silence wandb's tty output; we have our own logging.
+export WANDB_SILENT="${WANDB_SILENT:-true}"
+export WANDB_CONSOLE="${WANDB_CONSOLE:-off}"
+# Per-task logging toggle (1=on, 0=off). On by default; flip to 0
+# when running large grids to keep the project dashboard clean.
+export HORMUZ_WANDB_LOG_PER_TASK="${HORMUZ_WANDB_LOG_PER_TASK:-1}"
+
+# Best-effort visibility of the chosen W&B settings.
+echo "[wandb] project=${WANDB_PROJECT} group=${WANDB_RUN_GROUP} mode=${WANDB_MODE}"
+echo "[wandb] dir=${WANDB_DIR} per_task=${HORMUZ_WANDB_LOG_PER_TASK}"
+case "$WANDB_MODE" in
+    online)
+        if [[ -z "${WANDB_API_KEY:-}" ]]; then
+            echo "[wandb] WARNING: WANDB_MODE=online but WANDB_API_KEY is unset."
+            echo "[wandb]          The Python wrapper will downgrade to disabled."
+            echo "[wandb]          Set WANDB_API_KEY or WANDB_MODE=offline to fix."
+        fi
+        ;;
+    offline)
+        echo "[wandb] runs will be written to ${WANDB_DIR}; sync later with:"
+        echo "[wandb]   wandb sync ${WANDB_DIR}/wandb/offline-run-*"
+        ;;
+    disabled)
+        echo "[wandb] disabled via WANDB_MODE; pipeline runs without tracking."
+        ;;
+esac
+
+echo "================================================================"
+echo "  Hormuz Pipeline — Empire AI Alpha (single-node driver)"
+echo "================================================================"
+echo "  Job ID:        ${SLURM_JOB_ID:-N/A}"
+echo "  Run ID:        ${HORMUZ_RUN_ID}"
+echo "  Node:          $(hostname -f 2>/dev/null || hostname)"
+echo "  Partition:     ${SLURM_JOB_PARTITION:-suny}"
+echo "  CPUs:          ${SLURM_CPUS_PER_TASK:-?}"
+echo "  GPUs on node:  ${SLURM_GPUS_ON_NODE:-?}"
+echo "  Memory:        ${SLURM_MEM_PER_NODE:-?} MB"
+echo "  Walltime cap:  ${SBATCH_TIMELIMIT:-from-script}"
+echo "  Project root:  ${PROJECT_ROOT}"
+echo "  Conda env:     ${HORMUZ_CONDA_ENV}"
+echo "  Config:        ${HORMUZ_CONFIG}"
+echo "  Scratch:       ${HORMUZ_RUN_SCRATCH:-<unset, using project root>}"
+echo "  Run log dir:   ${RUN_LOG_DIR}"
+echo "  Driver out:    ${SBATCH_OUT}"
+echo "  Driver err:    ${SBATCH_ERR}"
+echo "  W&B project:   ${WANDB_PROJECT} (mode=${WANDB_MODE}, group=${WANDB_RUN_GROUP})"
+echo "  Started at:    $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+echo "================================================================"
+
+# ------------------------------------------------------------------
+# Modules. Alpha's module set is small; everything is best-effort so
+# missing modules are recorded, not fatal. The conda env is the
+# real source of dependencies.
+# ------------------------------------------------------------------
+module purge 2>/dev/null || true
+module load anaconda3        2>/dev/null || echo "[module] anaconda3 not available; relying on PATH"
+module load cuda/12.4        2>/dev/null || module load cuda 2>/dev/null || echo "[module] no cuda module loaded"
+module load cudnn/9.0        2>/dev/null || echo "[module] no cudnn module loaded"
+
+if ! hormuz_activate_conda "${HORMUZ_CONDA_ENV}"; then
+    record_bash_failure "${STAGE_PREFIX}_setup" 1 \
+        "hormuz_activate_conda failed for env '${HORMUZ_CONDA_ENV}' on $(hostname)"
+    echo "[fatal] cannot activate conda env '${HORMUZ_CONDA_ENV}'; aborting."
+    exit 1
+fi
+
+record_runtime_inventory "${STAGE_PREFIX}_setup"
+
+# ------------------------------------------------------------------
+# Optional vLLM sidecar on the local node (default: ON).
+#
+# Empire AI Alpha generally has no outbound HTTPS to commercial LLM
+# APIs from compute nodes, so the safe default is local inference.
+# If you want to use Anthropic/OpenAI/Bedrock, set
+#   export HORMUZ_USE_VLLM=0
+#   export PIPELINE_LLM_PROVIDER=anthropic   # or openai / bedrock
+#   export ANTHROPIC_API_KEY=...             # appropriate key
+# before submitting.
+# ------------------------------------------------------------------
+HORMUZ_USE_VLLM="${HORMUZ_USE_VLLM:-1}"
+PIPELINE_LLM_PROVIDER="${PIPELINE_LLM_PROVIDER:-vllm}"
+export PIPELINE_LLM_PROVIDER
+
+VLLM_PID=""
+cleanup_vllm() {
+    if [[ -n "$VLLM_PID" ]] && kill -0 "$VLLM_PID" 2>/dev/null; then
+        echo "[vllm] stopping sidecar (pid=$VLLM_PID)"
+        kill "$VLLM_PID" 2>/dev/null || true
+        sleep 2
+        kill -9 "$VLLM_PID" 2>/dev/null || true
+    fi
+}
+trap cleanup_vllm EXIT TERM INT
+
+if [[ "$HORMUZ_USE_VLLM" == "1" && "$PIPELINE_LLM_PROVIDER" == "vllm" ]]; then
+    if ! python -c "import vllm" 2>/dev/null; then
+        record_bash_failure "${STAGE_PREFIX}_vllm" 1 \
+            "vllm not installed in conda env '${HORMUZ_CONDA_ENV}'"
+        echo "[fatal] vllm not installed. Try: pip install vllm"
+        echo "        Or rerun with HORMUZ_USE_VLLM=0 + a cloud provider."
+        exit 1
+    fi
+
+    VLLM_MODEL="${HORMUZ_VLLM_MODEL:-meta-llama/Llama-3.1-8B-Instruct}"
+    VLLM_PORT="${HORMUZ_VLLM_PORT:-8000}"
+    VLLM_TP_SIZE="${HORMUZ_VLLM_TP_SIZE:-1}"
+    VLLM_DTYPE="${HORMUZ_VLLM_DTYPE:-auto}"
+    VLLM_MAX_LEN="${HORMUZ_VLLM_MAX_LEN:-8192}"
+    # Pin vLLM to GPU 0 so the rest of the visible devices are free
+    # for any GPU-using domain models (e.g. SimRLFab on the executor).
+    VLLM_GPUS="${HORMUZ_VLLM_GPUS:-0}"
+
+    NODE_HOST="$(hostname -f 2>/dev/null || hostname)"
+    VLLM_LOG="${RUN_LOG_DIR}/vllm.log"
+
+    echo "[vllm] starting sidecar on ${NODE_HOST}:${VLLM_PORT}"
+    echo "       model=${VLLM_MODEL} tp=${VLLM_TP_SIZE} dtype=${VLLM_DTYPE} gpus=${VLLM_GPUS}"
+    echo "       log:   ${VLLM_LOG}"
+
+    CUDA_VISIBLE_DEVICES="$VLLM_GPUS" \
+        python -m vllm.entrypoints.openai.api_server \
+            --model "${VLLM_MODEL}" \
+            --port "${VLLM_PORT}" \
+            --host 0.0.0.0 \
+            --tensor-parallel-size "${VLLM_TP_SIZE}" \
+            --dtype "${VLLM_DTYPE}" \
+            --max-model-len "${VLLM_MAX_LEN}" \
+            > "$VLLM_LOG" 2>&1 &
+    VLLM_PID=$!
+    echo "[vllm] pid=${VLLM_PID}"
+
+    # Reserve GPU 0 for vLLM; expose the rest to the pipeline driver
+    # (and the GPU domain models it spawns).
+    if [[ -n "${SLURM_GPUS_ON_NODE:-}" && "${SLURM_GPUS_ON_NODE}" -gt 1 ]]; then
+        REST=$(seq -s, 1 $((SLURM_GPUS_ON_NODE - 1)))
+        export CUDA_VISIBLE_DEVICES="$REST"
+        echo "[gpu] pipeline driver sees CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES}"
+    else
+        # Only one GPU on this node: vLLM owns it. The pipeline driver
+        # gets none — fine because LLM calls are HTTP and CPU adapters
+        # don't need a GPU. GPU-tagged adapters will be marked SKIPPED.
+        export CUDA_VISIBLE_DEVICES=""
+        echo "[gpu] single GPU on node; pipeline driver runs CPU-only."
+    fi
+
+    export PIPELINE_LLM_BASE_URL="http://${NODE_HOST}:${VLLM_PORT}/v1"
+    export PIPELINE_LLM_MODEL="${VLLM_MODEL}"
+
+    # Health-check loop. vLLM weights download + load can take 5-15
+    # minutes for a 70B model, so we wait up to 30 minutes by default.
+    VLLM_WAIT_SECS="${HORMUZ_VLLM_WAIT_SECS:-1800}"
+    echo "[vllm] waiting up to ${VLLM_WAIT_SECS}s for ${PIPELINE_LLM_BASE_URL}/models"
+    deadline=$(( $(date +%s) + VLLM_WAIT_SECS ))
+    until curl -fsS "${PIPELINE_LLM_BASE_URL}/models" >/dev/null 2>&1; do
+        if ! kill -0 "$VLLM_PID" 2>/dev/null; then
+            record_bash_failure "${STAGE_PREFIX}_vllm" 1 \
+                "vLLM exited before becoming healthy; see ${VLLM_LOG}"
+            echo "[fatal] vLLM died during startup. Tail of log:"
+            tail -n 40 "$VLLM_LOG" || true
+            exit 1
+        fi
+        if [[ $(date +%s) -ge $deadline ]]; then
+            record_bash_failure "${STAGE_PREFIX}_vllm" 1 \
+                "vLLM did not become healthy within ${VLLM_WAIT_SECS}s"
+            echo "[fatal] vLLM health check timed out. Tail of log:"
+            tail -n 40 "$VLLM_LOG" || true
+            exit 1
+        fi
+        sleep 10
+    done
+    echo "[vllm] healthy at ${PIPELINE_LLM_BASE_URL}"
+else
+    echo "[vllm] sidecar disabled (HORMUZ_USE_VLLM=${HORMUZ_USE_VLLM}, provider=${PIPELINE_LLM_PROVIDER})"
+    case "$PIPELINE_LLM_PROVIDER" in
+        anthropic)
+            : "${ANTHROPIC_API_KEY:?PIPELINE_LLM_PROVIDER=anthropic but ANTHROPIC_API_KEY is unset}"
+            ;;
+        openai)
+            : "${OPENAI_API_KEY:?PIPELINE_LLM_PROVIDER=openai but OPENAI_API_KEY is unset}"
+            ;;
+    esac
+fi
+
+# ------------------------------------------------------------------
+# Helper: run a manifest-driven stage as a serial loop on this node.
+# We override SLURM_ARRAY_TASK_ID per iteration so the existing
+# run_parameters.py / run_model.py scripts (which read that env var
+# via stage_utils.get_array_task) work unchanged.
+# ------------------------------------------------------------------
+run_manifest_loop() {
+    local stage="$1"      # tag for failure records
+    local script="$2"     # python script path
+    local count_file="$3" # manifest count sidecar written by dispatch_models.py
+
+    if [[ ! -f "$count_file" ]]; then
+        record_bash_failure "$stage" 1 "Manifest count file not found: $count_file"
+        echo "[fatal] expected manifest count file at $count_file"
+        return 1
+    fi
+
+    local n
+    n="$(tr -d '[:space:]' < "$count_file")"
+    if [[ -z "$n" || "$n" -le 0 ]]; then
+        echo "[$stage] manifest is empty (count=$n); nothing to do."
+        return 0
+    fi
+
+    echo "[$stage] dispatching ${n} task(s) serially on this node"
+    local i rc
+    for (( i=0; i<n; i++ )); do
+        export SLURM_ARRAY_TASK_ID="$i"
+        echo "─── [$stage] task ${i}/${n} ────────────────────────────────"
+        # continue_on_failure=1 inside the loop: one bad (scenario,
+        # model) pair must not halt the rest of the stage. Synthesis
+        # records the gaps from the per-task status JSONs.
+        safe_python "$stage" 1 -- python "$script"
+        rc=$?
+        if [[ $rc -ne 0 ]]; then
+            echo "[$stage] task $i exited $rc; continuing."
+        fi
+    done
+    unset SLURM_ARRAY_TASK_ID
+    echo "[$stage] loop complete (${n} task(s))"
+    return 0
+}
+
+# ==================================================================
+#  Stage 1 — Module 1: Scenario Generation
+# ==================================================================
+echo ""
+echo "════════════ Stage 1: Scenario Generation ════════════"
+safe_python "${STAGE_PREFIX}_01_scenarios" 0 -- python slurm/scripts/run_scenarios.py
+rc=$?
+if [[ $rc -ne 0 ]]; then
+    echo "[fatal] Module 1 failed (exit=$rc); aborting pipeline."
+    exit "$rc"
+fi
+
+# ==================================================================
+#  Dispatch — parameter manifest
+# ==================================================================
+echo ""
+echo "════════════ Dispatch: Parameter Manifest ════════════"
+safe_python "${STAGE_PREFIX}_dispatch_params" 0 -- \
+    python slurm/scripts/dispatch_models.py parameters --run-id "${HORMUZ_RUN_ID}"
+rc=$?
+if [[ $rc -ne 0 ]]; then
+    echo "[fatal] parameter dispatch failed (exit=$rc); aborting."
+    exit "$rc"
+fi
+
+PARAM_COUNT_FILE="${PROJECT_ROOT}/data/pipeline_state/manifests/${HORMUZ_RUN_ID}_parameters_count.txt"
+
+# ==================================================================
+#  Stage 2 — Module 2: Parameter Extraction (manifest loop)
+# ==================================================================
+echo ""
+echo "════════════ Stage 2: Parameter Extraction ════════════"
+run_manifest_loop "${STAGE_PREFIX}_02_parameters" \
+    "slurm/scripts/run_parameters.py" "$PARAM_COUNT_FILE"
+
+# ==================================================================
+#  Dispatch — model execution manifests
+# ==================================================================
+echo ""
+echo "════════════ Dispatch: Model Execution Manifest ════════════"
+safe_python "${STAGE_PREFIX}_dispatch_models" 0 -- \
+    python slurm/scripts/dispatch_models.py models --run-id "${HORMUZ_RUN_ID}"
+rc=$?
+if [[ $rc -ne 0 ]]; then
+    echo "[fatal] model dispatch failed (exit=$rc); aborting."
+    exit "$rc"
+fi
+
+MODELS_COUNT_FILE="${PROJECT_ROOT}/data/pipeline_state/manifests/${HORMUZ_RUN_ID}_models_count.txt"
+
+# ==================================================================
+#  Stage 3 — Module 3: Model Execution (CPU + GPU, single combined manifest)
+#
+# We run the unified "models" manifest rather than the split
+# cpu/gpu manifests because everything is on one node; the executor
+# will respect each adapter's ResourceRequirements internally and
+# any GPU-tagged adapters will use the device ids in
+# CUDA_VISIBLE_DEVICES that we reserved above.
+# ==================================================================
+echo ""
+echo "════════════ Stage 3: Model Execution ════════════"
+# Unset the manifest-name override so run_model.py uses the default
+# combined "models" manifest (the GPU sbatch sets HORMUZ_MANIFEST_NAME
+# to "models_gpu" — we don't want that here).
+unset HORMUZ_MANIFEST_NAME
+run_manifest_loop "${STAGE_PREFIX}_03_models" \
+    "slurm/scripts/run_model.py" "$MODELS_COUNT_FILE"
+
+# ==================================================================
+#  Stage 4 — Module 4: Output Synthesis
+# ==================================================================
+echo ""
+echo "════════════ Stage 4: Output Synthesis ════════════"
+# Surface bash-layer failures from earlier stages in the synthesis report.
+BASH_FAILURE_COUNT=$(ls -1 \
+    "${PROJECT_ROOT}/data/pipeline_state/${HORMUZ_RUN_ID}_"*"_bash_failure_"*.json \
+    2>/dev/null | wc -l | tr -d ' ')
+export HORMUZ_BASH_FAILURE_COUNT="${BASH_FAILURE_COUNT:-0}"
+echo "[synthesis] ${HORMUZ_BASH_FAILURE_COUNT} bash-layer failure record(s) from upstream stages."
+
+safe_python "${STAGE_PREFIX}_04_synthesis" 0 -- python slurm/scripts/run_synthesis.py
+rc=$?
+
+# ------------------------------------------------------------------
+# Summary
+# ------------------------------------------------------------------
+echo ""
+echo "================================================================"
+echo "  Hormuz pipeline complete on Empire AI Alpha"
+echo "  Run ID:       ${HORMUZ_RUN_ID}"
+echo "  Synthesis rc: ${rc}"
+echo "  Finished at:  $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+echo "  State files:  ${PROJECT_ROOT}/data/pipeline_state/${HORMUZ_RUN_ID}_*"
+echo "  Reports:      ${PROJECT_ROOT}/data/reports/"
+echo "  Run log dir:  ${RUN_LOG_DIR}"
+echo "                  driver-${SLURM_JOB_ID:-N/A}.out / .err  (symlinks)"
+echo "                  vllm.log                                (if sidecar ran)"
+echo "                  runtime-*-${SLURM_JOB_ID:-N/A}-*.json   (per-stage inventories)"
+echo "                  wandb/offline-run-*                     (W&B offline runs)"
+echo "  Driver log:   ${SBATCH_OUT}"
+echo "                ${SBATCH_ERR}"
+echo "  W&B:          project=${WANDB_PROJECT} group=${WANDB_RUN_GROUP} mode=${WANDB_MODE}"
+if [[ "$WANDB_MODE" == "offline" ]]; then
+    echo "                Sync from a login node with:"
+    echo "                  cd ${PROJECT_ROOT} && wandb sync ${WANDB_DIR}/wandb/offline-run-*"
+fi
+echo "================================================================"
+
+exit "$rc"

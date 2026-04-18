@@ -1,0 +1,43 @@
+# WaterGAP2 (Goethe-University Frankfurt) configuration template.
+#
+# The repository ships only the C++ sources at
+# Models/Water/WaterGAP2-v2.2d/HydrologyFrankfurt-WaterGAP2-65f306b/source/.
+# A compiled binary AND global climate forcing data are required at runtime.
+#
+# To activate the adapter, exactly one of the two endpoints must be set:
+#
+#   Option A) Local binary -- build via CMake:
+#     cd Models/Water/WaterGAP2-v2.2d/HydrologyFrankfurt-WaterGAP2-65f306b/source
+#     cmake -B build && cmake --build build --config Release
+#     # Binary will be at build/watergap (or build/Release/watergap.exe on Win)
+#
+#   Option B) Web service -- request access from Goethe-University Frankfurt
+#     and put the URL in api_url.
+#
+# Then:
+#   3. Stage precipitation/temperature NetCDF forcing data under
+#      forcing_data_path. ISIMIP3a/3b WFDE5 forcings work well.
+#   4. Copy this file to configs/model_configs/watergap2.yaml and edit paths.
+#   5. Re-build the model registry.
+#
+# Note: even with the YAML in place the adapter's execute() will raise
+# NotImplementedError until the run-driver is written inside
+# src/models/water/watergap2.py. It will, however, validate the executable /
+# forcing-data paths before raising.
+
+# Set EXACTLY ONE of executable_path or api_url (model_validator enforces this).
+executable_path: "Models/Water/WaterGAP2-v2.2d/HydrologyFrankfurt-WaterGAP2-65f306b/source/build/watergap"
+# api_url: "https://watergap.example.org/api/v1"
+
+forcing_data_path: "Models/Water/WaterGAP2-v2.2d/forcing"
+
+output_dir: "data/outputs/watergap2"
+
+simulation_period_years: 5
+timeout_seconds: 7200
+
+extra_env: {}
+# Example:
+# extra_env:
+#   OMP_NUM_THREADS: "4"
+#   NETCDF_DIR: "/usr/local/netcdf"

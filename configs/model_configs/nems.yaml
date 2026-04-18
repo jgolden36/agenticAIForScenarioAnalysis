@@ -1,0 +1,40 @@
+# NEMS Configuration
+# Default mode is output ingestion — reads pre-computed NEMS results.
+
+mode: "output_ingestion"
+output_base_dir: "data/nems_outputs"
+timeout_seconds: 86400
+
+# Map pipeline scenario IDs to NEMS output subdirectory names.
+# Each subdirectory should contain CSV/JSON/TXT output files from
+# a completed NEMS run. Keys MUST match the canonical Scenario enum
+# values (src/common/types.py): swift_contained, prolonged_contained,
+# swift_escalated, prolonged_escalated.
+scenario_dir_mapping:
+  baseline: "AEO2025_Reference"
+  swift_contained:     "Hormuz_ScenarioA"
+  prolonged_contained: "Hormuz_ScenarioB"
+  swift_escalated:     "Hormuz_ScenarioC"
+  prolonged_escalated: "Hormuz_ScenarioD"
+
+# --- Live-run options (subprocess / remote modes) -----------------------
+# Uncomment the block(s) below to drive NEMS end-to-end.
+
+# nems_install_dir: "Models/LNG/NEMS-main/NEMS-main"
+# python_env_path: "C:/path/to/nems_py311_env"
+# run_mode: "par"           # "par" (parallel partitions) or "jog" (sequential)
+# use_nems_setup: true
+
+# --- Pipeline shock translation -----------------------------------------
+# Maps standardized pipeline shock parameters to NEMS scedes overrides.
+# An empty dict (default) uses the MAM-derived defaults from
+# src/models/macro/nems_shocks.py:DEFAULT_MAM_LINK_TABLE.
+shock_translation:
+  enabled: true
+
+mam_link_table:
+  oil_price_shock_pct: "OGWPRNG"
+  natural_gas_price_shock_pct: "EXG"
+  lng_price_shock_pct: "EXL"
+  industrial_demand_shock_pct: "EXI"
+  electricity_demand_shock_pct: "EXE"

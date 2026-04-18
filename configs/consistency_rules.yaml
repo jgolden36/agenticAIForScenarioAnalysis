@@ -119,3 +119,44 @@ rules:
     description: >
       AIS-based shipping models should produce comparable estimates
       of transit time increases from Strait closure rerouting.
+
+  # --- Energy systems (OSeMOSYS / MESSAGEix / TEMOA) ---
+  # Long-run capacity-expansion models cover decades; tolerances are
+  # intentionally wide. The goal is to flag sign disagreements and
+  # extreme magnitude differences, not to enforce point agreement.
+  - model_a: bornstein_krusell_rebelo
+    model_b: messageix
+    variable_a: oil_price_usd
+    variable_b: oil_price_usd
+    tolerance_pct: 200.0
+    description: >
+      BKR (commodity-level structural GE oil price) and MESSAGEix
+      (long-run integrated assessment) should agree on oil-price
+      direction during the disruption window.
+
+  - model_a: osemosys
+    model_b: messageix
+    variable_a: total_system_cost_usd
+    variable_b: total_system_cost_usd
+    tolerance_pct: 300.0
+    description: >
+      OSeMOSYS and MESSAGEix should agree on the sign of the long-run
+      total-system-cost shift induced by the disruption shock.
+
+  - model_a: temoa
+    model_b: osemosys
+    variable_a: total_system_cost_usd
+    variable_b: total_system_cost_usd
+    tolerance_pct: 200.0
+    description: >
+      TEMOA and OSeMOSYS — both least-cost capacity-expansion frameworks —
+      should produce same-sign total-system-cost changes.
+
+  - model_a: osemosys
+    model_b: nems
+    variable_a: gas_consumption_bcfd
+    variable_b: gas_consumption_bcfd
+    tolerance_pct: 200.0
+    description: >
+      OSeMOSYS (when configured for US scope) and NEMS should agree on
+      US natural-gas consumption direction.

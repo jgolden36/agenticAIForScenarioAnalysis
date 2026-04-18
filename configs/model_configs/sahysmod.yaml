@@ -1,0 +1,50 @@
+# SahysMod (Spatially distributed agro-hydro-salinity model) configuration.
+#
+# The bundled ILRI Windows binary at Models/Water/SahysMod/SahysMod.exe is a
+# small console app that reads a .inp deck and produces .out / .gwt / .frq
+# plain-text outputs in the same directory.
+#
+# Required:
+#   executable_path     : path to SahysMod.exe
+#   baseline_input_deck : a complete baseline .inp file the adapter will copy
+#                         and mutate per scenario.
+#
+# Optional but important for meaningful scenarios:
+#   irrigation_line_ranges : 0-indexed inclusive ranges of lines in the
+#                            baseline deck that hold irrigation water inputs
+#                            (IaA / IaB / IaU blocks). Numeric values on
+#                            these lines are multiplied by
+#                            (1 - irrigation_water_reduction_pct/100).
+#   salinity_line_ranges   : same but for initial salinity values
+#                            (Cti / Cqi / Cic blocks). Multiplied by
+#                            salinity_increase_factor.
+#
+# Both line range lists default to empty -> the deck is run unmodified and
+# metadata.mutation_applied is set to false. To activate mutation, identify
+# the IaA / Cic / Cti blocks in your deck (see the SahysMod manual or the
+# "GarmsarInp.txt" sidecar bundled alongside Garmsar.inp) and add the line
+# numbers below.
+
+executable_path: "Models/Water/SahysMod/SahysMod.exe"
+baseline_input_deck: "Models/Water/SahysMod/GARMSAR/Garmsar.inp"
+
+timeout_seconds: 600
+keep_working_copy: false
+
+# How SahysMod.exe accepts the deck name. 'positional' = argv[1], 'stdin' = piped.
+cli_invocation: "positional"
+
+# Numeric values <= sentinel_min are SahysMod placeholders (e.g. -1.0) and
+# are not scaled.
+sentinel_min: -2.0
+
+# Empty by default. Populate per-deck after consulting the SahysMod input
+# documentation (e.g. "GarmsarInp.txt") for the IaA / Cic / Cti block locations.
+#
+# Example (illustrative, NOT correct for any specific deck):
+# irrigation_line_ranges:
+#   - {start: 130, end: 132}
+# salinity_line_ranges:
+#   - {start: 145, end: 147}
+irrigation_line_ranges: []
+salinity_line_ranges: []

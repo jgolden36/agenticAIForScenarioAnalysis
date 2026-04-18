@@ -1,0 +1,35 @@
+# TEMOA Configuration
+#
+# Required to actually run:
+#   - `pip install temoa-energysystem pyomo` (or
+#     `pip install hormuz-pipeline[energy]`).
+#   - A Pyomo-compatible solver. CBC is the default open-source choice
+#     (`apt install coinor-cbc` on Debian, `brew install cbc` on macOS,
+#     or download from https://github.com/coin-or/Cbc/releases on Windows).
+#   - The TEMOA source repo vendored at `temoa_dir`
+#     (https://github.com/TemoaProject/temoa) — provides example baseline
+#     SQLite databases under `data_files/` (utopia.sqlite, etc.).
+#   - A baseline SQLite database at `baseline_db_path`. The vendored
+#     `data_files/utopia.sqlite` is the smallest reproducible example.
+
+temoa_dir: "Models/Energy/TEMOA"
+baseline_db_path: "Models/Energy/TEMOA/data_files/utopia.sqlite"
+
+output_dir: "data/outputs/temoa"
+
+solver: "cbc"
+python_executable: "python"
+temoa_module: "temoa.temoa_run"
+
+# Subprocess timeout (seconds). Utopia solves in seconds; a US energy
+# system at full resolution can take 1-3 hours per scenario.
+timeout_seconds: 14400
+
+keep_working_copy: false
+
+# Substring patterns used to identify oil/gas/LNG-related TEMOA
+# technologies in CostVariable / MaxActivity / MaxCapacity rows.
+# Override for baselines that use different naming conventions.
+oil_fuel_pattern: "OIL"
+gas_fuel_pattern: "GAS"
+lng_pattern: "LNG"

@@ -1,0 +1,158 @@
+# GGM Node/Arc Topology Mapping for Strait of Hormuz Scenarios
+#
+# This file maps GGM's internal node and arc identifiers to the
+# geographic/economic entities relevant for Hormuz closure scenarios.
+# Derived from geo_data.csv, in_arcs.gms, in_prod.gms, and in_sets_parms.gms.
+#
+# GGM Node Types:
+#   - Country nodes (production + consumption)
+#   - LIQ nodes (liquefaction transit — LNG export terminals)
+#   - REG nodes (regasification transit — LNG import terminals)
+
+regions:
+  MEA:
+    name: "Middle East & Africa"
+    countries:
+      - {code: QAT, name: "Qatar"}
+      - {code: ARE, name: "United Arab Emirates"}
+      - {code: IRN, name: "Iran"}
+      - {code: IRQ, name: "Iraq"}
+      - {code: ISR, name: "Israel"}
+      - {code: KWT, name: "Kuwait"}
+      - {code: OMN, name: "Oman"}
+      - {code: SAU, name: "Saudi Arabia"}
+      - {code: SYR, name: "Syria"}
+      - {code: YEM, name: "Yemen"}
+      - {code: BHR, name: "Bahrain"}
+  ASP:
+    name: "Asia-Pacific"
+    note: "Primary destination for Gulf LNG exports"
+    countries:
+      - {code: JPN, name: "Japan"}
+      - {code: KOR, name: "South Korea"}
+      - {code: CHN, name: "China"}
+      - {code: IND, name: "India"}
+      - {code: TWN, name: "Taiwan"}
+      - {code: THA, name: "Thailand"}
+      - {code: PAK, name: "Pakistan"}
+      - {code: BGD, name: "Bangladesh"}
+      - {code: SGP, name: "Singapore"}
+      - {code: MYS, name: "Malaysia"}
+      - {code: IDN, name: "Indonesia"}
+      - {code: AUS, name: "Australia"}
+      - {code: PHL, name: "Philippines"}
+      - {code: VNM, name: "Vietnam"}
+      - {code: NZL, name: "New Zealand"}
+      - {code: BRN, name: "Brunei"}
+      - {code: PNG, name: "Papua New Guinea"}
+      - {code: MMR, name: "Myanmar"}
+  EU:
+    name: "European Union"
+    note: "Secondary destination for Gulf LNG"
+
+# Countries with LNG liquefaction terminals that transit the Strait of Hormuz
+hormuz_lng_exporters:
+  - code: QAT
+    role: "World's largest LNG exporter; ~80 MTPA capacity; all exports transit Strait"
+    severity: critical
+  - code: ARE
+    role: "Das Island LNG; ~6 MTPA; exports transit Strait"
+    severity: high
+  - code: IRN
+    role: "Limited LNG capacity; pipeline gas exports affected"
+    severity: medium
+  - code: OMN
+    role: "Qalhat LNG; ~10 MTPA; exports do NOT transit Strait (Indian Ocean coast)"
+    severity: low
+    note: "Oman's LNG terminal faces the Arabian Sea, not the Persian Gulf"
+
+# Countries with regasification (import) nodes in the Persian Gulf
+hormuz_lng_importers:
+  - code: ARE
+    role: "Jebel Ali FSRU; some domestic LNG imports"
+  - code: BHR
+    role: "LNG imports for power generation"
+  - code: KWT
+    role: "Al-Zour LNG import terminal"
+
+# Scenario shock mapping: how adapter parameters map to GGM model parameters
+shock_mapping:
+  production_capacity:
+    description: >
+      Scale cap_p(n_p, r, y) for country nodes in the affected countries.
+      In GGM, production capacity is computed as:
+        cap_p(n_p,r,y) = ref_p(n_p,y) * cap_p_cal(n_p,r) * cap_p_cal(n_p,y)
+      The shock multiplier is applied as:
+        cap_p(n_p,r,y) = cap_p(n_p,r,y) * hormuz_prod_shock(country_code)
+    affected_parameter: "cap_p"
+    gams_include: "hormuz_shock.gms"
+
+  arc_costs:
+    description: >
+      Apply war-risk premium multiplier to vessel arc costs (cost_a) for
+      arcs whose start or end is in a Persian Gulf country. In GGM:
+        cost_a(a,y) = cost_a_base(a) * (1-l_a) * length_factor * calibration * inflation
+      The shock multiplier is applied after baseline cost computation.
+    affected_parameter: "cost_a"
+    applies_to: "vessel arcs (av) with Persian Gulf endpoints"
+
+  demand_curve:
+    description: >
+      Demand curves could be shifted to reflect panic buying or demand
+      destruction. The intercept int(n,d,y) and slope slp(n,d,y) are
+      computed from reference prices and elasticities. Currently not
+      modified by the adapter — add if scenarios require demand shifts.
+    affected_parameter: "int, slp"
+    status: "not yet implemented"
+
+# GGM arc types (from in_arcs.gms)
+arc_types:
+  al: "Liquefaction arcs (production node → LNG transit node)"
+  ap: "Pipeline arcs (between country nodes)"
+  ar: "Regasification arcs (LNG transit node → consumption node)"
+  av: "Vessel/shipping arcs (LIQ node → REG node)"
+
+# GGM solve configuration
+solve:
+  model_name: "SGGM"
+  model_type: "QCP"
+  solver: "CPLEX"
+  abort_condition: "SGGM.modelstat > 2"
+  options_file: "cplex.opt"
+
+# GGM output variables for extraction
+outputs:
+  price:
+    description: "Market clearing price"
+    formula: "int(n,d,y) - slp(n,d,y) * sum(t, Q_S.l(t,n,d,y))"
+    unit: "EUR/kcm"
+    conversion_to_usd_per_mmbtu: 0.0343
+  production:
+    variable: "Q_P.l(cn,n,r,d,y)"
+    unit: "mcm/yr"
+  consumption:
+    variable: "Q_S.l(cn,n,d,y)"
+    unit: "mcm/yr"
+  arc_flow:
+    variable: "F_A.l(cn,a,d,y)"
+    unit: "mcm/yr"
+  capacity_expansion:
+    variable: "D_A.l(a,y)"
+    unit: "mcm/yr"
+  objective:
+    variable: "MinObj.l"
+    unit: "USD"
+    description: "Total cost = TC + MPA - REV - CS"
+
+# Report parameters (computed in report/reports.gms)
+reports:
+  - rep_cal_cn: "Country calibration report (BCM)"
+  - rep_cal_rgn: "Regional calibration report (BCM)"
+  - rep_mass_bal: "Mass balance by node/season (Mcm/d) and country (BCM/A)"
+  - rep_infra_pipe: "Pipeline infrastructure (Mcm/d)"
+  - rep_infra_liq: "Liquefaction infrastructure (Mcm/d)"
+  - rep_infra_regas: "Regasification infrastructure (Mcm/d)"
+  - rep_infra_stor: "Storage infrastructure (MCM/Mcm/d)"
+  - rep_IAMC: "IAMC platform format output (BCMA)"
+  - rep_geo_map: "Geo map country-level data (BCMA)"
+  - rep_geo_trade: "Regional trade for geo maps (BCMA)"

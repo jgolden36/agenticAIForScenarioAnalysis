@@ -1,0 +1,33 @@
+# MIRAGRODEP Configuration
+#
+# Required to actually run:
+#   - GAMS installation on PATH (or set gams_executable explicitly).
+#   - A licensed CONOPT (or PATH) solver.
+#   - The MIRAGRODEP source tree at model_dir (default points at the
+#     in-repo Models/General Equilibrium/MIRAGRODEP_v0-1/MIRAGRODEP_v0-1).
+
+model_dir: "Models/General Equilibrium/MIRAGRODEP_v0-1/MIRAGRODEP_v0-1"
+
+gams_executable: "gams"
+solver: "CONOPT"
+
+calib_gms: "calib.gms"
+msd_gms: "MSD.gms"
+ref_gms: "REF.gms"
+simul_gms: "Simul.gms"
+results_subdir: "Results"
+
+# Calibration / MSD / REF are deterministic and identical across scenarios;
+# skip them when the saved restart files already exist in the working copy.
+skip_calib_if_present: true
+
+# Per-phase GAMS subprocess timeout (seconds). MIRAGRODEP solves can take
+# 1–4 hours per phase depending on solver and SAM size.
+timeout_seconds: 14400
+
+keep_working_copy: false
+
+# Extra GAMS CLI flags (logging level, etc.).
+extra_gams_args:
+  - "lo=2"
+  - "ll=0"

@@ -1,0 +1,27 @@
+# MAM Configuration (EIA Macroeconomic Activity Module)
+#
+# Default mode is aeo_ingestion — reads pre-computed AEO macro tables.
+# eviews_subprocess mode requires Windows + EViews 13+ + IHS Markit data.
+
+mode: "aeo_ingestion"
+aeo_year: 2025
+timeout_seconds: 3600
+
+# AEO macro tables XLSX (Tables 19/20 in AEO2025).
+# Download from https://www.eia.gov/outlooks/aeo/tables_ref.php
+# Required for aeo_ingestion mode.
+# aeo_macro_xlsx_path: "data/eia/AEO2025_Tables_19_20.xlsx"
+
+# Map pipeline scenario IDs to AEO worksheet names. Keys MUST match
+# the canonical Scenario enum values (src/common/types.py).
+scenario_sheet_mapping:
+  baseline:            "Reference Case"
+  swift_contained:     "High Oil Price"
+  prolonged_contained: "High Oil Price"
+  swift_escalated:     "High Oil Price"
+  prolonged_escalated: "High Oil Price"
+
+# --- EViews subprocess mode (optional, Windows-only) ------------------
+# eviews_executable: "C:/Program Files/EViews 13/EViews13.exe"
+# mam_program_dir: "Models/General Equilibrium/MAM"
+# eviews_main_program: "mam_main.prg"

@@ -1,0 +1,16 @@
+# GGM (Global Gas Model) Configuration
+# Uncomment and set gams_system_dir to your local GAMS installation path.
+
+# gams_system_dir: "C:/GAMS/46"
+model_gms_path: "Models/LNG/GGM-20190509-open-source-final/GGM/main.gms"
+solver: "CPLEX"
+timeout_seconds: 7200
+extra_defines:
+  data: "SET-Nav"
+  WEO: "NPS"
+  SETNav: "Ref"
+  last_yr: "2025"
+
+# GAMS model/solve status codes considered acceptable:
+# 1 = Optimal, 2 = Locally Optimal
+acceptable_model_statuses: [1, 2]

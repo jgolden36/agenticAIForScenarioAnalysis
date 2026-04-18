@@ -1,0 +1,51 @@
+# OpenCGE Configuration (PSL OG-Core / OG-USA)
+#
+# The adapter binds OpenCGE to the Policy Simulation Library's OG-Core /
+# OG-USA dynamic OLG CGE framework.
+#
+# Required to actually run:
+#   - pip install ogcore ogusa dask[distributed]
+#   - An OG-USA calibration data directory (download via
+#     ogusa.utils.fetch_files() or unpack the calibration tarball)
+#   - Writable disk for baseline + reform output trees
+
+# Pipeline-managed output trees
+baseline_dir: "data/opencge/baseline"
+reform_dir: "data/opencge/reform"
+
+# OG-USA calibration data location.
+# Set to your local OG-USA data directory; leave commented to fall back
+# to OG-Core defaults (slower, less realistic).
+# ogusa_data_dir: "/path/to/ogusa_data"
+
+# Solver options
+solution_method: "TPI"     # 'TPI' (full transition path) or 'SS' (steady state only)
+closure_rule: "full_employment"
+baseline_year: 2026
+budget_balance: false
+time_path_iter: 200
+num_workers: 4
+skip_baseline_if_present: true
+timeout_seconds: 14400      # 4 hours
+
+# Productivity / capital-quality sensitivity coefficients.
+# Each commodity maps to two coefficients:
+#   Z_mult_per_pct        — multiplicative adjustment to aggregate Z per 1% price shock
+#   delta_tau_per_pct     — additive adjustment to delta_tau_annual per 1% price shock
+#
+# Default values are calibrated from BLS factor-share tables and are
+# intentionally small (<0.1% Z impact per 1% commodity price shock).
+# Tune these to your scenario or replace with empirical elasticities.
+shock_to_productivity:
+  oil:
+    Z_mult_per_pct: -0.0008
+    delta_tau_per_pct: 0.00005
+  lng:
+    Z_mult_per_pct: -0.0004
+    delta_tau_per_pct: 0.00002
+  fertilizer:
+    Z_mult_per_pct: -0.0002
+    delta_tau_per_pct: 0.00001
+  helium:
+    Z_mult_per_pct: -0.0001
+    delta_tau_per_pct: 0.000005

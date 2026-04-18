@@ -1,0 +1,37 @@
+# PyCGE Configuration (cge_modeling — Jesse Grabowski)
+#
+# Required to actually run:
+#   - pip install cge-modeling
+#   - A SAM file at sam_path (JSON or CSV).
+#     A simple Hosoe-style 2-region demo SAM is bundled at
+#     data/sams/hosoe_2region.json.
+
+sam_path: "data/sams/hosoe_2region.json"
+
+# Optional cge_modeling model-definition YAML. If omitted, the adapter
+# falls back to cge_modeling.examples.hosoe_2region.
+# model_definition_path: "data/sams/hosoe_2region_model.yaml"
+
+numeraire: "px[capital]"
+solver: "root"           # 'root' | 'minimize' | 'euler'
+tol: 1.0e-8
+max_iter: 2000
+
+baseline_cache_path: "data/pycge_baseline.pkl"
+rebuild_baseline: false
+timeout_seconds: 600
+
+# Map pipeline commodity names to the SAM parameter symbols that should
+# receive a multiplicative shock. Edit to match your SAM's parameter names.
+commodity_to_sam_param:
+  oil:
+    - "p_oil"
+    - "p_energy"
+  lng:
+    - "p_gas"
+    - "p_energy"
+  fertilizer:
+    - "p_fert"
+    - "p_intermediate"
+  helium:
+    - "p_helium"
