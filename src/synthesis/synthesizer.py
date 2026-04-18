@@ -3,9 +3,14 @@
 Collects results from all model runs, applies consistency checks, and
 produces structured synthesis using LLM-generated narrative summaries.
 Quantitative results pass through unmodified.
+
+Supports parallel per-scenario synthesis for cluster deployments.
 """
 
 from __future__ import annotations
+
+import asyncio
+from typing import Any
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.runnables import Runnable, RunnableLambda
@@ -132,3 +137,51 @@ def run_consistency_and_synthesize(
     })
 
     return flags, synthesis
+
+
+async def synthesize_all_scenarios(
+    llm: BaseChatModel,
+    scenario_data: list[dict[str, Any]],
+    consistency_config: Any = None,
+    max_concurrency: int = 4,
+) -> list[tuple[list[ConsistencyFlag], ScenarioSynthesis]]:
+    """Synthesize all scenarios in parallel.
+
+    Each scenario's consistency check + LLM synthesis runs as an
+    independent async task, bounded by max_concurrency.
+
+    Args:
+        llm: Configured LLM.
+        scenario_data: List of dicts with keys:
+            - "scenario_id": Scenario enum
+            - "narrative": ScenarioNarrativeState
+            - "results": list[ModelExecutionResult]
+        consistency_config: Optional consistency thresholds.
+        max_concurrency: Max concurrent synthesis tasks.
+
+    Returns:
+        List of (flags, synthesis) tuples in same order as input.
+    """
+    chain = build_synthesizer(llm)
+    semaphore = asyncio.Semaphore(max_concurrency)
+
+    async def _synthesize_one(
+        data: dict,
+    ) -> tuple[list[ConsistencyFlag], ScenarioSynthesis]:
+        async with semaphore:
+            scenario_id = data["scenario_id"]
+            narrative = data["narrative"]
+            results = data["results"]
+
+            flags = check_consistency(scenario_id, results, consistency_config)
+
+            synthesis = await chain.ainvoke({
+                "narrative": narrative,
+                "results": results,
+                "consistency_flags": flags,
+            })
+
+            return flags, synthesis
+
+    tasks = [_synthesize_one(d) for d in scenario_data]
+    return await asyncio.gather(*tasks)

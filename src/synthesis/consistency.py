@@ -59,7 +59,48 @@ DEFAULT_RULES: list[dict[str, Any]] = [
         "model_b": "pycge",
         "variable_a": "gdp_impact_pct",
         "variable_b": "gdp_impact_pct",
-        "description": "CGE models should produce comparable GDP impact estimates",
+        "description": "OpenCGE and PyCGE should agree on GDP impact direction (CGE cross-validation)",
+        "tolerance_pct": 200.0,
+    },
+    {
+        "model_a": "opencge",
+        "model_b": "pycge",
+        "variable_a": "welfare_pct_change",
+        "variable_b": "welfare_pct_change",
+        "description": "OpenCGE and PyCGE welfare changes should have the same sign and similar magnitude",
+        "tolerance_pct": 200.0,
+    },
+    {
+        "model_a": "opencge",
+        "model_b": "miragrodep",
+        "variable_a": "gdp_impact_pct",
+        "variable_b": "gdp_impact_pct",
+        "description": "OpenCGE (US OLG) and MIRAGRODEP (multi-region) should produce GDP impacts of the same sign over the disruption window",
+        "tolerance_pct": 300.0,
+    },
+    {
+        "model_a": "pycge",
+        "model_b": "miragrodep",
+        "variable_a": "welfare_pct_change",
+        "variable_b": "welfare_pct_change",
+        "description": "PyCGE and MIRAGRODEP welfare changes should agree in sign",
+        "tolerance_pct": 300.0,
+    },
+    {
+        "model_a": "nems",
+        "model_b": "mam",
+        "variable_a": "gdp_growth_pct",
+        "variable_b": "gdp_growth_pct_year1",
+        "description": "NEMS and MAM short-run GDP growth should agree within ±0.5pp at year 1",
+        "tolerance_pct": 50.0,
+    },
+    {
+        "model_a": "nems",
+        "model_b": "mam",
+        "variable_a": "cpi_inflation_pct",
+        "variable_b": "cpi_inflation_pct_year1",
+        "description": "NEMS and MAM CPI inflation should agree at year 1 (MAM derived from NEMS macro module)",
+        "tolerance_pct": 50.0,
     },
     {
         "model_a": "nems",
@@ -67,6 +108,57 @@ DEFAULT_RULES: list[dict[str, Any]] = [
         "variable_a": "electricity_price_change_pct",
         "variable_b": "electricity_price_change_pct",
         "description": "Energy models should agree on electricity price direction",
+    },
+    # ----------------------------------------------------------------
+    # Energy-systems consistency: cross-checks between OSeMOSYS,
+    # MESSAGEix, TEMOA, and the commodity-level oil model. Tolerances
+    # are deliberately wide (long-run capacity-expansion models cover
+    # decades and are sensitive to baseline calibration).
+    # ----------------------------------------------------------------
+    {
+        "model_a": "bornstein_krusell_rebelo",
+        "model_b": "messageix",
+        "variable_a": "oil_price_usd",
+        "variable_b": "oil_price_usd",
+        "description": (
+            "BKR (commodity-level GE oil price) and MESSAGEix "
+            "(long-run integrated assessment) should agree on oil-price "
+            "direction during the disruption window"
+        ),
+        "tolerance_pct": 200.0,
+    },
+    {
+        "model_a": "osemosys",
+        "model_b": "messageix",
+        "variable_a": "total_system_cost_usd",
+        "variable_b": "total_system_cost_usd",
+        "description": (
+            "OSeMOSYS and MESSAGEix should agree on the sign of the "
+            "long-run total-system-cost shift"
+        ),
+        "tolerance_pct": 300.0,
+    },
+    {
+        "model_a": "temoa",
+        "model_b": "osemosys",
+        "variable_a": "total_system_cost_usd",
+        "variable_b": "total_system_cost_usd",
+        "description": (
+            "TEMOA and OSeMOSYS — both least-cost capacity-expansion "
+            "models — should produce same-sign total-system-cost changes"
+        ),
+        "tolerance_pct": 200.0,
+    },
+    {
+        "model_a": "osemosys",
+        "model_b": "nems",
+        "variable_a": "gas_consumption_bcfd",
+        "variable_b": "gas_consumption_bcfd",
+        "description": (
+            "OSeMOSYS (when configured for US scope) and NEMS should "
+            "agree on US gas-consumption direction"
+        ),
+        "tolerance_pct": 200.0,
     },
 ]
 
