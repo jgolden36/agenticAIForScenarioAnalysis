@@ -7,13 +7,17 @@ Adapters for all oil-sector domain models:
 - FedOilAdapter: Fed Workhorse Oil Model (Baumeister-Hamilton)
 """
 
-from src.models.oil.bornstein_krusell_rebelo import BornsteinKrusellRebeloAdapter
+from src.models.oil.bornstein_krusell_rebelo import (
+    BornsteinKrusellRebeloAdapter,
+    BornsteinKrusellRebeloConfig,
+)
 from src.models.oil.fed_oil import FedOilAdapter
 from src.models.oil.marketsim import MarketSimAdapter
 from src.models.oil.poles_jrc import POLESJRCAdapter
 
 __all__ = [
     "BornsteinKrusellRebeloAdapter",
+    "BornsteinKrusellRebeloConfig",
     "FedOilAdapter",
     "MarketSimAdapter",
     "POLESJRCAdapter",
