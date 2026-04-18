@@ -37,6 +37,49 @@ excel = [
 r = [
     "rpy2>=3.5",
 ]
+macro = [
+    "ogcore>=0.13.0",
+    "ogusa>=0.13.0",
+    "dask[distributed]>=2024.1.0",
+    "cge-modeling>=0.4.0",
+    "openpyxl>=3.1",
+    "pandas>=2.0",
+]
+water = [
+    # Required for parsing CWatM and (future) WaterGAP2 NetCDF outputs.
+    # netCDF4 is the minimum dependency; xarray is optional but useful for
+    # downstream multi-dimensional array work.
+    "netCDF4>=1.6",
+    "xarray>=2024.1",
+]
+energy = [
+    # OSeMOSYS data tooling (csv/excel <-> MathProg datafile <-> results).
+    "otoole>=1.0",
+    # IIASA MESSAGEix integrated assessment model and its scenario manager.
+    # message-ix pulls in ixmp transitively, but pin both for clarity.
+    "message-ix>=3.7",
+    "ixmp>=3.7",
+    # TEMOA energy-systems optimization framework (Pyomo-based).
+    "temoa-energysystem>=0.1",
+    "pyomo>=6.7",
+    # Shared data-handling dependency used by all three adapters.
+    "pandas>=2.0",
+]
+wandb = [
+    # Optional Weights & Biases integration. The pipeline degrades to
+    # a no-op when wandb is unavailable, so this extra is only needed
+    # for users who want experiment tracking. See
+    # src/common/wandb_logger.py for the contract.
+    "wandb>=0.16",
+]
+news = [
+    # News/data ingestion adapters used by the temporal weekly
+    # re-analysis driver (slurm/jobs/weekly_news_pipeline.job and
+    # slurm/scripts/build_weekly_brief.py). All four adapters
+    # (NewsData.io, GNews, NewsAPI.org/.ai, EIA Open Data) talk plain
+    # HTTPS, so `requests` is the only hard dependency.
+    "requests>=2.31",
+]
 
 [tool.setuptools.packages.find]
 where = ["."]

@@ -1,187 +1,433 @@
-# Agentic AI for Crisis Scenario Analysis
+# Agentic AI for Scenario Analysis — Hormuz Pipeline
 
-An AI-orchestrated, multi-model pipeline for rapid analysis of chokepoint crises along strategic and economic dimensions. Built with **LangChain** and **LangGraph**, the system coordinates heterogeneous domain models -- written in Python, Julia, GAMS, R, AnyLogic, and Excel -- through a structured scenario analysis framework with mandatory human-in-the-loop checkpoints.
+A LangGraph-based agentic AI orchestration framework for multi-model, multi-scenario crisis analysis, built around the case study of the February 2026 closure of the Strait of Hormuz.
 
-> **Applied case study:** Closure of the Strait of Hormuz (February 2026), as described in *"Agentic AI Modeling for Rapid Analysis of Chokepoint Crises Along Strategic and Economic Dimensions"* (Golden, Indelicato, Varshney, & Thornsbury).
+This repository implements the framework described in *"Agentic AI Modeling for Rapid Analysis of Chokepoint Crises Along Strategic and Economic Dimensions: A Case Study of the Closure of the Strait of Hormuz"* (Golden, Indelicato, Varshney, & Thornsbury). It coordinates ~30 heterogeneous domain models — written in Python, Julia, GAMS, R, AnyLogic, Octave, EViews, Fortran, and Excel — through a structured Schwartz-style scenario analysis with mandatory human-in-the-loop checkpoints.
 
----
-
-## Motivation
-
-Crisis economics suffers from three persistent analytical gaps:
-
-1. **Short-run vs. long-run** -- immediate price shocks vs. structural adjustment
-2. **Microeconomic vs. macroeconomic** -- commodity markets vs. GDP, inflation, employment
-3. **Economic vs. strategic-military** -- trade flows vs. alliance credibility, deterrence, logistics
-
-No single model spans all three dimensions. This pipeline bridges them by orchestrating dozens of specialized domain models under a unified scenario framework, using LLMs for the operationally intensive but conceptually routine tasks (narrative generation, parameter extraction, output synthesis) while reserving judgment and validation for human analysts.
+> **Status (April 2026):** The orchestration layer is feature-complete. ~14 of ~30 model adapters have real execution paths wired to vendored or external model code; the remaining ~16 are typed stubs awaiting upstream integration. See [Model implementation status](#model-implementation-status) below.
 
 ---
 
-## How It Works
+## Table of contents
 
-The pipeline implements a five-module architecture (Algorithm 1 from the paper):
+1. [What this framework does](#what-this-framework-does)
+2. [Pipeline architecture](#pipeline-architecture)
+3. [Model implementation status](#model-implementation-status)
+4. [Repository layout](#repository-layout)
+5. [Installation](#installation)
+6. [Running the pipeline](#running-the-pipeline)
+7. [Temporal re-analysis from weekly news](#temporal-re-analysis-from-weekly-news)
+8. [Configuration](#configuration)
+9. [Further reading](#further-reading)
 
-```
-Crisis Description + Scenario Framework
-        |
-        v
-[Module 1] Scenario Generation -----> Analyst Review (mandatory)
-        |
-        v
-[Module 2] Parameter Extraction -----> Analyst Review (mandatory)
-        |
-        v
-[Module 3] Model Execution (parallel within analytical levels)
-   Combat -> Commodity -> Short-run Macro -> Long-run Macro/Strategic
-        |
-        v
-[Module 4] Output Synthesis + Cross-model Consistency Checks
-        |
-        v
-[Module 5] Analyst Interface -----> Analyst Review (mandatory)
-        |
-        v
-    Final Report with Full Provenance
-```
+---
 
-### Module 1: Scenario Generation
+## What this framework does
 
-Generates structured scenario narratives using the Schwartz scenario matrix methodology. For the Hormuz case, two critical uncertainties define a 2x2 matrix:
+The pipeline implements **Algorithm 1** from the paper:
 
-| | Contained Conflict | Escalated Conflict |
+1. Generate `N` scenario narratives with an LLM, conditioned on a Schwartz scenario framework.
+2. **Analyst checkpoint** — review and validate scenarios.
+3. For each scenario, extract structured per-model parameters with the LLM.
+4. **Analyst checkpoint** — review and validate extracted parameters.
+5. Execute each domain model on each scenario, respecting analytical-level dependencies (combat → commodity → short-run macro → long-run macro / strategic).
+6. Run cross-model consistency checks; flag disagreements outside configurable tolerances.
+7. Synthesize a structured, scenario-by-scenario report with full provenance.
+8. **Analyst checkpoint** — review and finalise the synthesis.
+
+Two non-negotiable design constraints govern the pipeline:
+
+- **No fabricated quantities.** The LLM generates narratives, extracts parameters, and writes prose summaries. Numerical model outputs are passed through unmodified — every number in the synthesis is traceable to a specific model run with specific inputs.
+- **Human-in-the-loop is mandatory.** The pipeline pauses (`langgraph.types.interrupt`) at three checkpoints. There is no fully autonomous mode.
+
+The applied case is the 2026 Hormuz closure, but the framework is reusable: swap in a different crisis description (`configs/crisis_descriptions/`) and scenario framework (`configs/scenario_frameworks/`) to apply it to other chokepoint or commodity-disruption crises.
+
+---
+
+## Pipeline architecture
+
+The orchestrator is built on **LangGraph 1.1** (`StateGraph` + `Send` for fan-out + `interrupt` for HITL + reducer-based state accumulation), not raw LangChain runnables. Five logical modules:
+
+| Module | Code | Role |
 |---|---|---|
-| **Swift Resolution (4-6 weeks)** | Scenario A | Scenario C |
-| **Prolonged Closure (3-6+ months)** | Scenario B | Scenario D |
+| 1. Scenario generation | `src/scenarios/` | LLM produces structured scenario narratives within a Schwartz framework |
+| 2. Parameter extraction | `src/parameters/` | LLM maps each narrative to per-model parameter sets with confidence annotations |
+| 3. Model execution | `src/models/` | `ModelExecutor` dispatches model adapters with level-ordered parallelism |
+| 4. Synthesis | `src/synthesis/` | Cross-model consistency checks + LLM-generated narrative summary |
+| 5. Analyst interface | `src/interface/` | Provenance tracking, cross-scenario comparison, CLI review |
 
-### Module 2: Parameter Extraction
+The graph itself lives in `src/pipeline/graph.py`; a thin imperative wrapper in `src/pipeline/orchestrator.py` is retained for tests and scripting.
 
-Parses each scenario narrative and extracts quantitative parameters (oil supply loss, LNG disruption, fertilizer price shocks, etc.) mapped to each domain model's input specification, with confidence annotations.
+### The `ModelAdapter` contract
 
-### Module 3: Model Execution
+Every domain model is wrapped by a `ModelAdapter` subclass (`src/models/base.py`). Concrete adapters declare `model_id`, `commodity_system`, `analytical_level`, `description`, and `resource_requirements` (CPU/GPU hints), and implement `validate_inputs`, `translate_inputs`, `execute`, and `parse_outputs`. Six platform-specific bases handle the heterogeneous runtime mix:
 
-Dispatches parameterized runs across the full model portfolio. Models execute in analytical-level order (combat -> commodity -> short-run macro -> long-run macro), with parallelism within each level. A generic adapter pattern supports heterogeneous execution environments.
+| Base class | File | Targets |
+|---|---|---|
+| `SubprocessAdapter` | `src/models/adapters/subprocess_adapter.py` | Generic JSON-in / JSON-out CLI invocation, with SLURM `srun` and CUDA device support |
+| `GAMSAdapter` | `src/models/adapters/gams_adapter.py` | GAMS Control + Transfer API |
+| `RAdapter` | `src/models/adapters/r_adapter.py` | `Rscript` subprocess (rpy2 optional) |
+| `JuliaAdapter` | `src/models/adapters/julia_adapter.py` | `juliacall` in-process; subprocess fallback |
+| `ExcelAdapter` | `src/models/adapters/excel_adapter.py` | `openpyxl` (headless) or `xlwings` (Excel COM) |
+| `AnyLogicAdapter` | `src/models/adapters/anylogic_adapter.py` | Exported standalone Java (JAR) via subprocess |
 
-### Module 4: Output Synthesis
-
-Aggregates results across models and scenarios, performs cross-model consistency checks, and generates narrative summaries. Quantitative results pass through unmodified -- the LLM synthesizes text, not numbers.
-
-### Module 5: Analyst Interface
-
-Presents results with full provenance (every number traces back to a specific model run with specific inputs from a specific scenario). Supports iterative refinement and selective reruns.
-
----
-
-## Domain Models
-
-The pipeline wraps **30+ domain models** across seven commodity systems:
-
-| Commodity System | Models |
-|---|---|
-| **Water** | WEAP/WEAP-MENA, SahysMod, WaterGAP2, CWatM |
-| **Oil** | Bornstein-Krusell-Rebelo, POLES-JRC, MarketSim (BOEM), Fed Workhorse Oil Model |
-| **LNG** | Energy Flux Gas Power, Energy Flux LNG Profits, Global Gas Model (GGM), LNG Spreadsheet Tool |
-| **Helium & Semiconductors** | World Helium Model, Argonne Helium ABM, SimRLFab |
-| **Fertilizer & Agriculture** | CAPRI, MAgPIE, SIMPLE-G, World Fertilizer Model, GTAP, APSIM, Futures models |
-| **Shipping** | AISdb, AIS_project |
-| **Macroeconomic** | NEMS, NREL, MPSGE.jl/GTAP, OpenCGE, pycge, MIRAGRODEP |
-
-Each model is accessed through a `ModelAdapter` subclass that handles input translation, execution, and output parsing. Platform-specific adapters are provided for Python, Julia, GAMS, R, AnyLogic, and Excel environments.
+The executor (`src/models/executor.py`) respects analytical-level ordering, parallelises within levels, isolates failures, and honours per-adapter `ResourceRequirements` for GPU/CPU/SLURM scheduling.
 
 ---
 
-## Project Structure
+## Model implementation status
+
+The CLAUDE.md inventory lists ~30 domain models. Each has a typed adapter, a Pydantic input/output schema, and is registered in `build_default_registry()` (`src/models/registry.py`). Adapters fall into three buckets:
+
+- **Real execution path wired** — adapter calls the vendored or external model code and returns model outputs end-to-end. Some additionally accept a YAML config to point at the real binary/data; those run as functional pure-Python implementations or stubs in its absence.
+- **Config-aware stub** — full `validate_inputs` / `translate_inputs` / `parse_outputs` plus a real `execute` path that activates when a YAML config is provided. Without config, raises `NotImplementedError` with a precise list of the prerequisites (binary, data, license).
+- **Typed stub** — schemas and metadata complete; `execute()` raises `NotImplementedError` because the upstream model code is not yet available in this repository.
+
+### Water
+
+| Model | Adapter | Status | Notes |
+|---|---|---|---|
+| WEAP / WEAP–MENA | `src/models/water/weap.py` | Config-aware stub | COM automation path implemented; needs licensed WEAP install + study file via `weap_mena.yaml` |
+| SahysMod | `src/models/water/sahysmod.py` | Real (config-aware) | CLI driver with line-range injection for irrigation/salinity decks |
+| WaterGAP2 | `src/models/water/watergap2.py` | Config-aware stub | Executable or HTTP API path; needs forcing data + binary |
+| CWatM | `src/models/water/cwatm.py` | Real (config-aware) | Subprocess driver; needs `cwatm.yaml` pointing at CWatM root + settings + data |
+
+### Oil
+
+| Model | Adapter | Status | Notes |
+|---|---|---|---|
+| Bornstein-Krusell-Rebelo World Equilibrium Oil Model | `src/models/oil/bornstein_krusell_rebelo.py` | **Real** | Octave + Dynare driver; replication files vendored at `Models/Oil/WorldEquilibriumOilModel/` |
+| POLES-JRC | `src/models/oil/poles_jrc.py` | Stub | Awaiting JRC model distribution |
+| MarketSim (BOEM) | `src/models/oil/marketsim.py` | Stub | Awaiting BOEM codebase |
+| Fed Workhorse Oil Model (Baumeister-Hamilton) | `src/models/oil/fed_oil.py` | Stub | Awaiting upstream MATLAB/R code |
+
+### LNG
+
+| Model | Adapter | Status | Notes |
+|---|---|---|---|
+| Global Gas Model (GGM v3.0) | `src/models/lng/ggm.py` | Real (config-aware) | GAMS subprocess driver; vendored at `Models/LNG/GGM-20190509-open-source-final/`; needs GAMS + CPLEX + `ggm.yaml` |
+| Energy Flux US Gas Power Build-Out | `src/models/lng/energy_flux_gas_power.py` | **Real** | Pure-Python implementation (default) + optional xlwings path |
+| Energy Flux US LNG War Profits | `src/models/lng/energy_flux_lng_profits.py` | **Real** | Pure-Python implementation (default) + optional xlwings path |
+| LNG Spreadsheet Tool (LNGST) | `src/models/lng/lngst.py` | Config-aware stub | `ExcelAdapter` machinery in place; needs `ExcelConfig` + workbook |
+
+### Helium & Semiconductors
+
+| Model | Adapter | Status | Notes |
+|---|---|---|---|
+| World Helium Model (IFP EN) | `src/models/helium/world_helium_model.py` | Stub | Awaiting IFP Énergies Nouvelles model |
+| Argonne Helium ABM | `src/models/helium/argonne_abm.py` | Config-aware stub | `AnyLogicAdapter` JAR-export pattern wired; needs exported model + license |
+| SimRLFab | `src/models/helium/simrlfab.py` + `simrlfab_driver.py` | Real (config-aware) | Subprocess driver into vendored repo at `Models/Helium Market_ Semiconductors/SimRLFab-master/`; needs Python 3.6 venv with pinned deps |
+
+### Fertilizer & Agriculture
+
+| Model | Adapter | Status | Notes |
+|---|---|---|---|
+| MAgPIE | `src/models/fertilizer/magpie.py` | Real (config-aware) | `RAdapter` driver into vendored repo at `Models/Fertilizer/magpie-master/`; needs R + GAMS + `magpie.yaml` |
+| CAPRI | `src/models/fertilizer/capri.py` | Stub | |
+| SIMPLE-G | `src/models/fertilizer/simple_g.py` | Stub | |
+| World Fertilizer Model | `src/models/fertilizer/world_fertilizer.py` | Stub | `GAMSAdapter` base in place; needs `.gms` files and license |
+| GTAP | `src/models/fertilizer/gtap.py` | Stub | |
+| APSIM | `src/models/fertilizer/apsim.py` | Stub | |
+| Futures forecasting | `src/models/fertilizer/futures.py` | Stub | |
+
+### Shipping
+
+| Model | Adapter | Status | Notes |
+|---|---|---|---|
+| AISdb | `src/models/shipping/aisdb.py` | Stub | |
+| AIS_project | `src/models/shipping/ais_project.py` | Stub | aisstream WebSocket README vendored at `Models/Shipping/aisstream-main/` |
+
+### Macroeconomic / General Equilibrium
+
+| Model | Adapter | Status | Notes |
+|---|---|---|---|
+| NEMS (EIA AEO2025) | `src/models/macro/nems.py` | **Real** | Three modes: `output_ingestion` (default, no install required), `subprocess` (full NEMS), `remote` (SLURM); vendored at `Models/LNG/NEMS-main/` |
+| MAM (EIA Macroeconomic Activity Module) | `src/models/macro/mam.py` | **Real** | AEO ingestion mode (default) + optional EViews subprocess |
+| OpenCGE (PSL OG-Core / OG-USA) | `src/models/macro/opencge.py` | **Real** | Wraps `ogcore.execute.runner`; needs `ogcore`/`ogusa` + Dask client + baseline data |
+| pycge / cge\_modeling | `src/models/macro/pycge.py` | **Real** | Wraps the `cge-modeling` Python package; SAM-driven |
+| MIRAGRODEP | `src/models/macro/miragrodep.py` | **Real** | GAMS driver against vendored MIRAGRODEP code under `Models/General Equilibrium/MIRAGRODEP_v0-1/` |
+| MPSGE.jl / GTAP | `src/models/macro/mpsge_jl.py` | Config-aware stub | `JuliaAdapter` machinery wired; needs Julia + MPSGE.jl install |
+| NREL baseline | `src/models/macro/nrel.py` | Stub | |
+
+### Energy systems (long-run)
+
+A new commodity system, `ENERGY_SYSTEMS`, was added beyond the original CLAUDE.md inventory to provide long-run electricity / energy-system optimisation alongside the macro CGE layer. All three are real and config-aware. See `Models/Energy/README.md` for cloning instructions.
+
+| Model | Adapter | Status | Notes |
+|---|---|---|---|
+| OSeMOSYS | `src/models/energy/osemosys.py` | **Real** | GLPK or CBC; otoole CSV ↔ MathProg pipeline |
+| MESSAGEix | `src/models/energy/messageix.py` | **Real** | IIASA `message-ix` + `ixmp` Platform; needs Java + GAMS |
+| TEMOA | `src/models/energy/temoa.py` | **Real** | Pyomo + CBC; baseline SQLite databases ship with TEMOA |
+
+### Summary
+
+- **Real / fully-wired adapters (10):** Bornstein-Krusell-Rebelo, Energy Flux Gas Power, Energy Flux LNG Profits, NEMS, MAM, OpenCGE, pycge, MIRAGRODEP, OSeMOSYS, MESSAGEix, TEMOA.
+- **Real config-aware (activate when YAML provided) (6):** SahysMod, CWatM, GGM, SimRLFab, MAgPIE.
+- **Config-aware stubs (5):** WEAP–MENA, WaterGAP2, LNGST, Argonne Helium ABM, MPSGE.jl.
+- **Typed stubs awaiting upstream code (12):** POLES-JRC, MarketSim, Fed Workhorse Oil, World Helium Model, World Fertilizer Model, CAPRI, SIMPLE-G, GTAP, APSIM, Futures, AISdb, AIS_project, NREL.
+
+Stubs do not break the pipeline: the executor catches `NotImplementedError`, marks the run as `SKIPPED`, and continues with the remaining models. The synthesis report notes which models contributed and which were unavailable.
+
+---
+
+## Repository layout
 
 ```
 agenticAIForScenarioAnalysis/
+├── CLAUDE.md                      # Design specification (canonical)
+├── README.md                      # This file
+├── pyproject.toml                 # Dependencies (with optional extras per platform)
+├── field_guide_model_integration_v2.md
+├── model_integration_plan.md
+├── LangChainNextSteps.md
+│
 ├── src/
-│   ├── pipeline/          # Core orchestration (Algorithm 1)
-│   ├── scenarios/         # Module 1: Scenario generation (Schwartz framework)
-│   ├── parameters/        # Module 2: Parameter extraction + model input specs
-│   ├── models/            # Module 3: Model adapters, registry, and executor
-│   │   ├── water/         #   Water model adapters
-│   │   ├── oil/           #   Oil model adapters
-│   │   ├── lng/           #   LNG model adapters
-│   │   ├── helium/        #   Helium & semiconductor adapters
-│   │   ├── fertilizer/    #   Fertilizer & agriculture adapters
-│   │   ├── shipping/      #   Shipping model adapters
-│   │   ├── macro/         #   Macroeconomic model adapters
-│   │   └── adapters/      #   Platform-specific adapters (Julia, GAMS, R, Excel, AnyLogic)
-│   ├── synthesis/         # Module 4: Cross-model synthesis and consistency
-│   ├── interface/         # Module 5: Analyst review, provenance, comparison
-│   └── common/            # Shared types, LLM config, logging
-├── configs/               # YAML configuration (crisis descriptions, scenario frameworks, model configs)
-├── tests/                 # Unit and integration tests
-├── Model/                 # External model source code and documentation
-└── data/                  # Input data, model outputs, generated reports (gitignored)
+│   ├── pipeline/                  # LangGraph orchestrator (graph.py + state.py + config.py)
+│   ├── scenarios/                 # Module 1
+│   ├── parameters/                # Module 2 (extractor + per-system model_specs/)
+│   ├── models/
+│   │   ├── base.py                # ModelAdapter ABC, ModelOutput, ResourceRequirements
+│   │   ├── registry.py            # build_default_registry(config_dir=...)
+│   │   ├── executor.py            # Level-ordered async executor
+│   │   ├── tools.py               # LangChain @tool wrappers
+│   │   ├── adapters/              # SubprocessAdapter, GAMSAdapter, RAdapter,
+│   │   │                          # JuliaAdapter, ExcelAdapter, AnyLogicAdapter
+│   │   ├── water/  oil/  lng/
+│   │   ├── helium/ fertilizer/
+│   │   ├── shipping/ macro/
+│   │   └── energy/                # OSeMOSYS, MESSAGEix, TEMOA
+│   ├── synthesis/                 # consistency.py, synthesizer.py, schemas, prompts
+│   ├── interface/                 # review, provenance, comparison
+│   ├── news/                      # Temporal re-analysis: news + EIA adapters,
+│   │                              # aggregator, weekly LLM summariser
+│   └── common/                    # types, llm, logging
+│
+├── configs/
+│   ├── crisis_descriptions/hormuz_2026.yaml
+│   ├── crisis_descriptions/hormuz_2026_weekly/  # auto-populated by the
+│   │                              # weekly news driver, one YAML per week
+│   ├── scenario_frameworks/hormuz_2026.yaml
+│   ├── consistency_rules.yaml
+│   ├── news_sources.yaml          # Adapters + boolean query for the
+│   │                              # temporal weekly driver
+│   └── model_configs/             # Per-adapter YAML; pick this dir up via
+│                                  # build_default_registry("configs/model_configs")
+│
+├── Models/                        # Vendored / cloned external model code
+│   ├── Oil/WorldEquilibriumOilModel/
+│   ├── LNG/GGM-20190509-open-source-final/
+│   ├── LNG/NEMS-main/
+│   ├── Fertilizer/magpie-master/
+│   ├── Helium Market_ Semiconductors/SimRLFab-master/
+│   ├── Shipping/aisstream-main/
+│   ├── General Equilibrium/MIRAGRODEP_v0-1/
+│   ├── General Equilibrium/EIA/   # MAM AEO2025 PDF
+│   └── Energy/                    # OSeMOSYS, MESSAGEix, TEMOA (clone with submodules)
+│
+├── tests/
+└── data/                          # Inputs, outputs, reports (gitignored for large files)
 ```
 
 ---
 
 ## Installation
 
-Requires **Python 3.11+**.
+The pipeline targets **Python ≥ 3.11**. Install the core orchestration layer:
 
 ```bash
-# Clone the repository
-git clone https://github.com/jgolden36/agenticAIForScenarioAnalysis.git
-cd agenticAIForScenarioAnalysis
-
-# Install core dependencies
 pip install -e .
+```
 
-# Install with development tools
-pip install -e ".[dev]"
+Domain-model integrations live behind optional extras so you only pull in what you need:
 
-# Install optional adapter dependencies as needed
-pip install -e ".[adapters]"    # pandas, openpyxl
-pip install -e ".[julia]"      # juliacall
-pip install -e ".[gams]"       # gamsapi
-pip install -e ".[r]"          # rpy2
-pip install -e ".[excel]"      # openpyxl, xlwings
+```bash
+pip install -e ".[adapters]"     # openpyxl, pandas
+pip install -e ".[julia]"        # juliacall (MPSGE.jl)
+pip install -e ".[gams]"         # gamsapi (GGM, MIRAGRODEP, World Fertilizer, ...)
+pip install -e ".[excel]"        # openpyxl + xlwings (Energy Flux, LNGST, MarketSim)
+pip install -e ".[r]"            # rpy2 (MAgPIE in-process mode)
+pip install -e ".[macro]"        # ogcore, ogusa, dask, cge-modeling
+pip install -e ".[water]"        # netCDF4, xarray (CWatM / WaterGAP2 outputs)
+pip install -e ".[energy]"       # otoole, message-ix, ixmp, temoa-energysystem, pyomo
+pip install -e ".[news]"         # requests (NewsData.io / GNews / NewsAPI / EIA adapters)
+pip install -e ".[dev]"          # pytest, pytest-asyncio
+```
+
+Non-Python prerequisites (GAMS, Octave + Dynare, GLPK/CBC, R, Java/JDK, Excel, AnyLogic Pro) are documented per-model in the linked READMEs (e.g., `Models/Energy/README.md`).
+
+---
+
+## Running the pipeline
+
+A minimal end-to-end run loads the Hormuz crisis description, the scenario framework, and the model registry, then drives the LangGraph pipeline:
+
+```python
+from pathlib import Path
+from src.pipeline.config import PipelineConfig
+from src.pipeline.graph import build_graph
+from src.models.registry import build_default_registry
+
+registry = build_default_registry(config_dir=Path("configs/model_configs"))
+config = PipelineConfig.from_yaml(Path("configs/model_configs/default.yaml"))
+
+graph = build_graph(registry=registry, config=config)
+state = graph.invoke({
+    "run_id": "hormuz-001",
+    "crisis_description": Path("configs/crisis_descriptions/hormuz_2026.yaml").read_text(),
+    "framework": Path("configs/scenario_frameworks/hormuz_2026.yaml").read_text(),
+})
+```
+
+The graph will pause at each HITL `interrupt()`. Resume with `Command(resume=...)` from the analyst review CLI (`src/interface/review.py`).
+
+Tests live under `tests/`:
+
+```bash
+pytest                     # full suite
+pytest tests/test_models   # adapter contract tests only
 ```
 
 ---
 
-## Running Tests
+## Temporal re-analysis from weekly news
+
+The single-shot pipeline above answers *"what does our model portfolio say about the crisis given today's information?"*. The temporal driver answers a complementary question central to the framework's value proposition: *"how does the agent's analysis change as new information arrives, week by week?"*
+
+Each iteration of the temporal loop:
+
+1. Pulls a calendar week of news articles and government indicators from a configurable set of sources (NewsData.io, GNews, NewsAPI.org, NewsAPI.ai, EIA Open Data).
+2. Runs an LLM summariser that produces a structured `WeeklyBrief` (headline, quantitative summary, key indicators, per-scenario probability signals, coverage gaps), threading in the previous week's brief as context.
+3. Writes a per-week augmented crisis-description YAML into `configs/crisis_descriptions/hormuz_2026_weekly/<date>.yaml` (the baseline file is never mutated; the weekly file appends a `recent_developments` block plus a cumulative `weekly_briefs` history).
+4. Re-runs **all of Algorithm 1** (scenarios → parameter extraction → model execution → synthesis) under a unique `HORMUZ_RUN_ID="weekly_<YYYYMMDD>"`, so each week's full set of state files, model outputs, and synthesis report sits side by side under `data/pipeline_state/weekly_*` and `data/reports/weekly_*` for cross-week comparison.
+
+### Components
+
+| Path | Role |
+|---|---|
+| `src/news/base.py` | `NewsArticle`, `NewsSource` ABC, `NewsSourceError` |
+| `src/news/newsdata.py` | NewsData.io (`/archive` with auto-fallback to `/latest`) |
+| `src/news/gnews.py` | GNews `/api/v4/search` |
+| `src/news/newsapi.py` | NewsAPI.org and NewsAPI.ai (Event Registry) |
+| `src/news/eia.py` | EIA Open Data API (WTI, Brent, US crude stocks, Henry Hub gas; series list overridable) |
+| `src/news/aggregator.py` | Fan-out across sources with URL+title-date deduplication and per-source success/failure reporting |
+| `src/news/summarizer.py` | LLM chain producing `WeeklyBrief` + `write_updated_crisis_yaml` helper |
+| `configs/news_sources.yaml` | Crisis metadata, boolean query, list of source adapter specs |
+| `slurm/scripts/build_weekly_brief.py` | CLI: fetch one week → summarise → write per-week YAML + provenance artefacts |
+| `slurm/jobs/weekly_news_pipeline.job` | Generic SLURM driver: enumerate weeks, build briefs, re-run the pipeline for each |
+| `slurm/jobs/empire_ai_alpha_weekly.job` | Empire AI Alpha companion to `empire_ai_alpha.job`: same `suny`-partition idioms, scratch detection (`/mnt/lustre/suny/$USER`), per-week W&B run groups, vLLM sidecar shared across all weeks |
+
+`run_scenarios.py` honours the `HORMUZ_CRISIS_DESCRIPTION` environment variable so each weekly rerun feeds its own per-week YAML into Module 1; everything downstream (parameters, executor, synthesis) keys off `HORMUZ_RUN_ID` and so is automatically isolated per week.
+
+### Source coverage notes
+
+Historical search is paywalled on most commercial news APIs:
+
+- **EIA Open Data** — free key, full historical depth. The default and recommended baseline source.
+- **NewsData.io** — free tier returns last 48 hours only; `/archive` requires a paid tier (the adapter falls back to `/latest` automatically when archive returns 403/426 so the most recent week still works).
+- **GNews** — free tier ≈ last 24 hours; Essential / Pro plans support full ranges.
+- **NewsAPI.org** — Developer plan caps history at 30 days; Business plan for older ranges.
+- **NewsAPI.ai** (Event Registry) — best historical coverage of the four article sources; tier-based rate limits.
+
+The aggregator records per-source successes and failures into `data/news/<date>/report.json` so a week with degraded coverage is auditable rather than silent.
+
+### Running the temporal driver
+
+There are two SLURM entry points; pick the one that matches your cluster:
+
+- **`slurm/jobs/empire_ai_alpha_weekly.job`** — the production driver for the Empire AI Alpha cluster. Companion to the main `empire_ai_alpha.job`: same `suny`-partition / `--gpus-per-node` directives, same `/mnt/lustre/suny/$USER` scratch detection, same three-tier W&B key resolution, same per-run logging discipline — but wraps the Module 6 weekly loop around Modules 1–4 and writes per-week W&B run groups (`weekly_<YYYYMMDD>`) tagged with the parent batch group so the W&B UI can show them as a single experiment.
+- **`slurm/jobs/weekly_news_pipeline.job`** — the portable driver. Same loop logic but with the Empire-AI-specific scratch and W&B blocks stripped out. Useful as a starting template when porting to another cluster.
+
+Both default to the full `2026-02-15` → `2026-04-10` window, weekly cadence, and a shared vLLM sidecar across all weeks (so the 70B model loads once, not nine times).
 
 ```bash
-pytest
+# Empire AI Alpha, cheapest path: free EIA indicators + cloud LLM
+export EIA_API_KEY=...                    # free, eia.gov/opendata/register.php
+export PIPELINE_LLM_PROVIDER=anthropic
+export ANTHROPIC_API_KEY=sk-ant-...
+export HORMUZ_USE_VLLM=0
+sbatch --gpus-per-node=1 slurm/jobs/empire_ai_alpha_weekly.job
+
+# Empire AI Alpha, richer briefs with commercial news + local vLLM
+export EIA_API_KEY=...
+export NEWSDATA_API_KEY=...
+export GNEWS_API_KEY=...
+export NEWSAPI_ORG_API_KEY=...
+sbatch slurm/jobs/empire_ai_alpha_weekly.job
+
+# Empire AI Alpha, larger model on 4 GPUs with tensor parallelism
+export HORMUZ_VLLM_MODEL=meta-llama/Llama-3.1-70B-Instruct
+export HORMUZ_VLLM_TP_SIZE=4
+sbatch --gpus-per-node=4 slurm/jobs/empire_ai_alpha_weekly.job
+
+# Custom backfill window (works on either driver)
+export HORMUZ_WEEKLY_START=2026-03-01
+export HORMUZ_WEEKLY_END=2026-04-10
+sbatch slurm/jobs/empire_ai_alpha_weekly.job
+
+# Brief-only mode: build all weekly briefs but skip pipeline reruns
+# (useful for inspecting summariser output before committing GPU time)
+export HORMUZ_WEEKLY_SKIP_PIPELINE=1
+sbatch --gpus-per-node=1 --time=06:00:00 slurm/jobs/empire_ai_alpha_weekly.job
+
+# Generic / portable variant (different cluster, no Lustre scratch, no W&B):
+sbatch slurm/jobs/weekly_news_pipeline.job
 ```
+
+Either job fails fast at submission time if no news/EIA API key is set in the environment. Both validate conda activation, optionally start a single shared vLLM sidecar across all weeks, then enumerate calendar weeks via an inline Python helper (avoiding `date --iso` portability issues) and execute the brief-builder + full pipeline for each.
+
+You can also drive a single week directly without SLURM, which is the easiest way to iterate on the summariser prompt:
+
+```bash
+python slurm/scripts/build_weekly_brief.py \
+    --week-start 2026-02-15 --week-end 2026-02-22 \
+    --baseline configs/crisis_descriptions/hormuz_2026.yaml \
+    --output   configs/crisis_descriptions/hormuz_2026_weekly/2026-02-15.yaml \
+    --sources-config configs/news_sources.yaml \
+    --brief-out    data/news/2026-02-15/brief.txt \
+    --articles-out data/news/2026-02-15/articles.json \
+    --report-out   data/news/2026-02-15/report.json
+```
+
+### Outputs
+
+After a full nine-week run you have:
+
+- `configs/crisis_descriptions/hormuz_2026_weekly/<date>.yaml` — augmented crisis YAMLs, one per week, each carrying the cumulative `weekly_briefs` history.
+- `data/news/<date>/articles.json` — raw fetched articles (full provenance).
+- `data/news/<date>/report.json` — aggregator FetchReport (which sources succeeded, which failed, dedup statistics).
+- `data/news/<date>/brief.txt` — plain-text rendering of the structured brief, fed as context to the next week.
+- `data/pipeline_state/weekly_<date>_*` — Module 1–4 state files for that week.
+- `data/reports/weekly_<date>_*` — synthesis reports for that week.
+- `slurm/logs/weekly_news_pipeline-<jobid>/<date>/` — per-week stage logs and runtime inventory.
+
+The set is directly comparable across weeks: the same scenario IDs, the same model registry, only the crisis description (and therefore extracted parameters and resulting outputs) shift. This is the artefact that demonstrates *"value of rapidly updated analysis"* in concrete, reviewable form.
 
 ---
 
 ## Configuration
 
-The pipeline is configured through YAML files in `configs/`:
+Three YAML directories drive a run:
 
-- **`crisis_descriptions/`** -- Structured crisis event descriptions (the input to Module 1)
-- **`scenario_frameworks/`** -- Schwartz scenario framework specifications (focal issue, driving forces, critical uncertainties)
-- **`model_configs/`** -- Per-model settings (paths, timeouts, convergence thresholds)
-- **`consistency_rules.yaml`** -- Cross-model consistency check tolerances
+- `configs/crisis_descriptions/` — structured event description (timeline, actors, parameters known a priori).
+- `configs/scenario_frameworks/` — Schwartz framework: focal issue, key factors, driving forces, predetermined elements, critical uncertainties.
+- `configs/model_configs/` — one file per adapter that needs concrete paths, executables, baseline data, or solvers. Adapters whose YAML is **absent** instantiate as stubs (and skip cleanly at execution time); adapters whose YAML is **present and valid** activate their real execution paths.
 
-LLM provider settings are configured via `src/common/llm.py` and are not hardcoded to a specific provider.
+`configs/consistency_rules.yaml` declares cross-model consistency tolerances (e.g., oil-price agreement bands across BKR, POLES-JRC, and the Fed model) used by `src/synthesis/consistency.py`.
 
----
-
-## Design Principles
-
-- **Human-in-the-loop is mandatory.** The pipeline pauses for analyst validation after scenario generation, parameter extraction, and final synthesis. It reorganizes the division of labor between AI and analysts -- it does not replace analysts.
-- **Provenance is mandatory.** Every quantitative result traces back through the full chain: synthesis -> model output -> model input -> extracted parameter -> scenario narrative.
-- **The LLM does not fabricate numbers.** LLMs generate narratives, extract parameters, and synthesize text summaries. All quantitative results come from domain model runs.
-- **Graceful degradation.** Individual model failures are isolated and reported; they do not crash the pipeline.
-- **Configuration over hardcoding.** Model paths, LLM settings, parallelism, tolerances, and output directories are configurable via YAML or environment variables.
+`configs/news_sources.yaml` configures the temporal weekly driver: crisis metadata, the boolean query passed to every source, and an ordered list of source adapter specs (NewsData.io, GNews, NewsAPI.org / .ai, EIA Open Data). Commented-out source entries activate by uncommenting; missing API keys cause a source to be skipped at runtime rather than aborting the week.
 
 ---
 
-## Citation
+## Further reading
 
-If you use this framework, please cite:
-
-> Golden, J., Indelicato, N., Varshney, L. R., & Thornsbury, S. "Agentic AI Modeling for Rapid Analysis of Chokepoint Crises Along Strategic and Economic Dimensions: A Case Study of the Closure of the Strait of Hormuz."
+- **`CLAUDE.md`** — full design specification (Algorithm 1, module contracts, design constraints).
+- **`field_guide_model_integration_v2.md`** — practical reference for each execution environment (Julia, GAMS, Excel, AnyLogic, R, generic subprocess) with current 2026 API details.
+- **`model_integration_plan.md`** — historical sequencing notes for `Models/` ↔ `src/models/` integration.
+- **`LangChainNextSteps.md`** — LangGraph 1.x patterns (state, supervisors, HITL, fan-out) referenced by the orchestrator.
+- **`Models/Energy/README.md`** — cloning, solver, and baseline-data instructions for the energy-systems trio.
 
 ---
 
-## License
+## License & citation
 
-See repository for license details.
+This is a research codebase. If you use it in academic work, please cite the underlying paper (Golden, Indelicato, Varshney, & Thornsbury, *Agentic AI Modeling for Rapid Analysis of Chokepoint Crises ...*) and respect the licenses of each vendored model under `Models/` (NEMS: public domain, GGM: MIT, MAgPIE: AGPL-3.0, OSeMOSYS / MESSAGEix / TEMOA: see upstream repositories, etc.).
