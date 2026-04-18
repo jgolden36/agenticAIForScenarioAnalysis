@@ -1,15 +1,13 @@
 """LNG model adapters.
 
-This package contains adapter stubs for the four LNG domain models in the
-pipeline inventory:
+This package contains adapters for the four LNG domain models:
 
 - EnergyFluxGasPowerAdapter  — Energy Flux US Gas Power Build-Out Constraint Model v1.0
 - EnergyFluxLNGProfitsAdapter — Energy Flux US LNG War Profits Model v1.0
-- GGMAdapter                 — Global Gas Model
-- LNGSTAdapter               — LNG Spreadsheet Tool (Excel-based)
+- GGMAdapter                 — Global Gas Model (GAMSAdapter; integrated with GGM v3.0)
+- LNGSTAdapter               — LNG Spreadsheet Tool (ExcelAdapter)
 
-All adapters subclass ModelAdapter and are tagged with
-CommoditySystem.LNG / AnalyticalLevel.COMMODITY.
+All adapters are tagged with CommoditySystem.LNG / AnalyticalLevel.COMMODITY.
 """
 
 from src.models.lng.energy_flux_gas_power import EnergyFluxGasPowerAdapter

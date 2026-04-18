@@ -2,12 +2,18 @@
 
 This is the universal fallback: any model can be wrapped in a thin script
 that reads JSON, runs the model, and writes JSON — regardless of native language.
+
+Cluster features:
+- GPU device assignment via CUDA_VISIBLE_DEVICES injection
+- Optional srun wrapping for SLURM-aware multi-node execution
+- Thread/process affinity control via OMP_NUM_THREADS et al.
 """
 
 from __future__ import annotations
 
 import json
 import os
+import shlex
 import subprocess
 import tempfile
 from abc import abstractmethod
@@ -32,6 +38,22 @@ class SubprocessConfig(BaseModel):
     timeout_seconds: int = 3600
     extra_env: dict[str, str] = Field(default_factory=dict)
     run_dir_base: Path = Field(default_factory=lambda: Path(tempfile.gettempdir()))
+    srun_enabled: bool = Field(
+        default=False,
+        description="Wrap the command with srun for SLURM-aware execution",
+    )
+    srun_args: list[str] = Field(
+        default_factory=list,
+        description="Extra srun arguments (e.g., ['--ntasks=1', '--cpus-per-task=4'])",
+    )
+    gpu_device: int | None = Field(
+        default=None,
+        description="CUDA device index to bind (set by the executor at runtime)",
+    )
+    num_threads: int = Field(
+        default=1,
+        description="CPU threads for this model (sets OMP/MKL/OpenBLAS thread vars)",
+    )
 
 
 class SubprocessAdapter(ModelAdapter):
@@ -71,14 +93,46 @@ class SubprocessAdapter(ModelAdapter):
         """Default implementation delegates to translate_inputs_to_dict."""
         return self.translate_inputs_to_dict(params)
 
+    def _build_env(self) -> dict[str, str]:
+        """Build the environment for the subprocess, including GPU and thread control."""
+        config = self.subprocess_config
+        env = {**os.environ, **config.extra_env}
+
+        if config.gpu_device is not None:
+            env["CUDA_VISIBLE_DEVICES"] = str(config.gpu_device)
+
+        threads = str(config.num_threads)
+        env.setdefault("OMP_NUM_THREADS", threads)
+        env.setdefault("MKL_NUM_THREADS", threads)
+        env.setdefault("OPENBLAS_NUM_THREADS", threads)
+        env.setdefault("JULIA_NUM_THREADS", threads)
+
+        return env
+
+    def _build_command(self, cmd_str: str) -> list[str]:
+        """Build the final command, optionally wrapping with srun.
+
+        Uses shlex.split (posix=True) so quoted arguments — including paths
+        that contain spaces — are preserved as single tokens. Adapters that
+        embed Windows paths in command_template should pre-convert them to
+        forward-slash form (e.g., via Path.as_posix()) so shlex does not
+        consume backslashes as escape characters.
+        """
+        config = self.subprocess_config
+        parts = shlex.split(cmd_str, posix=True)
+
+        if config.srun_enabled:
+            srun_cmd = ["srun"] + config.srun_args
+            if config.gpu_device is not None:
+                srun_cmd.extend(["--gres", f"gpu:1"])
+            return srun_cmd + parts
+
+        return parts
+
     def execute(self, inputs: Any) -> ModelOutput:
         """Execute the model via subprocess with JSON file I/O.
 
-        Args:
-            inputs: Dict from translate_inputs (must contain 'scenario_id' or defaults to 'default').
-
-        Returns:
-            ModelOutput with parsed results and execution metadata.
+        Respects GPU device assignment and srun wrapping if configured.
         """
         scenario_id = inputs.get("scenario_id", "default") if isinstance(inputs, dict) else "default"
         config = self.subprocess_config
@@ -86,22 +140,21 @@ class SubprocessAdapter(ModelAdapter):
         input_path = run_dir / "inputs.json"
         output_path = run_dir / "outputs.json"
 
-        # Write inputs
         input_data = inputs if isinstance(inputs, dict) else {"data": inputs}
         with open(input_path, "w") as f:
             json.dump(input_data, f, default=str)
 
-        # Build command
-        cmd = config.command_template.format(
-            input_path=str(input_path),
-            output_path=str(output_path),
-            run_dir=str(run_dir),
+        cmd_str = config.command_template.format(
+            input_path=input_path.as_posix(),
+            output_path=output_path.as_posix(),
+            run_dir=run_dir.as_posix(),
         )
 
-        env = {**os.environ, **config.extra_env}
+        cmd = self._build_command(cmd_str)
+        env = self._build_env()
 
         result = subprocess.run(
-            cmd.split(),
+            cmd,
             capture_output=True,
             text=True,
             timeout=config.timeout_seconds,
@@ -114,6 +167,8 @@ class SubprocessAdapter(ModelAdapter):
             "stdout_tail": result.stdout[-2000:] if result.stdout else "",
             "stderr_tail": result.stderr[-2000:] if result.stderr else "",
             "run_dir": str(run_dir),
+            "gpu_device": config.gpu_device,
+            "srun_enabled": config.srun_enabled,
         }
 
         if result.returncode != 0:
@@ -122,7 +177,6 @@ class SubprocessAdapter(ModelAdapter):
                 f"{result.stderr[-500:] if result.stderr else 'no stderr'}"
             )
 
-        # Read output
         if not output_path.exists():
             raise FileNotFoundError(
                 f"{self.model_id}: expected output file at {output_path} but it does not exist. "
@@ -135,4 +189,5 @@ class SubprocessAdapter(ModelAdapter):
         output = self.parse_outputs(raw)
         if isinstance(output, ModelOutput):
             output.metadata.update(metadata)
+            output.gpu_device = config.gpu_device
         return output

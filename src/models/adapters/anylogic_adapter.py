@@ -2,6 +2,7 @@
 
 Executes exported standalone Java applications (JARs) via subprocess.
 Supports multiple stochastic replications with statistical aggregation.
+Replications run in parallel using ProcessPoolExecutor on the cluster.
 
 Applies to: Argonne Helium ABM.
 """
@@ -12,6 +13,7 @@ import json
 import os
 import subprocess
 from abc import abstractmethod
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
@@ -36,6 +38,10 @@ class AnyLogicConfig(BaseModel):
             "Number of stochastic replications to run. ABMs are inherently "
             "stochastic; run multiple replications and aggregate."
         ),
+    )
+    parallel_replications: int = Field(
+        default=8,
+        description="Max replications to run concurrently (uses ProcessPoolExecutor)",
     )
     use_cloud_api: bool = Field(
         default=False,
@@ -109,58 +115,82 @@ class AnyLogicAdapter(ModelAdapter):
     def translate_inputs(self, params: dict[str, Any]) -> Any:
         return params
 
+    def _run_single_replication(
+        self,
+        inputs: dict[str, Any],
+        rep: int,
+        scenario_id: str,
+    ) -> dict[str, Any]:
+        """Execute a single replication (designed to run in a worker process)."""
+        config = self.anylogic_config
+        run_dir = self._get_run_dir(scenario_id, rep)
+
+        input_path = run_dir / "scenario_params.json"
+        with open(input_path, "w") as f:
+            json.dump({**inputs, "replication": rep, "random_seed": rep + 42}, f, default=str)
+
+        startup_script = config.model_dir / f"{config.model_name}_linux.sh"
+        if not startup_script.exists():
+            startup_script = config.model_dir / f"{config.model_name}.sh"
+
+        cli_args = self.build_cli_args(inputs)
+
+        env = {**os.environ}
+        if config.java_home:
+            env["JAVA_HOME"] = str(config.java_home)
+        env["JAVA_OPTS"] = f"-Xmx{config.max_memory_mb}m"
+
+        result = subprocess.run(
+            [str(startup_script), str(input_path)] + cli_args,
+            capture_output=True,
+            text=True,
+            timeout=config.timeout_seconds,
+            cwd=str(config.model_dir),
+            env=env,
+        )
+
+        if result.returncode != 0:
+            raise RuntimeError(
+                f"AnyLogic replication {rep} failed (rc={result.returncode}): "
+                f"{result.stderr[-500:] if result.stderr else 'no stderr'}"
+            )
+
+        output_path = run_dir / "results.json"
+        if not output_path.exists():
+            raise FileNotFoundError(
+                f"Replication {rep}: expected output at {output_path}"
+            )
+
+        with open(output_path) as f:
+            return json.load(f)
+
     def execute(self, inputs: Any) -> ModelOutput:
-        """Execute the AnyLogic model with multiple replications."""
+        """Execute the AnyLogic model with parallel replications."""
         config = self.anylogic_config
         scenario_id = inputs.get("scenario_id", "default") if isinstance(inputs, dict) else "default"
 
-        replication_results = []
-        for rep in range(config.num_replications):
-            run_dir = self._get_run_dir(scenario_id, rep)
+        max_workers = min(config.parallel_replications, config.num_replications)
+        replication_results: list[dict[str, Any]] = []
+        errors: list[str] = []
 
-            # Write inputs
-            input_path = run_dir / "scenario_params.json"
-            with open(input_path, "w") as f:
-                json.dump({**inputs, "replication": rep, "random_seed": rep + 42}, f, default=str)
+        with ProcessPoolExecutor(max_workers=max_workers) as pool:
+            futures = {
+                pool.submit(self._run_single_replication, inputs, rep, scenario_id): rep
+                for rep in range(config.num_replications)
+            }
 
-            # Build startup command
-            startup_script = config.model_dir / f"{config.model_name}_linux.sh"
-            if not startup_script.exists():
-                startup_script = config.model_dir / f"{config.model_name}.sh"
+            for future in as_completed(futures):
+                rep = futures[future]
+                try:
+                    replication_results.append(future.result())
+                except Exception as e:
+                    errors.append(f"Replication {rep}: {type(e).__name__}: {e}")
 
-            cli_args = self.build_cli_args(inputs)
-
-            env = {**os.environ}
-            if config.java_home:
-                env["JAVA_HOME"] = str(config.java_home)
-            env["JAVA_OPTS"] = f"-Xmx{config.max_memory_mb}m"
-
-            result = subprocess.run(
-                [str(startup_script), str(input_path)] + cli_args,
-                capture_output=True,
-                text=True,
-                timeout=config.timeout_seconds,
-                cwd=str(config.model_dir),
-                env=env,
+        if not replication_results:
+            raise RuntimeError(
+                f"All {config.num_replications} replications failed: {errors}"
             )
 
-            if result.returncode != 0:
-                raise RuntimeError(
-                    f"AnyLogic replication {rep} failed (rc={result.returncode}): "
-                    f"{result.stderr[-500:] if result.stderr else 'no stderr'}"
-                )
-
-            # Read output
-            output_path = run_dir / "results.json"
-            if not output_path.exists():
-                raise FileNotFoundError(
-                    f"Replication {rep}: expected output at {output_path}"
-                )
-
-            with open(output_path) as f:
-                replication_results.append(json.load(f))
-
-        # Aggregate across replications
         aggregated = self.aggregate_replications(replication_results)
 
         return ModelOutput(
@@ -168,6 +198,10 @@ class AnyLogicAdapter(ModelAdapter):
             outputs=aggregated,
             metadata={
                 "num_replications": config.num_replications,
+                "successful_replications": len(replication_results),
+                "failed_replications": len(errors),
+                "replication_errors": errors[:5] if errors else [],
+                "parallel_workers": max_workers,
                 "scenario_id": scenario_id,
             },
         )

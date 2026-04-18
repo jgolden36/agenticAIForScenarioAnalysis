@@ -23,6 +23,50 @@ class ValidationResult(BaseModel):
     warnings: list[str] = Field(default_factory=list)
 
 
+class ResourceRequirements(BaseModel):
+    """Declarative resource requirements for a model adapter.
+
+    The executor uses these hints to schedule models across available
+    CPU cores and GPU devices on the cluster.
+    """
+
+    requires_gpu: bool = Field(
+        default=False,
+        description="Whether this model requires GPU acceleration",
+    )
+    gpu_memory_gb: float = Field(
+        default=0.0,
+        description="Minimum GPU memory required in GB (0 = no GPU needed)",
+    )
+    num_gpus: int = Field(
+        default=0,
+        description="Number of GPU devices required",
+    )
+    cpu_cores: int = Field(
+        default=1,
+        description="Number of CPU cores preferred",
+    )
+    memory_gb: float = Field(
+        default=4.0,
+        description="RAM required in GB",
+    )
+    supports_multi_threading: bool = Field(
+        default=False,
+        description="Whether the model can exploit multiple threads internally",
+    )
+    max_threads: int = Field(
+        default=1,
+        description="Max useful threads if supports_multi_threading is True",
+    )
+    prefers_process_isolation: bool = Field(
+        default=False,
+        description=(
+            "Run in a separate process instead of a thread. "
+            "Set True for CPU-bound Python-native models to avoid GIL contention."
+        ),
+    )
+
+
 class ModelOutput(BaseModel):
     """Standardized model output container."""
 
@@ -31,6 +75,12 @@ class ModelOutput(BaseModel):
     metadata: dict[str, Any] = Field(default_factory=dict)
     convergence_status: str | None = None
     diagnostics: dict[str, Any] = Field(default_factory=dict)
+    worker_id: str | None = Field(
+        default=None, description="Identifier of the worker/node that executed this model"
+    )
+    gpu_device: int | None = Field(
+        default=None, description="CUDA device index used (if GPU model)"
+    )
 
 
 class ModelAdapter(ABC):
@@ -40,6 +90,9 @@ class ModelAdapter(ABC):
     must implement all abstract methods. The `execute` method should raise
     NotImplementedError for stub implementations until the real model is
     integrated.
+
+    Resource requirements are declared via the `resource_requirements` property
+    so the executor can schedule models across GPUs and CPU cores on the cluster.
     """
 
     @property
@@ -61,6 +114,15 @@ class ModelAdapter(ABC):
     @abstractmethod
     def description(self) -> str:
         """Human-readable description of the model."""
+
+    @property
+    def resource_requirements(self) -> ResourceRequirements:
+        """Declare compute resource requirements for scheduling.
+
+        Override in subclasses that need GPU, extra CPU cores, or process
+        isolation. Defaults to a minimal single-threaded CPU profile.
+        """
+        return ResourceRequirements()
 
     @abstractmethod
     def validate_inputs(self, params: dict[str, Any]) -> ValidationResult:

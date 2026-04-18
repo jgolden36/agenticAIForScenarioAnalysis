@@ -37,8 +37,18 @@ class GAMSConfig(BaseModel):
         default_factory=dict,
         description="Additional GAMS defines to pass via options",
     )
+    solver_threads: int = Field(
+        default=0,
+        description=(
+            "Number of threads for the solver (0 = solver default). "
+            "CPLEX, Gurobi, and BARON support parallel solves."
+        ),
+    )
+    solver_options_file: Path | None = Field(
+        default=None,
+        description="Path to solver options file (e.g., cplex.opt)",
+    )
 
-    # Acceptable model status codes (1=optimal, 2=locally optimal)
     acceptable_model_statuses: list[int] = Field(default=[1, 2])
 
 
@@ -132,6 +142,11 @@ class GAMSAdapter(ModelAdapter):
         opt.defines["solver"] = config.solver
         for key, val in config.extra_defines.items():
             opt.defines[key] = val
+
+        if config.solver_threads > 0:
+            opt.threads = config.solver_threads
+        if config.solver_options_file and config.solver_options_file.exists():
+            opt.optfile = 1
 
         job.run(gams_options=opt, databases=db)
 

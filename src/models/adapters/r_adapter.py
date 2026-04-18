@@ -44,6 +44,18 @@ class RConfig(BaseModel):
         default_factory=list,
         description="Extra arguments to pass to Rscript (e.g., ['--vanilla'])",
     )
+    num_threads: int = Field(
+        default=1,
+        description="CPU threads (sets MKL/OpenBLAS thread vars for R's BLAS backend)",
+    )
+    srun_enabled: bool = Field(
+        default=False,
+        description="Wrap Rscript calls with srun for SLURM-aware execution",
+    )
+    srun_args: list[str] = Field(
+        default_factory=list,
+        description="Extra srun arguments",
+    )
 
 
 class RAdapter(ModelAdapter):
@@ -90,7 +102,7 @@ class RAdapter(ModelAdapter):
             return self._execute_subprocess(inputs)
 
     def _execute_subprocess(self, inputs: dict[str, Any]) -> ModelOutput:
-        """Execute via Rscript subprocess with JSON I/O."""
+        """Execute via Rscript subprocess with JSON I/O and thread control."""
         config = self.r_config
 
         with tempfile.NamedTemporaryFile(
@@ -105,9 +117,17 @@ class RAdapter(ModelAdapter):
                 input_path,
             ]
 
+            if config.srun_enabled:
+                cmd = ["srun"] + config.srun_args + cmd
+
             env = {**os.environ}
             if config.r_libs_path:
                 env["R_LIBS_USER"] = str(config.r_libs_path)
+
+            threads = str(config.num_threads)
+            env["OMP_NUM_THREADS"] = threads
+            env["MKL_NUM_THREADS"] = threads
+            env["OPENBLAS_NUM_THREADS"] = threads
 
             result = subprocess.run(
                 cmd,

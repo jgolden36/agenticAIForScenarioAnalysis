@@ -9,11 +9,12 @@ production impacts under Strait of Hormuz closure scenarios, where Qatar's
 """
 
 from src.models.helium.argonne_abm import ArgonneABMAdapter
-from src.models.helium.simrlfab import SimRLFabAdapter
+from src.models.helium.simrlfab import SimRLFabAdapter, SimRLFabConfig
 from src.models.helium.world_helium_model import WorldHeliumModelAdapter
 
 __all__ = [
     "WorldHeliumModelAdapter",
     "ArgonneABMAdapter",
     "SimRLFabAdapter",
+    "SimRLFabConfig",
 ]

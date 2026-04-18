@@ -33,8 +33,11 @@ class JuliaConfig(BaseModel):
         description="Path to the Julia script to execute (for subprocess fallback)",
     )
     use_juliacall: bool = Field(
-        default=True,
-        description="Use juliacall (in-process) vs subprocess. Prefer juliacall for performance.",
+        default=False,
+        description=(
+            "Use juliacall (in-process) vs subprocess. Defaults to False (subprocess) "
+            "for cluster safety — the juliacall singleton is not safe for parallel workers."
+        ),
     )
     timeout_seconds: int = 3600
     sysimage_path: Path | None = Field(
@@ -44,6 +47,22 @@ class JuliaConfig(BaseModel):
     packages: list[str] = Field(
         default_factory=list,
         description="Julia packages to load (e.g., ['MPSGE', 'JuMP'])",
+    )
+    num_threads: int = Field(
+        default=4,
+        description="Number of threads for Julia (JULIA_NUM_THREADS)",
+    )
+    gpu_device: int | None = Field(
+        default=None,
+        description="CUDA device index to bind for CUDA.jl (set by the executor)",
+    )
+    srun_enabled: bool = Field(
+        default=False,
+        description="Wrap subprocess calls with srun for SLURM-aware execution",
+    )
+    srun_args: list[str] = Field(
+        default_factory=list,
+        description="Extra srun arguments",
     )
 
 
@@ -160,7 +179,7 @@ class JuliaAdapter(ModelAdapter):
         return self.parse_outputs(raw)
 
     def _execute_subprocess(self, inputs: dict[str, Any]) -> ModelOutput:
-        """Execute via Julia subprocess (fallback)."""
+        """Execute via Julia subprocess with thread/GPU configuration."""
         config = self.julia_config
 
         if config.julia_script_path is None:
@@ -175,7 +194,7 @@ class JuliaAdapter(ModelAdapter):
             input_path = f.name
 
         try:
-            cmd = ["julia"]
+            cmd = ["julia", f"--threads={config.num_threads}"]
             if config.sysimage_path:
                 cmd.extend(["--sysimage", str(config.sysimage_path)])
             cmd.extend([
@@ -184,11 +203,21 @@ class JuliaAdapter(ModelAdapter):
                 input_path,
             ])
 
+            if config.srun_enabled:
+                srun_prefix = ["srun"] + config.srun_args
+                cmd = srun_prefix + cmd
+
+            env = {**os.environ}
+            env["JULIA_NUM_THREADS"] = str(config.num_threads)
+            if config.gpu_device is not None:
+                env["CUDA_VISIBLE_DEVICES"] = str(config.gpu_device)
+
             result = subprocess.run(
                 cmd,
                 capture_output=True,
                 text=True,
                 timeout=config.timeout_seconds,
+                env=env,
             )
 
             if result.returncode != 0:
