@@ -13,6 +13,23 @@ OIL_MODEL_SPECS: dict[str, dict] = {
             {"name": "opec_spare_capacity_mbd", "description": "Available OPEC spare production capacity", "unit": "mb/d"},
             {"name": "demand_elasticity_override", "description": "Override for short-run demand elasticity (optional)", "unit": "elasticity"},
         ],
+        "optional_parameters": [
+            {
+                "name": "section",
+                "description": (
+                    "Replication-package section to run. One of "
+                    "'Section 3/benchmark_model' (baseline calibration), "
+                    "'Section 5/supply_shocks_to_non_opec' (default — Hormuz-style non-OPEC shock IRFs), "
+                    "or 'Section 4/fracking_TD' (transitional fracking dynamics)."
+                ),
+                "unit": "categorical",
+            },
+            {
+                "name": "frisch_elasticity",
+                "description": "Override for the Frisch labor-supply elasticity used in the GE block",
+                "unit": "elasticity",
+            },
+        ],
     },
     "poles_jrc": {
         "model_id": "poles_jrc",

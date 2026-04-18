@@ -5,6 +5,7 @@ commodity system require. These specifications drive Module 2 (parameter
 extraction) — the LLM uses them to know what to extract from scenario narratives.
 """
 
+from src.parameters.model_specs.energy import ENERGY_MODEL_SPECS
 from src.parameters.model_specs.fertilizer import FERTILIZER_MODEL_SPECS
 from src.parameters.model_specs.helium import HELIUM_MODEL_SPECS
 from src.parameters.model_specs.lng import LNG_MODEL_SPECS
@@ -22,5 +23,6 @@ for specs in [
     FERTILIZER_MODEL_SPECS,
     SHIPPING_MODEL_SPECS,
     MACRO_MODEL_SPECS,
+    ENERGY_MODEL_SPECS,
 ]:
     ALL_MODEL_SPECS.update(specs)

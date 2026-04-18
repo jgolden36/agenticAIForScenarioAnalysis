@@ -2,9 +2,15 @@
 
 Takes validated scenario narratives and model input specifications,
 extracts structured parameters for each (scenario, model) pair.
+
+Supports both single extraction and batch extraction for parallelism
+across the cluster (multiple extractions in one LLM call where possible).
 """
 
 from __future__ import annotations
+
+import asyncio
+from typing import Any
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.runnables import Runnable, RunnableLambda
@@ -61,3 +67,48 @@ def build_parameter_extractor(llm: BaseChatModel) -> Runnable:
     )
 
     return chain
+
+
+async def extract_parameters_batch(
+    llm: BaseChatModel,
+    extraction_pairs: list[dict[str, Any]],
+    max_concurrency: int = 8,
+) -> list[ModelParameterExtraction]:
+    """Extract parameters for multiple (scenario, model) pairs concurrently.
+
+    Uses asyncio.Semaphore to bound concurrency and avoid overwhelming
+    the LLM provider's rate limits. Each pair runs as an independent
+    async invocation.
+
+    Args:
+        llm: Configured LangChain LLM instance.
+        extraction_pairs: List of dicts with "scenario" and "model_spec" keys.
+        max_concurrency: Max concurrent LLM requests.
+
+    Returns:
+        List of ModelParameterExtraction results (same order as input).
+    """
+    chain = build_parameter_extractor(llm)
+    semaphore = asyncio.Semaphore(max_concurrency)
+
+    async def _extract_one(pair: dict) -> ModelParameterExtraction:
+        async with semaphore:
+            return await chain.ainvoke(pair)
+
+    tasks = [_extract_one(pair) for pair in extraction_pairs]
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+
+    extractions: list[ModelParameterExtraction] = []
+    for i, result in enumerate(results):
+        if isinstance(result, Exception):
+            pair = extraction_pairs[i]
+            scenario_id = pair["scenario"].scenario_id.value
+            model_id = pair["model_spec"].get("model_id", "unknown")
+            logger.error(
+                f"Parameter extraction failed for {scenario_id}/{model_id}: {result}"
+            )
+            extractions.append(ModelParameterExtraction(parameters=[]))
+        else:
+            extractions.append(result)
+
+    return extractions

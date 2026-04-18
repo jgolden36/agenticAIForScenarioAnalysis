@@ -46,6 +46,7 @@ class CommoditySystem(str, Enum):
     FERTILIZER_AGRICULTURE = "fertilizer_agriculture"
     SHIPPING = "shipping"
     MACROECONOMIC = "macroeconomic"
+    ENERGY_SYSTEMS = "energy_systems"
 
 
 class TimeHorizon(str, Enum):

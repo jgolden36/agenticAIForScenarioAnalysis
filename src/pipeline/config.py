@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import yaml
 from pydantic import BaseModel, Field
@@ -15,16 +15,68 @@ class LLMConfig(BaseModel):
     provider: str = "anthropic"
     model: str | None = None
     temperature: float = 0.0
+    max_concurrency: int = Field(
+        default=8,
+        description="Max concurrent LLM requests (rate-limit protection)",
+    )
+    base_url: str | None = Field(
+        default=None,
+        description="Custom base URL for local LLM servers (vLLM, Ollama, TGI)",
+    )
     extra_kwargs: dict[str, Any] = Field(default_factory=dict)
+
+
+class GPUConfig(BaseModel):
+    """GPU resource configuration for the cluster."""
+
+    available_devices: list[int] = Field(
+        default_factory=list,
+        description=(
+            "CUDA device indices available to this process. "
+            "Empty list means auto-detect from CUDA_VISIBLE_DEVICES."
+        ),
+    )
+    memory_per_device_gb: float = Field(
+        default=0.0,
+        description="GPU memory per device in GB (0 = auto-detect at runtime)",
+    )
+    reserve_for_llm: int = Field(
+        default=0,
+        description="Number of GPU devices reserved for local LLM inference",
+    )
 
 
 class ExecutionConfig(BaseModel):
     """Model execution configuration."""
 
-    max_parallel_models: int = 4
+    max_parallel_models: int = Field(
+        default=4,
+        description="Max domain models running concurrently within a single process",
+    )
     default_timeout_seconds: int = 3600
     retry_failed_models: bool = False
+    max_retries: int = Field(default=2, description="Retry count for failed models")
     capture_stderr: bool = True
+    worker_type: Literal["thread", "process"] = Field(
+        default="thread",
+        description=(
+            "Executor backend. 'thread' for I/O-bound models (subprocess, API calls). "
+            "'process' for CPU-bound Python-native models (avoids GIL contention)."
+        ),
+    )
+    cpu_threads_per_model: int = Field(
+        default=1,
+        description="CPU threads allocated per model (passed via OMP_NUM_THREADS etc.)",
+    )
+    gpu: GPUConfig = Field(default_factory=GPUConfig)
+    srun_enabled: bool = Field(
+        default=False,
+        description="Wrap subprocess calls with srun for SLURM-aware execution",
+    )
+    srun_args: list[str] = Field(
+        default_factory=list,
+        description="Extra srun arguments (e.g., ['--exclusive', '--mem=32G'])",
+    )
 
 
 class OutputConfig(BaseModel):

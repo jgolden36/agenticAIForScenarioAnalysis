@@ -14,13 +14,28 @@ FERTILIZER_MODEL_SPECS: dict[str, dict] = {
     },
     "magpie": {
         "model_id": "magpie",
-        "description": "MAgPIE — land-use and agricultural production optimization",
+        "description": "MAgPIE — recursive-dynamic land-use and agricultural production optimization (PIK)",
         "commodity_system": "fertilizer_agriculture",
         "analytical_level": "commodity",
+        "platform": "GAMS (CONOPT solver) orchestrated via R",
         "required_parameters": [
-            {"name": "fertilizer_price_shock_pct", "description": "Percentage increase in fertilizer prices", "unit": "percent"},
-            {"name": "crop_yield_impact_pct", "description": "Direct impact on crop yields", "unit": "percent"},
-            {"name": "water_availability_change_pct", "description": "Change in agricultural water availability", "unit": "percent"},
+            {"name": "fertilizer_price_shock_pct", "description": "Percentage increase in fertilizer prices (affects module 38 factor costs)", "unit": "percent"},
+            {"name": "crop_yield_impact_pct", "description": "Direct impact on crop yields (negative = reduction; module 14)", "unit": "percent"},
+            {"name": "water_availability_change_pct", "description": "Change in agricultural water availability (negative = less water; module 43)", "unit": "percent"},
+        ],
+        "optional_parameters": [
+            {"name": "energy_price_shock_pct", "description": "Energy price increase affecting transport costs (module 40)", "unit": "percent"},
+            {"name": "trade_restriction_flag", "description": "Whether to tighten trade self-sufficiency constraints (module 21)", "unit": "boolean"},
+            {"name": "affected_regions", "description": "ISO country codes for region-specific shocks", "unit": "list"},
+            {"name": "ssp_scenario", "description": "SSP scenario for population/GDP drivers: SSP1-SSP5", "unit": "categorical"},
+        ],
+        "output_variables": [
+            {"name": "production", "description": "Agricultural production by crop group", "unit": "Mt/yr"},
+            {"name": "prices", "description": "Food prices by commodity", "unit": "$/t"},
+            {"name": "land_use", "description": "Land cover by type", "unit": "Mha"},
+            {"name": "water_use", "description": "Agricultural water use", "unit": "km³/yr"},
+            {"name": "fertilizer_use", "description": "Nitrogen fertilizer use", "unit": "Mt N/yr"},
+            {"name": "emissions", "description": "GHG emissions from land use", "unit": "Mt CO2eq/yr"},
         ],
     },
     "simple_g": {

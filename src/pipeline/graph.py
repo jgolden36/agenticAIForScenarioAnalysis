@@ -8,6 +8,13 @@ Implements Algorithm 1 using LangGraph's StateGraph with:
 
 This replaces the imperative orchestrator with a declarative graph
 structure that supports persistence, partial reruns, and visualization.
+
+NOTE: The interrupt() nodes (review_scenarios, review_parameters,
+review_synthesis) require a long-lived process to be resumed via
+Command(resume=...). They are therefore for LOCAL / DEVELOPMENT runs
+only -- on the SLURM cluster the pipeline is split across separate
+short-lived jobs (slurm/scripts/run_*.py) that auto-approve the
+checkpoints. See slurm/submit_pipeline.sh for the cluster entry point.
 """
 
 from __future__ import annotations
@@ -339,15 +346,18 @@ def review_parameters(state: OverallSimulationState) -> dict:
 def dispatch_model_execution(state: OverallSimulationState) -> list[Send]:
     """Fan-out: dispatch model execution for each (scenario, model) pair.
 
-    Respects analytical level ordering by grouping sends per level.
-    Within each level, models execute in parallel via Send.
+    Groups sends by analytical level so the LangGraph runner processes
+    all combat-level models before commodity-level, etc. Within each
+    level, models for all scenarios execute in parallel via Send.
+
+    GPU vs CPU resource class is tagged in the state so downstream
+    SLURM jobs or the executor can route appropriately.
     """
     logger.info("Node: dispatch_model_execution (fan-out)")
 
     registry = build_default_registry()
     sends = []
 
-    # Group parameter sets by scenario
     params_by_scenario: dict[str, dict[str, dict]] = {}
     for ps in state["parameter_sets"]:
         sid = ps["scenario_id"]
@@ -357,22 +367,32 @@ def dispatch_model_execution(state: OverallSimulationState) -> list[Send]:
             p["name"]: p["value"] for p in ps["parameters"]
         }
 
-    for scenario_id, model_params in params_by_scenario.items():
-        for model_id, params in model_params.items():
-            sends.append(
-                Send(
-                    "execute_single_model",
-                    {
-                        **state,
-                        "current_scenario_id": scenario_id,
-                        "current_model_id": model_id,
-                        "current_params": params,
-                        "execution_results": [],  # Reset accumulator
-                    },
-                )
-            )
+    for level in ANALYTICAL_LEVEL_ORDER:
+        level_adapters = registry.get_by_analytical_level(level)
+        level_model_ids = {a.model_id for a in level_adapters}
 
-    logger.info(f"Dispatching {len(sends)} model execution tasks")
+        for scenario_id, model_params in params_by_scenario.items():
+            for model_id, params in model_params.items():
+                if model_id not in level_model_ids:
+                    continue
+
+                adapter = registry.get(model_id)
+                reqs = adapter.resource_requirements if adapter else None
+
+                sends.append(
+                    Send(
+                        "execute_single_model",
+                        {
+                            **state,
+                            "current_scenario_id": scenario_id,
+                            "current_model_id": model_id,
+                            "current_params": params,
+                            "execution_results": [],
+                        },
+                    )
+                )
+
+    logger.info(f"Dispatching {len(sends)} model execution tasks (level-ordered)")
     return sends
 
 
@@ -380,8 +400,12 @@ def execute_single_model(state: OverallSimulationState) -> dict:
     """Execute a single domain model for a scenario.
 
     Handles NotImplementedError (SKIPPED), timeouts (FAILED),
-    and general exceptions (FAILED) gracefully.
+    and general exceptions (FAILED) gracefully. Sets environment
+    variables for GPU device and thread control based on the
+    adapter's resource requirements.
     """
+    import os
+
     scenario_id_str = state["current_scenario_id"]
     model_id = state["current_model_id"]
     params = state["current_params"]
@@ -398,6 +422,17 @@ def execute_single_model(state: OverallSimulationState) -> dict:
                 "error_message": f"Model {model_id} not found in registry",
             }]
         }
+
+    reqs = adapter.resource_requirements
+    config = PipelineConfig(**state["config"])
+
+    # Set thread control environment for this model
+    threads = config.execution.cpu_threads_per_model
+    if reqs.supports_multi_threading:
+        threads = max(threads, reqs.max_threads)
+    os.environ["OMP_NUM_THREADS"] = str(threads)
+    os.environ["MKL_NUM_THREADS"] = str(threads)
+    os.environ["OPENBLAS_NUM_THREADS"] = str(threads)
 
     started_at = datetime.now(timezone.utc)
 
@@ -428,6 +463,9 @@ def execute_single_model(state: OverallSimulationState) -> dict:
                 "started_at": started_at.isoformat(),
                 "completed_at": completed_at.isoformat(),
                 "runtime_seconds": (completed_at - started_at).total_seconds(),
+                "requires_gpu": reqs.requires_gpu,
+                "gpu_device": output.gpu_device,
+                "worker_id": output.worker_id,
             }]
         }
 
