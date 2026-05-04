@@ -1,0 +1,3 @@
+name,target_key,llm_value,computed_value,source_model_id,source_field,transform,deviation_pct
+oil_price_shock_pct,,0.0,60.5,poles_jrc,peak_price_change_pct,identity,200.0
+commodity_price_shocks,helium,30,0.0,world_helium_model,price_change_pct,identity,200.0

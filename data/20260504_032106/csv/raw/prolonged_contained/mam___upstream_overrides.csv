@@ -1,0 +1,2 @@
+name,target_key,llm_value,computed_value,source_model_id,source_field,transform,deviation_pct
+oil_price_path,,,"[128.4, 116.3, 104.2, 92.1, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0]",poles_jrc,brent_price_path_usd_per_bbl,identity,

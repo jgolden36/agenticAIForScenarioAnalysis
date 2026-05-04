@@ -1,0 +1,193 @@
+scenario_id,time_horizon,outcome_scope,outcome_variable,value,source_model_id,narrative_summary
+swift_contained,short_run,micro,brent_price_path_usd_per_bbl,80.0,poles_jrc,The short-run price path for Brent crude oil is expected to remain stable at $80.0 per barrel.
+swift_contained,short_run,micro,peak_price_usd_per_bbl,123.83,poles_jrc,"The peak price for Brent crude oil is expected to reach $123.83 per barrel, representing a 54.79% increase from the baseline price."
+swift_contained,short_run,micro,peak_price_change_pct,54.79,poles_jrc,The peak price change for Brent crude oil is expected to be 54.79%.
+swift_contained,short_run,micro,baseline_price_usd_per_bbl,80.0,poles_jrc,The baseline price for Brent crude oil is expected to be $80.0 per barrel.
+swift_contained,short_run,micro,rerouting_volume_mbd,4.38,poles_jrc,The rerouting volume for oil is expected to be 4.38 million barrels per day.
+swift_contained,short_run,micro,substitution_volume_mbd,0.0,poles_jrc,The substitution volume for oil is expected to be 0.0 million barrels per day.
+swift_contained,short_run,micro,disruption_duration_months,0.42,poles_jrc,The disruption duration for oil supply is expected to be 0.42 months.
+swift_contained,short_run,micro,supply_loss_mbd,4.38,poles_jrc,The supply loss for oil is expected to be 4.38 million barrels per day.
+swift_contained,short_run,micro,supply_loss_pct_of_global,4.294,poles_jrc,The supply loss as a percentage of global oil supply is expected to be 4.294%.
+swift_contained,short_run,micro,build_cap_mw_yr,10135.0,energy_flux_gas_power,"The build capacity for gas power is expected to be 10,135 MW per year."
+swift_contained,short_run,micro,total_pipeline_mw,252000.0,energy_flux_gas_power,"The total pipeline capacity for gas power is expected to be 252,000 MW."
+swift_contained,short_run,micro,total_commissioned_gw,101.35,energy_flux_gas_power,The total commissioned capacity for gas power is expected to be 101.35 GW.
+swift_contained,short_run,micro,years_to_clear_backlog,None,energy_flux_gas_power,The years to clear backlog for gas power is not available.
+swift_contained,short_run,micro,by_2030_new_gw,50.675,energy_flux_gas_power,The new capacity for gas power by 2030 is expected to be 50.675 GW.
+swift_contained,short_run,micro,by_2030_bcf_per_day_mid,3.799891996142719,energy_flux_gas_power,The mid-case demand for gas power by 2030 is expected to be 3.799891996142719 bcf/day.
+swift_contained,short_run,micro,by_2035_new_gw,101.35,energy_flux_gas_power,The new capacity for gas power by 2035 is expected to be 101.35 GW.
+swift_contained,short_run,micro,by_2035_bcf_per_day_mid,7.599783992285438,energy_flux_gas_power,The mid-case demand for gas power by 2035 is expected to be 7.599783992285438 bcf/day.
+swift_contained,short_run,micro,yearly_results,See yearly_results field in energy_flux_gas_power model output,energy_flux_gas_power,The yearly results for gas power are available in the energy_flux_gas_power model output.
+swift_contained,short_run,micro,segmented_results,See segmented_results field in energy_flux_gas_power model output,energy_flux_gas_power,The segmented results for gas power are available in the energy_flux_gas_power model output.
+swift_contained,short_run,macro,oil_price_path,"[123.83, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0]",poles_jrc,"Oil prices remain constant at $80.00 per barrel from 2026 to 2039, as computed by the upstream commodity-tier model."
+swift_contained,short_run,strategic,oil_price_path,"[123.83, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0]",poles_jrc,"Oil prices remain constant at $80.00 per barrel from 2026 to 2039, as computed by the upstream commodity-tier model."
+swift_contained,long_run,micro,brent_price_path_usd_per_bbl,80.0,poles_jrc,The long-run brent price is expected to remain stable at 80.0 USD per barrel.
+swift_contained,long_run,micro,peak_price_usd_per_bbl,123.83,poles_jrc,"The peak brent price reached 123.83 USD per barrel, representing a 54.79% increase from the baseline."
+swift_contained,long_run,micro,peak_price_change_pct,54.79,poles_jrc,The peak price change represents a 54.79% increase from the baseline.
+swift_contained,long_run,micro,baseline_price_usd_per_bbl,80.0,poles_jrc,The baseline brent price is expected to remain stable at 80.0 USD per barrel.
+swift_contained,long_run,micro,rerouting_volume_mbd,4.38,poles_jrc,The rerouting volume is expected to be 4.38 million barrels per day.
+swift_contained,long_run,micro,substitution_volume_mbd,0.0,poles_jrc,The substitution volume is expected to be 0.0 million barrels per day.
+swift_contained,long_run,micro,disruption_duration_months,0.42,poles_jrc,The disruption duration is expected to be approximately 0.42 months.
+swift_contained,long_run,micro,supply_loss_mbd,4.38,poles_jrc,The supply loss is expected to be 4.38 million barrels per day.
+swift_contained,long_run,micro,supply_loss_pct_of_global,4.294,poles_jrc,The supply loss represents approximately 4.294% of the global supply.
+swift_contained,long_run,micro,build_cap_mw_yr,10135.0,energy_flux_gas_power,The build capacity is expected to be 10135.0 MW per year.
+swift_contained,long_run,micro,total_pipeline_mw,252000.0,energy_flux_gas_power,The total pipeline capacity is expected to be 252000.0 MW.
+swift_contained,long_run,micro,total_commissioned_gw,101.35,energy_flux_gas_power,The total commissioned capacity is expected to be 101.35 GW.
+swift_contained,long_run,micro,years_to_clear_backlog,None,energy_flux_gas_power,The years to clear backlog is not specified.
+swift_contained,long_run,micro,by_2030_new_gw,50.675,energy_flux_gas_power,The new capacity by 2030 is expected to be 50.675 GW.
+swift_contained,long_run,micro,by_2030_bcf_per_day_mid,3.799891996142719,energy_flux_gas_power,The mid-case production by 2030 is expected to be 3.799891996142719 bcf/day.
+swift_contained,long_run,micro,by_2035_new_gw,101.35,energy_flux_gas_power,The new capacity by 2035 is expected to be 101.35 GW.
+swift_contained,long_run,micro,by_2035_bcf_per_day_mid,7.599783992285438,energy_flux_gas_power,The mid-case production by 2035 is expected to be 7.599783992285438 bcf/day.
+swift_contained,long_run,micro,cumulative_added_gw,101.35,energy_flux_gas_power,The cumulative added capacity is expected to be 101.35 GW.
+swift_contained,long_run,micro,dc_capacity_gw,37.4995,energy_flux_gas_power,The DC capacity is expected to be 37.4995 GW.
+swift_contained,long_run,micro,non_dc_capacity_gw,63.8505,energy_flux_gas_power,The non-DC capacity is expected to be 63.8505 GW.
+swift_contained,long_run,micro,dc_effective_cf,0.695,energy_flux_gas_power,The DC effective capacity factor is expected to be 0.695.
+swift_contained,long_run,micro,non_dc_effective_cf,0.45,energy_flux_gas_power,The non-DC effective capacity factor is expected to be 0.45.
+swift_contained,long_run,micro,blended_bcf_per_day,9.13071825650916,energy_flux_gas_power,The blended production is expected to be 9.13071825650916 bcf/day.
+swift_contained,long_run,macro,gdp_impact_pct,-0.157,pycge,The swift containment of the conflict results in a 0.157% contraction in global GDP.
+swift_contained,long_run,macro,gdp_growth_pct,-0.157,pycge,The swift containment of the conflict results in a 0.157% decline in global GDP growth.
+swift_contained,long_run,macro,gdp_growth_pct_year1,-0.157,pycge,The swift containment of the conflict results in a 0.157% decline in global GDP growth in the first year.
+swift_contained,long_run,macro,cpi_inflation_pct,1.3458,pycge,The swift containment of the conflict results in a 1.3458% increase in global CPI inflation.
+swift_contained,long_run,macro,cpi_inflation_pct_year1,1.3458,pycge,The swift containment of the conflict results in a 1.3458% increase in global CPI inflation in the first year.
+swift_contained,long_run,macro,consumption_impact_pct,-0.6953,pycge,The swift containment of the conflict results in a 0.6953% decline in global consumption.
+swift_contained,long_run,macro,welfare_pct_change,-0.6953,pycge,The swift containment of the conflict results in a 0.6953% decline in global welfare.
+swift_contained,long_run,macro,wage_impact_pct,0.729,pycge,The swift containment of the conflict results in a 0.729% increase in global wages.
+swift_contained,long_run,macro,interest_rate_impact_pct,0.6337,pycge,The swift containment of the conflict results in a 0.6337% increase in global interest rates.
+swift_contained,long_run,macro,sectoral_output_pct_change,"{'agriculture': -0.0157, 'industry': -0.0382, 'energy': 0.0738, 'services': -0.125}",pycge,"The swift containment of the conflict results in a decline in global output across various sectors, with the services sector being the most affected (-0.125%) and the energy sector being the least affected (0.0738%)."
+swift_contained,long_run,strategic,gdp_impact_pct,-0.157,pycge,"The swift contained conflict is expected to have a moderate negative impact on global GDP, with a 15.7% reduction in output."
+swift_contained,long_run,strategic,gdp_growth_pct,-0.157,pycge,"The swift contained conflict is expected to lead to a moderate decline in global GDP growth, with a 15.7% reduction in growth rate."
+swift_contained,long_run,strategic,gdp_growth_pct_year1,-0.157,pycge,"The swift contained conflict is expected to lead to a moderate decline in global GDP growth in the first year after the conflict, with a 15.7% reduction in growth rate."
+swift_contained,long_run,strategic,cpi_inflation_pct,1.3458,pycge,"The swift contained conflict is expected to lead to a moderate increase in global CPI inflation, with a 1.35% increase in inflation rate."
+swift_contained,long_run,strategic,cpi_inflation_pct_year1,1.3458,pycge,"The swift contained conflict is expected to lead to a moderate increase in global CPI inflation in the first year after the conflict, with a 1.35% increase in inflation rate."
+swift_contained,long_run,strategic,consumption_impact_pct,-0.6953,pycge,"The swift contained conflict is expected to have a significant negative impact on global consumption, with a 69.53% reduction in consumption."
+swift_contained,long_run,strategic,welfare_pct_change,-0.6953,pycge,"The swift contained conflict is expected to lead to a significant decline in global welfare, with a 69.53% reduction in welfare."
+swift_contained,long_run,strategic,wage_impact_pct,0.729,pycge,"The swift contained conflict is expected to lead to a moderate increase in global wages, with a 72.9% increase in wages."
+swift_contained,long_run,strategic,interest_rate_impact_pct,0.6337,pycge,"The swift contained conflict is expected to lead to a moderate increase in global interest rates, with a 63.37% increase in interest rates."
+swift_contained,long_run,strategic,sectoral_output_pct_change,"{'agriculture': -0.0157, 'industry': -0.0382, 'energy': 0.0738, 'services': -0.125}",pycge,"The swift contained conflict is expected to have a moderate negative impact on global output, with the services sector being the most affected, and the energy sector being the least affected."
+prolonged_contained,short_run,micro,cumulative_added_gw,101.35,energy_flux_gas_power,The cumulative added capacity of gas power plants is expected to reach 101.35 GW by 2035.
+prolonged_contained,short_run,micro,blended_bcf_per_day,9.13071825650916,energy_flux_gas_power,The blended gas production rate is expected to reach 9.13 BCF/day by 2035.
+prolonged_contained,short_run,micro,equilibrium_price_usd_per_mscf,280.0,world_helium_model,The equilibrium price of helium is expected to be 280 USD/MSCF.
+prolonged_contained,short_run,micro,price_change_pct,0.0,world_helium_model,The price change of helium is expected to be 0%.
+prolonged_contained,short_run,micro,effective_supply_gap_pct,0.0,world_helium_model,The effective supply gap of helium is expected to be 0%.
+prolonged_contained,short_run,micro,demand_rationing_mmscf,0.0,world_helium_model,The demand rationing of helium is expected to be 0 MMSCF.
+prolonged_contained,short_run,micro,sector_allocation_share,"{'mri_medical': 0.32, 'semiconductors': 0.28, 'cryogenics_research': 0.2, 'aerospace_defense': 0.12, 'other': 0.08}",world_helium_model,"The sector allocation share of helium is expected to be 32% for MRI medical, 28% for semiconductors, 20% for cryogenics research, 12% for aerospace defense, and 8% for other sectors."
+prolonged_contained,short_run,micro,rationing_share_by_sector,"{'mri_medical': 0.198, 'semiconductors': 0.2079, 'cryogenics_research': 0.297, 'aerospace_defense': 0.1485, 'other': 0.1485}",world_helium_model,"The rationing share by sector of helium is expected to be 19.8% for MRI medical, 20.8% for semiconductors, 29.7% for cryogenics research, 14.9% for aerospace defense, and 14.9% for other sectors."
+prolonged_contained,short_run,micro,inventory_drawdown_months,0.0,world_helium_model,The inventory drawdown of helium is expected to be 0 months.
+prolonged_contained,short_run,micro,qatar_helium_supply_loss_pct,0.0,world_helium_model,The Qatar helium supply loss is expected to be 0%.
+prolonged_contained,short_run,micro,disruption_duration_months,4.0,world_helium_model,The disruption duration of helium is expected to be 4 months.
+prolonged_contained,short_run,micro,initial_price_shock_pct,21.0,futures,The initial price shock of oil and LNG is expected to be 21%.
+prolonged_contained,short_run,micro,peak_price_index_per_commodity,"{'oil': 1.21, 'LNG': 1.21}",futures,The peak price index of oil and LNG is expected to be 121% of the baseline price.
+prolonged_contained,short_run,micro,time_to_normalization_months_per_commodity,"{'oil': None, 'LNG': None}",futures,The time to normalization of oil and LNG prices is expected to be None months.
+prolonged_contained,short_run,micro,forecast_horizon_months,4,futures,The forecast horizon of oil and LNG prices is expected to be 4 months.
+prolonged_contained,short_run,macro,oil_price_path,"[128.4, 116.3, 104.2, 92.1, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0]",poles_jrc,"Oil prices are expected to remain stable at $80 per barrel from 2026 to 2039, as per the upstream commodity-tier model."
+prolonged_contained,short_run,strategic,oil_price_path,"upstream=[128.4, 116.3, 104.2, 92.1, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0]",poles_jrc,"Oil prices are expected to remain high in the short run, with Brent crude prices averaging around $80 per barrel from 2026 to 2030."
+prolonged_contained,long_run,micro,cumulative_added_gw,101.35,energy_flux_gas_power,The cumulative added capacity of gas power plants is expected to reach 101.35 GW by 2035.
+prolonged_contained,long_run,micro,cumulative_gw,101.35,energy_flux_gas_power,The cumulative capacity of gas power plants is expected to reach 101.35 GW by 2035.
+prolonged_contained,long_run,micro,equilibrium_price_usd_per_mscf,280.0,world_helium_model,The equilibrium price of helium is expected to remain at 280.0 USD/MSCF.
+prolonged_contained,long_run,micro,disruption_duration_months,4.0,world_helium_model,The disruption duration of helium supply is expected to be 4 months.
+prolonged_contained,long_run,micro,initial_price_shock_pct,21.0,futures,The initial price shock of oil and LNG is expected to be 21.0%.
+prolonged_contained,long_run,micro,peak_price_index_per_commodity,1.21,futures,The peak price index of oil and LNG is expected to be 1.21.
+prolonged_contained,long_run,macro,gdp_impact_pct,-0.7611,pycge,"The prolonged contained conflict is expected to have a significant negative impact on global GDP, with a decline of 0.7611%."
+prolonged_contained,long_run,macro,gdp_growth_pct,-0.7611,pycge,The prolonged contained conflict is expected to lead to a decline in global GDP growth rate of 0.7611%.
+prolonged_contained,long_run,macro,gdp_growth_pct_year1,-0.7611,pycge,The prolonged contained conflict is expected to lead to a decline in global GDP growth rate of 0.7611% in the first year.
+prolonged_contained,long_run,macro,cpi_inflation_pct,1.46,pycge,The prolonged contained conflict is expected to lead to a moderate increase in global CPI inflation rate of 1.46%.
+prolonged_contained,long_run,macro,cpi_inflation_pct_year1,1.46,pycge,The prolonged contained conflict is expected to lead to a moderate increase in global CPI inflation rate of 1.46% in the first year.
+prolonged_contained,long_run,macro,consumption_impact_pct,-1.3451,pycge,"The prolonged contained conflict is expected to have a significant negative impact on global consumption, with a decline of 1.3451%."
+prolonged_contained,long_run,macro,welfare_pct_change,-1.3451,pycge,"The prolonged contained conflict is expected to have a significant negative impact on global welfare, with a decline of 1.3451%."
+prolonged_contained,long_run,macro,wage_impact_pct,0.4955,pycge,"The prolonged contained conflict is expected to have a moderate positive impact on global wages, with an increase of 0.4955%."
+prolonged_contained,long_run,macro,interest_rate_impact_pct,0.5397,pycge,"The prolonged contained conflict is expected to have a moderate positive impact on global interest rates, with an increase of 0.5397%."
+prolonged_contained,long_run,macro,sectoral_output_pct_change,"{'agriculture': -0.0749, 'industry': -0.1845, 'energy': 0.3511, 'services': -0.6058}",pycge,"The prolonged contained conflict is expected to have a significant negative impact on global services sector output, with a decline of 0.6058%, and a moderate positive impact on global energy sector output, with an increase of 0.3511%."
+prolonged_contained,long_run,strategic,gdp_impact_pct,-0.7611,pycge,"The prolonged contained conflict is expected to have a significant negative impact on global GDP, with a decline of 0.7611%."
+swift_escalated,short_run,micro,unmet_demand_pct,9.091,cwatm,"The model predicts a 9.09% unmet demand for water in the short run, indicating a significant shortage."
+swift_escalated,short_run,micro,brent_price_path_usd_per_bbl,"[126.6, 114.95, 103.3, 91.65, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0]",poles_jrc,"The model predicts a sharp increase in Brent oil prices, peaking at $126.6/bbl and then stabilizing at $80/bbl."
+swift_escalated,short_run,micro,peak_price_usd_per_bbl,126.6,poles_jrc,The model predicts a peak oil price of $126.6/bbl.
+swift_escalated,short_run,micro,peak_price_change_pct,58.25,poles_jrc,The model predicts a 58.25% increase in oil prices.
+swift_escalated,short_run,micro,baseline_price_usd_per_bbl,80.0,poles_jrc,The model predicts a baseline oil price of $80/bbl.
+swift_escalated,short_run,micro,disruption_duration_months,4.0,poles_jrc,The model predicts a 4-month disruption in oil supply.
+swift_escalated,short_run,micro,supply_loss_mbd,4.32,poles_jrc,The model predicts a 4.32 mb/d loss in oil supply.
+swift_escalated,short_run,micro,supply_loss_pct_of_global,4.235,poles_jrc,The model predicts a 4.235% loss in global oil supply.
+swift_escalated,short_run,micro,equilibrium_price_usd_per_mscf,280.0,world_helium_model,The model predicts an equilibrium helium price of $280/mscf.
+swift_escalated,short_run,micro,baseline_price_usd_per_mscf,280.0,world_helium_model,The model predicts a baseline helium price of $280/mscf.
+swift_escalated,short_run,micro,price_change_pct,0.0,world_helium_model,The model predicts no change in helium prices.
+swift_escalated,short_run,micro,effective_supply_gap_pct,0.0,world_helium_model,The model predicts no effective supply gap in helium.
+swift_escalated,short_run,micro,demand_rationing_mmscf,0.0,world_helium_model,The model predicts no demand rationing in helium.
+swift_escalated,short_run,micro,sector_allocation_share,"{'mri_medical': 0.32, 'semiconductors': 0.28, 'cryogenics_research': 0.2, 'aerospace_defense': 0.12, 'other': 0.08}",world_helium_model,"The model predicts the following sector allocation shares for helium: MRI medical (32%), semiconductors (28%), cryogenics research (20%), aerospace defense (12%), and other (8%)."
+swift_escalated,short_run,micro,rationing_share_by_sector,"{'mri_medical': 0.198, 'semiconductors': 0.2079, 'cryogenics_research': 0.297, 'aerospace_defense': 0.1485, 'other': 0.1485}",world_helium_model,"The model predicts the following rationing shares by sector for helium: MRI medical (19.8%), semiconductors (20.79%), cryogenics research (29.7%), aerospace defense (14.85%), and other (14.85%)."
+swift_escalated,short_run,micro,inventory_drawdown_months,0.0,world_helium_model,The model predicts no inventory drawdown in helium.
+swift_escalated,short_run,micro,qatar_helium_supply_loss_pct,0.0,world_helium_model,The model predicts no helium supply loss from Qatar.
+swift_escalated,short_run,micro,disruption_duration_months,4.0,world_helium_model,The model predicts a 4-month disruption in helium supply.
+swift_escalated,short_run,macro,oil_price_path,"[126.6, 114.95, 103.3, 91.65, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0]",poles_jrc,"Oil prices are expected to remain high in the short run, with Brent prices averaging around $80 per barrel from 2026 to 2039."
+swift_escalated,short_run,strategic,oil_price_path,"[126.6, 114.95, 103.3, 91.65, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0]",poles_jrc,"Oil prices are expected to remain high in the short run, with Brent crude prices averaging around $80 per barrel from 2026 to 2039."
+swift_escalated,long_run,micro,unmet_demand_pct,9.091,cwatm,"The model predicts a 9.09% unmet demand for water in the long run, indicating a significant shortage."
+swift_escalated,long_run,micro,brent_price_path_usd_per_bbl,"[126.6, 114.95, 103.3, 91.65, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0]",poles_jrc,"The model predicts a peak Brent oil price of $126.6 per barrel, with a peak price change of 58.25%."
+swift_escalated,long_run,micro,equilibrium_price_usd_per_mscf,280.0,world_helium_model,"The model predicts an equilibrium helium price of $280.0 per million standard cubic feet, with no price change from the baseline."
+swift_escalated,long_run,micro,cumulative_water_deficit_pct_months,36.364,cwatm,"The model predicts a cumulative water deficit of 36.36% over 36 months, indicating a significant shortage."
+swift_escalated,long_run,micro,peak_price_index_per_commodity,"{'Oil': 1.21, 'LNG': 1.21}",futures,"The model predicts a peak price index of 1.21 for both oil and LNG, indicating a significant price increase."
+swift_escalated,long_run,micro,disruption_duration_months,4.0,cwatm,"The model predicts a disruption duration of 4 months, indicating a significant impact on the water supply."
+swift_escalated,long_run,micro,supply_loss_mbd,4.32,poles_jrc,"The model predicts a supply loss of 4.32 million barrels per day, indicating a significant impact on the oil supply."
+swift_escalated,long_run,micro,effective_supply_gap_pct,0.0,world_helium_model,"The model predicts an effective supply gap of 0%, indicating no significant impact on the helium supply."
+swift_escalated,long_run,micro,cumulative_added_gw,101.35,energy_flux_gas_power,"The model predicts a cumulative added capacity of 101.35 GW, indicating a significant increase in the gas power capacity."
+swift_escalated,long_run,micro,blended_bcf_per_day,9.13071825650916,energy_flux_gas_power,"The model predicts a blended production of 9.13 BCF/day, indicating a significant increase in the gas production."
+swift_escalated,long_run,micro,sector_allocation_share,"{'mri_medical': 0.32, 'semiconductors': 0.28, 'cryogenics_research': 0.2, 'aerospace_defense': 0.12, 'other': 0.08}",world_helium_model,"The model predicts a sector allocation share of 32% for MRI medical, 28% for semiconductors, 20% for cryogenics research, 12% for aerospace defense, and 8% for other sectors."
+swift_escalated,long_run,micro,rationing_share_by_sector,"{'mri_medical': 0.198, 'semiconductors': 0.2079, 'cryogenics_research': 0.297, 'aerospace_defense': 0.1485, 'other': 0.1485}",world_helium_model,"The model predicts a rationing share by sector of 19.8% for MRI medical, 20.8% for semiconductors, 29.7% for cryogenics research, 14.9% for aerospace defense, and 14.9% for other sectors."
+swift_escalated,long_run,macro,gdp_impact_pct,-0.7361,pycge,"The swift escalation of the conflict in the Strait of Hormuz is expected to have a significant negative impact on global GDP, with a predicted decline of 0.7361%."
+swift_escalated,long_run,macro,gdp_growth_pct,-0.7361,pycge,"The swift escalation of the conflict in the Strait of Hormuz is expected to have a significant negative impact on global GDP growth, with a predicted decline of 0.7361%."
+swift_escalated,long_run,macro,cpi_inflation_pct,1.415,pycge,"The swift escalation of the conflict in the Strait of Hormuz is expected to lead to a moderate increase in global CPI inflation, with a predicted rise of 1.415%."
+swift_escalated,long_run,macro,cpi_inflation_pct_year1,1.415,pycge,"The swift escalation of the conflict in the Strait of Hormuz is expected to lead to a moderate increase in global CPI inflation in the first year, with a predicted rise of 1.415%."
+swift_escalated,long_run,macro,consumption_impact_pct,-1.3021,pycge,"The swift escalation of the conflict in the Strait of Hormuz is expected to have a significant negative impact on global consumption, with a predicted decline of 1.3021%."
+swift_escalated,long_run,macro,welfare_pct_change,-1.3021,pycge,"The swift escalation of the conflict in the Strait of Hormuz is expected to have a significant negative impact on global welfare, with a predicted decline of 1.3021%."
+swift_escalated,long_run,macro,wage_impact_pct,0.481,pycge,"The swift escalation of the conflict in the Strait of Hormuz is expected to have a moderate positive impact on global wages, with a predicted increase of 0.481%."
+swift_escalated,long_run,macro,interest_rate_impact_pct,0.5235,pycge,"The swift escalation of the conflict in the Strait of Hormuz is expected to have a moderate positive impact on global interest rates, with a predicted increase of 0.5235%."
+swift_escalated,long_run,macro,sectoral_output_pct_change,"{'agriculture': -0.0728, 'industry': -0.1787, 'energy': 0.342, 'services': -0.586}",pycge,"The swift escalation of the conflict in the Strait of Hormuz is expected to have a significant negative impact on global sectoral output, with the services sector being the most affected and the energy sector being the least affected."
+swift_escalated,long_run,strategic,gdp_impact_pct,-0.7361,pycge,"The swift escalation of the conflict in the Strait of Hormuz is expected to have a significant negative impact on global GDP, with a projected decline of 0.7361%."
+swift_escalated,long_run,strategic,gdp_growth_pct,-0.7361,pycge,"The swift escalation of the conflict in the Strait of Hormuz is expected to have a significant negative impact on global GDP growth, with a projected decline of 0.7361%."
+swift_escalated,long_run,strategic,cpi_inflation_pct,1.415,pycge,"The swift escalation of the conflict in the Strait of Hormuz is expected to lead to a moderate increase in global CPI inflation, with a projected increase of 1.415%."
+swift_escalated,long_run,strategic,cpi_inflation_pct_year1,1.415,pycge,"The swift escalation of the conflict in the Strait of Hormuz is expected to lead to a moderate increase in global CPI inflation in the first year, with a projected increase of 1.415%."
+swift_escalated,long_run,strategic,consumption_impact_pct,-1.3021,pycge,"The swift escalation of the conflict in the Strait of Hormuz is expected to have a significant negative impact on global consumption, with a projected decline of 1.3021%."
+swift_escalated,long_run,strategic,welfare_pct_change,-1.3021,pycge,"The swift escalation of the conflict in the Strait of Hormuz is expected to have a significant negative impact on global welfare, with a projected decline of 1.3021%."
+swift_escalated,long_run,strategic,wage_impact_pct,0.481,pycge,"The swift escalation of the conflict in the Strait of Hormuz is expected to have a moderate positive impact on global wages, with a projected increase of 0.481%."
+swift_escalated,long_run,strategic,interest_rate_impact_pct,0.5235,pycge,"The swift escalation of the conflict in the Strait of Hormuz is expected to have a moderate positive impact on global interest rates, with a projected increase of 0.5235%."
+swift_escalated,long_run,strategic,sectoral_output_pct_change,"{'agriculture': -0.0728, 'industry': -0.1787, 'energy': 0.342, 'services': -0.586}",pycge,"The swift escalation of the conflict in the Strait of Hormuz is expected to have a significant negative impact on global sectoral output, with the services sector being the most affected and the energy sector being the least affected."
+prolonged_escalated,short_run,macro,oil_price_path,"[121.46, 115.54, 109.61, 103.69, 97.77, 91.85, 85.92, 80.0, 80.0, 80.0, 80.0, 80.0]",poles_jrc,"Oil prices are expected to remain high in the short run, with prices ranging from $85.92 to $121.46 per barrel."
+prolonged_escalated,short_run,strategic,oil_price_path,"[121.46, 115.54, 109.61, 103.69, 97.77, 91.85, 85.92, 80.0, 80.0, 80.0, 80.0, 80.0]",poles_jrc,"Oil prices are expected to remain high in the short run, with prices ranging from $85.92 to $121.46 per barrel."
+prolonged_escalated,long_run,macro,gdp_impact_pct,-0.98,pycge,The prolonged escalated conflict is expected to result in a 0.98% decline in global GDP.
+prolonged_escalated,long_run,macro,gdp_growth_pct,-0.98,pycge,The prolonged escalated conflict is expected to result in a 0.98% decline in global GDP growth.
+prolonged_escalated,long_run,macro,gdp_growth_pct_year1,-0.98,pycge,The prolonged escalated conflict is expected to result in a 0.98% decline in global GDP growth in the first year.
+prolonged_escalated,long_run,macro,cpi_inflation_pct,1.6792,pycge,The prolonged escalated conflict is expected to result in a 1.6792% increase in global CPI inflation.
+prolonged_escalated,long_run,macro,cpi_inflation_pct_year1,1.6792,pycge,The prolonged escalated conflict is expected to result in a 1.6792% increase in global CPI inflation in the first year.
+prolonged_escalated,long_run,macro,consumption_impact_pct,-1.6517,pycge,The prolonged escalated conflict is expected to result in a 1.6517% decline in global consumption.
+prolonged_escalated,long_run,macro,welfare_pct_change,-1.6517,pycge,The prolonged escalated conflict is expected to result in a 1.6517% decline in global welfare.
+prolonged_escalated,long_run,macro,wage_impact_pct,0.5175,pycge,The prolonged escalated conflict is expected to result in a 0.5175% increase in global wages.
+prolonged_escalated,long_run,macro,interest_rate_impact_pct,0.5946,pycge,The prolonged escalated conflict is expected to result in a 0.5946% increase in global interest rates.
+prolonged_escalated,long_run,macro,sectoral_output_pct_change,"{'agriculture': -0.0985, 'industry': -0.2391, 'energy': 0.4641, 'services': -0.7806}",pycge,"The prolonged escalated conflict is expected to result in a decline in output across various sectors, with the energy sector being the least affected and the services sector being the most affected."
+prolonged_escalated,long_run,strategic,gdp_impact_pct,-0.98,pycge,"The prolonged escalated conflict is expected to have a significant negative impact on global GDP, with a decline of 0.98%."
+prolonged_escalated,long_run,strategic,gdp_growth_pct,-0.98,pycge,"The prolonged escalated conflict is expected to lead to a significant decline in global GDP growth, with a decrease of 0.98%."
+prolonged_escalated,long_run,strategic,gdp_growth_pct_year1,-0.98,pycge,"The prolonged escalated conflict is expected to lead to a significant decline in global GDP growth in the first year, with a decrease of 0.98%."
+prolonged_escalated,long_run,strategic,cpi_inflation_pct,1.6792,pycge,"The prolonged escalated conflict is expected to lead to a moderate increase in global CPI inflation, with an increase of 1.6792%."
+prolonged_escalated,long_run,strategic,cpi_inflation_pct_year1,1.6792,pycge,"The prolonged escalated conflict is expected to lead to a moderate increase in global CPI inflation in the first year, with an increase of 1.6792%."
+prolonged_escalated,long_run,strategic,consumption_impact_pct,-1.6517,pycge,"The prolonged escalated conflict is expected to have a significant negative impact on global consumption, with a decline of 1.6517%."
+prolonged_escalated,long_run,strategic,welfare_pct_change,-1.6517,pycge,"The prolonged escalated conflict is expected to have a significant negative impact on global welfare, with a decline of 1.6517%."
+prolonged_escalated,long_run,strategic,wage_impact_pct,0.5175,pycge,"The prolonged escalated conflict is expected to have a moderate positive impact on global wages, with an increase of 0.5175%."
+prolonged_escalated,long_run,strategic,interest_rate_impact_pct,0.5946,pycge,"The prolonged escalated conflict is expected to have a moderate positive impact on global interest rates, with an increase of 0.5946%."
+prolonged_escalated,long_run,strategic,sectoral_output_pct_change,"{'agriculture': -0.0985, 'industry': -0.2391, 'energy': 0.4641, 'services': -0.7806}",pycge,"The prolonged escalated conflict is expected to have a significant negative impact on global output in the services sector, with a decline of 0.7806%, and a moderate positive impact on the energy sector, with an increase of 0.4641%."
+infrastructure_collapse,short_run,macro,oil_price_path,"upstream=[118.69, 113.16, 107.63, 102.11, 96.58, 91.05, 85.53, 80.0, 80.0, 80.0, 80.0, 80.0]",poles_jrc,"Oil prices are expected to decline in the short run, with a predicted price path of $118.69, $113.16, $107.63, $102.11, $96.58, $91.05, $85.53, $80.0, $80.0, $80.0, $80.0, $80.0 per barrel in the respective years."
+infrastructure_collapse,short_run,strategic,oil_price_path,"upstream=[118.69, 113.16, 107.63, 102.11, 96.58, 91.05, 85.53, 80.0, 80.0, 80.0, 80.0, 80.0]",poles_jrc,"Oil prices are expected to decline in the short run, with Brent crude prices reaching $80.00 per barrel by 2027 and remaining at that level through 2039."
+infrastructure_collapse,long_run,macro,gdp_impact_pct,-0.8499,pycge,The global GDP is expected to decline by 84.99% due to the infrastructure collapse scenario.
+infrastructure_collapse,long_run,macro,gdp_growth_pct,-0.8499,pycge,The global GDP growth rate is expected to decline by 84.99% due to the infrastructure collapse scenario.
+infrastructure_collapse,long_run,macro,gdp_growth_pct_year1,-0.8499,pycge,The global GDP growth rate in the first year is expected to decline by 84.99% due to the infrastructure collapse scenario.
+infrastructure_collapse,long_run,macro,cpi_inflation_pct,1.7262,pycge,The global CPI inflation rate is expected to increase by 172.62% due to the infrastructure collapse scenario.
+infrastructure_collapse,long_run,macro,cpi_inflation_pct_year1,1.7262,pycge,The global CPI inflation rate in the first year is expected to increase by 172.62% due to the infrastructure collapse scenario.
+infrastructure_collapse,long_run,macro,consumption_impact_pct,-1.5404,pycge,The global consumption is expected to decline by 154.04% due to the infrastructure collapse scenario.
+infrastructure_collapse,long_run,macro,welfare_pct_change,-1.5404,pycge,The global welfare is expected to decline by 154.04% due to the infrastructure collapse scenario.
+infrastructure_collapse,long_run,macro,wage_impact_pct,0.6107,pycge,The global wage is expected to increase by 61.07% due to the infrastructure collapse scenario.
+infrastructure_collapse,long_run,macro,interest_rate_impact_pct,0.6506,pycge,The global interest rate is expected to increase by 65.06% due to the infrastructure collapse scenario.
+infrastructure_collapse,long_run,macro,sectoral_output_pct_change,"{'agriculture': -0.1004, 'industry': -0.2097, 'energy': 0.4217, 'services': -0.678}",pycge,"The global sectoral output is expected to change as follows: agriculture -10.04%, industry -20.97%, energy 42.17%, services -67.8% due to the infrastructure collapse scenario."
+infrastructure_collapse,long_run,strategic,gdp_impact_pct,-0.8499,pycge,The global GDP is expected to decline by 84.99% due to the infrastructure collapse scenario.
+infrastructure_collapse,long_run,strategic,gdp_growth_pct,-0.8499,pycge,The global GDP growth rate is expected to decline by 84.99% due to the infrastructure collapse scenario.
+infrastructure_collapse,long_run,strategic,gdp_growth_pct_year1,-0.8499,pycge,The global GDP growth rate is expected to decline by 84.99% in the first year of the infrastructure collapse scenario.
+infrastructure_collapse,long_run,strategic,cpi_inflation_pct,1.7262,pycge,The global CPI inflation rate is expected to increase by 172.62% due to the infrastructure collapse scenario.
+infrastructure_collapse,long_run,strategic,cpi_inflation_pct_year1,1.7262,pycge,The global CPI inflation rate is expected to increase by 172.62% in the first year of the infrastructure collapse scenario.
+infrastructure_collapse,long_run,strategic,consumption_impact_pct,-1.5404,pycge,The global consumption is expected to decline by 154.04% due to the infrastructure collapse scenario.
+infrastructure_collapse,long_run,strategic,welfare_pct_change,-1.5404,pycge,The global welfare is expected to decline by 154.04% due to the infrastructure collapse scenario.
+infrastructure_collapse,long_run,strategic,wage_impact_pct,0.6107,pycge,The global wages are expected to increase by 61.07% due to the infrastructure collapse scenario.
+infrastructure_collapse,long_run,strategic,interest_rate_impact_pct,0.6506,pycge,The global interest rates are expected to increase by 65.06% due to the infrastructure collapse scenario.
+infrastructure_collapse,long_run,strategic,sectoral_output_pct_change,"{'agriculture': -0.1004, 'industry': -0.2097, 'energy': 0.4217, 'services': -0.678}",pycge,"The global sectoral output is expected to change as follows: agriculture by -10.04%, industry by -20.97%, energy by 42.17%, and services by -67.8% due to the infrastructure collapse scenario."

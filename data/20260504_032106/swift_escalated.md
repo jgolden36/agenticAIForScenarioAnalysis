@@ -1,0 +1,265 @@
+# Scenario swift_escalated: Swift Escalated Conflict
+
+## Short Run — Micro
+
+- **unmet_demand_pct**: 9.091 % _(source: `cwatm`)_
+  - The model predicts a 9.09% unmet demand for water in the short run, indicating a significant shortage.
+  - distributional note: The water shortage is expected to affect all regions equally, with no clear hotspots or areas of relative resilience.
+- **brent_price_path_usd_per_bbl**: [126.6, 114.95, 103.3, 91.65, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0] USD/bbl _(source: `poles_jrc`)_
+  - The model predicts a sharp increase in Brent oil prices, peaking at $126.6/bbl and then stabilizing at $80/bbl.
+  - distributional note: The price shock is expected to affect all regions and sectors equally, with no clear hotspots or areas of relative resilience.
+- **peak_price_usd_per_bbl**: 126.6 USD/bbl _(source: `poles_jrc`)_
+  - The model predicts a peak oil price of $126.6/bbl.
+  - distributional note: The price shock is expected to affect all regions and sectors equally, with no clear hotspots or areas of relative resilience.
+- **peak_price_change_pct**: 58.25 % _(source: `poles_jrc`)_
+  - The model predicts a 58.25% increase in oil prices.
+  - reliability: Note: This value is inconsistent with the upstream-computed value of 0.0, indicating a disagreement between the two models.
+  - distributional note: The price shock is expected to affect all regions and sectors equally, with no clear hotspots or areas of relative resilience.
+- **baseline_price_usd_per_bbl**: 80.0 USD/bbl _(source: `poles_jrc`)_
+  - The model predicts a baseline oil price of $80/bbl.
+  - distributional note: The price shock is expected to affect all regions and sectors equally, with no clear hotspots or areas of relative resilience.
+- **disruption_duration_months**: 4.0 months _(source: `poles_jrc`)_
+  - The model predicts a 4-month disruption in oil supply.
+  - distributional note: The disruption is expected to affect all regions and sectors equally, with no clear hotspots or areas of relative resilience.
+- **supply_loss_mbd**: 4.32 mbd _(source: `poles_jrc`)_
+  - The model predicts a 4.32 mb/d loss in oil supply.
+  - distributional note: The disruption is expected to affect all regions and sectors equally, with no clear hotspots or areas of relative resilience.
+- **supply_loss_pct_of_global**: 4.235 % _(source: `poles_jrc`)_
+  - The model predicts a 4.235% loss in global oil supply.
+  - distributional note: The disruption is expected to affect all regions and sectors equally, with no clear hotspots or areas of relative resilience.
+- **equilibrium_price_usd_per_mscf**: 280.0 USD/mscf _(source: `world_helium_model`)_
+  - The model predicts an equilibrium helium price of $280/mscf.
+  - distributional note: The price shock is expected to affect all regions and sectors equally, with no clear hotspots or areas of relative resilience.
+- **baseline_price_usd_per_mscf**: 280.0 USD/mscf _(source: `world_helium_model`)_
+  - The model predicts a baseline helium price of $280/mscf.
+  - distributional note: The price shock is expected to affect all regions and sectors equally, with no clear hotspots or areas of relative resilience.
+- **price_change_pct**: 0.0 % _(source: `world_helium_model`)_
+  - The model predicts no change in helium prices.
+  - reliability: Note: This value is inconsistent with the upstream-computed value of 30.0, indicating a disagreement between the two models.
+  - distributional note: The price shock is expected to affect all regions and sectors equally, with no clear hotspots or areas of relative resilience.
+- **effective_supply_gap_pct**: 0.0 % _(source: `world_helium_model`)_
+  - The model predicts no effective supply gap in helium.
+  - distributional note: The supply gap is expected to affect all regions and sectors equally, with no clear hotspots or areas of relative resilience.
+- **demand_rationing_mmscf**: 0.0 mmscf _(source: `world_helium_model`)_
+  - The model predicts no demand rationing in helium.
+  - distributional note: The demand rationing is expected to affect all regions and sectors equally, with no clear hotspots or areas of relative resilience.
+- **sector_allocation_share**: {'mri_medical': 0.32, 'semiconductors': 0.28, 'cryogenics_research': 0.2, 'aerospace_defense': 0.12, 'other': 0.08} _(source: `world_helium_model`)_
+  - The model predicts the following sector allocation shares for helium: MRI medical (32%), semiconductors (28%), cryogenics research (20%), aerospace defense (12%), and other (8%).
+  - distributional note: The sector allocation shares are expected to affect all regions equally, with no clear hotspots or areas of relative resilience.
+- **rationing_share_by_sector**: {'mri_medical': 0.198, 'semiconductors': 0.2079, 'cryogenics_research': 0.297, 'aerospace_defense': 0.1485, 'other': 0.1485} _(source: `world_helium_model`)_
+  - The model predicts the following rationing shares by sector for helium: MRI medical (19.8%), semiconductors (20.79%), cryogenics research (29.7%), aerospace defense (14.85%), and other (14.85%).
+  - distributional note: The rationing shares are expected to affect all regions equally, with no clear hotspots or areas of relative resilience.
+- **inventory_drawdown_months**: 0.0 months _(source: `world_helium_model`)_
+  - The model predicts no inventory drawdown in helium.
+  - distributional note: The inventory drawdown is expected to affect all regions and sectors equally, with no clear hotspots or areas of relative resilience.
+- **qatar_helium_supply_loss_pct**: 0.0 % _(source: `world_helium_model`)_
+  - The model predicts no helium supply loss from Qatar.
+  - distributional note: The supply loss is expected to affect all regions and sectors equally, with no clear hotspots or areas of relative resilience.
+- **disruption_duration_months**: 4.0 months _(source: `world_helium_model`)_
+  - The model predicts a 4-month disruption in helium supply.
+  - distributional note: The disruption is expected to affect all regions and sectors equally, with no clear hotspots or areas of relative resilience.
+
+## Short Run — Macro
+
+- **oil_price_path**: [126.6, 114.95, 103.3, 91.65, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0] USD per barrel _(source: `poles_jrc`)_
+  - Oil prices are expected to remain high in the short run, with Brent prices averaging around $80 per barrel from 2026 to 2039.
+  - reliability: The oil price path is based on the upstream commodity-tier model 'poles_jrc', which provides a reliable estimate of oil prices.
+  - distributional note: Distribution note: No regional or sectoral data is available for this outcome.
+
+## Short Run — Strategic
+
+- **oil_price_path**: [126.6, 114.95, 103.3, 91.65, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0] USD per barrel _(source: `poles_jrc`)_
+  - Oil prices are expected to remain high in the short run, with Brent crude prices averaging around $80 per barrel from 2026 to 2039.
+  - reliability: The oil price path is based on the upstream commodity-tier model 'poles_jrc', which provides a reliable estimate of oil prices.
+  - distributional note: Distribution note: No regional or sectoral data is available for this outcome.
+
+## Long Run — Micro
+
+- **unmet_demand_pct**: 9.091 % _(source: `cwatm`)_
+  - The model predicts a 9.09% unmet demand for water in the long run, indicating a significant shortage.
+  - distributional note: No regional or sectoral data available for this outcome.
+- **brent_price_path_usd_per_bbl**: [126.6, 114.95, 103.3, 91.65, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0] USD/bbl _(source: `poles_jrc`)_
+  - The model predicts a peak Brent oil price of $126.6 per barrel, with a peak price change of 58.25%.
+  - reliability: Note: The model's price path is consistent with the scenario's narrative, but the peak price change is significantly higher than the initial price shock of 21%.
+  - distributional note: No regional or sectoral data available for this outcome.
+- **equilibrium_price_usd_per_mscf**: 280.0 USD/MSCF _(source: `world_helium_model`)_
+  - The model predicts an equilibrium helium price of $280.0 per million standard cubic feet, with no price change from the baseline.
+  - reliability: Note: The model's price prediction is consistent with the scenario's narrative, but the price change is zero, which may indicate a lack of supply disruption.
+  - distributional note: No regional or sectoral data available for this outcome.
+- **cumulative_water_deficit_pct_months**: 36.364 % _(source: `cwatm`)_
+  - The model predicts a cumulative water deficit of 36.36% over 36 months, indicating a significant shortage.
+  - distributional note: No regional or sectoral data available for this outcome.
+- **peak_price_index_per_commodity**: {'Oil': 1.21, 'LNG': 1.21} _(source: `futures`)_
+  - The model predicts a peak price index of 1.21 for both oil and LNG, indicating a significant price increase.
+  - reliability: Note: The model's price prediction is consistent with the scenario's narrative, but the peak price index is the same for both oil and LNG, which may indicate a lack of differentiation between the two commodities.
+  - distributional note: No regional or sectoral data available for this outcome.
+- **disruption_duration_months**: 4.0 months _(source: `cwatm`)_
+  - The model predicts a disruption duration of 4 months, indicating a significant impact on the water supply.
+  - distributional note: No regional or sectoral data available for this outcome.
+- **supply_loss_mbd**: 4.32 MBD _(source: `poles_jrc`)_
+  - The model predicts a supply loss of 4.32 million barrels per day, indicating a significant impact on the oil supply.
+  - reliability: Note: The model's supply loss is consistent with the scenario's narrative, but the value is relatively small compared to the global oil supply.
+  - distributional note: No regional or sectoral data available for this outcome.
+- **effective_supply_gap_pct**: 0.0 % _(source: `world_helium_model`)_
+  - The model predicts an effective supply gap of 0%, indicating no significant impact on the helium supply.
+  - reliability: Note: The model's supply gap prediction is consistent with the scenario's narrative, but the value is zero, which may indicate a lack of supply disruption.
+  - distributional note: No regional or sectoral data available for this outcome.
+- **cumulative_added_gw**: 101.35 GW _(source: `energy_flux_gas_power`)_
+  - The model predicts a cumulative added capacity of 101.35 GW, indicating a significant increase in the gas power capacity.
+  - distributional note: No regional or sectoral data available for this outcome.
+- **blended_bcf_per_day**: 9.13071825650916 BCF/day _(source: `energy_flux_gas_power`)_
+  - The model predicts a blended production of 9.13 BCF/day, indicating a significant increase in the gas production.
+  - distributional note: No regional or sectoral data available for this outcome.
+- **sector_allocation_share**: {'mri_medical': 0.32, 'semiconductors': 0.28, 'cryogenics_research': 0.2, 'aerospace_defense': 0.12, 'other': 0.08} _(source: `world_helium_model`)_
+  - The model predicts a sector allocation share of 32% for MRI medical, 28% for semiconductors, 20% for cryogenics research, 12% for aerospace defense, and 8% for other sectors.
+  - distributional note: The most-affected sector is MRI medical, while the least-affected sector is aerospace defense.
+- **rationing_share_by_sector**: {'mri_medical': 0.198, 'semiconductors': 0.2079, 'cryogenics_research': 0.297, 'aerospace_defense': 0.1485, 'other': 0.1485} _(source: `world_helium_model`)_
+  - The model predicts a rationing share by sector of 19.8% for MRI medical, 20.8% for semiconductors, 29.7% for cryogenics research, 14.9% for aerospace defense, and 14.9% for other sectors.
+  - distributional note: The most-affected sector is cryogenics research, while the least-affected sector is aerospace defense.
+
+## Long Run — Macro
+
+- **gdp_impact_pct**: -0.7361 % _(source: `pycge`)_
+  - The swift escalation of the conflict in the Strait of Hormuz is expected to have a significant negative impact on global GDP, with a predicted decline of 0.7361%.
+  - reliability: The pycge model successfully completed and produced this outcome.
+  - regional distribution: US=-0.123875
+  - sectoral distribution: services=-0.586, industry=-0.1787, agriculture=-0.0728, energy=0.342
+  - distributional note: The energy sector is expected to be the least affected, with a predicted increase of 0.342%, while the services sector is expected to be the most affected, with a predicted decline of 0.586%.
+- **gdp_growth_pct**: -0.7361 % _(source: `pycge`)_
+  - The swift escalation of the conflict in the Strait of Hormuz is expected to have a significant negative impact on global GDP growth, with a predicted decline of 0.7361%.
+  - reliability: The pycge model successfully completed and produced this outcome.
+  - regional distribution: US=-0.123875
+  - sectoral distribution: services=-0.586, industry=-0.1787, agriculture=-0.0728, energy=0.342
+  - distributional note: The energy sector is expected to be the least affected, with a predicted increase of 0.342%, while the services sector is expected to be the most affected, with a predicted decline of 0.586%.
+- **cpi_inflation_pct**: 1.415 % _(source: `pycge`)_
+  - The swift escalation of the conflict in the Strait of Hormuz is expected to lead to a moderate increase in global CPI inflation, with a predicted rise of 1.415%.
+  - reliability: The pycge model successfully completed and produced this outcome.
+  - regional distribution: US=-0.123875
+  - sectoral distribution: services=-0.586, industry=-0.1787, agriculture=-0.0728, energy=0.342
+  - distributional note: The energy sector is expected to be the least affected, with a predicted increase of 0.342%, while the services sector is expected to be the most affected, with a predicted decline of 0.586%.
+- **cpi_inflation_pct_year1**: 1.415 % _(source: `pycge`)_
+  - The swift escalation of the conflict in the Strait of Hormuz is expected to lead to a moderate increase in global CPI inflation in the first year, with a predicted rise of 1.415%.
+  - reliability: The pycge model successfully completed and produced this outcome.
+  - regional distribution: US=-0.123875
+  - sectoral distribution: services=-0.586, industry=-0.1787, agriculture=-0.0728, energy=0.342
+  - distributional note: The energy sector is expected to be the least affected, with a predicted increase of 0.342%, while the services sector is expected to be the most affected, with a predicted decline of 0.586%.
+- **consumption_impact_pct**: -1.3021 % _(source: `pycge`)_
+  - The swift escalation of the conflict in the Strait of Hormuz is expected to have a significant negative impact on global consumption, with a predicted decline of 1.3021%.
+  - reliability: The pycge model successfully completed and produced this outcome.
+  - regional distribution: US=-0.123875
+  - sectoral distribution: services=-0.586, industry=-0.1787, agriculture=-0.0728, energy=0.342
+  - distributional note: The energy sector is expected to be the least affected, with a predicted increase of 0.342%, while the services sector is expected to be the most affected, with a predicted decline of 0.586%.
+- **welfare_pct_change**: -1.3021 % _(source: `pycge`)_
+  - The swift escalation of the conflict in the Strait of Hormuz is expected to have a significant negative impact on global welfare, with a predicted decline of 1.3021%.
+  - reliability: The pycge model successfully completed and produced this outcome.
+  - regional distribution: US=-0.123875
+  - sectoral distribution: services=-0.586, industry=-0.1787, agriculture=-0.0728, energy=0.342
+  - distributional note: The energy sector is expected to be the least affected, with a predicted increase of 0.342%, while the services sector is expected to be the most affected, with a predicted decline of 0.586%.
+- **wage_impact_pct**: 0.481 % _(source: `pycge`)_
+  - The swift escalation of the conflict in the Strait of Hormuz is expected to have a moderate positive impact on global wages, with a predicted increase of 0.481%.
+  - reliability: The pycge model successfully completed and produced this outcome.
+  - regional distribution: US=-0.123875
+  - sectoral distribution: services=-0.586, industry=-0.1787, agriculture=-0.0728, energy=0.342
+  - distributional note: The energy sector is expected to be the least affected, with a predicted increase of 0.342%, while the services sector is expected to be the most affected, with a predicted decline of 0.586%.
+- **interest_rate_impact_pct**: 0.5235 % _(source: `pycge`)_
+  - The swift escalation of the conflict in the Strait of Hormuz is expected to have a moderate positive impact on global interest rates, with a predicted increase of 0.5235%.
+  - reliability: The pycge model successfully completed and produced this outcome.
+  - regional distribution: US=-0.123875
+  - sectoral distribution: services=-0.586, industry=-0.1787, agriculture=-0.0728, energy=0.342
+  - distributional note: The energy sector is expected to be the least affected, with a predicted increase of 0.342%, while the services sector is expected to be the most affected, with a predicted decline of 0.586%.
+- **sectoral_output_pct_change**: {'agriculture': -0.0728, 'industry': -0.1787, 'energy': 0.342, 'services': -0.586} % _(source: `pycge`)_
+  - The swift escalation of the conflict in the Strait of Hormuz is expected to have a significant negative impact on global sectoral output, with the services sector being the most affected and the energy sector being the least affected.
+  - reliability: The pycge model successfully completed and produced this outcome.
+  - regional distribution: US=-0.123875
+  - sectoral distribution: services=-0.586, industry=-0.1787, agriculture=-0.0728, energy=0.342
+  - distributional note: The energy sector is expected to be the least affected, with a predicted increase of 0.342%, while the services sector is expected to be the most affected, with a predicted decline of 0.586%.
+
+## Long Run — Strategic
+
+- **gdp_impact_pct**: -0.7361 % _(source: `pycge`)_
+  - The swift escalation of the conflict in the Strait of Hormuz is expected to have a significant negative impact on global GDP, with a projected decline of 0.7361%.
+  - reliability: The pycge model successfully completed and produced this outcome.
+  - regional distribution: US=-0.123875
+  - sectoral distribution: services=-0.586, industry=-0.1787, agriculture=-0.0728, energy=0.342
+  - distributional note: The energy sector is expected to be the least affected, with a projected increase of 0.342%, while the services sector is expected to be the most affected, with a projected decline of 0.586%.
+- **gdp_growth_pct**: -0.7361 % _(source: `pycge`)_
+  - The swift escalation of the conflict in the Strait of Hormuz is expected to have a significant negative impact on global GDP growth, with a projected decline of 0.7361%.
+  - reliability: The pycge model successfully completed and produced this outcome.
+  - regional distribution: US=-0.123875
+  - sectoral distribution: services=-0.586, industry=-0.1787, agriculture=-0.0728, energy=0.342
+  - distributional note: The energy sector is expected to be the least affected, with a projected increase of 0.342%, while the services sector is expected to be the most affected, with a projected decline of 0.586%.
+- **cpi_inflation_pct**: 1.415 % _(source: `pycge`)_
+  - The swift escalation of the conflict in the Strait of Hormuz is expected to lead to a moderate increase in global CPI inflation, with a projected increase of 1.415%.
+  - reliability: The pycge model successfully completed and produced this outcome.
+  - regional distribution: US=-0.123875
+  - sectoral distribution: services=-0.586, industry=-0.1787, agriculture=-0.0728, energy=0.342
+  - distributional note: The energy sector is expected to be the least affected, with a projected increase of 0.342%, while the services sector is expected to be the most affected, with a projected decline of 0.586%.
+- **cpi_inflation_pct_year1**: 1.415 % _(source: `pycge`)_
+  - The swift escalation of the conflict in the Strait of Hormuz is expected to lead to a moderate increase in global CPI inflation in the first year, with a projected increase of 1.415%.
+  - reliability: The pycge model successfully completed and produced this outcome.
+  - regional distribution: US=-0.123875
+  - sectoral distribution: services=-0.586, industry=-0.1787, agriculture=-0.0728, energy=0.342
+  - distributional note: The energy sector is expected to be the least affected, with a projected increase of 0.342%, while the services sector is expected to be the most affected, with a projected decline of 0.586%.
+- **consumption_impact_pct**: -1.3021 % _(source: `pycge`)_
+  - The swift escalation of the conflict in the Strait of Hormuz is expected to have a significant negative impact on global consumption, with a projected decline of 1.3021%.
+  - reliability: The pycge model successfully completed and produced this outcome.
+  - regional distribution: US=-0.123875
+  - sectoral distribution: services=-0.586, industry=-0.1787, agriculture=-0.0728, energy=0.342
+  - distributional note: The energy sector is expected to be the least affected, with a projected increase of 0.342%, while the services sector is expected to be the most affected, with a projected decline of 0.586%.
+- **welfare_pct_change**: -1.3021 % _(source: `pycge`)_
+  - The swift escalation of the conflict in the Strait of Hormuz is expected to have a significant negative impact on global welfare, with a projected decline of 1.3021%.
+  - reliability: The pycge model successfully completed and produced this outcome.
+  - regional distribution: US=-0.123875
+  - sectoral distribution: services=-0.586, industry=-0.1787, agriculture=-0.0728, energy=0.342
+  - distributional note: The energy sector is expected to be the least affected, with a projected increase of 0.342%, while the services sector is expected to be the most affected, with a projected decline of 0.586%.
+- **wage_impact_pct**: 0.481 % _(source: `pycge`)_
+  - The swift escalation of the conflict in the Strait of Hormuz is expected to have a moderate positive impact on global wages, with a projected increase of 0.481%.
+  - reliability: The pycge model successfully completed and produced this outcome.
+  - regional distribution: US=-0.123875
+  - sectoral distribution: services=-0.586, industry=-0.1787, agriculture=-0.0728, energy=0.342
+  - distributional note: The energy sector is expected to be the least affected, with a projected increase of 0.342%, while the services sector is expected to be the most affected, with a projected decline of 0.586%.
+- **interest_rate_impact_pct**: 0.5235 % _(source: `pycge`)_
+  - The swift escalation of the conflict in the Strait of Hormuz is expected to have a moderate positive impact on global interest rates, with a projected increase of 0.5235%.
+  - reliability: The pycge model successfully completed and produced this outcome.
+  - regional distribution: US=-0.123875
+  - sectoral distribution: services=-0.586, industry=-0.1787, agriculture=-0.0728, energy=0.342
+  - distributional note: The energy sector is expected to be the least affected, with a projected increase of 0.342%, while the services sector is expected to be the most affected, with a projected decline of 0.586%.
+- **sectoral_output_pct_change**: {'agriculture': -0.0728, 'industry': -0.1787, 'energy': 0.342, 'services': -0.586} % _(source: `pycge`)_
+  - The swift escalation of the conflict in the Strait of Hormuz is expected to have a significant negative impact on global sectoral output, with the services sector being the most affected and the energy sector being the least affected.
+  - reliability: The pycge model successfully completed and produced this outcome.
+  - regional distribution: US=-0.123875
+  - sectoral distribution: services=-0.586, industry=-0.1787, agriculture=-0.0728, energy=0.342
+  - distributional note: The energy sector is expected to be the least affected, with a projected increase of 0.342%, while the services sector is expected to be the most affected, with a projected decline of 0.586%.
+
+## Cross-model consistency warnings
+
+- LLM-extracted vs upstream-computed disagreement on pycge input commodity_price_shocks[helium]: LLM=30.0, world_helium_model=0.0 (deviation: 200.0%, threshold: 50.0%)
+- LLM-extracted vs upstream-computed disagreement on pycge input oil_price_shock_pct: LLM=0.0, poles_jrc=58.25 (deviation: 200.0%, threshold: 50.0%)
+
+## Failed / skipped models
+
+- `ais_project`
+- `aisdb`
+- `apsim`
+- `bornstein_krusell_rebelo`
+- `capri`
+- `energy_flux_lng_profits`
+- `fed_oil`
+- `ggm`
+- `gtap`
+- `lngst`
+- `magpie`
+- `marketsim`
+- `messageix`
+- `miragrodep`
+- `mpsge_jl`
+- `nems`
+- `nrel`
+- `opencge`
+- `osemosys`
+- `sahysmod`
+- `simple_g`
+- `temoa`
+- `watergap2`
+- `weap_mena`
+- `world_fertilizer`

@@ -1,0 +1,55 @@
+{
+  "run_id": "20260504_032106",
+  "completed": 20,
+  "skipped": 61,
+  "failed": 18,
+  "consistency_flags": 10,
+  "outcomes_total": 192,
+  "scenarios": [
+    {
+      "scenario_id": "swift_contained",
+      "label": "Swift Contained Conflict",
+      "outcomes": 64,
+      "consistency_flags": 2,
+      "failed_models": 4,
+      "completed_models": 4,
+      "skipped_models": 9
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "label": "Prolonged Contained Conflict",
+      "outcomes": 34,
+      "consistency_flags": 2,
+      "failed_models": 4,
+      "completed_models": 5,
+      "skipped_models": 17
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "label": "Swift Escalated Conflict",
+      "outcomes": 50,
+      "consistency_flags": 2,
+      "failed_models": 5,
+      "completed_models": 7,
+      "skipped_models": 20
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "label": "Prolonged Escalated Conflict",
+      "outcomes": 22,
+      "consistency_flags": 1,
+      "failed_models": 2,
+      "completed_models": 2,
+      "skipped_models": 8
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "label": "Infrastructure Collapse (Tail Risk)",
+      "outcomes": 22,
+      "consistency_flags": 3,
+      "failed_models": 3,
+      "completed_models": 2,
+      "skipped_models": 7
+    }
+  ]
+}

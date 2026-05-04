@@ -1,0 +1,6 @@
+scenario_id,model_id,output_key,unified_region,value_label,value
+infrastructure_collapse,pycge,sectoral_output_pct_change,US,output_pct_change,-0.1416
+swift_contained,pycge,sectoral_output_pct_change,US,output_pct_change,-0.026275
+prolonged_contained,pycge,sectoral_output_pct_change,US,output_pct_change,-0.128525
+swift_escalated,pycge,sectoral_output_pct_change,US,output_pct_change,-0.12387499999999999
+prolonged_escalated,pycge,sectoral_output_pct_change,US,output_pct_change,-0.16352499999999998
