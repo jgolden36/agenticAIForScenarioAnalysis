@@ -256,7 +256,7 @@ The following tables list every domain model referenced in the paper, grouped by
 ### Water Models
 | Model | Type | Platform/Language | Adapter | Status | Role |
 |---|---|---|---|---|---|
-| WEAP / WEAP–MENA | Simulation | Windows COM (SEI WEAP) | `src/models/water/weap.py` | Config-aware stub | Integrated water resource planning; Persian Gulf regional config |
+| WEAP / WEAP–MENA | Simulation | Windows COM (SEI WEAP) **or analytical MVP** | `src/models/water/weap.py` | **Real (analytical MVP mode)** + config-aware stub | Integrated water resource planning; Persian Gulf regional config. Analytical fallback runs a country-disaggregated unmet-demand calculator using AGCC desal-dependence weights and World Bank population data when no `WEAPConfig` is supplied; the real COM-automation path activates with a config. |
 | SahysMod | Simulation | Native CLI (executable) | `src/models/water/sahysmod.py` | **Real** (config-aware) | Spatially distributed agro-hydro-salinity modeling |
 | WaterGAP2 | Gridded global | Native binary or HTTP API | `src/models/water/watergap2.py` | Config-aware stub | Global gridded hydrological modeling of infrastructure disruption |
 | CWatM | Gridded global | Python subprocess **or analytical MVP fallback** | `src/models/water/cwatm.py` | **Real** (config-aware) **+ analytical MVP fallback** | Community-scale water availability under disruption. Falls back to a closed-form scarcity-index calculation when no `CWatMConfig` is provided so the WATER system always has a runnable model on the cluster. |
@@ -266,8 +266,8 @@ The following tables list every domain model referenced in the paper, grouped by
 |---|---|---|---|---|---|
 | World Equilibrium Model of the Oil Market (Bornstein-Krusell-Rebelo) | Structural GE | GNU Octave + Dynare | `src/models/oil/bornstein_krusell_rebelo.py` | **Real** (config-aware) | Supply disruption analysis in general equilibrium; replication files vendored at `Models/Oil/WorldEquilibriumOilModel/` |
 | POLES-JRC | Partial equilibrium | TBD (JRC distribution) **or analytical MVP** | `src/models/oil/poles_jrc.py` | **Real (analytical MVP mode)** | Detailed global energy supply and demand dynamics. Closed-form constant-elasticity oil price impulse (Hamilton 2009; Baumeister & Peersman 2013) lets the OIL system always have a runnable model on the cluster. |
-| MarketSim (BOEM) | Partial equilibrium | Excel/VBA (BOEM) | `src/models/oil/marketsim.py` | Stub | Consumer surplus and energy substitution for disruption scenarios |
-| Fed Workhorse Oil Model (Baumeister-Hamilton) | Macro-energy | MATLAB/R (upstream) | `src/models/oil/fed_oil.py` | Stub | US monetary transmission of oil price shocks |
+| MarketSim (BOEM) | Partial equilibrium | Pure Python (analytical MVP) + Excel/VBA (BOEM, upstream) | `src/models/oil/marketsim.py` | **Real (analytical MVP mode)** | Consumer surplus / energy substitution. Triangle-rule CS-loss using EIA STEO 2025 baseline consumption + Hamilton (2009) oil and Auffhammer & Rubin (2018) gas demand elasticities. Real BOEM codebase path preserved in docs. |
+| Fed Workhorse Oil Model (Baumeister-Hamilton) | Macro-energy | Pure Python (analytical MVP) + MATLAB/R (upstream) | `src/models/oil/fed_oil.py` | **Real (analytical MVP mode)** | US monetary transmission. Macro_kernel-backed core augmented with Baumeister-Hamilton (2019 AER) shock-type multipliers (supply / demand / speculative) and Kilian (2009) IRF decay; produces quarterly GDP / CPI / FFR / unemployment IRFs and an FEVD oil-share scalar. |
 
 ### LNG Models
 | Model | Type | Platform/Language | Adapter | Status | Role |
@@ -275,7 +275,7 @@ The following tables list every domain model referenced in the paper, grouped by
 | Energy Flux US Gas Power Build-Out Constraint Model v1.0 | Proprietary calc | Pure Python (default) + Excel via xlwings | `src/models/lng/energy_flux_gas_power.py` | **Real** | US gas-to-power capacity constraints |
 | Energy Flux US LNG War Profits Model v1.0 | Proprietary calc | Pure Python (default) + Excel via xlwings | `src/models/lng/energy_flux_lng_profits.py` | **Real** | LNG export revenue under conflict scenarios |
 | Global Gas Model (GGM v3.0) | Optimization | GAMS + CPLEX | `src/models/lng/ggm.py` | **Real** (config-aware) | Global gas trade flow optimization; vendored at `Models/LNG/GGM-20190509-open-source-final/` |
-| LNG Spreadsheet Tool (LNGST) | Spreadsheet | Excel (openpyxl/xlwings) | `src/models/lng/lngst.py` | Config-aware stub | Scenario-level LNG trade flow simulation |
+| LNG Spreadsheet Tool (LNGST) | Spreadsheet | Pure Python (analytical MVP) + Excel (openpyxl/xlwings) | `src/models/lng/lngst.py` | **Real (analytical MVP mode)** + config-aware Excel path | Scenario-level LNG trade flow simulation. Closed-form Qatar+UAE export-loss -> hub price (TTF / JKM / Henry Hub) impulse using QatarEnergy 2024 + IEA Gas 2024 elasticities; real Excel workbook path preserved when `ExcelConfig` is supplied. |
 
 ### Helium & Semiconductor Models
 
@@ -284,7 +284,7 @@ The `world_helium_model` adapter sits at `AnalyticalLevel.COMMODITY`; `argonne_a
 | Model | Type | Platform/Language | Adapter | Analytical level | Status | Role |
 |---|---|---|---|---|---|---|
 | World Helium Model (IFP Énergies Nouvelles) | Market equilibrium | TBD **or analytical MVP** | `src/models/helium/world_helium_model.py` | COMMODITY | **Real (analytical MVP mode)** | Global helium supply-demand equilibrium. Closed-form Qatar-share-driven equilibrium (USGS 2024; Massol & Rifaat 2018 demand elasticity) gives the HELIUM_SEMICONDUCTORS system a runnable model on the cluster. Outputs (`effective_supply_gap_pct`, `price_change_pct`, `sector_allocation_share`, `disruption_duration_months`) feed both Argonne ABM / SimRLFab and the macro models. |
-| Argonne Helium ABM | Agent-based | AnyLogic Pro (exported JAR) | `src/models/helium/argonne_abm.py` | COMMODITY_DOWNSTREAM | Config-aware stub | Contemporary helium market dynamics. `supply_shock_pct` and `disruption_duration_months` forwarded from `world_helium_model`; `demand_response_elasticity` LLM-extracted. |
+| Argonne Helium ABM | Agent-based | Pure Python (analytical MVP) + AnyLogic Pro (exported JAR) | `src/models/helium/argonne_abm.py` | COMMODITY_DOWNSTREAM | **Real (analytical MVP mode)** + config-aware AnyLogic path | Contemporary helium market dynamics. Analytical fallback runs 20 stochastic replications of the world_helium_model elasticity formula with lognormal supply-shock noise and Gaussian elasticity noise so the adapter emits mean / std companion fields without the AnyLogic JAR. Real ABM activates with `AnyLogicConfig`. `supply_shock_pct` and `disruption_duration_months` forwarded from `world_helium_model`; `demand_response_elasticity` LLM-extracted. |
 | SimRLFab | RL / SimPy simulation | Python 3.6 venv (SimPy + Tensorforce) | `src/models/helium/simrlfab.py` + `simrlfab_driver.py` | COMMODITY_DOWNSTREAM | **Real** (config-aware) | Semiconductor fab disruption impacts; vendored at `Models/Helium Market_ Semiconductors/SimRLFab-master/`. `helium_supply_reduction_pct` and `disruption_duration_months` forwarded from `world_helium_model`; `neon_supply_status` and `fab_utilization_baseline` LLM-extracted. |
 
 ### Fertilizer & Agricultural Trade Models
@@ -293,24 +293,24 @@ The `world_helium_model` adapter sits at `AnalyticalLevel.COMMODITY`; `argonne_a
 | CAPRI | Partial equilibrium | GAMS (upstream) | `src/models/fertilizer/capri.py` | Stub | Regional agricultural policy impact modeling |
 | MAgPIE | Optimization | R orchestration + GAMS (CONOPT) | `src/models/fertilizer/magpie.py` | **Real** (config-aware) | Land-use and agricultural production modeling; vendored at `Models/Fertilizer/magpie-master/` |
 | SIMPLE-G | CGE | TBD | `src/models/fertilizer/simple_g.py` | Stub | General equilibrium agricultural trade |
-| World Fertilizer Model | Market equilibrium | GAMS | `src/models/fertilizer/world_fertilizer.py` | Stub (`GAMSAdapter` base wired) | Global fertilizer supply-demand dynamics |
+| World Fertilizer Model | Market equilibrium | Pure Python (analytical MVP) + GAMS (upstream) | `src/models/fertilizer/world_fertilizer.py` | **Real (analytical MVP mode)** + config-aware GAMS path | Global fertilizer supply-demand dynamics. Closed-form NG-feedstock + ME-production-loss pass-through to nitrogen / phosphate / potash prices, FAO 2024 trade-share-weighted index, AR(1) forward curves. Real GAMS World Fertilizer Model path activates when a `GAMSConfig` and the `.gms` file are supplied. |
 | GTAP | CGE | GEMPACK (upstream) | `src/models/fertilizer/gtap.py` | Stub | Global agricultural and commodity trade flows |
-| APSIM | Crop simulation | Native (.NET / CLI) | `src/models/fertilizer/apsim.py` | Stub | Physical crop yield response to input disruption |
+| APSIM | Crop simulation | Pure Python (analytical MVP) + Native (.NET / CLI) | `src/models/fertilizer/apsim.py` | **Real (analytical MVP mode)** | Physical crop yield response to input disruption. Closed-form Mitscherlich N-response + FAO water-yield curves per crop (wheat / rice / maize / soybean / barley); produces yield change and N-use-efficiency outputs. Real APSIM Next Generation invocation path preserved in docs. |
 | Futures forecasting models | Time series | Pure Python AR(1) (analytical MVP) or pandas / statsmodels | `src/models/fertilizer/futures.py` | **Real (analytical MVP mode)** | Commodity futures price trajectory forecasting. Pure-Python AR(1) mean-reversion with commodity-specific half-lives gives the FERTILIZER_AGRICULTURE system a runnable model on the cluster with no `statsmodels` dependency. |
 
 ### Shipping Models
 | Model | Type | Platform/Language | Adapter | Status | Role |
 |---|---|---|---|---|---|
-| AISdb | Spatial database | Python (sqlite/PostGIS) | `src/models/shipping/aisdb.py` | Stub | AIS vessel tracking data processing and rerouting calibration |
-| AIS_project / aisstream | Spatial analysis | Python + WebSocket API | `src/models/shipping/ais_project.py` | Stub | Transit time and fleet utilization under Strait closure (aisstream README at `Models/Shipping/aisstream-main/`) |
+| AISdb | Spatial database | Pure Python (analytical MVP) + Python (sqlite/PostGIS, upstream) | `src/models/shipping/aisdb.py` | **Real (analytical MVP mode)** | AIS vessel tracking data processing and rerouting calibration. Closed-form Cape-of-Good-Hope detour calculator with UNCTAD 2024 traffic-share weights, Clarksons elasticity, and Lloyd's List war-risk surcharge. Outputs (`rerouting_cost_multiplier`, `war_risk_insurance_premium_pct`) feed `poles_jrc.rerouting_cost_multiplier` and `mpsge_jl.trade_disruption_spec.trade_cost_multiplier` via the upstream forwarding mapping. |
+| AIS_project / aisstream | Spatial analysis | Pure Python (analytical MVP) + Python + WebSocket API (upstream) | `src/models/shipping/ais_project.py` | **Real (analytical MVP mode)** | Transit time and fleet utilization under Strait closure. Closed-form voyage simulator with BDTI 2019-2024 tanker-rate elasticity; mirrors AISDB's `rerouting_cost_multiplier` for use as a forwarding fallback. |
 
 ### Macroeconomic / General Equilibrium Models
 | Model | Type | Platform/Language | Adapter | Status | Role |
 |---|---|---|---|---|---|
 | NEMS (EIA AEO2025) | Systems model | Fortran + AIMMS + GAMS + Python | `src/models/macro/nems.py` | **Real** | National energy-economy projections; three modes: `output_ingestion` (default, no install), `subprocess` (full NEMS), `remote` (SLURM). Vendored at `Models/LNG/NEMS-main/` |
 | MAM (EIA Macroeconomic Activity Module) | Macro econometric | EViews | `src/models/macro/mam.py` | **Real** | AEO ingestion mode (default) + optional EViews subprocess; AEO2025 docs under `Models/General Equilibrium/EIA/` |
-| NREL baseline | Sectoral | TBD | `src/models/macro/nrel.py` | Stub | Electricity sector baseline and disruption impacts |
-| MPSGE.jl / GTAP | CGE | Julia (juliacall) | `src/models/macro/mpsge_jl.py` | Config-aware stub | General equilibrium trade and welfare analysis |
+| NREL baseline | Sectoral | Pure Python (analytical MVP) + ReEDS / Cambium (upstream) | `src/models/macro/nrel.py` | **Real (analytical MVP mode)** + derived macro outputs | Electricity sector baseline and disruption impacts. Closed-form merit-order/dispatch math using EIA AEO 2024 generation shares, NREL Cambium 2023 capacity factors, and EPA eGRID 2024 CO2 intensities. Augmented with macro_kernel-derived `gdp_impact_pct` / `cpi_inflation_pct` / `consumption_impact_pct` / `welfare_pct_change` tagged `_macro_source: nrel_derived`. |
+| MPSGE.jl / GTAP | CGE | Pure Python (analytical MVP) + Julia (juliacall) | `src/models/macro/mpsge_jl.py` | **Real (analytical MVP mode)** + config-aware Julia path | General equilibrium trade and welfare analysis. Analytical fallback runs `compute_macro_outcomes` + `compute_regional_macro_outcomes` (`regime="long_run"`), augmented with bilateral trade-flow gravity attenuation (Anderson-van Wincoop 2003) and IMF-2022-calibrated terms-of-trade per region. Real MPSGE.jl path activates when a `JuliaConfig` is supplied. |
 | OpenCGE (PSL OG-Core / OG-USA) | CGE | Python (`ogcore`/`ogusa` + Dask) | `src/models/macro/opencge.py` | **Real** | Open-source dynamic OLG CGE; commodity shocks mapped to productivity / capital-quality reforms. Native US response surfaced as a single-row `regional_vars` table; an additional `regional_context_vars` table from `compute_regional_macro_outcomes` provides a calibrated cross-region benchmark for analyst comparison (tagged `_regional_source: ogcore_us_native_plus_kernel_context`). |
 | pycge / cge\_modeling | CGE | Pure Python AR(1) macro kernel (analytical MVP) **or** `cge-modeling` (real path) | `src/models/macro/pycge.py` | **Real (analytical MVP mode) + real cge\_modeling path when API matches** | SAM-driven Python CGE for sensitivity analysis. The real `cge_modeling` solver runs whenever the package is installed AND its API matches (`Model`, `load_sam`, the bundled `examples.hosoe_2region`); otherwise the adapter cleanly falls back to a closed-form macro kernel (`src/models/macro/macro_kernel.py`) calibrated against Hamilton (2003, 2009 Brookings), Kilian (2008 RES), Blanchard & Galí (2007), Baffes (2007), Massol & Rifaat (2018) and UN-Water (2024) so the macro tier always has a runnable CGE. Standardised outputs: `gdp_impact_pct`, `gdp_growth_pct`, `cpi_inflation_pct`, `consumption_impact_pct`, `welfare_pct_change`, `wage_impact_pct`, `interest_rate_impact_pct`, `sectoral_output_pct_change`, **`regional_vars`** (kernel-derived per-region GDP/CPI/consumption/welfare across the unified taxonomy `{US, CHN, IND, EU, MENA_GCC, MENA_OTHER, SSA, LAC, ROW}`; tagged `_regional_source: macro_kernel_derived` on both the analytical-MVP and real cge_modeling paths). |
 | MIRAGRODEP | CGE | GAMS (CONOPT) | `src/models/macro/miragrodep.py` | **Real** | Multi-region CGE with agricultural-trade linkages; vendored at `Models/General Equilibrium/MIRAGRODEP_v0-1/` |
@@ -331,23 +331,23 @@ The derived-macro augmentation runs `src/models/macro/macro_kernel.py :: derive_
 
 - **Fully wired (real `execute`) — 10 adapters:** Bornstein-Krusell-Rebelo, Energy Flux Gas Power, Energy Flux LNG Profits, NEMS, MAM, OpenCGE, MIRAGRODEP, OSeMOSYS, MESSAGEix, TEMOA. The three energy-systems adapters (OSeMOSYS, MESSAGEix, TEMOA) additionally augment their outputs with macro_kernel-derived `gdp_impact_pct` / `cpi_inflation_pct` / `consumption_impact_pct` / `welfare_pct_change` tagged `_macro_source: <model>_derived`.
 - **Real config-aware (activate when YAML is provided) — 5 adapters:** SahysMod, CWatM, GGM, SimRLFab, MAgPIE.
-- **Real (analytical MVP mode) — 5 adapters:** POLES-JRC, World Helium Model, Futures, CWatM (analytical fallback when `_config is None`), and **PyCGE** (closed-form macro kernel fallback when `cge_modeling` is missing or its pre-alpha API does not match). These use closed-form formulas with literature-sourced calibration so the OIL, HELIUM_SEMICONDUCTORS, FERTILIZER_AGRICULTURE, WATER, and MACROECONOMIC systems each have at least one runnable model on the cluster MVP. Real upstream-model execution paths (where they exist) are preserved and activated when the corresponding YAML/data assets are provided. The PyCGE analytical-MVP path is shared with the energy adapters via `src/models/macro/macro_kernel.py`, so commodity shocks always map to a standardised macro response calibrated against Hamilton (2003, 2009 Brookings), Kilian (2008 RES), Blanchard & Galí (2007), Baffes (2007), Massol & Rifaat (2018), and UN-Water (2024).
-- **Config-aware stubs (dispatch wired, real `execute` pending) — 5 adapters:** WEAP–MENA, WaterGAP2, LNGST, Argonne Helium ABM, MPSGE.jl.
-- **Typed stubs (awaiting upstream code) — 10 adapters:** MarketSim, Fed Workhorse Oil, World Fertilizer Model, CAPRI, SIMPLE-G, GTAP, APSIM, AISdb, AIS\_project, NREL.
+- **Real (analytical MVP mode) — 16 adapters:** POLES-JRC, World Helium Model, Futures, CWatM (analytical fallback when `_config is None`), **PyCGE** (closed-form macro kernel fallback when `cge_modeling` is missing or its pre-alpha API does not match), **AISdb**, **AIS_project**, **Fed Workhorse Oil**, **MarketSim**, **MPSGE.jl** (analytical fallback when no `JuliaConfig`), **NREL** (with macro_kernel-derived companion outputs), **Argonne Helium ABM** (analytical fallback when no `AnyLogicConfig`; 20 stochastic replications), **World Fertilizer Model** (analytical fallback when no `GAMSConfig`), **APSIM**, **LNGST** (analytical fallback when no `ExcelConfig`), **WEAP-MENA** (analytical fallback when no `WEAPConfig`). These use closed-form formulas with literature-sourced calibration so every commodity system (including SHIPPING, which previously had zero runnable models) has at least one runnable model on the cluster MVP. Real upstream-model execution paths (where they exist) are preserved and activated when the corresponding YAML/data assets are provided.
+- **Config-aware stubs (dispatch wired, real `execute` pending) — 1 adapter:** WaterGAP2.
+- **Typed stubs (awaiting upstream code) — 3 adapters:** CAPRI, SIMPLE-G, GTAP.
 
 ### MVP commodity-system coverage
 
-After the SLURM driver bootstrap completes (`slurm/jobs/stonybrook_ai_cluster.job`), every `CommoditySystem` except `SHIPPING` has at least one model with a runnable `execute()`:
+Every `CommoditySystem` now has at least one model (and most have two) with a runnable `execute()`:
 
-| CommoditySystem | MVP model | Mode |
+| CommoditySystem | MVP models | Mode |
 |---|---|---|
-| WATER | `cwatm` | Analytical fallback (or real CWatM when configured) |
-| OIL | `poles_jrc` | Analytical MVP |
-| LNG | `energy_flux_gas_power`, `energy_flux_lng_profits` | Real (pure Python) |
-| HELIUM_SEMICONDUCTORS | `world_helium_model` | Analytical MVP |
-| FERTILIZER_AGRICULTURE | `futures` | Analytical MVP |
-| SHIPPING | — | All adapters still stubs |
-| MACROECONOMIC | `pycge` | Analytical MVP (always runnable, no extras required); real `cge_modeling` path activates when the package's API matches. `mam` upgrades to Real after `[macro]` extras + auto-vendored AEO XLSX. |
+| WATER | `cwatm`, `weap_mena` | Analytical fallbacks (real CWatM/WEAP paths activate with config) |
+| OIL | `poles_jrc`, `bornstein_krusell_rebelo`, `fed_oil`, `marketsim` | Analytical MVPs (BKR is config-aware Real) |
+| LNG | `energy_flux_gas_power`, `energy_flux_lng_profits`, `lngst` | Real (pure Python) + `lngst` analytical fallback |
+| HELIUM_SEMICONDUCTORS | `world_helium_model`, `argonne_abm` | Analytical MVPs; `simrlfab` upgrades to Real with config |
+| FERTILIZER_AGRICULTURE | `futures`, `world_fertilizer`, `apsim` | Analytical MVPs (`magpie` upgrades to Real with config) |
+| SHIPPING | `aisdb`, `ais_project` | Analytical MVPs (Cape-of-Good-Hope rerouting calculator); previously zero runnable models |
+| MACROECONOMIC | `pycge`, `mpsge_jl`, `nrel` | Analytical MVPs (always runnable, no extras required); real `cge_modeling` / Julia paths activate when their config / API matches. `mam` upgrades to Real after `[macro]` extras + auto-vendored AEO XLSX. |
 | ENERGY_SYSTEMS | `temoa` | Real (after auto-vendored TEMOA clone + `cbc`); also emits derived macro outputs (`gdp_impact_pct`, `cpi_inflation_pct`, `consumption_impact_pct`, `welfare_pct_change`) tagged `_macro_source: temoa_derived` so synthesis sees a macro-flavoured answer from the energy tier even before `pycge`'s analytical MVP runs. |
 
 The executor (`src/models/executor.py`) catches `NotImplementedError` from stub `execute()` calls, marks the run as `SKIPPED`, and continues — a single missing adapter does **not** halt the pipeline. The synthesis report records which models contributed and which were unavailable for each scenario.

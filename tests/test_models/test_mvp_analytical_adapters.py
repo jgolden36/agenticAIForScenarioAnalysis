@@ -359,3 +359,362 @@ class TestCWatMAnalyticalFallback:
             (1.05 - 1.0) / 1.05 * 100.0, abs=0.01
         )
         assert out.outputs["mean_discharge_deviation_pct"] == pytest.approx(0.0, abs=0.01)
+
+
+# ===========================================================================
+# Additional analytical-MVP adapters (11 stubs converted)
+# ===========================================================================
+#
+# Each adapter previously raised ``NotImplementedError`` from execute();
+# the MVP path lets it return a populated ModelOutput without external
+# binaries, licenses, or upstream code. Tests verify standard MVP
+# metadata + a small set of structural invariants per adapter.
+
+
+def _assert_mvp_metadata(out: ModelOutput) -> None:
+    assert isinstance(out, ModelOutput)
+    assert out.convergence_status == "converged"
+    assert out.metadata.get("mode") == "analytical_mvp"
+    cs = out.metadata.get("calibration_source")
+    assert isinstance(cs, str) and len(cs) > 0
+
+
+def _assert_finite_number(value: Any) -> None:
+    assert isinstance(value, (int, float))
+    assert math.isfinite(float(value))
+
+
+# --- SHIPPING tier ---------------------------------------------------------
+
+class TestAISDBAnalytical:
+    def test_closed_strait_via_cape_produces_positive_cost_and_premium(self) -> None:
+        from src.models.shipping.aisdb import AISDBAdapter
+
+        out = AISDBAdapter().execute({
+            "strait_closure_flag": True,
+            "alternative_routes": ["cape_of_good_hope"],
+            "vessel_types": ["tanker", "lng_carrier"],
+        })
+        _assert_mvp_metadata(out)
+        for key in (
+            "rerouting_cost_multiplier",
+            "effective_fleet_capacity_loss_pct",
+            "war_risk_insurance_premium_pct",
+            "max_additional_transit_days",
+        ):
+            assert key in out.outputs
+            _assert_finite_number(out.outputs[key])
+        assert out.outputs["rerouting_cost_multiplier"] > 1.0
+        assert out.outputs["war_risk_insurance_premium_pct"] > 0.0
+
+    def test_open_strait_yields_baseline_cost_and_zero_premium(self) -> None:
+        from src.models.shipping.aisdb import AISDBAdapter
+
+        out = AISDBAdapter().execute({
+            "strait_closure_flag": False,
+            "alternative_routes": ["none"],
+            "vessel_types": ["tanker"],
+        })
+        _assert_mvp_metadata(out)
+        assert out.outputs["rerouting_cost_multiplier"] == pytest.approx(1.0)
+        assert out.outputs["war_risk_insurance_premium_pct"] == pytest.approx(0.0)
+
+
+class TestAISProjectAnalytical:
+    def test_cape_rerouting_lifts_tanker_rates(self) -> None:
+        from src.models.shipping.ais_project import AISProjectAdapter
+
+        out = AISProjectAdapter().execute({
+            "strait_closure_flag": True,
+            "rerouting_via_cape": True,
+            "fleet_size_change_pct": 0.0,
+            "disruption_duration_months": 6.0,
+        })
+        _assert_mvp_metadata(out)
+        for key in (
+            "rerouting_cost_multiplier",
+            "tanker_rate_change_pct",
+            "fleet_utilization_multiplier",
+            "voyage_days_lost_per_baseline_voyage",
+        ):
+            assert key in out.outputs
+            _assert_finite_number(out.outputs[key])
+        assert out.outputs["rerouting_cost_multiplier"] > 1.0
+        assert out.outputs["tanker_rate_change_pct"] > 0.0
+
+
+# --- OIL tier --------------------------------------------------------------
+
+class TestFedOilAnalytical:
+    def test_supply_shock_contracts_gdp_and_lifts_cpi(self) -> None:
+        from src.models.oil.fed_oil import FedOilAdapter
+
+        out = FedOilAdapter().execute({
+            "oil_price_change_pct": 50.0,
+            "shock_type": "supply",
+            "disruption_duration_quarters": 2.0,
+            "fed_funds_rate_baseline": 4.5,
+        })
+        _assert_mvp_metadata(out)
+        assert out.outputs["peak_gdp_impact_pct"] < 0.0
+        assert out.outputs["peak_cpi_impact_pp"] > 0.0
+        horizon = out.outputs["horizon_quarters"]
+        assert len(out.outputs["gdp_irf_pct_quarterly"]) == horizon
+        assert len(out.outputs["cpi_irf_pp_quarterly"]) == horizon
+        # FEVD share is in (0, 1)
+        assert 0.0 < out.outputs["fevd_oil_share"] < 1.0
+
+    def test_demand_shock_smaller_than_supply_shock(self) -> None:
+        """Baumeister-Hamilton (2019): demand shocks should produce smaller
+        GDP / CPI impacts than supply shocks of equal magnitude."""
+        from src.models.oil.fed_oil import FedOilAdapter
+
+        base = {
+            "oil_price_change_pct": 50.0,
+            "disruption_duration_quarters": 2.0,
+            "fed_funds_rate_baseline": 4.5,
+        }
+        supply = FedOilAdapter().execute({**base, "shock_type": "supply"})
+        demand = FedOilAdapter().execute({**base, "shock_type": "demand"})
+        assert abs(demand.outputs["peak_gdp_impact_pct"]) < abs(
+            supply.outputs["peak_gdp_impact_pct"]
+        )
+
+
+class TestMarketSimAnalytical:
+    def test_oil_and_gas_shock_produce_consumer_surplus_loss(self) -> None:
+        from src.models.oil.marketsim import MarketSimAdapter
+
+        out = MarketSimAdapter().execute({
+            "oil_price_shock_pct": 50.0,
+            "natural_gas_price_change_pct": 30.0,
+            "disruption_duration_months": 6.0,
+        })
+        _assert_mvp_metadata(out)
+        for key in (
+            "consumer_surplus_loss_bn_usd",
+            "producer_surplus_change_oil_bn_usd",
+            "net_welfare_impact_bn_usd",
+            "oil_demand_destruction_mbd",
+            "fuel_switching_oil_to_gas_mmbtu",
+        ):
+            assert key in out.outputs
+            _assert_finite_number(out.outputs[key])
+        assert out.outputs["consumer_surplus_loss_bn_usd"] > 0.0
+
+
+# --- MACRO tier ------------------------------------------------------------
+
+class TestMPSGEJLAnalytical:
+    def test_oil_shock_helps_gcc_hurts_india(self) -> None:
+        from src.models.macro.mpsge_jl import MPSGEJLAdapter
+
+        out = MPSGEJLAdapter().execute({
+            "oil_price_shock_pct": 50.0,
+            "trade_disruption_spec": {"trade_cost_multiplier": 1.2},
+            "commodity_price_shocks": {"lng": 30.0, "fertilizer": 20.0},
+            "disruption_duration_months": 6.0,
+        })
+        _assert_mvp_metadata(out)
+        for key in (
+            "gdp_impact_pct",
+            "welfare_pct_change_by_region",
+            "regional_vars",
+            "bilateral_trade_flow_change_pct",
+            "terms_of_trade_pct_change_by_region",
+        ):
+            assert key in out.outputs
+        welfare = out.outputs["welfare_pct_change_by_region"]
+        assert welfare["MENA_GCC"] > 0.0
+        assert welfare["IND"] < 0.0
+
+
+class TestNRELAnalytical:
+    def test_gas_shock_lifts_retail_and_shifts_dispatch_to_renewables(self) -> None:
+        from src.models.macro.nrel import NRELAdapter
+
+        out = NRELAdapter().execute({
+            "natural_gas_price_change_pct": 50.0,
+            "electricity_demand_change_pct": 2.0,
+            "disruption_duration_months": 6.0,
+        })
+        _assert_mvp_metadata(out)
+        for key in (
+            "retail_electricity_price_change_pct",
+            "generation_dispatch_pct_change",
+            "co2_emissions_pct_change",
+            "renewables_dispatch_gain_pp",
+            "coal_dispatch_gain_pp",
+            "gdp_impact_pct",  # macro companion
+        ):
+            assert key in out.outputs
+        assert out.outputs["retail_electricity_price_change_pct"] > 0.0
+        dispatch = out.outputs["generation_dispatch_pct_change"]
+        assert dispatch["natural_gas"] < 0.0
+        assert dispatch["coal"] > 0.0
+        assert dispatch["renewables"] > 0.0
+
+
+# --- HELIUM_DOWNSTREAM tier -----------------------------------------------
+
+class TestArgonneABMAnalytical:
+    def test_replications_emit_mean_and_std_companion_fields(self) -> None:
+        from src.models.helium.argonne_abm import ArgonneABMAdapter
+
+        out = ArgonneABMAdapter().execute({
+            "supply_shock_pct": 25.0,
+            "disruption_duration_months": 6.0,
+            "demand_response_elasticity": -0.15,
+        })
+        _assert_mvp_metadata(out)
+        for base in (
+            "equilibrium_price_change_pct",
+            "unmet_demand_pct",
+            "critical_application_failure_rate",
+        ):
+            assert f"{base}_mean" in out.outputs
+            assert f"{base}_std" in out.outputs
+        assert out.outputs["n_replications"] == 20
+        assert out.outputs["equilibrium_price_change_pct_std"] >= 0.0
+        assert "agent_population_summary" in out.outputs
+
+
+# --- FERTILIZER_AGRICULTURE tier ------------------------------------------
+
+class TestWorldFertilizerAnalytical:
+    def test_ng_and_me_loss_lift_nitrogen_index(self) -> None:
+        from src.models.fertilizer.world_fertilizer import WorldFertilizerAdapter
+
+        out = WorldFertilizerAdapter().execute({
+            "natural_gas_price_change_pct": 50.0,
+            "middle_east_production_loss_pct": 30.0,
+            "disruption_duration_months": 6.0,
+        })
+        _assert_mvp_metadata(out)
+        for key in (
+            "fertilizer_price_index_pct",
+            "nitrogen_price_pct",
+            "phosphate_price_pct",
+            "potash_price_pct",
+            "forward_price_curves",
+            "trade_flows",
+        ):
+            assert key in out.outputs
+        assert out.outputs["nitrogen_price_pct"] > 0.0
+        assert "urea" in out.outputs["forward_price_curves"]
+        assert len(out.outputs["forward_price_curves"]["urea"]) >= 12
+
+
+class TestAPSIMAnalytical:
+    def test_input_reductions_drop_yields(self) -> None:
+        from src.models.fertilizer.apsim import APSIMAdapter
+
+        out = APSIMAdapter().execute({
+            "fertilizer_application_reduction_pct": 30.0,
+            "irrigation_water_reduction_pct": 20.0,
+            "growing_season": "2026_winter_wheat",
+        })
+        _assert_mvp_metadata(out)
+        for key in (
+            "yield_pct_change_by_crop",
+            "mean_yield_pct_change",
+            "n_use_efficiency_new",
+            "crop_yield_loss_pct",
+        ):
+            assert key in out.outputs
+        assert out.outputs["mean_yield_pct_change"] < 0.0
+        assert "wheat" in out.outputs["yield_pct_change_by_crop"]
+
+
+# --- LNG tier --------------------------------------------------------------
+
+class TestLNGSTAnalytical:
+    def test_qatar_uae_loss_lifts_ttf_more_than_henry_hub(self) -> None:
+        from src.models.lng.lngst import LNGSTAdapter
+
+        out = LNGSTAdapter().execute({
+            "qatar_export_reduction_pct": 80.0,
+            "uae_export_reduction_pct": 50.0,
+            "spot_price_multiplier": 1.5,
+            "disruption_duration_months": 6.0,
+        })
+        _assert_mvp_metadata(out)
+        for key in (
+            "ttf_price",
+            "henry_hub_price",
+            "jkm_price",
+            "supply_shortfall_bcm",
+            "lng_price_usd_mmbtu",
+        ):
+            assert key in out.outputs
+            _assert_finite_number(out.outputs[key])
+        assert out.outputs["ttf_price"] > out.outputs["henry_hub_price"]
+
+
+# --- WATER tier ------------------------------------------------------------
+
+class TestWEAPMENAAnalytical:
+    def test_kuwait_higher_unmet_share_than_uae(self) -> None:
+        from src.models.water.weap import WEAPAdapter
+
+        out = WEAPAdapter().execute({
+            "desalination_capacity_loss_pct": 30.0,
+            "disruption_duration_weeks": 12.0,
+            "affected_countries": ["uae", "qatar", "saudi_arabia", "kuwait"],
+            "alternative_supply_available": True,
+            "population_affected_millions": 50.0,
+        })
+        _assert_mvp_metadata(out)
+        for key in (
+            "aggregate_unmet_demand_pct",
+            "unmet_demand_pct_by_country",
+            "supply_coverage_pct_by_country",
+            "cumulative_water_deficit_pct_weeks",
+        ):
+            assert key in out.outputs
+        by_country = out.outputs["unmet_demand_pct_by_country"]
+        # Kuwait has the highest desal dependence (0.92) -> highest
+        # unmet-demand share for the same loss percentage.
+        assert by_country["kuwait"] > by_country["uae"]
+
+
+# ---------------------------------------------------------------------------
+# Forwarding-rule structural test
+# ---------------------------------------------------------------------------
+
+
+class TestUpstreamForwardingMappingNewRules:
+    def test_new_rules_present(self) -> None:
+        """The 8 new forwarding rules should be parseable and present."""
+        import yaml
+        from pathlib import Path
+
+        repo_root = Path(__file__).resolve().parents[2]
+        cfg = yaml.safe_load(
+            (repo_root / "configs" / "upstream_forwarding_mapping.yaml").read_text()
+        )
+        models = cfg["models"]
+
+        # SHIPPING -> POLES-JRC
+        assert "rerouting_cost_multiplier" in models["poles_jrc"]
+        assert "insurance_premium_increase_pct" in models["poles_jrc"]
+        primary_source = (
+            models["poles_jrc"]["rerouting_cost_multiplier"]["sources"][0][
+                "source_model"
+            ]
+        )
+        assert primary_source == "aisdb"
+
+        # New macro/oil downstream targets
+        assert "fed_oil" in models
+        assert "marketsim" in models
+        assert "nrel" in models
+
+        # MPSGE.jl trade-disruption-spec rule
+        assert "trade_disruption_spec" in models["mpsge_jl"]
+
+        # World fertilizer is now the primary source for the fertilizer
+        # price shock in the macro CGE adapters.
+        for downstream in ("opencge", "pycge", "mpsge_jl"):
+            rule = models[downstream]["commodity_price_shocks__fertilizer"]
+            assert rule["sources"][0]["source_model"] == "world_fertilizer"

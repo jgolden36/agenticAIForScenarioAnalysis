@@ -29,6 +29,37 @@ _REQUIRED_PARAMS: list[tuple[str, str]] = [
     ("disruption_duration_months", "float — expected duration of the supply disruption in months"),
 ]
 
+# ---------------------------------------------------------------------------
+# Analytical-MVP calibration constants
+# ---------------------------------------------------------------------------
+# US baseline oil consumption (mb/d), EIA STEO 2025 reference. Used for
+# the consumer-surplus triangle.
+_US_OIL_CONSUMPTION_MBD: float = 19.0
+# US baseline natural gas consumption (Tcf/yr -> bcf/d ~= 88), EIA STEO 2025.
+_US_GAS_CONSUMPTION_BCFD: float = 88.0
+# Reference oil and natural gas prices for surplus calculation (USD).
+_OIL_BASELINE_USD_PER_BBL: float = 80.0
+_GAS_BASELINE_USD_PER_MMBTU: float = 3.5
+# Short-run elasticities of demand by carrier. Hamilton (2009 Brookings)
+# for oil; Auffhammer & Rubin (2018 J Env Econ Mgmt) for gas.
+_DEMAND_ELASTICITY_OIL: float = -0.06
+_DEMAND_ELASTICITY_GAS: float = -0.10
+# Cross-elasticity between oil and gas (heat-content substitution).
+_CROSS_ELASTICITY: float = 0.05
+# Sector consumption shares (US average), EIA AEO 2024.
+_OIL_SECTOR_SHARES: dict[str, float] = {
+    "transport": 0.69,
+    "industrial": 0.23,
+    "residential": 0.04,
+    "commercial": 0.04,
+}
+_GAS_SECTOR_SHARES: dict[str, float] = {
+    "industrial": 0.32,
+    "residential": 0.16,
+    "commercial": 0.13,
+    "electric_power": 0.39,
+}
+
 _REQUIRED_PARAM_NAMES: set[str] = {name for name, _ in _REQUIRED_PARAMS}
 
 
@@ -138,28 +169,148 @@ class MarketSimAdapter(ModelAdapter):
         return dict(params)
 
     def execute(self, inputs: Any) -> ModelOutput:
-        """Execute the MarketSim (BOEM) model.
+        """Execute the analytical-MVP MarketSim consumer-surplus model.
 
-        Not yet implemented. The real implementation requires:
-            1. Translating price shock parameters into MarketSim's scenario input format
-               (regional and sectoral price vectors by time period).
-            2. Invoking the MarketSim model via its Python API or CLI interface.
-            3. Collecting output files containing consumer and producer surplus estimates,
-               fuel-switching volumes, and welfare decomposition tables.
-            4. Mapping MarketSim sector and region codes to pipeline standardized identifiers.
-            5. Handling edge cases where price shocks push demand to zero in specific sectors.
+        Closed-form approximation of the BOEM MarketSim partial-
+        equilibrium framework. Real MarketSim invocation requires the
+        BOEM codebase + calibration matrices; this fallback gives the
+        OIL tier a welfare-loss model alongside POLES-JRC and
+        Bornstein-Krusell-Rebelo.
 
-        Raises:
-            NotImplementedError: Always, until the BOEM MarketSim codebase is integrated.
+        Mechanics:
+
+          * Triangle-rule consumer-surplus loss for oil and gas:
+            ``CS_loss = 0.5 * Q * P * Δ * (1 + |ε| * Δ/2)``,
+            where ``Δ`` is the fractional price change.
+          * Fuel-switching volume from the cross-elasticity: positive
+            oil shock pulls additional gas demand at rate
+            ``cross * oil_pct/100 * gas_baseline``.
+          * Implied demand destruction in mb/d from the own-price
+            elasticity.
+          * Producer surplus change is positive on a price rise (the
+            consumer surplus loss is partially redistributed to
+            producers; rest is deadweight). Heuristic split: producers
+            capture 60% of the consumer-surplus drop on a positive
+            shock; deadweight is the residual.
+          * Surplus values scaled by ``duration_months/12`` to get a
+            cumulative impact over the disruption window.
         """
-        raise NotImplementedError(
-            "MarketSimAdapter.execute() is not yet implemented. "
-            "Integration requires: (1) access to the BOEM MarketSim model codebase and "
-            "calibration data from BOEM's Office of Resource Evaluation, (2) regional "
-            "demand elasticity matrices and baseline consumption data by sector, (3) a "
-            "compatible Python or compiled-binary execution environment, and (4) output "
-            "parsers for consumer/producer surplus tables and fuel-switching volumes by "
-            "energy carrier and sector."
+        params = inputs if isinstance(inputs, dict) else dict(inputs)
+
+        oil_pct = float(params["oil_price_shock_pct"])
+        gas_pct = float(params["natural_gas_price_change_pct"])
+        duration_months = float(params["disruption_duration_months"])
+
+        oil_delta = oil_pct / 100.0
+        gas_delta = gas_pct / 100.0
+        duration_scaler = max(0.0, duration_months / 12.0)
+
+        # Annual oil consumption in barrels.
+        oil_q_bbl_yr = _US_OIL_CONSUMPTION_MBD * 1e6 * 365.0
+        gas_q_mmbtu_yr = _US_GAS_CONSUMPTION_BCFD * 1e6 * 365.0 * 1.037  # 1 bcf ~= 1.037 MMBtu (HHV)
+
+        # Consumer-surplus loss in USD (annualised), then scaled by duration.
+        # Multiply by 0.5 because triangle, by Δ for height, and add the
+        # elasticity quadratic correction term.
+        oil_cs_loss = (
+            0.5
+            * oil_q_bbl_yr
+            * _OIL_BASELINE_USD_PER_BBL
+            * oil_delta
+            * (1.0 + abs(_DEMAND_ELASTICITY_OIL) * oil_delta / 2.0)
+        )
+        gas_cs_loss = (
+            0.5
+            * gas_q_mmbtu_yr
+            * _GAS_BASELINE_USD_PER_MMBTU
+            * gas_delta
+            * (1.0 + abs(_DEMAND_ELASTICITY_GAS) * gas_delta / 2.0)
+        )
+        oil_cs_loss_bn = oil_cs_loss * duration_scaler / 1e9
+        gas_cs_loss_bn = gas_cs_loss * duration_scaler / 1e9
+        total_cs_loss_bn = oil_cs_loss_bn + gas_cs_loss_bn
+
+        # Producer-surplus change: 60% redistribution from consumers to
+        # producers on a positive shock, sign-aware.
+        oil_ps_change_bn = oil_cs_loss_bn * 0.6
+        gas_ps_change_bn = gas_cs_loss_bn * 0.6
+        net_welfare_bn = -(total_cs_loss_bn) + oil_ps_change_bn + gas_ps_change_bn
+
+        # Demand destruction (mb/d) from own-price elasticity.
+        oil_demand_destruction_mbd = (
+            _US_OIL_CONSUMPTION_MBD * _DEMAND_ELASTICITY_OIL * oil_delta
+        )
+        gas_demand_destruction_bcfd = (
+            _US_GAS_CONSUMPTION_BCFD * _DEMAND_ELASTICITY_GAS * gas_delta
+        )
+
+        # Fuel switching from cross-elasticity. Positive oil shock
+        # increases gas demand and vice versa; convert oil-displaced
+        # mb/d to MMBtu/yr equivalents using ~5.8 MMBtu/bbl.
+        cross_oil_to_gas_mmbtu = (
+            _CROSS_ELASTICITY * oil_delta * _US_GAS_CONSUMPTION_BCFD * 1e6 * 365.0 * 1.037
+            * duration_scaler
+        )
+        cross_gas_to_oil_bbl = (
+            _CROSS_ELASTICITY * gas_delta * _US_OIL_CONSUMPTION_MBD * 1e6 * 365.0
+            * duration_scaler
+        )
+
+        # Sectoral CS-loss split (proportional to baseline shares).
+        cs_loss_by_sector_oil = {
+            sec: round(share * oil_cs_loss_bn, 3)
+            for sec, share in _OIL_SECTOR_SHARES.items()
+        }
+        cs_loss_by_sector_gas = {
+            sec: round(share * gas_cs_loss_bn, 3)
+            for sec, share in _GAS_SECTOR_SHARES.items()
+        }
+
+        outputs: dict[str, Any] = {
+            "oil_price_shock_pct": oil_pct,
+            "natural_gas_price_change_pct": gas_pct,
+            "disruption_duration_months": duration_months,
+            "consumer_surplus_loss_oil_bn_usd": round(oil_cs_loss_bn, 3),
+            "consumer_surplus_loss_gas_bn_usd": round(gas_cs_loss_bn, 3),
+            "consumer_surplus_loss_bn_usd": round(total_cs_loss_bn, 3),
+            "producer_surplus_change_oil_bn_usd": round(oil_ps_change_bn, 3),
+            "producer_surplus_change_gas_bn_usd": round(gas_ps_change_bn, 3),
+            "net_welfare_impact_bn_usd": round(net_welfare_bn, 3),
+            "oil_demand_destruction_mbd": round(oil_demand_destruction_mbd, 4),
+            "gas_demand_destruction_bcfd": round(gas_demand_destruction_bcfd, 4),
+            "fuel_switching_oil_to_gas_mmbtu": round(cross_oil_to_gas_mmbtu, 1),
+            "fuel_switching_gas_to_oil_bbl": round(cross_gas_to_oil_bbl, 1),
+            "cs_loss_by_sector_oil_bn_usd": cs_loss_by_sector_oil,
+            "cs_loss_by_sector_gas_bn_usd": cs_loss_by_sector_gas,
+            "us_baseline_oil_consumption_mbd": _US_OIL_CONSUMPTION_MBD,
+            "us_baseline_gas_consumption_bcfd": _US_GAS_CONSUMPTION_BCFD,
+        }
+
+        return ModelOutput(
+            model_id=self.model_id,
+            outputs=outputs,
+            convergence_status="converged",
+            metadata={
+                "adapter": self.__class__.__name__,
+                "mode": "analytical_mvp",
+                "calibration_source": (
+                    "EIA STEO 2025 baseline consumption; Hamilton (2009 "
+                    "Brookings) oil demand elasticity; Auffhammer & "
+                    "Rubin (2018 JEEM) gas demand elasticity; EIA AEO "
+                    "2024 sector shares."
+                ),
+                "demand_elasticity_oil": _DEMAND_ELASTICITY_OIL,
+                "demand_elasticity_gas": _DEMAND_ELASTICITY_GAS,
+                "cross_elasticity": _CROSS_ELASTICITY,
+                "oil_sector_shares": dict(_OIL_SECTOR_SHARES),
+                "gas_sector_shares": dict(_GAS_SECTOR_SHARES),
+                "note": (
+                    "Analytical MVP path. Real BOEM MarketSim integration "
+                    "would require: (1) BOEM model codebase + calibration "
+                    "matrices, (2) regional demand elasticity tables, "
+                    "(3) sector-level baseline consumption data."
+                ),
+            },
         )
 
     def parse_outputs(self, raw: Any) -> ModelOutput:
