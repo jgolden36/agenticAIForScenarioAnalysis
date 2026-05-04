@@ -1,0 +1,14 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "swift_contained",
+  "model_id": "aisdb",
+  "task_id": 51,
+  "status": "skipped",
+  "started_at": "2026-05-04T04:35:21.939682+00:00",
+  "completed_at": "2026-05-04T04:35:22.788250+00:00",
+  "runtime_seconds": null,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": "Not yet implemented: AISdb adapter is a stub. Real implementation requires: (1) an AISdb installation with a populated vessel track database, (2) route geometry files for Cape of Good Hope and Suez Canal alternatives, (3) a vessel registry cross-reference for type classification, and (4) the AISdb Python API or CLI for programmatic query execution."
+}

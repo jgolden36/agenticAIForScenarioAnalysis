@@ -1,0 +1,77 @@
+{
+  "gdp_impact_pct": -0.7361,
+  "gdp_growth_pct": -0.7361,
+  "gdp_growth_pct_year1": -0.7361,
+  "cpi_inflation_pct": 1.415,
+  "cpi_inflation_pct_year1": 1.415,
+  "consumption_impact_pct": -1.3021,
+  "welfare_pct_change": -1.3021,
+  "wage_impact_pct": 0.481,
+  "interest_rate_impact_pct": 0.5235,
+  "sectoral_output_pct_change": {
+    "agriculture": -0.0728,
+    "industry": -0.1787,
+    "energy": 0.342,
+    "services": -0.586
+  },
+  "_inputs": {
+    "commodity_shocks": {
+      "oil": 58.25,
+      "lng": 25.0,
+      "fertilizer": 0.0,
+      "helium": 0.0
+    },
+    "duration_months": 4.0,
+    "regime": "short_run",
+    "duration_scaler": 0.4444
+  },
+  "_calibration_sources": [
+    "Hamilton (2003, 2009 Brookings) -- oil -> GDP elasticity",
+    "Kilian (2008 RES) -- oil supply shock GDP response",
+    "Blanchard & Gal\u00ed (2007) -- oil -> CPI pass-through",
+    "Kilian & Zhou (2022) -- oil + macro pass-through",
+    "Baffes (2007) -- fertilizer pass-through",
+    "Massol & Rifaat (2018) -- helium market response",
+    "UN-Water (2024) Progress Report -- water shortage GDP impact"
+  ],
+  "_applied_shocks": {
+    "oil": 58.25,
+    "lng": 25.0,
+    "fertilizer": 0.0,
+    "helium": 0.0
+  },
+  "_duration_months": 4.0,
+  "_overrides": {
+    "p_oil": 1.5825,
+    "p_energy": 1.978125,
+    "p_gas": 1.25,
+    "p_fert": 1.0,
+    "p_intermediate": 1.0,
+    "p_helium": 1.0
+  },
+  "_used_analytical_mvp": true,
+  "_execution_mode": "analytical_mvp",
+  "_provenance_note": "PyCGE analytical-MVP closed-form macro kernel (literature-calibrated elasticities). Activates when the optional cge_modeling package is missing or its pre-alpha API does not match this adapter's expectations.",
+  "_upstream_overrides": [
+    {
+      "name": "oil_price_shock_pct",
+      "target_key": null,
+      "llm_value": 0.0,
+      "computed_value": 58.25,
+      "source_model_id": "poles_jrc",
+      "source_field": "peak_price_change_pct",
+      "transform": "identity",
+      "deviation_pct": 200.0
+    },
+    {
+      "name": "commodity_price_shocks",
+      "target_key": "helium",
+      "llm_value": 30.0,
+      "computed_value": 0.0,
+      "source_model_id": "world_helium_model",
+      "source_field": "price_change_pct",
+      "transform": "identity",
+      "deviation_pct": 200.0
+    }
+  ]
+}

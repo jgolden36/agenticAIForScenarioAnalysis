@@ -1,0 +1,14 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "swift_contained",
+  "model_id": "messageix",
+  "task_id": 35,
+  "status": "failed",
+  "started_at": "2026-05-04T04:38:05.785896+00:00",
+  "completed_at": "2026-05-04T04:38:07.711633+00:00",
+  "runtime_seconds": 1.0320558287203312,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": "JVMNotFoundException: No JVM shared library file (libjvm.so) found. Try setting up the JAVA_HOME environment variable properly."
+}

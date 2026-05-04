@@ -1,0 +1,14 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "swift_escalated",
+  "model_id": "ggm",
+  "task_id": 86,
+  "status": "skipped",
+  "started_at": "2026-05-04T04:36:15.335345+00:00",
+  "completed_at": "2026-05-04T04:36:16.274505+00:00",
+  "runtime_seconds": null,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": "Not yet implemented: GGMAdapter.execute() requires a GGMConfig. Prerequisites:\n  1. GAMS installation with CPLEX solver license\n  2. gamsapi Python package (pip install gamsapi[transfer])\n  3. GGM model directory with data/SET-Nav/*.xlsx files\n  4. GGMConfig(gams_system_dir=..., model_dir=...)\n"
+}

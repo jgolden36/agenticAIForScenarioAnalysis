@@ -1,0 +1,14 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "swift_escalated",
+  "model_id": "simple_g",
+  "task_id": 92,
+  "status": "skipped",
+  "started_at": "2026-05-04T04:36:24.691628+00:00",
+  "completed_at": "2026-05-04T04:36:25.549103+00:00",
+  "runtime_seconds": null,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": "Not yet implemented: SIMPLEGAdapter.execute is not yet implemented. Real integration requires: (1) a GAMS installation with the SIMPLE-G model, (2) writing scenario shock parameters to a GAMS-compatible input file, (3) invoking the SIMPLE-G GAMS entry point via subprocess, and (4) parsing output GDX or CSV files for agricultural price, trade, and welfare results by region."
+}

@@ -1,0 +1,14 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "swift_escalated",
+  "model_id": "sahysmod",
+  "task_id": 78,
+  "status": "failed",
+  "started_at": "2026-05-04T04:36:02.977159+00:00",
+  "completed_at": "2026-05-04T04:36:03.813021+00:00",
+  "runtime_seconds": 0.0038879550993442535,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": "FileNotFoundError: [Errno 2] No such file or directory: 'Models/Water/SahysMod/SahysMod.exe'"
+}

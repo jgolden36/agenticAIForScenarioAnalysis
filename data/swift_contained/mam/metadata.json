@@ -1,0 +1,39 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "swift_contained",
+  "model_id": "mam",
+  "task_id": 28,
+  "status": "completed",
+  "started_at": "2026-05-04T04:37:45.971516+00:00",
+  "completed_at": "2026-05-04T04:37:47.033016+00:00",
+  "runtime_seconds": 0.21000876650214195,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": null,
+  "upstream_overrides": [
+    {
+      "name": "oil_price_path",
+      "target_key": null,
+      "llm_value": null,
+      "computed_value": [
+        123.83,
+        80.0,
+        80.0,
+        80.0,
+        80.0,
+        80.0,
+        80.0,
+        80.0,
+        80.0,
+        80.0,
+        80.0,
+        80.0
+      ],
+      "source_model_id": "poles_jrc",
+      "source_field": "brent_price_path_usd_per_bbl",
+      "transform": "identity",
+      "deviation_pct": null
+    }
+  ]
+}

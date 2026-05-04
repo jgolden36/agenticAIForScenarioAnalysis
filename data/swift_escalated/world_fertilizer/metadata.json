@@ -1,0 +1,14 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "swift_escalated",
+  "model_id": "world_fertilizer",
+  "task_id": 93,
+  "status": "skipped",
+  "started_at": "2026-05-04T04:36:26.225338+00:00",
+  "completed_at": "2026-05-04T04:36:27.088980+00:00",
+  "runtime_seconds": null,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": "Not yet implemented: WorldFertilizerAdapter.execute is not yet implemented. Provide a GAMSConfig to enable execution via the GAMS Control API. Requirements: (1) GAMS system installation with matching gamsapi version, (2) the World Fertilizer Model .gms file, (3) CONOPT solver license."
+}

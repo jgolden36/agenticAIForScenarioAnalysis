@@ -1,0 +1,14 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "swift_contained",
+  "model_id": "osemosys",
+  "task_id": 34,
+  "status": "skipped",
+  "started_at": "2026-05-04T04:38:04.264355+00:00",
+  "completed_at": "2026-05-04T04:38:05.102786+00:00",
+  "runtime_seconds": null,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": "Not yet implemented: OSeMOSYS baseline_data_dir not found: data/osemosys/baseline. Provide a baseline dataset (CSV-per-parameter layout)."
+}

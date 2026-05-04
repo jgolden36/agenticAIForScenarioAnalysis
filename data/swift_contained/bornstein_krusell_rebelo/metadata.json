@@ -1,0 +1,14 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "swift_contained",
+  "model_id": "bornstein_krusell_rebelo",
+  "task_id": 60,
+  "status": "failed",
+  "started_at": "2026-05-04T04:35:35.729253+00:00",
+  "completed_at": "2026-05-04T04:35:36.559738+00:00",
+  "runtime_seconds": 0.0001339353621006012,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": "FileNotFoundError: Dynare .mod file not found: Models/Oil/WorldEquilibriumOilModel/Replication Files/Section 5/supply_shocks_to_non_opec/dynare_codes/World_Economy_Cartel_nonopec_shocks.mod. Verify the section/mod_file configuration."
+}

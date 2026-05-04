@@ -1,0 +1,14 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "swift_escalated",
+  "model_id": "lngst",
+  "task_id": 87,
+  "status": "skipped",
+  "started_at": "2026-05-04T04:36:16.980306+00:00",
+  "completed_at": "2026-05-04T04:36:17.920344+00:00",
+  "runtime_seconds": null,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": "Not yet implemented: LNGSTAdapter.execute is not yet implemented. Provide an ExcelConfig with the workbook path to enable execution. The ExcelAdapter base class handles openpyxl (headless) or xlwings (full recalculation) based on config. Update input_mappings and output_mappings once the actual workbook cell layout is known."
+}

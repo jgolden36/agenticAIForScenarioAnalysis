@@ -1,0 +1,14 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "swift_contained",
+  "model_id": "weap_mena",
+  "task_id": 0,
+  "status": "skipped",
+  "started_at": "2026-05-04T04:34:03.121509+00:00",
+  "completed_at": "2026-05-04T04:34:03.986651+00:00",
+  "runtime_seconds": null,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": "Not yet implemented: WEAPAdapter.execute() requires a WEAPConfig. To integrate WEAP-MENA:\n  1. Install WEAP from Models/Water/Install_WEAP.exe on a Windows host with a valid SEI licence.\n  2. Build / acquire a WEAP-MENA study file (.weap).\n  3. Configure 'weap_executable', 'study_path', and 'result_export_path' in configs/model_configs/weap_mena.yaml.\n  4. Implement COM automation or subprocess invocation of weap.exe inside this method.\n  5. Implement scenario-branch creation from the inputs dict.\n  6. Parse exported CSV results in parse_outputs."
+}

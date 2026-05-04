@@ -1,0 +1,14 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "swift_escalated",
+  "model_id": "mpsge_jl",
+  "task_id": 55,
+  "status": "skipped",
+  "started_at": "2026-05-04T04:38:48.687468+00:00",
+  "completed_at": "2026-05-04T04:38:49.521367+00:00",
+  "runtime_seconds": null,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": "Not yet implemented: MPSGEJLAdapter.execute() is not yet implemented. Provide a JuliaConfig to enable execution via juliacall or subprocess. Requirements: (1) Julia >=1.9 with MPSGE.jl and JuMP packages, (2) GTAP database v10+ with calibration scripts, (3) juliacall (pip install juliacall) or Julia subprocess. Consider custom sysimages via PackageCompiler.jl to eliminate JIT latency."
+}

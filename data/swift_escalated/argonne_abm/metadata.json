@@ -1,0 +1,14 @@
+{
+  "run_id": "20260423_125906",
+  "scenario_id": "swift_escalated",
+  "model_id": "argonne_abm",
+  "task_id": 116,
+  "status": "failed",
+  "started_at": "2026-04-23T13:51:59.235988+00:00",
+  "completed_at": "2026-04-23T13:51:59.236231+00:00",
+  "runtime_seconds": null,
+  "node": "quadro1",
+  "slurm_job_id": "23199",
+  "resource_class": "cpu",
+  "error_message": "Validation failed: Parameter 'demand_response_elasticity' = 0.5 is outside the valid range [-2.0, 0.0]."
+}

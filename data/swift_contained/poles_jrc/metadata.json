@@ -1,0 +1,14 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "swift_contained",
+  "model_id": "poles_jrc",
+  "task_id": 68,
+  "status": "completed",
+  "started_at": "2026-05-04T04:35:47.808833+00:00",
+  "completed_at": "2026-05-04T04:35:48.645791+00:00",
+  "runtime_seconds": 8.676201105117798e-05,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": null
+}

@@ -1,0 +1,14 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "swift_escalated",
+  "model_id": "gtap",
+  "task_id": 51,
+  "status": "skipped",
+  "started_at": "2026-05-04T04:38:42.248206+00:00",
+  "completed_at": "2026-05-04T04:38:43.112359+00:00",
+  "runtime_seconds": null,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": "Not yet implemented: GTAPAdapter.execute is not yet implemented. Real integration requires: (1) a licensed GTAP database (version 10+, from the GTAP Center at Purdue University), (2) a GTAP model software installation (RunGTAP or FlexGTAP), (3) writing shock and closure files specifying oil price, fertilizer cost, and trade-route disruption shocks, (4) invoking the GTAP executable via subprocess, and (5) parsing the HAR/SOL solution file for welfare (EV by region), bilateral trade flows, and producer/consumer price changes by sector."
+}

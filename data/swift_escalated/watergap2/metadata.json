@@ -1,0 +1,14 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "swift_escalated",
+  "model_id": "watergap2",
+  "task_id": 79,
+  "status": "skipped",
+  "started_at": "2026-05-04T04:36:04.445563+00:00",
+  "completed_at": "2026-05-04T04:36:05.306352+00:00",
+  "runtime_seconds": null,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": "Not yet implemented: WaterGAP2Adapter.execute() requires a WaterGAP2Config. To integrate WaterGAP2:\n  1. Build the binary from the C++ sources at Models/Water/WaterGAP2-v2.2d/HydrologyFrankfurt-WaterGAP2-65f306b/source/ via CMake, OR obtain access to the Frankfurt WaterGAP2 web service.\n  2. Stage global climate forcing NetCDFs (precipitation, temperature) under forcing_data_path.\n  3. Configure the adapter via configs/model_configs/watergap2.yaml.\n  4. Implement either subprocess invocation of the compiled binary or a REST client against the web service inside this method.\n  5. Build a NetCDF damage mask from 'affected_grid_cells' and 'infrastructure_damage_index' and pass it to WaterGAP2.\n  6. Parse gridded NetCDF outputs in parse_outputs."
+}
