@@ -10,9 +10,25 @@ requires-python = ">=3.11"
 dependencies = [
     "langchain>=0.3.0",
     "langchain-core>=0.3.0",
+    # langchain-openai backs both the OpenAI cloud provider and the
+    # local vLLM / Ollama providers (all three use ChatOpenAI under the
+    # hood — see src/common/llm.py::_create_provider). Treating it as
+    # a core dependency means a fresh pip install of the pipeline is
+    # immediately usable on any SLURM driver that runs a vLLM sidecar
+    # (the cluster default), without needing to remember an extra.
+    "langchain-openai>=0.2.0",
     "langgraph>=0.3.0",
     "pydantic>=2.0",
     "pyyaml>=6.0",
+    # tiktoken is used by src/common/context_budget.py to count prompt
+    # tokens accurately before sending requests to vLLM / OpenAI / vLLM
+    # (cl100k_base for GPT-4 / Llama-3 family, o200k_base for gpt-4o).
+    # The helper degrades to a `len(text) // 4` heuristic if tiktoken is
+    # missing, but every Module 4 / Stage 5 call site relies on the
+    # accurate count to stay under the served context window without
+    # silently dropping content. Pure-Rust binary wheels available for
+    # all major platforms, so this is cheap to ship as a core dep.
+    "tiktoken>=0.7.0",
 ]
 
 [project.optional-dependencies]
@@ -38,12 +54,28 @@ r = [
     "rpy2>=3.5",
 ]
 macro = [
+    # OG-Core: open-source overlapping-generations framework. Used by
+    # the OpenCGE adapter (src/models/macro/opencge.py). PyPI exposes
+    # 0.13.x .. 0.15.x at time of writing, all Python 3.11+ compatible.
     "ogcore>=0.13.0",
-    "ogusa>=0.13.0",
     "dask[distributed]>=2024.1.0",
-    "cge-modeling>=0.4.0",
+    # cge_modeling: Jesse Grabowski's pytensor-based CGE library used
+    # by the pycge adapter (src/models/macro/pycge.py). The project is
+    # at 0.0.x on PyPI (latest 0.0.6); the older >=0.4.0 pin we used
+    # to ship was a typo that sent pip's resolver into a long
+    # backtrack and ultimately failed the install.
+    "cge-modeling>=0.0.6",
     "openpyxl>=3.1",
     "pandas>=2.0",
+]
+macro-us = [
+    # OG-USA: US calibration of OG-Core, used by OpenCGE when
+    # OpenCGEConfig.ogusa_data_dir is set. Lives outside [macro]
+    # because every ogusa wheel on PyPI (>=0.2.x) requires Python
+    # >=3.12, while the default cluster env is Python 3.11. The
+    # OpenCGE adapter degrades to OG-Core defaults with a warning
+    # when ogusa is unavailable, so this extra is genuinely opt-in.
+    "ogusa>=0.2.0",
 ]
 water = [
     # Required for parsing CWatM and (future) WaterGAP2 NetCDF outputs.
@@ -60,7 +92,13 @@ energy = [
     "message-ix>=3.7",
     "ixmp>=3.7",
     # TEMOA energy-systems optimization framework (Pyomo-based).
-    "temoa-energysystem>=0.1",
+    # The TEMOAAdapter (src/models/energy/temoa.py) shells out to a
+    # vendored upstream clone at Models/Energy/TEMOA via
+    # `python -m temoa.temoa_run`, so we do NOT pip-install temoa
+    # here. The `temoa` PyPI package additionally requires Python
+    # >=3.12, which is incompatible with the default cluster env
+    # (Python 3.11). Pyomo + a backend solver (cbc/highs) is enough
+    # to drive the vendored TEMOA from the active conda env.
     "pyomo>=6.7",
     # Shared data-handling dependency used by all three adapters.
     "pandas>=2.0",
@@ -72,6 +110,18 @@ wandb = [
     # src/common/wandb_logger.py for the contract.
     "wandb>=0.16",
 ]
+viz = [
+    # Visualization suite consumed by Stage 6 of the SLURM driver
+    # (slurm/scripts/visualize_results.py). The script degrades to a
+    # text-only HTML dashboard when these are unavailable, so the extra
+    # is genuinely optional, but installing it produces the full PNG
+    # figure set + a richer narrative-rendered dashboard.
+    "matplotlib>=3.8",
+    "pandas>=2.0",
+    # Markdown -> HTML rendering for the qualitative narrative blocks
+    # embedded in the dashboard. Pure Python; no native deps.
+    "markdown>=3.5",
+]
 news = [
     # News/data ingestion adapters used by the temporal weekly
     # re-analysis driver (slurm/jobs/weekly_news_pipeline.job and
@@ -79,6 +129,15 @@ news = [
     # (NewsData.io, GNews, NewsAPI.org/.ai, EIA Open Data) talk plain
     # HTTPS, so `requests` is the only hard dependency.
     "requests>=2.31",
+]
+llm-providers = [
+    # Optional cloud LLM providers. langchain-openai is already a
+    # core dependency (used by vLLM / Ollama / OpenAI). Installing
+    # this extra adds Anthropic and AWS Bedrock so all four
+    # PIPELINE_LLM_PROVIDER values in src/common/llm.py work without
+    # an ImportError.
+    "langchain-anthropic>=0.3.0",
+    "langchain-aws>=0.2.0",
 ]
 
 [tool.setuptools.packages.find]

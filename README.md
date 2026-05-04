@@ -4,7 +4,7 @@ A LangGraph-based agentic AI orchestration framework for multi-model, multi-scen
 
 This repository implements the framework described in *"Agentic AI Modeling for Rapid Analysis of Chokepoint Crises Along Strategic and Economic Dimensions: A Case Study of the Closure of the Strait of Hormuz"* (Golden, Indelicato, Varshney, & Thornsbury). It coordinates ~30 heterogeneous domain models — written in Python, Julia, GAMS, R, AnyLogic, Octave, EViews, Fortran, and Excel — through a structured Schwartz-style scenario analysis with mandatory human-in-the-loop checkpoints.
 
-> **Status (April 2026):** The orchestration layer is feature-complete. ~14 of ~30 model adapters have real execution paths wired to vendored or external model code; the remaining ~16 are typed stubs awaiting upstream integration. See [Model implementation status](#model-implementation-status) below.
+> **Status (April 2026):** The orchestration layer is feature-complete. ~14 of ~30 model adapters have real execution paths wired to vendored or external model code; an additional 4 (POLES-JRC, World Helium Model, Futures, CWatM analytical fallback) ship a closed-form analytical-MVP execution path so every commodity system except SHIPPING has at least one runnable model on the cluster MVP; the remaining ~12 are typed stubs awaiting upstream integration. See [Model implementation status](#model-implementation-status) below.
 
 ---
 
@@ -73,6 +73,18 @@ Every domain model is wrapped by a `ModelAdapter` subclass (`src/models/base.py`
 
 The executor (`src/models/executor.py`) respects analytical-level ordering, parallelises within levels, isolates failures, and honours per-adapter `ResourceRequirements` for GPU/CPU/SLURM scheduling.
 
+### Upstream-to-downstream feed-forward (Algorithm 1, step 11)
+
+Module 3 is split in three phases so downstream models (semiconductor / helium-ABM downstream of the helium model, then the macroeconomic CGE / NEMS layer downstream of every commodity result) solve with shocks computed by upstream domain models rather than by the LLM extracting them from the scenario narrative:
+
+1. **Phase A (commodity)** — combat + commodity adapters (POLES-JRC, BKR, GGM, Energy Flux LNG, World Helium Model, futures, ...) execute first and write their outputs to `data/outputs/<scenario>/<model>/output.json`.
+2. **Barrier merge #1 → Phase A2 (commodity_downstream)** — `src/pipeline/upstream_forwarding.py` reads the completed commodity outputs and applies the rules in `configs/upstream_forwarding_mapping.yaml` whose targets sit at `AnalyticalLevel.COMMODITY_DOWNSTREAM`. Today this forwards `world_helium_model.effective_supply_gap_pct` into `simrlfab.helium_supply_reduction_pct` and `argonne_abm.supply_shock_pct`, plus `world_helium_model.disruption_duration_months` into both adapters' `disruption_duration_months`. SimRLFab and Argonne ABM then execute with those merged inputs, so the semiconductor-fab and helium-market-ABM simulations consume the helium model's *computed* sectoral shortfall instead of an LLM estimate. Categorical (`neon_supply_status`) and calibration (`fab_utilization_baseline`, `demand_response_elasticity`) parameters stay on whatever the LLM extracted.
+3. **Barrier merge #2 → Phase B (macro)** — the same machinery is re-invoked, this time with macro models (NEMS, MAM, OpenCGE, PyCGE, MPSGE.jl, MIRAGRODEP) as the targets. It pulls outputs from BOTH the commodity and commodity_downstream phases, so e.g. `oil_price_shock_pct` ← `poles_jrc.peak_price_change_pct`; `commodity_price_shocks.helium` ← `world_helium_model.price_change_pct`; `commodity_price_shocks.fertilizer` ← mean of `futures.peak_price_index_per_commodity[urea, dap, potash]`. Macro adapters then execute with the merged parameters.
+
+`src/synthesis/consistency.py` walks each downstream result's `outputs["_upstream_overrides"]` and automatically flags any LLM-vs-upstream divergence above `defaults.llm_vs_upstream_warn_threshold_pct` (default 50%) as a `ConsistencyFlag`. The synthesis prompt includes an explicit "Upstream-to-Macro Overrides" section so the report attributes downstream findings to the upstream calculation.
+
+The same merge logic is invoked from both the local LangGraph orchestrator (the `merge_upstream_into_commodity_downstream_params` and `merge_upstream_into_macro_params` nodes between `execute_commodity_model` → `execute_commodity_downstream_model` → `execute_macro_model` in `src/pipeline/graph.py`) and the SLURM cluster pipeline (`slurm/scripts/dispatch_models.py --tier {commodity_downstream,macro}`, called between Stage 3a, Stage 3a-2, and Stage 3b in `slurm/jobs/*.job` and `slurm/submit_pipeline.sh`). When an upstream model is FAILED / SKIPPED / not in the registry, the LLM-extracted shock is preserved (graceful degradation). The legacy filename `configs/upstream_to_macro_mapping.yaml` and the legacy module `src/pipeline/upstream_to_macro.py` are kept as backwards-compat shims.
+
 ---
 
 ## Model implementation status
@@ -90,14 +102,14 @@ The CLAUDE.md inventory lists ~30 domain models. Each has a typed adapter, a Pyd
 | WEAP / WEAP–MENA | `src/models/water/weap.py` | Config-aware stub | COM automation path implemented; needs licensed WEAP install + study file via `weap_mena.yaml` |
 | SahysMod | `src/models/water/sahysmod.py` | Real (config-aware) | CLI driver with line-range injection for irrigation/salinity decks |
 | WaterGAP2 | `src/models/water/watergap2.py` | Config-aware stub | Executable or HTTP API path; needs forcing data + binary |
-| CWatM | `src/models/water/cwatm.py` | Real (config-aware) | Subprocess driver; needs `cwatm.yaml` pointing at CWatM root + settings + data |
+| CWatM | `src/models/water/cwatm.py` | **Real** (config-aware) **+ analytical MVP fallback** | Subprocess driver when `cwatm.yaml` is provided; otherwise a closed-form scarcity-index fallback runs so WATER always has a model in the cluster MVP |
 
 ### Oil
 
 | Model | Adapter | Status | Notes |
 |---|---|---|---|
 | Bornstein-Krusell-Rebelo World Equilibrium Oil Model | `src/models/oil/bornstein_krusell_rebelo.py` | **Real** | Octave + Dynare driver; replication files vendored at `Models/Oil/WorldEquilibriumOilModel/` |
-| POLES-JRC | `src/models/oil/poles_jrc.py` | Stub | Awaiting JRC model distribution |
+| POLES-JRC | `src/models/oil/poles_jrc.py` | **Real (analytical MVP mode)** | Closed-form constant-elasticity oil price impulse (Hamilton 2009; Baumeister & Peersman 2013); JRC model distribution still pending |
 | MarketSim (BOEM) | `src/models/oil/marketsim.py` | Stub | Awaiting BOEM codebase |
 | Fed Workhorse Oil Model (Baumeister-Hamilton) | `src/models/oil/fed_oil.py` | Stub | Awaiting upstream MATLAB/R code |
 
@@ -114,7 +126,7 @@ The CLAUDE.md inventory lists ~30 domain models. Each has a typed adapter, a Pyd
 
 | Model | Adapter | Status | Notes |
 |---|---|---|---|
-| World Helium Model (IFP EN) | `src/models/helium/world_helium_model.py` | Stub | Awaiting IFP Énergies Nouvelles model |
+| World Helium Model (IFP EN) | `src/models/helium/world_helium_model.py` | **Real (analytical MVP mode)** | Closed-form Qatar-share equilibrium (USGS 2024; Massol & Rifaat 2018 demand elasticity); IFP Énergies Nouvelles model still pending |
 | Argonne Helium ABM | `src/models/helium/argonne_abm.py` | Config-aware stub | `AnyLogicAdapter` JAR-export pattern wired; needs exported model + license |
 | SimRLFab | `src/models/helium/simrlfab.py` + `simrlfab_driver.py` | Real (config-aware) | Subprocess driver into vendored repo at `Models/Helium Market_ Semiconductors/SimRLFab-master/`; needs Python 3.6 venv with pinned deps |
 
@@ -128,7 +140,7 @@ The CLAUDE.md inventory lists ~30 domain models. Each has a typed adapter, a Pyd
 | World Fertilizer Model | `src/models/fertilizer/world_fertilizer.py` | Stub | `GAMSAdapter` base in place; needs `.gms` files and license |
 | GTAP | `src/models/fertilizer/gtap.py` | Stub | |
 | APSIM | `src/models/fertilizer/apsim.py` | Stub | |
-| Futures forecasting | `src/models/fertilizer/futures.py` | Stub | |
+| Futures forecasting | `src/models/fertilizer/futures.py` | **Real (analytical MVP mode)** | Pure-Python AR(1) mean-reversion with commodity-specific half-lives (CBOT/NYMEX-calibrated); no `statsmodels` dependency required |
 
 ### Shipping
 
@@ -161,12 +173,28 @@ A new commodity system, `ENERGY_SYSTEMS`, was added beyond the original CLAUDE.m
 
 ### Summary
 
-- **Real / fully-wired adapters (10):** Bornstein-Krusell-Rebelo, Energy Flux Gas Power, Energy Flux LNG Profits, NEMS, MAM, OpenCGE, pycge, MIRAGRODEP, OSeMOSYS, MESSAGEix, TEMOA.
-- **Real config-aware (activate when YAML provided) (6):** SahysMod, CWatM, GGM, SimRLFab, MAgPIE.
+- **Real / fully-wired adapters (11):** Bornstein-Krusell-Rebelo, Energy Flux Gas Power, Energy Flux LNG Profits, NEMS, MAM, OpenCGE, pycge, MIRAGRODEP, OSeMOSYS, MESSAGEix, TEMOA.
+- **Real config-aware (activate when YAML provided) (5):** SahysMod, CWatM, GGM, SimRLFab, MAgPIE.
+- **Real (analytical MVP mode) (4):** POLES-JRC, World Helium Model, Futures, CWatM (analytical fallback when no `_config` is provided). Closed-form formulas with literature-sourced calibration. The full upstream-model paths (where they exist) are preserved and activated when the corresponding YAML / data assets are provided.
 - **Config-aware stubs (5):** WEAP–MENA, WaterGAP2, LNGST, Argonne Helium ABM, MPSGE.jl.
-- **Typed stubs awaiting upstream code (12):** POLES-JRC, MarketSim, Fed Workhorse Oil, World Helium Model, World Fertilizer Model, CAPRI, SIMPLE-G, GTAP, APSIM, Futures, AISdb, AIS_project, NREL.
+- **Typed stubs awaiting upstream code (10):** MarketSim, Fed Workhorse Oil, World Fertilizer Model, CAPRI, SIMPLE-G, GTAP, APSIM, AISdb, AIS_project, NREL.
 
 Stubs do not break the pipeline: the executor catches `NotImplementedError`, marks the run as `SKIPPED`, and continues with the remaining models. The synthesis report notes which models contributed and which were unavailable.
+
+### MVP commodity-system coverage
+
+After the SLURM driver bootstrap completes (`slurm/jobs/stonybrook_ai_cluster.job`), every `CommoditySystem` except `SHIPPING` has at least one model with a runnable `execute()`:
+
+| CommoditySystem | MVP model | Mode |
+|---|---|---|
+| WATER | `cwatm` | Analytical fallback (or real CWatM when `cwatm.yaml` is provided) |
+| OIL | `poles_jrc` | Analytical MVP |
+| LNG | `energy_flux_gas_power`, `energy_flux_lng_profits` | Real (pure Python) |
+| HELIUM_SEMICONDUCTORS | `world_helium_model` | Analytical MVP |
+| FERTILIZER_AGRICULTURE | `futures` | Analytical MVP |
+| SHIPPING | — | All adapters still stubs |
+| MACROECONOMIC | `pycge`, `mam` | Real (after `[macro]` extras + auto-vendored AEO XLSX) |
+| ENERGY_SYSTEMS | `temoa` | Real (after auto-vendored TEMOA clone + `cbc`) |
 
 ---
 
@@ -246,9 +274,10 @@ pip install -e ".[julia]"        # juliacall (MPSGE.jl)
 pip install -e ".[gams]"         # gamsapi (GGM, MIRAGRODEP, World Fertilizer, ...)
 pip install -e ".[excel]"        # openpyxl + xlwings (Energy Flux, LNGST, MarketSim)
 pip install -e ".[r]"            # rpy2 (MAgPIE in-process mode)
-pip install -e ".[macro]"        # ogcore, ogusa, dask, cge-modeling
+pip install -e ".[macro]"        # ogcore, dask, cge-modeling (Python 3.11+)
+pip install -e ".[macro-us]"     # ogusa (Python 3.12+ ONLY; OpenCGE US calibration)
 pip install -e ".[water]"        # netCDF4, xarray (CWatM / WaterGAP2 outputs)
-pip install -e ".[energy]"       # otoole, message-ix, ixmp, temoa-energysystem, pyomo
+pip install -e ".[energy]"       # otoole, message-ix, ixmp, pyomo (TEMOA via vendored repo)
 pip install -e ".[news]"         # requests (NewsData.io / GNews / NewsAPI / EIA adapters)
 pip install -e ".[dev]"          # pytest, pytest-asyncio
 ```
@@ -285,6 +314,20 @@ Tests live under `tests/`:
 ```bash
 pytest                     # full suite
 pytest tests/test_models   # adapter contract tests only
+```
+
+### Per-run output artefacts
+
+The SLURM driver (`slurm/jobs/stonybrook_ai_cluster.job`) runs two trailing post-processing stages over the synthesis output of every run, both gated to be best-effort so a missing optional dep can't fail a run:
+
+- **Stage 5 — quantitative + qualitative export** (`slurm/scripts/export_results.py`). Emits `data/reports/<run_id>/csv/{model_status,synthesis_outcomes,quantitative_results,consistency_flags}.csv`, per-(scenario, model) tables under `csv/raw/<scenario>/`, and per-scenario plain-prose narratives under `qualitative/<scenario>.md` plus a cross-scenario index.
+- **Stage 6 — visualization suite** (`slurm/scripts/visualize_results.py`). Reads the Stage 5 CSVs + qualitative narratives and emits PNG figures (status by scenario / commodity system, headline-outcomes grid, per-row-normalised cross-model heatmap, consistency-flag bars, per-CSV time-series line/bar plots) plus a single self-contained `data/reports/<run_id>/figures/index.html` dashboard that embeds every figure inline alongside the rendered narrative markdown. Requires the `[viz]` extra (`pip install -e ".[viz]"` — matplotlib + pandas + markdown). The dashboard degrades to a text-only HTML report when any of those are unavailable.
+
+Both stages are also runnable standalone against any historical run id:
+
+```bash
+python slurm/scripts/export_results.py    --run-id 20260423_125906
+python slurm/scripts/visualize_results.py --run-id 20260423_125906
 ```
 
 ---
