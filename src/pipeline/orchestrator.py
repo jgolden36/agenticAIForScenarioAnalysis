@@ -17,7 +17,11 @@ from src.interface.comparison import find_robust_outcomes
 from src.interface.provenance import ProvenanceTracker
 from src.interface.review import CLIReviewInterface, ReviewInterface
 from src.models.executor import ModelExecutor
-from src.models.registry import ModelRegistry, build_default_registry
+from src.models.registry import (
+    ModelRegistry,
+    build_default_registry,
+    default_config_dir,
+)
 from src.parameters.extractor import build_parameter_extractor
 from src.parameters.model_specs import ALL_MODEL_SPECS
 from src.pipeline.config import PipelineConfig
@@ -50,7 +54,7 @@ class PipelineOrchestrator:
         review_interface: ReviewInterface | None = None,
     ) -> None:
         self.config = config or PipelineConfig()
-        self.registry = registry or build_default_registry()
+        self.registry = registry or build_default_registry(default_config_dir())
         self.review = review_interface or CLIReviewInterface()
 
         self.llm = get_llm(

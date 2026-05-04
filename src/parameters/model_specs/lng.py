@@ -31,6 +31,7 @@ LNG_MODEL_SPECS: dict[str, dict] = {
                     "or '2002_dash' (63,975 MW/yr)"
                 ),
                 "unit": "categorical",
+                "type": "string",
                 "allowed_values": ["conservative", "central", "stretch", "2002_dash"],
             },
         ],
@@ -39,41 +40,49 @@ LNG_MODEL_SPECS: dict[str, dict] = {
                 "name": "custom_build_cap_mw_yr",
                 "description": "Custom annual build cap in MW (overrides build_scenario)",
                 "unit": "MW/yr",
+                "type": "positive_number",
             },
             {
                 "name": "construction_mw",
                 "description": "Pipeline MW currently under construction (default 30,000)",
                 "unit": "MW",
+                "type": "non_negative_number",
             },
             {
                 "name": "pre_construction_mw",
                 "description": "Pipeline MW in pre-construction phase (default 159,000)",
                 "unit": "MW",
+                "type": "non_negative_number",
             },
             {
                 "name": "announced_mw",
                 "description": "Pipeline MW announced but not yet in pre-construction (default 63,000)",
                 "unit": "MW",
+                "type": "non_negative_number",
             },
             {
                 "name": "projection_years",
                 "description": "Number of years to project (default 10, covering 2026–2035)",
                 "unit": "years",
+                "type": "positive_number",
             },
             {
                 "name": "dc_share",
                 "description": "Data-centre share of incremental capacity (default 0.37)",
                 "unit": "fraction",
+                "type": "non_negative_number",
             },
             {
                 "name": "capacity_factor",
                 "description": "Mid-case capacity factor for gas burn translation (default 0.45)",
                 "unit": "fraction",
+                "type": "non_negative_number",
             },
             {
                 "name": "heat_rate_btu_kwh",
                 "description": "Mid-case heat rate for gas burn translation (default 7,200)",
                 "unit": "Btu/kWh",
+                "type": "positive_number",
             },
         ],
         "output_variables": [
@@ -106,6 +115,7 @@ LNG_MODEL_SPECS: dict[str, dict] = {
                 "name": "disruption_duration_months",
                 "description": "Duration of crisis / elevated prices (1–12 months)",
                 "unit": "months",
+                "type": "positive_number",
             },
             {
                 "name": "ttf_peak_price",
@@ -115,6 +125,7 @@ LNG_MODEL_SPECS: dict[str, dict] = {
                     "Not required if price_schedule is provided directly."
                 ),
                 "unit": "$/MMBtu",
+                "type": "positive_number",
             },
             {
                 "name": "jkm_peak_price",
@@ -123,6 +134,7 @@ LNG_MODEL_SPECS: dict[str, dict] = {
                     "Not required if price_schedule is provided directly."
                 ),
                 "unit": "$/MMBtu",
+                "type": "positive_number",
             },
             {
                 "name": "hh_crisis_price",
@@ -131,6 +143,7 @@ LNG_MODEL_SPECS: dict[str, dict] = {
                     "Not required if price_schedule is provided directly."
                 ),
                 "unit": "$/MMBtu",
+                "type": "positive_number",
             },
         ],
         "optional_parameters": [
@@ -142,46 +155,55 @@ LNG_MODEL_SPECS: dict[str, dict] = {
                     "peak-price auto-generation."
                 ),
                 "unit": "structured",
+                "type": "list",
             },
             {
                 "name": "peak_month",
                 "description": "Month at which crisis prices peak (default 7)",
                 "unit": "month",
+                "type": "positive_number",
             },
             {
                 "name": "monthly_export_bcf",
                 "description": "Total US LNG exports per month (default 500 Bcf)",
                 "unit": "Bcf/month",
+                "type": "non_negative_number",
             },
             {
                 "name": "eu_share",
                 "description": "Fraction of exports destined for Europe (default 0.50)",
                 "unit": "fraction",
+                "type": "non_negative_number",
             },
             {
                 "name": "asia_share",
                 "description": "Fraction of exports destined for Asia (default 0.37)",
                 "unit": "fraction",
+                "type": "non_negative_number",
             },
             {
                 "name": "liquefaction_toll",
                 "description": "Liquefaction cost per cargo (default $2.10/MMBtu)",
                 "unit": "$/MMBtu",
+                "type": "non_negative_number",
             },
             {
                 "name": "baseline_hh",
                 "description": "Pre-crisis Henry Hub price (default $3.041/MMBtu)",
                 "unit": "$/MMBtu",
+                "type": "positive_number",
             },
             {
                 "name": "baseline_ttf",
                 "description": "Pre-crisis TTF price (default $16.98/MMBtu)",
                 "unit": "$/MMBtu",
+                "type": "positive_number",
             },
             {
                 "name": "baseline_jkm",
                 "description": "Pre-crisis JKM price (default $21.185/MMBtu)",
                 "unit": "$/MMBtu",
+                "type": "positive_number",
             },
         ],
         "output_variables": [
@@ -205,18 +227,18 @@ LNG_MODEL_SPECS: dict[str, dict] = {
         "analytical_level": "commodity",
         "platform": "GAMS (CPLEX solver)",
         "required_parameters": [
-            {"name": "strait_closure_flag", "description": "Whether the Strait of Hormuz is closed", "unit": "boolean"},
-            {"name": "qatar_lng_export_loss_pct", "description": "Percentage loss of Qatar LNG exports (~80 MTPA capacity)", "unit": "percent"},
-            {"name": "uae_lng_export_loss_pct", "description": "Percentage loss of UAE LNG exports (Das Island ~6 MTPA)", "unit": "percent"},
-            {"name": "iran_lng_export_loss_pct", "description": "Percentage loss of Iranian gas exports", "unit": "percent"},
-            {"name": "rerouting_available", "description": "Whether alternative LNG supply routes are available", "unit": "boolean"},
-            {"name": "disruption_duration_months", "description": "Duration of Strait closure", "unit": "months"},
+            {"name": "strait_closure_flag", "description": "Whether the Strait of Hormuz is closed", "unit": "boolean", "type": "boolean"},
+            {"name": "qatar_lng_export_loss_pct", "description": "Percentage loss of Qatar LNG exports (~80 MTPA capacity)", "unit": "percent", "type": "percent"},
+            {"name": "uae_lng_export_loss_pct", "description": "Percentage loss of UAE LNG exports (Das Island ~6 MTPA)", "unit": "percent", "type": "percent"},
+            {"name": "iran_lng_export_loss_pct", "description": "Percentage loss of Iranian gas exports", "unit": "percent", "type": "percent"},
+            {"name": "rerouting_available", "description": "Whether alternative LNG supply routes are available", "unit": "boolean", "type": "boolean"},
+            {"name": "disruption_duration_months", "description": "Duration of Strait closure", "unit": "months", "type": "positive_number"},
         ],
         "optional_parameters": [
-            {"name": "oman_lng_export_loss_pct", "description": "Percentage loss of Omani LNG exports (Qalhat ~10 MTPA; NOT through Strait)", "unit": "percent"},
-            {"name": "insurance_premium_multiplier", "description": "War-risk premium multiplier on shipping arc costs", "unit": "factor"},
-            {"name": "scenario_label", "description": "WEO scenario: 'NPS' or 'SDS'", "unit": "categorical"},
-            {"name": "time_horizon", "description": "GGM time horizon: '2015', '2025', or '2060'", "unit": "categorical"},
+            {"name": "oman_lng_export_loss_pct", "description": "Percentage loss of Omani LNG exports (Qalhat ~10 MTPA; NOT through Strait)", "unit": "percent", "type": "percent"},
+            {"name": "insurance_premium_multiplier", "description": "War-risk premium multiplier on shipping arc costs", "unit": "factor", "type": "positive_number"},
+            {"name": "scenario_label", "description": "WEO scenario: 'NPS' or 'SDS'", "unit": "categorical", "type": "string"},
+            {"name": "time_horizon", "description": "GGM time horizon: '2015', '2025', or '2060'", "unit": "categorical", "type": "string"},
         ],
         "output_variables": [
             {"name": "regional_prices_eur_per_kcm", "description": "Market clearing gas prices by node/season/year", "unit": "EUR/kcm"},
@@ -237,10 +259,10 @@ LNG_MODEL_SPECS: dict[str, dict] = {
         "commodity_system": "lng",
         "analytical_level": "commodity",
         "required_parameters": [
-            {"name": "qatar_export_reduction_pct", "description": "Reduction in Qatar LNG exports", "unit": "percent"},
-            {"name": "uae_export_reduction_pct", "description": "Reduction in UAE LNG exports", "unit": "percent"},
-            {"name": "spot_price_multiplier", "description": "Multiplier on LNG spot prices", "unit": "factor"},
-            {"name": "disruption_duration_months", "description": "Duration of disruption", "unit": "months"},
+            {"name": "qatar_export_reduction_pct", "description": "Reduction in Qatar LNG exports", "unit": "percent", "type": "percent"},
+            {"name": "uae_export_reduction_pct", "description": "Reduction in UAE LNG exports", "unit": "percent", "type": "percent"},
+            {"name": "spot_price_multiplier", "description": "Multiplier on LNG spot prices", "unit": "factor", "type": "positive_number"},
+            {"name": "disruption_duration_months", "description": "Duration of disruption", "unit": "months", "type": "positive_number"},
         ],
     },
 }

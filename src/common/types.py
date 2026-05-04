@@ -4,25 +4,43 @@ from enum import Enum
 
 
 class Scenario(str, Enum):
-    """The four scenarios from the 2x2 scenario matrix.
+    """Scenario identifiers used throughout the pipeline.
 
-    Axes: Duration (swift vs prolonged) x Escalation (contained vs escalated).
+    The first four (A-D) are the canonical 2x2 quadrants from the
+    Schwartz scenario matrix. Axes: Duration (swift vs prolonged) x
+    Escalation (contained vs escalated).
+
+    ``E`` is a prescribed tail-risk scenario added outside the 2x2
+    matrix. It assumes a prolonged-and-escalated path (like D) but
+    additionally stipulates that major Persian Gulf infrastructure --
+    desalination plants, Qatari LNG export terminals, and Saudi /
+    UAE oil loading terminals -- is destroyed or severely damaged
+    during the conflict, producing a multi-year reconstruction and
+    investment overhang and a substantially deeper supply shock than
+    D. Configured via ``additional_scenarios`` in the scenario
+    framework (see ``configs/scenario_frameworks/hormuz_2026.yaml``).
     """
 
     A = "swift_contained"
     B = "prolonged_contained"
     C = "swift_escalated"
     D = "prolonged_escalated"
+    E = "infrastructure_collapse"
 
 
 class AnalyticalLevel(str, Enum):
     """Ordered analytical levels that determine execution sequencing.
 
-    Information flows downward: combat -> commodity -> short-run macro -> long-run macro.
+    Information flows downward: combat -> commodity -> commodity_downstream
+    -> short-run macro -> long-run macro. The COMMODITY_DOWNSTREAM tier
+    hosts commodity-system models whose inputs are themselves derived
+    from other commodity-tier model outputs (e.g. SimRLFab and the
+    Argonne Helium ABM consume world_helium_model outputs).
     """
 
     COMBAT = "combat"
     COMMODITY = "commodity"
+    COMMODITY_DOWNSTREAM = "commodity_downstream"
     SHORT_RUN_MACRO = "short_run_macro"
     LONG_RUN_MACRO_STRATEGIC = "long_run_macro_strategic"
 
@@ -31,6 +49,7 @@ class AnalyticalLevel(str, Enum):
 ANALYTICAL_LEVEL_ORDER = [
     AnalyticalLevel.COMBAT,
     AnalyticalLevel.COMMODITY,
+    AnalyticalLevel.COMMODITY_DOWNSTREAM,
     AnalyticalLevel.SHORT_RUN_MACRO,
     AnalyticalLevel.LONG_RUN_MACRO_STRATEGIC,
 ]

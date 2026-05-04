@@ -9,20 +9,20 @@ MACRO_MODEL_SPECS: dict[str, dict] = {
         "platform": "Fortran + AIMMS + Python + GAMS (Windows only)",
         "execution_mode": "output_ingestion (reads pre-computed results; full runs take ~20 hours)",
         "required_parameters": [
-            {"name": "scenario_id", "description": "Scenario identifier to locate pre-computed NEMS output directory", "unit": "string"},
+            {"name": "scenario_id", "description": "Scenario identifier to locate pre-computed NEMS output directory", "unit": "string", "type": "string"},
         ],
         "optional_parameters": [
-            {"name": "oil_price_shock_pct", "description": "Oil price shock injected via OGWPRNG override (subprocess mode)", "unit": "percent"},
-            {"name": "natural_gas_price_shock_pct", "description": "Natural gas price shock via EXG override", "unit": "percent"},
-            {"name": "lng_price_shock_pct", "description": "LNG price shock via EXL override", "unit": "percent"},
-            {"name": "industrial_demand_shock_pct", "description": "Industrial demand shock via EXI override", "unit": "percent"},
-            {"name": "electricity_demand_shock_pct", "description": "Electricity demand shock via EXE override", "unit": "percent"},
-            {"name": "disruption_duration_months", "description": "Disruption duration (clamps LASTYR window)", "unit": "months"},
-            {"name": "shock_window_start_year", "description": "First year of the shock window (defaults to baseline_year)", "unit": "year"},
-            {"name": "scedes_overrides", "description": "Direct scedes KEY=VALUE overrides; takes precedence over auto-derived ones", "unit": "dict"},
-            {"name": "modules_on", "description": "List of NEMS modules to enable (e.g., ['IDM','EMM'])", "unit": "list"},
-            {"name": "modules_off", "description": "List of NEMS modules to disable", "unit": "list"},
-            {"name": "base_scedes", "description": "Base scedes scenario name (e.g., 'ref2025')", "unit": "string"},
+            {"name": "oil_price_shock_pct", "description": "Oil price shock injected via OGWPRNG override (subprocess mode)", "unit": "percent", "type": "number"},
+            {"name": "natural_gas_price_shock_pct", "description": "Natural gas price shock via EXG override", "unit": "percent", "type": "number"},
+            {"name": "lng_price_shock_pct", "description": "LNG price shock via EXL override", "unit": "percent", "type": "number"},
+            {"name": "industrial_demand_shock_pct", "description": "Industrial demand shock via EXI override", "unit": "percent", "type": "number"},
+            {"name": "electricity_demand_shock_pct", "description": "Electricity demand shock via EXE override", "unit": "percent", "type": "number"},
+            {"name": "disruption_duration_months", "description": "Disruption duration (clamps LASTYR window)", "unit": "months", "type": "positive_number"},
+            {"name": "shock_window_start_year", "description": "First year of the shock window (defaults to baseline_year)", "unit": "year", "type": "positive_number"},
+            {"name": "scedes_overrides", "description": "Direct scedes KEY=VALUE overrides; takes precedence over auto-derived ones", "unit": "dict", "type": "dict"},
+            {"name": "modules_on", "description": "List of NEMS modules to enable (e.g., ['IDM','EMM'])", "unit": "list", "type": "list"},
+            {"name": "modules_off", "description": "List of NEMS modules to disable", "unit": "list", "type": "list"},
+            {"name": "base_scedes", "description": "Base scedes scenario name (e.g., 'ref2025')", "unit": "string", "type": "string"},
         ],
         "output_variables": [
             {"name": "oil_price_wti", "description": "WTI oil price", "unit": "$/bbl"},
@@ -45,12 +45,12 @@ MACRO_MODEL_SPECS: dict[str, dict] = {
         "platform": "EViews 13+ (Windows) — default mode reads AEO XLSX with openpyxl",
         "execution_mode": "aeo_ingestion (default) or eviews_subprocess",
         "required_parameters": [
-            {"name": "scenario_id", "description": "Scenario identifier to locate the AEO worksheet via scenario_sheet_mapping", "unit": "string"},
+            {"name": "scenario_id", "description": "Scenario identifier to locate the AEO worksheet via scenario_sheet_mapping", "unit": "string", "type": "string"},
         ],
         "optional_parameters": [
-            {"name": "oil_price_path", "description": "Annual oil price trajectory (eviews_subprocess mode only)", "unit": "usd_per_barrel_series"},
-            {"name": "natural_gas_price_path", "description": "Annual natural gas price trajectory (eviews_subprocess mode only)", "unit": "usd_per_mmbtu_series"},
-            {"name": "disruption_duration_months", "description": "Disruption duration", "unit": "months"},
+            {"name": "oil_price_path", "description": "Annual oil price trajectory (eviews_subprocess mode only)", "unit": "usd_per_barrel_series", "type": "list"},
+            {"name": "natural_gas_price_path", "description": "Annual natural gas price trajectory (eviews_subprocess mode only)", "unit": "usd_per_mmbtu_series", "type": "list"},
+            {"name": "disruption_duration_months", "description": "Disruption duration", "unit": "months", "type": "positive_number"},
         ],
         "output_variables": [
             {"name": "gdp_growth_pct", "description": "Real GDP growth rate", "unit": "%"},
@@ -68,9 +68,9 @@ MACRO_MODEL_SPECS: dict[str, dict] = {
         "commodity_system": "macroeconomic",
         "analytical_level": "short_run_macro",
         "required_parameters": [
-            {"name": "natural_gas_price_change_pct", "description": "Change in natural gas price", "unit": "percent"},
-            {"name": "electricity_demand_change_pct", "description": "Change in electricity demand", "unit": "percent"},
-            {"name": "disruption_duration_months", "description": "Duration of disruption", "unit": "months"},
+            {"name": "natural_gas_price_change_pct", "description": "Change in natural gas price", "unit": "percent", "type": "number"},
+            {"name": "electricity_demand_change_pct", "description": "Change in electricity demand", "unit": "percent", "type": "number"},
+            {"name": "disruption_duration_months", "description": "Duration of disruption", "unit": "months", "type": "positive_number"},
         ],
     },
     "mpsge_jl": {
@@ -79,10 +79,23 @@ MACRO_MODEL_SPECS: dict[str, dict] = {
         "commodity_system": "macroeconomic",
         "analytical_level": "long_run_macro_strategic",
         "required_parameters": [
-            {"name": "oil_price_shock_pct", "description": "Oil price shock", "unit": "percent"},
-            {"name": "trade_disruption_spec", "description": "Specification of disrupted trade routes and volumes", "unit": "spec"},
-            {"name": "commodity_price_shocks", "description": "Dict of commodity price shocks from upstream models", "unit": "dict"},
-            {"name": "disruption_duration_months", "description": "Duration of disruption", "unit": "months"},
+            {"name": "oil_price_shock_pct", "description": "Oil price shock", "unit": "percent", "type": "number", "value_range": [-100.0, 500.0]},
+            {"name": "trade_disruption_spec", "description": "Specification of disrupted trade routes and volumes (object with keys like 'corridors' [list], 'volume_disruption_pct' [number])", "unit": "spec", "type": "dict"},
+            {
+                "name": "commodity_price_shocks",
+                "description": (
+                    "Dict mapping commodity name -> percentage price shock as a bare number "
+                    "(e.g. {\"lng\": 40.0}). Do NOT wrap each value in {shock, unit}. "
+                    "Recognised commodity keys: 'oil', 'lng', 'fertilizer', 'helium', "
+                    "and 'water' (the latter is interpreted as an unmet-demand "
+                    "percentage and is only injected automatically by the upstream-"
+                    "to-macro merge under the infrastructure_collapse scenario)."
+                ),
+                "unit": "dict[str, percent]",
+                "type": "dict",
+                "value_schema": "dict[str, number]",
+            },
+            {"name": "disruption_duration_months", "description": "Duration of disruption", "unit": "months", "type": "positive_number", "value_range": [0, 24]},
         ],
     },
     "opencge": {
@@ -92,15 +105,36 @@ MACRO_MODEL_SPECS: dict[str, dict] = {
         "analytical_level": "long_run_macro_strategic",
         "platform": "Python (ogcore + ogusa + dask[distributed])",
         "required_parameters": [
-            {"name": "oil_price_shock_pct", "description": "Oil price shock (mapped to aggregate productivity Z)", "unit": "percent"},
-            {"name": "commodity_price_shocks", "description": "Dict of commodity price shocks (mapped via shock_to_productivity)", "unit": "dict"},
-            {"name": "disruption_duration_months", "description": "Duration of disruption (drives the Z time-path window)", "unit": "months"},
+            {
+                "name": "oil_price_shock_pct",
+                "description": "Oil price shock (mapped to aggregate productivity Z); positive = price increase",
+                "unit": "percent",
+                "type": "number",
+                "value_range": [-100.0, 500.0],
+            },
+            {
+                "name": "commodity_price_shocks",
+                "description": (
+                    "Dict mapping commodity name to a percentage price shock (mapped via "
+                    "shock_to_productivity). Recognised commodity keys: 'oil', 'lng', "
+                    "'fertilizer', 'helium', and 'water' (the latter is interpreted as "
+                    "the CWatM unmet-demand percentage and is normally only injected by "
+                    "the upstream-to-macro merge under the infrastructure_collapse "
+                    "scenario). Each VALUE must be a bare number (e.g. 40.0 for +40%), "
+                    "NOT an object like {'shock': 40, 'unit': 'percent'}. "
+                    "Example: {\"lng\": 40.0, \"fertilizer\": 25.0}."
+                ),
+                "unit": "dict[str, percent]",
+                "type": "dict",
+                "value_schema": "dict[str, number] — keys are commodity names from {oil, lng, fertilizer, helium, water}; values are bare percentage numbers (no nested {shock, unit} objects).",
+            },
+            {"name": "disruption_duration_months", "description": "Duration of disruption (drives the Z time-path window)", "unit": "months", "type": "positive_number", "value_range": [0, 24]},
         ],
         "optional_parameters": [
-            {"name": "closure_rule", "description": "Macro closure: 'full_employment' or 'fixed_capital'", "unit": "categorical"},
-            {"name": "solution_method", "description": "'TPI' (transition path) or 'SS' (steady state only)", "unit": "categorical"},
-            {"name": "baseline_year", "description": "First year of the simulation (start_year in OG-Core)", "unit": "year"},
-            {"name": "budget_balance", "description": "Force government budget balance (lump-sum closure)", "unit": "boolean"},
+            {"name": "closure_rule", "description": "Macro closure: 'full_employment' or 'fixed_capital'", "unit": "categorical", "type": "string"},
+            {"name": "solution_method", "description": "'TPI' (transition path) or 'SS' (steady state only)", "unit": "categorical", "type": "string"},
+            {"name": "baseline_year", "description": "First year of the simulation (start_year in OG-Core)", "unit": "year", "type": "positive_number"},
+            {"name": "budget_balance", "description": "Force government budget balance (lump-sum closure)", "unit": "boolean", "type": "boolean"},
         ],
         "output_variables": [
             {"name": "welfare_pct_change", "description": "Hicksian-equivalent welfare change at SS", "unit": "%"},
@@ -118,15 +152,36 @@ MACRO_MODEL_SPECS: dict[str, dict] = {
         "analytical_level": "long_run_macro_strategic",
         "platform": "Python (cge_modeling + scipy/jax)",
         "required_parameters": [
-            {"name": "oil_price_shock_pct", "description": "Oil price shock (mapped to SAM parameter)", "unit": "percent"},
-            {"name": "commodity_price_shocks", "description": "Dict of commodity price shocks (mapped via commodity_to_sam_param)", "unit": "dict"},
-            {"name": "disruption_duration_months", "description": "Disruption duration (annotates output, does not affect static solve)", "unit": "months"},
+            {
+                "name": "oil_price_shock_pct",
+                "description": "Oil price shock (mapped to SAM parameter); positive = price increase",
+                "unit": "percent",
+                "type": "number",
+                "value_range": [-100.0, 500.0],
+            },
+            {
+                "name": "commodity_price_shocks",
+                "description": (
+                    "Dict mapping commodity name to a percentage price shock (mapped via "
+                    "commodity_to_sam_param). Recognised commodity keys: 'oil', 'lng', "
+                    "'fertilizer', 'helium', and 'water' (the latter is interpreted as "
+                    "the CWatM unmet-demand percentage and is normally only injected by "
+                    "the upstream-to-macro merge under the infrastructure_collapse "
+                    "scenario). Each VALUE must be a bare number (e.g. 40.0 for +40%), "
+                    "NOT an object like {'shock': 40, 'unit': 'percent'}. "
+                    "Example: {\"lng\": 40.0, \"fertilizer\": 25.0}."
+                ),
+                "unit": "dict[str, percent]",
+                "type": "dict",
+                "value_schema": "dict[str, number] — keys are commodity names from {oil, lng, fertilizer, helium, water}; values are bare percentage numbers (no nested {shock, unit} objects).",
+            },
+            {"name": "disruption_duration_months", "description": "Disruption duration (annotates output, does not affect static solve)", "unit": "months", "type": "positive_number", "value_range": [0, 24]},
         ],
         "optional_parameters": [
-            {"name": "numeraire", "description": "cge_modeling numeraire variable", "unit": "string"},
-            {"name": "solver", "description": "Solver: 'root', 'minimize', or 'euler'", "unit": "categorical"},
-            {"name": "tol", "description": "Solver tolerance", "unit": "float"},
-            {"name": "rebuild_baseline", "description": "Force baseline equilibrium rebuild", "unit": "boolean"},
+            {"name": "numeraire", "description": "cge_modeling numeraire variable", "unit": "string", "type": "string"},
+            {"name": "solver", "description": "Solver: 'root', 'minimize', or 'euler'", "unit": "categorical", "type": "string"},
+            {"name": "tol", "description": "Solver tolerance", "unit": "float", "type": "positive_number"},
+            {"name": "rebuild_baseline", "description": "Force baseline equilibrium rebuild", "unit": "boolean", "type": "boolean"},
         ],
         "output_variables": [
             {"name": "gdp_impact_pct", "description": "GDP impact at new equilibrium (consistency-check scalar)", "unit": "%"},
@@ -144,14 +199,14 @@ MACRO_MODEL_SPECS: dict[str, dict] = {
         "platform": "GAMS (CONOPT or PATH solver)",
         "execution_mode": "calib → MSD → REF → Simul phase sequence with auto-injected shock includes",
         "required_parameters": [
-            {"name": "oil_price_shock_pct", "description": "Oil price shock (injected via shock_oil.inc on the 'ffl' sector)", "unit": "percent"},
-            {"name": "fertilizer_price_shock_pct", "description": "Fertilizer price shock (injected via shock_fertilizer.inc on the 'crp' sector)", "unit": "percent"},
-            {"name": "agricultural_trade_disruption_spec", "description": "Trade shock: {'affected_corridors': [(O,D), ...], 'shipping_cost_multiplier': float, 'affected_commodities': [sector, ...]}", "unit": "spec"},
-            {"name": "disruption_duration_months", "description": "Duration of disruption (annotated in metadata)", "unit": "months"},
+            {"name": "oil_price_shock_pct", "description": "Oil price shock (injected via shock_oil.inc on the 'ffl' sector)", "unit": "percent", "type": "number"},
+            {"name": "fertilizer_price_shock_pct", "description": "Fertilizer price shock (injected via shock_fertilizer.inc on the 'crp' sector)", "unit": "percent", "type": "number"},
+            {"name": "agricultural_trade_disruption_spec", "description": "Trade shock: {'affected_corridors': [(O,D), ...], 'shipping_cost_multiplier': float, 'affected_commodities': [sector, ...]}", "unit": "spec", "type": "dict"},
+            {"name": "disruption_duration_months", "description": "Duration of disruption (annotated in metadata)", "unit": "months", "type": "positive_number"},
         ],
         "optional_parameters": [
-            {"name": "skip_calib_if_present", "description": "Reuse calibration / MSD / REF restarts across scenarios", "unit": "boolean"},
-            {"name": "keep_working_copy", "description": "Preserve the per-scenario working copy after completion", "unit": "boolean"},
+            {"name": "skip_calib_if_present", "description": "Reuse calibration / MSD / REF restarts across scenarios", "unit": "boolean", "type": "boolean"},
+            {"name": "keep_working_copy", "description": "Preserve the per-scenario working copy after completion", "unit": "boolean", "type": "boolean"},
         ],
         "output_variables": [
             {"name": "world_aggregate_vars", "description": "Records from Results/var.csv", "unit": "list[dict]"},

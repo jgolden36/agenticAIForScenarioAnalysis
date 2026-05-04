@@ -103,7 +103,7 @@ class PipelineConfig(BaseModel):
     execution: ExecutionConfig = Field(default_factory=ExecutionConfig)
     output: OutputConfig = Field(default_factory=OutputConfig)
     consistency: ConsistencyConfig = Field(default_factory=ConsistencyConfig)
-    num_scenarios: int = 4
+    num_scenarios: int = 5  # 4 matrix quadrants (A-D) + 1 prescribed tail-risk (E: infrastructure_collapse)
 
     @classmethod
     def from_yaml(cls, path: str | Path) -> PipelineConfig:
