@@ -513,7 +513,24 @@ def write_quantitative_results_csv(
 
 
 def write_per_model_raw_csvs(run_id: str, model_results: list[dict]) -> int:
-    """One scalar CSV + one CSV per list-of-dicts series per (scenario, model).
+    """One scalar CSV + one CSV per series per (scenario, model).
+
+    Series detection covers three shapes:
+
+    * ``list[dict]`` — long-form rows (e.g. ``yearly_results`` from
+      ``energy_flux_gas_power``). Written verbatim.
+    * ``list[int|float]`` — bare numeric path (e.g.
+      ``brent_price_path_usd_per_bbl`` from ``poles_jrc``). Written
+      with a ``period,value`` schema so Stage 6 can plot it as a real
+      time series.
+    * ``dict[str -> int|float]`` whose keys look like time labels
+      (years, year ranges, "year_1"/"y1"/"month_3", or pure ints) —
+      written with ``period,value`` so e.g. ``gdp_pct_change_path``
+      keyed by 2026..2050 reaches Stage 6 too.
+
+    Underscore-prefixed keys are skipped — they are adapter
+    bookkeeping (``_upstream_overrides``, ``_calibration_sources``,
+    ``_inputs``) rather than analytical outputs.
 
     Returns the number of CSV files written.
     """
@@ -538,6 +555,8 @@ def write_per_model_raw_csvs(run_id: str, model_results: list[dict]) -> int:
             written += 1
 
         for key, value in outputs.items():
+            if not isinstance(key, str) or key.startswith("_"):
+                continue
             if isinstance(value, list) and value and all(isinstance(e, dict) for e in value):
                 cols = _list_of_dicts_keys(value)
                 if not cols:
@@ -545,8 +564,66 @@ def write_per_model_raw_csvs(run_id: str, model_results: list[dict]) -> int:
                 long_path = scen_dir / f"{model}__{key}.csv"
                 write_csv(long_path, cols, value)
                 written += 1
+            elif (
+                isinstance(value, list)
+                and value
+                and all(isinstance(e, (int, float)) and not isinstance(e, bool) for e in value)
+            ):
+                rows = [{"period": i, "value": float(v)} for i, v in enumerate(value)]
+                long_path = scen_dir / f"{model}__{key}__series.csv"
+                write_csv(long_path, ["period", "value"], rows)
+                written += 1
+            elif (
+                isinstance(value, dict)
+                and value
+                and all(
+                    isinstance(v, (int, float)) and not isinstance(v, bool)
+                    for v in value.values()
+                )
+                and _looks_like_time_keyed_dict(value)
+            ):
+                rows = [
+                    {"period": str(k), "value": float(v)}
+                    for k, v in value.items()
+                ]
+                long_path = scen_dir / f"{model}__{key}__series.csv"
+                write_csv(long_path, ["period", "value"], rows)
+                written += 1
     logger.info(f"wrote {written} per-model raw CSV file(s) under {base}")
     return written
+
+
+_TIME_KEY_HINTS = ("year", "yr", "y", "period", "month", "mo", "step", "horizon", "t")
+
+
+def _looks_like_time_keyed_dict(d: dict) -> bool:
+    """Heuristic: does a ``dict[str, number]`` look like a time series?
+
+    True when every key parses as an int (e.g. 2026, 2030, 1, 5) or
+    starts with a recognised time-axis hint (e.g. ``year_1``, ``y2030``,
+    ``month_3``). Otherwise False — sectoral / categorical dicts like
+    ``{"agriculture": -0.1, "industry": -0.2}`` are not time series.
+    """
+    if not d:
+        return False
+    int_like = 0
+    hinted = 0
+    for k in d.keys():
+        s = str(k).strip().lower()
+        try:
+            int(s)
+            int_like += 1
+            continue
+        except ValueError:
+            pass
+        for h in _TIME_KEY_HINTS:
+            if s.startswith(h) or s.startswith(h + "_") or s.startswith(h + "-"):
+                hinted += 1
+                break
+    n = len(d)
+    # All keys must look time-like; we don't want to misclassify a
+    # mixed dict.
+    return (int_like + hinted) == n
 
 
 # --------------------------------------------------------------------
