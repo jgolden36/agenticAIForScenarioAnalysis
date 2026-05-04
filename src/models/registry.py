@@ -88,6 +88,21 @@ class ModelRegistry:
         return len(self._adapters)
 
 
+def default_config_dir() -> Path | None:
+    """Resolve ``configs/model_configs/`` from the project root, or None.
+
+    Used by the SLURM stage scripts and the LangGraph nodes so that
+    ``build_default_registry()`` is rarely called without a ``config_dir``.
+    Without this, configured adapters (OSeMOSYS, NEMS, MAM, MIRAGRODEP,
+    OpenCGE, BKR, MESSAGEix, TEMOA, MAgPIE, GGM, SahysMod, CWatM, ...)
+    silently fall back to default paths that do not exist on the cluster
+    and raise ``FileNotFoundError`` at execute time.
+    """
+    root = Path(__file__).resolve().parents[2]
+    cfg = root / "configs" / "model_configs"
+    return cfg if cfg.exists() else None
+
+
 def _load_yaml_config(config_path: Path) -> dict[str, Any] | None:
     """Load a YAML config file, returning None if not found or invalid."""
     if not config_path.exists():
@@ -220,6 +235,8 @@ def _build_mam_adapter(
     config_dir: Path | None = None,
 ) -> ModelAdapter:
     """Build MAMAdapter with optional YAML config."""
+    import os
+
     from src.models.macro.mam import MAMAdapter, MAMConfig
 
     if config_dir is not None:
@@ -235,7 +252,13 @@ def _build_mam_adapter(
                 "eviews_main_program": raw.get("eviews_main_program", "mam_main.prg"),
                 "timeout_seconds": raw.get("timeout_seconds", 3600),
             }
-            if xlsx:
+            # Environment override (set by the SLURM driver after
+            # auto-vendoring the AEO XLSX) takes precedence over the
+            # YAML so the cluster job stays generic across users.
+            env_xlsx = os.environ.get("HORMUZ_MAM_AEO_XLSX_PATH")
+            if env_xlsx:
+                cfg_kwargs["aeo_macro_xlsx_path"] = Path(env_xlsx)
+            elif xlsx:
                 cfg_kwargs["aeo_macro_xlsx_path"] = Path(xlsx)
             if eviews_exe:
                 cfg_kwargs["eviews_executable"] = Path(eviews_exe)
@@ -245,6 +268,11 @@ def _build_mam_adapter(
             logger.info("MAMAdapter: loaded MAMConfig from mam.yaml")
             return MAMAdapter(config=config)
 
+    # No YAML config — still honour the env var so a freshly cloned
+    # repo on the cluster picks up the auto-vendored XLSX.
+    env_xlsx = os.environ.get("HORMUZ_MAM_AEO_XLSX_PATH")
+    if env_xlsx:
+        return MAMAdapter(config=MAMConfig(aeo_macro_xlsx_path=Path(env_xlsx)))
     return MAMAdapter()
 
 

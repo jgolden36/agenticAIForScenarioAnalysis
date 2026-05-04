@@ -349,8 +349,21 @@ class MIRAGRODEPAdapter(ModelAdapter):
         scenario_id = inputs["scenario_id"]
         model_dir = Path(cfg.model_dir).resolve()
 
+        # Surface missing GAMS as SKIPPED rather than FAILED. GAMS is
+        # licensed software; on clusters without it MIRAGRODEP simply
+        # can't run and there's no fallback path to attempt.
+        from shutil import which
+        if which(cfg.gams_executable) is None:
+            raise NotImplementedError(
+                f"MIRAGRODEP requires the '{cfg.gams_executable}' executable on PATH "
+                "(GAMS + a CONOPT/PATH licence). Install GAMS and ensure 'gams' is on "
+                "PATH, or set MIRAGRODEPConfig.gams_executable to its absolute path."
+            )
+
         if not model_dir.exists():
-            raise FileNotFoundError(
+            # Same SKIPPED-vs-FAILED rationale: missing model tree is a
+            # vendoring gap, not a bug in the adapter.
+            raise NotImplementedError(
                 f"MIRAGRODEP model_dir not found: {model_dir}. "
                 "Set MIRAGRODEPConfig.model_dir or place the MIRAGRODEP source tree "
                 f"at {DEFAULT_MIRAGRODEP_DIR} relative to the project root."

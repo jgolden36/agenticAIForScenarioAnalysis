@@ -483,6 +483,16 @@ class EnergyFluxGasPowerAdapter(ExcelAdapter):
         translated.setdefault("pre_construction_mw", _DEFAULT_PRE_CONSTRUCTION_MW)
         translated.setdefault("announced_mw", _DEFAULT_ANNOUNCED_MW)
         translated.setdefault("projection_years", 10)
+
+        # LLM extraction can return floats (``projection_years: 10.0``);
+        # the buildout loop uses ``range(projection_years)`` so coerce
+        # back to int here.
+        py = translated.get("projection_years")
+        if py is not None and not isinstance(py, int):
+            try:
+                translated["projection_years"] = int(round(float(py)))
+            except (TypeError, ValueError):
+                pass
         return translated
 
     # -- Execution -----------------------------------------------------------

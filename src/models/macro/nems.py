@@ -513,7 +513,11 @@ class NEMSAdapter(ModelAdapter):
         output_dir = Path(inputs["output_dir"])
 
         if not output_dir.exists():
-            raise FileNotFoundError(
+            # Raise NotImplementedError (not FileNotFoundError) so the
+            # SLURM model runner classifies this as SKIPPED rather than
+            # FAILED. NEMS in output_ingestion mode has no fallback —
+            # the data has to be vendored externally.
+            raise NotImplementedError(
                 f"NEMS output directory not found: {output_dir}\n"
                 "Run NEMS externally and place outputs at this path, or "
                 "update NEMSConfig.scenario_dir_mapping."

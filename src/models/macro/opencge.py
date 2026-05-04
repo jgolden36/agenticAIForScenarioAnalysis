@@ -102,11 +102,26 @@ class OpenCGEConfig(BaseModel):
             "lng": {"Z_mult_per_pct": -0.0004, "delta_tau_per_pct": 0.00002},
             "fertilizer": {"Z_mult_per_pct": -0.0002, "delta_tau_per_pct": 0.00001},
             "helium": {"Z_mult_per_pct": -0.0001, "delta_tau_per_pct": 0.000005},
+            # Water enters the macro layer ONLY under the prescribed
+            # infrastructure_collapse scenario (per the rule in
+            # configs/upstream_to_macro_mapping.yaml). Calibration is
+            # deliberately larger in magnitude than oil because, in the
+            # short run, water has near-zero substitutability for the
+            # affected sectors (households, agriculture, refining,
+            # power-plant cooling). The "shock" channel here is the
+            # CWatM unmet-demand percentage rather than a price; we
+            # treat it as a quantity-equivalent productivity hit on
+            # aggregate Z and a small additional capital-quality drag
+            # standing in for damage to water-distribution
+            # infrastructure that depreciates the productive capital
+            # stock.
+            "water": {"Z_mult_per_pct": -0.0012, "delta_tau_per_pct": 0.00008},
         },
         description=(
             "Per-commodity sensitivity coefficients translating a 1% commodity "
-            "price shock into multiplicative adjustments on aggregate "
-            "productivity (Z) and capital-quality (delta_tau_annual)."
+            "price (or, for 'water', unmet-demand) shock into multiplicative "
+            "adjustments on aggregate productivity (Z) and capital-quality "
+            "(delta_tau_annual)."
         ),
     )
     skip_baseline_if_present: bool = Field(
@@ -134,6 +149,38 @@ REQUIRED_PARAMS = frozenset(
         "disruption_duration_months",
     }
 )
+
+
+def _coerce_commodity_shocks(value: Any) -> dict[str, float] | None:
+    """Best-effort flattening of common LLM-emitted shapes for ``commodity_price_shocks``.
+
+    The model spec asks the LLM for ``dict[str, number]`` (e.g.
+    ``{"lng": 40.0}``), but smaller LLMs sometimes emit
+    ``{"lng": {"shock": 40, "unit": "percent"}}``. This helper accepts
+    either shape and normalises to ``{commodity: float}``. Returns
+    ``None`` if the input isn't a dict at all (caller surfaces a clearer
+    error in that case).
+    """
+    if not isinstance(value, dict):
+        return None
+    flat: dict[str, float] = {}
+    for k, v in value.items():
+        if isinstance(v, bool):
+            continue
+        if isinstance(v, (int, float)):
+            flat[str(k)] = float(v)
+            continue
+        if isinstance(v, dict):
+            inner = v.get("shock", v.get("value", v.get("pct", v.get("percent"))))
+            if isinstance(inner, (int, float)) and not isinstance(inner, bool):
+                flat[str(k)] = float(inner)
+                continue
+        if isinstance(v, str):
+            try:
+                flat[str(k)] = float(v.strip().rstrip("%"))
+            except ValueError:
+                continue
+    return flat
 
 
 # ---------------------------------------------------------------------------
@@ -207,6 +254,18 @@ class OpenCGEAdapter(ModelAdapter):
 
         if errors:
             return ValidationResult(valid=False, errors=errors, warnings=warnings)
+
+        # Defensive coercion: smaller LLMs sometimes wrap each shock in
+        # {shock, unit} instead of emitting a bare number. Normalise to
+        # dict[str, float] in place so the rest of validation and
+        # translate_inputs see the canonical shape.
+        coerced = _coerce_commodity_shocks(params.get("commodity_price_shocks"))
+        if coerced is not None and coerced != params.get("commodity_price_shocks"):
+            params["commodity_price_shocks"] = coerced
+            warnings.append(
+                "'commodity_price_shocks' was normalised from an LLM-emitted "
+                "nested shape to a flat dict[str, number]."
+            )
 
         oil_shock = params["oil_price_shock_pct"]
         if not isinstance(oil_shock, (int, float)):

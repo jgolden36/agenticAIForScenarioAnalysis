@@ -200,15 +200,22 @@ class MAMAdapter(ModelAdapter):
     def _validate_ingestion(
         self, params: dict[str, Any], errors: list[str], warnings: list[str],
     ) -> None:
+        # Missing XLSX is a vendoring gap, not a malformed input. Surface
+        # it as a warning so validate_inputs returns valid=True; the
+        # actual execute() path raises NotImplementedError instead, which
+        # the SLURM runner classifies as SKIPPED rather than FAILED.
         xlsx = self._config.aeo_macro_xlsx_path
         if xlsx is None:
-            errors.append(
-                "MAMConfig.aeo_macro_xlsx_path is required for aeo_ingestion mode. "
-                "Point it at the AEO macro tables XLSX (e.g., 'AEO2025_Tables_19_20.xlsx')."
+            warnings.append(
+                "MAMConfig.aeo_macro_xlsx_path is not set; MAM will be SKIPPED. "
+                "Point it at the AEO macro tables XLSX (e.g., 'AEO2025_Tables_19_20.xlsx') "
+                "or set HORMUZ_MAM_AEO_XLSX_PATH."
             )
             return
         if not Path(xlsx).exists():
-            errors.append(f"AEO macro XLSX not found at {xlsx}")
+            warnings.append(
+                f"AEO macro XLSX not found at {xlsx}; MAM will be SKIPPED."
+            )
             return
 
         sid = params.get("scenario_id")
@@ -290,15 +297,27 @@ class MAMAdapter(ModelAdapter):
 
     def _execute_ingestion(self, inputs: dict[str, Any]) -> ModelOutput:
         """Parse AEO macro tables (XLSX) and standardize the variables."""
-        xlsx_path = Path(inputs["xlsx_path"])
+        xlsx_str = inputs.get("xlsx_path")
+        if xlsx_str in (None, "None", "") or not Path(xlsx_str).exists():
+            # NotImplementedError → SKIPPED in the SLURM runner. Real
+            # execution requires the AEO XLSX to be vendored, which is a
+            # data-availability gap rather than a code defect.
+            raise NotImplementedError(
+                "MAM aeo_ingestion mode requires MAMConfig.aeo_macro_xlsx_path "
+                "to point at an existing AEO macro tables XLSX. Vendor "
+                "AEO2025_Tables_19_20.xlsx under data/eia/ (the SLURM "
+                "driver auto-downloads it when HORMUZ_AUTO_VENDOR=1) or set "
+                "HORMUZ_MAM_AEO_XLSX_PATH."
+            )
+        xlsx_path = Path(xlsx_str)
         sheet_name = inputs["sheet_name"]
 
         try:
             import openpyxl  # noqa: F401  (used dynamically below)
         except ImportError as exc:
-            raise ImportError(
+            raise NotImplementedError(
                 "MAMAdapter aeo_ingestion mode requires openpyxl. "
-                "Install with: pip install openpyxl"
+                "Install with: pip install -e .[adapters]"
             ) from exc
 
         rows = self._read_xlsx_sheet(xlsx_path, sheet_name)

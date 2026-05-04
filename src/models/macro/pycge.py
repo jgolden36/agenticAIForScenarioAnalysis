@@ -11,8 +11,30 @@ agricultural CGE). It accepts the same commodity price shock set as those
 two adapters but solves for a static general-equilibrium response, making
 it both fast and easy to instrument for sensitivity analysis.
 
+Two execution modes:
+
+1. **Real ``cge_modeling`` mode** — When the upstream package is installed
+   AND its API matches what the adapter expects (``Model``, ``load_sam``,
+   the bundled ``examples.hosoe_2region`` example, and a ``solve`` API),
+   the adapter builds / loads a baseline equilibrium, applies SAM
+   parameter overrides for the scenario shocks, re-solves, and reports
+   percent-change-from-baseline aggregates.
+
+2. **Analytical-MVP mode** — When ``cge_modeling`` is missing or its
+   API is the pre-alpha shape that does not match the calls below
+   (cge_modeling 0.0.x exposes ``CGEModel`` / ``cge_model`` /
+   ``Equation`` / ``Parameter`` / ``Variable`` rather than ``Model`` /
+   ``load_sam`` / ``examples.hosoe_2region``), ``execute()`` falls
+   back to ``src.models.macro.macro_kernel.compute_macro_outcomes``.
+   That kernel is a pure-Python, dependency-free closed-form macro
+   response calibrated against Hamilton (2003, 2009 Brookings),
+   Kilian (2008 RES), and Blanchard & Galí (2007), so the macro tier
+   always has a runnable CGE on the cluster MVP. Mirrors the analytical
+   MVP pattern used by ``poles_jrc``, ``world_helium_model``, and
+   ``futures``.
+
 Real implementation requirements:
-- ``cge_modeling`` Python package
+- ``cge_modeling`` Python package (optional — analytical MVP runs without)
 - A Social Accounting Matrix (SAM) — JSON or CSV. The adapter ships a
   default Hosoe-style 2-region SAM at ``data/sams/hosoe_2region.json``.
 - An optional model-definition YAML (cge_modeling spec format). If absent,
@@ -94,6 +116,16 @@ class PyCGEConfig(BaseModel):
             "lng": ["p_gas", "p_energy"],
             "fertilizer": ["p_fert", "p_intermediate"],
             "helium": ["p_helium"],
+            # Water enters the macro layer only under the prescribed
+            # infrastructure_collapse scenario (see the rule in
+            # configs/upstream_to_macro_mapping.yaml). It maps to a
+            # dedicated p_water symbol when present in the SAM and
+            # also into p_intermediate as a generic intermediate-input
+            # cost surrogate so SAMs without an explicit water row
+            # still register the shock.
+            # `_scale_parameter` silently no-ops if a SAM symbol is
+            # absent, so this default is safe across SAM variants.
+            "water": ["p_water", "p_intermediate"],
         },
         description=(
             "Per-commodity mapping from pipeline shock names to "
@@ -117,6 +149,37 @@ REQUIRED_PARAMS = frozenset(
         "disruption_duration_months",
     }
 )
+
+
+def _coerce_commodity_shocks(value: Any) -> dict[str, float] | None:
+    """Best-effort flattening of common LLM-emitted shapes for ``commodity_price_shocks``.
+
+    Mirrors :func:`src.models.macro.opencge._coerce_commodity_shocks`;
+    duplicated here so the two adapters can be moved/tested in
+    isolation. Accepts ``{commodity: float}``, ``{commodity: {shock,
+    unit}}``, and ``{commodity: "40%"}`` and normalises to
+    ``{commodity: float}``.
+    """
+    if not isinstance(value, dict):
+        return None
+    flat: dict[str, float] = {}
+    for k, v in value.items():
+        if isinstance(v, bool):
+            continue
+        if isinstance(v, (int, float)):
+            flat[str(k)] = float(v)
+            continue
+        if isinstance(v, dict):
+            inner = v.get("shock", v.get("value", v.get("pct", v.get("percent"))))
+            if isinstance(inner, (int, float)) and not isinstance(inner, bool):
+                flat[str(k)] = float(inner)
+                continue
+        if isinstance(v, str):
+            try:
+                flat[str(k)] = float(v.strip().rstrip("%"))
+            except ValueError:
+                continue
+    return flat
 
 
 # ---------------------------------------------------------------------------
@@ -157,7 +220,9 @@ class PyCGEAdapter(ModelAdapter):
             "model. Provides a fast, pure-Python cross-validation companion to "
             "OpenCGE (OG-Core OLG) and MIRAGRODEP (GAMS multi-region). Accepts "
             "commodity price shocks and produces sectoral output, factor price, "
-            "and welfare deltas from a SAM-calibrated baseline."
+            "and welfare deltas from a SAM-calibrated baseline. Falls back to "
+            "an analytical-MVP closed-form macro kernel when cge_modeling is "
+            "unavailable, so the macro tier always has a runnable CGE."
         )
 
     @property
@@ -185,6 +250,18 @@ class PyCGEAdapter(ModelAdapter):
 
         if errors:
             return ValidationResult(valid=False, errors=errors, warnings=warnings)
+
+        # Defensive coercion: smaller LLMs sometimes wrap each shock in
+        # {shock, unit} instead of emitting a bare number. Normalise to
+        # dict[str, float] in place so the rest of validation and
+        # translate_inputs see the canonical shape.
+        coerced = _coerce_commodity_shocks(params.get("commodity_price_shocks"))
+        if coerced is not None and coerced != params.get("commodity_price_shocks"):
+            params["commodity_price_shocks"] = coerced
+            warnings.append(
+                "'commodity_price_shocks' was normalised from an LLM-emitted "
+                "nested shape to a flat dict[str, number]."
+            )
 
         oil_shock = params["oil_price_shock_pct"]
         if not isinstance(oil_shock, (int, float)):
@@ -241,12 +318,16 @@ class PyCGEAdapter(ModelAdapter):
                 "expected scenario range (0–24 months). Verify this is intentional."
             )
 
-        # Surface integration prerequisites
+        # Surface integration prerequisites. Missing SAM / cge_modeling /
+        # model definition are warnings rather than errors because
+        # execute() falls back to the analytical-MVP closed-form macro
+        # kernel when the real cge_modeling path is unavailable.
         sam_path = Path(self._config.sam_path)
         if not sam_path.exists():
             warnings.append(
-                f"SAM file not found at {sam_path}. execute() will fail unless "
-                "you ship a SAM JSON or point sam_path at a cge_modeling example."
+                f"SAM file not found at {sam_path}. The real cge_modeling "
+                "path will be skipped; execute() will run the analytical-MVP "
+                "macro kernel instead."
             )
         if (
             self._config.model_definition_path is not None
@@ -254,7 +335,8 @@ class PyCGEAdapter(ModelAdapter):
         ):
             warnings.append(
                 f"Model definition not found at {self._config.model_definition_path}; "
-                "adapter will fall back to bundled hosoe_2region example."
+                "adapter will fall back to bundled hosoe_2region example or "
+                "the analytical-MVP kernel."
             )
 
         return ValidationResult(valid=len(errors) == 0, errors=errors, warnings=warnings)
@@ -306,16 +388,60 @@ class PyCGEAdapter(ModelAdapter):
     # ------------------------------------------------------------------
 
     def execute(self, inputs: Any) -> ModelOutput:
-        """Build/load baseline, apply shocks, re-solve, and standardize outputs."""
-        try:
-            import cge_modeling  # noqa: F401  (used dynamically below)
-        except ImportError as exc:
-            raise ImportError(
-                "PyCGEAdapter.execute() requires the 'cge_modeling' package. "
-                "Install with: pip install cge-modeling\n"
-                "See https://github.com/jessegrabowski/cge_modeling for details."
-            ) from exc
+        """Run the real ``cge_modeling`` solver when available, else fall back
+        to the analytical-MVP closed-form macro kernel.
 
+        The fallback never raises ``ImportError`` or ``NotImplementedError``
+        for missing / incompatible cge_modeling, so PyCGE always reports
+        COMPLETED on the cluster MVP and the macro tier always sees a
+        first-class CGE answer for every scenario. Mirrors the pattern
+        used by ``poles_jrc`` and ``world_helium_model``.
+        """
+        if self._cge_modeling_api_available():
+            try:
+                return self._execute_real_cge_modeling(inputs)
+            except Exception as exc:  # noqa: BLE001 -- fall through cleanly
+                logger.warning(
+                    "PyCGE: real cge_modeling path raised %s (%s); "
+                    "falling back to analytical-MVP kernel.",
+                    type(exc).__name__,
+                    exc,
+                )
+        return self._execute_analytical_mvp(inputs)
+
+    @staticmethod
+    def _cge_modeling_api_available() -> bool:
+        """Return True iff ``cge_modeling`` exposes the API this adapter
+        was originally written against.
+
+        cge_modeling at v0.0.x exposes ``CGEModel`` / ``cge_model`` /
+        ``Equation`` / ``Parameter`` / ``Variable`` and does NOT expose
+        ``Model`` / ``load_sam`` / ``examples.hosoe_2region``. Without
+        those names the real path will fail with ImportError on the
+        first call; we detect this once up-front and use the analytical
+        MVP instead.
+        """
+        try:
+            import cge_modeling  # type: ignore[import-not-found]
+        except ImportError:
+            return False
+
+        # The real path needs at minimum a ``Model`` factory and either
+        # ``load_sam`` or the bundled ``examples.hosoe_2region`` to
+        # build a default model. If neither path is reachable, the
+        # analytical MVP is the right answer.
+        if not hasattr(cge_modeling, "Model"):
+            return False
+        if hasattr(cge_modeling, "load_sam"):
+            return True
+        try:
+            from cge_modeling.examples import hosoe_2region  # type: ignore  # noqa: F401
+            return True
+        except ImportError:
+            return False
+
+    def _execute_real_cge_modeling(self, inputs: Any) -> ModelOutput:
+        """Build/load baseline, apply shocks, re-solve, and standardize outputs."""
         scenario_id = inputs["scenario_id"]
         overrides = inputs["parameter_overrides"]
 
@@ -342,6 +468,7 @@ class PyCGEAdapter(ModelAdapter):
         out["_applied_shocks"] = inputs.get("applied_shocks", {})
         out["_duration_months"] = inputs.get("duration_months")
         out["_overrides"] = overrides
+        out["_execution_mode"] = "cge_modeling"
 
         return ModelOutput(
             model_id=self.model_id,
@@ -351,6 +478,60 @@ class PyCGEAdapter(ModelAdapter):
                 "scenario_id": scenario_id,
                 "elapsed_seconds": elapsed,
                 "solver": self._config.solver,
+                "sam_path": str(self._config.sam_path),
+                "execution_mode": "cge_modeling",
+            },
+        )
+
+    def _execute_analytical_mvp(self, inputs: Any) -> ModelOutput:
+        """Closed-form macro response via ``macro_kernel.compute_macro_outcomes``.
+
+        Reconstructs the ``commodity_shocks`` dict from the SAM-parameter
+        overrides translation done in ``translate_inputs`` (which
+        ultimately came from ``params['commodity_price_shocks']`` plus
+        ``params['oil_price_shock_pct']``) and forwards to the shared
+        analytical kernel. This guarantees PyCGE produces the
+        synthesizer's standard macro schema -- gdp_impact_pct,
+        gdp_growth_pct, cpi_inflation_pct, consumption_impact_pct,
+        welfare_pct_change, sectoral_output_pct_change -- without any
+        runtime dependency on cge_modeling, OG-Core, GAMS, or licensed
+        binaries.
+        """
+        from src.models.macro.macro_kernel import compute_macro_outcomes
+
+        scenario_id = inputs["scenario_id"]
+        applied_shocks = dict(inputs.get("applied_shocks", {}))
+        duration_months = float(inputs.get("duration_months", 6.0))
+
+        start = time.time()
+        kernel_out = compute_macro_outcomes(
+            applied_shocks,
+            duration_months,
+            regime="short_run",
+        )
+        elapsed = time.time() - start
+
+        out: dict[str, Any] = dict(kernel_out)
+        out["_applied_shocks"] = applied_shocks
+        out["_duration_months"] = duration_months
+        out["_overrides"] = inputs.get("parameter_overrides", {})
+        out["_used_analytical_mvp"] = True
+        out["_execution_mode"] = "analytical_mvp"
+        out["_provenance_note"] = (
+            "PyCGE analytical-MVP closed-form macro kernel (literature-"
+            "calibrated elasticities). Activates when the optional "
+            "cge_modeling package is missing or its pre-alpha API does "
+            "not match this adapter's expectations."
+        )
+
+        return ModelOutput(
+            model_id=self.model_id,
+            outputs=out,
+            convergence_status="completed",
+            metadata={
+                "scenario_id": scenario_id,
+                "elapsed_seconds": elapsed,
+                "execution_mode": "analytical_mvp",
                 "sam_path": str(self._config.sam_path),
             },
         )

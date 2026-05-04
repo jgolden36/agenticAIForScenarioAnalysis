@@ -164,6 +164,8 @@ def generate_price_schedule(
     toward a floor equal to ``baseline + floor_fraction * (peak - baseline)``
     by month 12.  Freight costs follow the same envelope.
     """
+    months = int(round(float(months)))
+    peak_month = int(round(float(peak_month)))
     rows: list[PriceScheduleRow] = []
     for m in range(1, months + 1):
         if m <= peak_month:
@@ -217,6 +219,7 @@ def compute_windfall(
         + baseline_asia_cargo_profit * asia_cargoes
     )
 
+    duration_months = int(round(float(duration_months)))
     n = min(duration_months, len(price_schedule))
     monthly: list[MonthlyResult] = []
     cumulative = 0.0
@@ -546,6 +549,17 @@ class EnergyFluxLNGProfitsAdapter(ExcelAdapter):
         parameters using :func:`generate_price_schedule`.
         """
         translated = dict(params)
+
+        # LLM-extracted parameters often arrive as floats (e.g.
+        # ``disruption_duration_months: 4.0``); coerce the integer-typed
+        # fields here so downstream ``range()`` / indexing operations don't
+        # raise ``TypeError: 'float' object cannot be interpreted as an integer``.
+        for _int_field in ("disruption_duration_months", "peak_month"):
+            if _int_field in translated and translated[_int_field] is not None:
+                try:
+                    translated[_int_field] = int(round(float(translated[_int_field])))
+                except (TypeError, ValueError):
+                    pass
 
         if "price_schedule" not in translated:
             translated["price_schedule"] = generate_price_schedule(
