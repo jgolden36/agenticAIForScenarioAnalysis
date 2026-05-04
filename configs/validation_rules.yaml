@@ -1,0 +1,258 @@
+# Output validation rules (declarative configuration)
+#
+# These rules are applied by src/synthesis/validation.py to every
+# (scenario, model) output dict that Module 3 wrote to
+# data/pipeline_state/<run_id>_model_*.json. They are intentionally
+# conservative: bounds are wide enough that only clearly-wrong values
+# trigger them, not merely surprising ones. Cross-model AGREEMENT
+# checks (e.g. POLES-JRC vs BKR oil price within ±20%) live in
+# configs/consistency_rules.yaml; this file is for per-output sanity.
+#
+# Three rule kinds are supported:
+#
+#   bounds:        a single numeric variable must satisfy min <= x <= max.
+#                  Either bound may be omitted (one-sided).
+#   non_negative:  a list of variables that must be >= 0 (these are
+#                  *magnitudes* of losses/shocks/reductions; a negative
+#                  value is almost always a sign-convention bug
+#                  upstream).
+#   relation:      a small algebraic invariant between several variables
+#                  in the same output dict. Only fires if every
+#                  `requires` variable is present and finite.
+#
+# Plus an implicit finiteness check (NaN, +/-Inf) on every numeric
+# scalar that any rule references. NaN/Inf is always an error.
+#
+# Severity: "error" surfaces in the report's `errors` list and counts
+# toward the run's error total; "warning" surfaces in `warnings` and
+# does NOT block the pipeline. The Stage 4b SLURM driver is
+# best-effort and never fails the job — operators read the report.
+
+defaults:
+  default_severity: error
+  # Variables that match any of these glob-style suffixes are looked
+  # up case-insensitively when the engine walks an output dict for the
+  # implicit NaN/Inf check. Listed here only for documentation; the
+  # engine itself walks every numeric leaf regardless.
+  finite_check_suffixes: ["_pct", "_usd", "_mbd", "_bcfd", "_pp", "_index"]
+
+rules:
+  # ------------------------------------------------------------------
+  # Bounds — order-of-magnitude sanity. Thresholds are deliberately
+  # WIDE so legitimate scenario variation does not trigger them.
+  # ------------------------------------------------------------------
+
+  - kind: bounds
+    variable: oil_price_usd
+    min: 0
+    max: 1000
+    severity: error
+    description: >
+      Oil price (USD/bbl) must be positive and within a plausible upper
+      bound. A negative or four-digit oil price is almost certainly a
+      unit-conversion or sign-convention error upstream.
+
+  - kind: bounds
+    variable: lng_price_usd_mmbtu
+    min: 0
+    max: 200
+    severity: error
+    description: >
+      LNG spot price (USD/MMBtu) must be positive and within historical
+      crisis bounds. Even the European TTF spike in 2022 peaked near
+      USD 90/MMBtu; >200 indicates a unit error.
+
+  - kind: bounds
+    variable: helium_price_usd
+    min: 0
+    max: 10000
+    severity: error
+    description: >
+      Helium price (USD/Mcf or equivalent unit) must be positive. Upper
+      bound is loose because Grade-A bulk helium has spiked into the
+      thousands during severe shortages.
+
+  - kind: bounds
+    variable: gdp_impact_pct
+    min: -50
+    max: 50
+    severity: error
+    description: >
+      Single-scenario GDP impact must lie within +/-50%. A larger
+      magnitude signals a calibration error; even Great-Depression-era
+      drawdowns were ~30% over multiple years.
+
+  - kind: bounds
+    variable: gdp_growth_pct
+    min: -50
+    max: 50
+    severity: error
+    description: >
+      Annual GDP growth must lie within +/-50%.
+
+  - kind: bounds
+    variable: cpi_inflation_pct
+    min: -20
+    max: 100
+    severity: error
+    description: >
+      CPI inflation must lie within -20% (severe deflation) to +100%
+      (hyperinflation). Outside this range is a clear error.
+
+  - kind: bounds
+    variable: unemployment_rate_pct
+    min: 0
+    max: 50
+    severity: error
+    description: >
+      Unemployment rate must be non-negative and below 50%.
+
+  - kind: bounds
+    variable: federal_funds_rate_pct
+    min: -5
+    max: 30
+    severity: error
+    description: >
+      US federal funds rate must lie within plausible monetary policy
+      bounds (mildly negative to extreme tightening).
+
+  - kind: bounds
+    variable: interest_rate_impact_pct
+    min: -20
+    max: 20
+    severity: error
+    description: >
+      Interest-rate change (percentage points) must lie within +/-20pp.
+
+  - kind: bounds
+    variable: welfare_pct_change
+    min: -50
+    max: 50
+    severity: error
+    description: >
+      Welfare change must lie within +/-50%.
+
+  - kind: bounds
+    variable: consumption_impact_pct
+    min: -50
+    max: 50
+    severity: error
+
+  - kind: bounds
+    variable: wage_impact_pct
+    min: -50
+    max: 50
+    severity: error
+
+  - kind: bounds
+    variable: effective_supply_gap_pct
+    min: 0
+    max: 100
+    severity: error
+    description: >
+      A supply gap is a fraction of demand and must lie in [0, 100]%.
+
+  - kind: bounds
+    variable: oil_supply_loss_mbd
+    min: 0
+    max: 25
+    severity: error
+    description: >
+      Oil supply loss (mb/d) must be non-negative. The Strait of Hormuz
+      itself carries ~20 mb/d, so >25 is implausible even worst-case.
+
+  - kind: bounds
+    variable: opec_spare_capacity_mbd
+    min: 0
+    max: 15
+    severity: error
+
+  - kind: bounds
+    variable: refinery_utilization_pct
+    min: 0
+    max: 110
+    severity: error
+    description: >
+      Refinery utilization is bounded in [0, 110]% (slight overshoot
+      allowed for nameplate vs. effective capacity).
+
+  - kind: bounds
+    variable: total_system_cost_usd
+    min: 0
+    severity: error
+    description: >
+      Energy-systems total system cost must be non-negative.
+
+  - kind: bounds
+    variable: water_availability_index_mean
+    min: 0
+    max: 2
+    severity: error
+    description: >
+      Normalized water availability index (1.0 = baseline) must lie in
+      [0, 2]; 2x baseline is already implausibly high.
+
+  # ------------------------------------------------------------------
+  # Non-negative — variables whose semantics make a negative value a
+  # clear sign-convention bug. Each is the *magnitude* of a loss,
+  # shock, or reduction.
+  # ------------------------------------------------------------------
+
+  - kind: non_negative
+    severity: error
+    description: >
+      Loss, shock, and reduction magnitudes must be >= 0. A negative
+      "loss" or "reduction" indicates a sign-convention error in the
+      adapter or in the LLM-extracted shock vector.
+    variables:
+      - oil_supply_loss_mbd
+      - lng_export_capacity_loss_pct
+      - iran_lng_export_loss_pct
+      - oman_lng_export_loss_pct
+      - qatar_lng_export_loss_pct
+      - uae_lng_export_loss_pct
+      - yemen_lng_export_loss_pct
+      - qatar_helium_supply_loss_pct
+      - qatar_export_reduction_pct
+      - uae_export_reduction_pct
+      - helium_supply_reduction_pct
+      - effective_supply_gap_pct
+      - insurance_premium_increase_pct
+      - non_opec_loss_mbd
+      - opec_loss_mbd
+      - net_loss_mbd
+      - supply_loss_mbd
+
+  # ------------------------------------------------------------------
+  # Relations — algebraic invariants between variables in the same
+  # output dict. The engine evaluates `expression` only after every
+  # `requires` variable is present and finite; missing variables
+  # silently skip the rule (graceful degradation).
+  # ------------------------------------------------------------------
+
+  - kind: relation
+    description: >
+      Peak price change magnitude must be at least as large as the
+      mean/path price change magnitude (peaks dominate averages by
+      definition).
+    requires: [peak_price_change_pct, price_change_pct]
+    expression: "abs(peak_price_change_pct) >= abs(price_change_pct) - 1e-6"
+    severity: error
+
+  - kind: relation
+    description: >
+      OPEC + non-OPEC supply losses should approximately equal the
+      total supply loss (within 1 mb/d slack for rounding and SPR
+      release accounting).
+    requires: [opec_loss_mbd, non_opec_loss_mbd, oil_supply_loss_mbd]
+    expression: "abs((opec_loss_mbd + non_opec_loss_mbd) - oil_supply_loss_mbd) <= 1.0"
+    severity: warning
+
+  - kind: relation
+    description: >
+      A positive oil supply loss with a non-positive oil price shock
+      is a clear directionality error during a closure scenario.
+      Only fires when the loss is materially non-zero (>0.5 mb/d).
+    requires: [oil_supply_loss_mbd, oil_price_shock_pct]
+    expression: "(oil_supply_loss_mbd <= 0.5) or (oil_price_shock_pct > 0)"
+    severity: error
