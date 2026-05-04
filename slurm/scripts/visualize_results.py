@@ -22,7 +22,20 @@ bundle under ``data/reports/<run_id>/figures/``:
   (only emitted when ``consistency_flags.csv`` is non-empty).
 * ``timeseries/<scenario>__<model>__<series>.png`` — line plot per
   long-form CSV under ``csv/raw/``. Categorical x-axes are detected
-  automatically and rendered as bar charts instead.
+  automatically and rendered as bar charts instead. Bookkeeping series
+  (``_upstream_overrides``, ``_calibration_sources``, …) are skipped
+  so the time-series view only shows real model outputs.
+* ``crossscenario/<model>__<series>.png`` — same series overlaid
+  across every scenario in which it ran. The headline "how do
+  scenarios diverge?" view; emitted whenever a series exists in two
+  or more scenarios.
+* ``world_regional_map.png`` — per-scenario bubble map of unified-
+  region impacts on a schematic world basemap (matplotlib-only; no
+  GIS dependency). Bubble area = |value|, colour = sign.
+* ``gulf_chokepoint_map.png`` — Strait of Hormuz schematic with the
+  chokepoint, oil/LNG terminals, desalination clusters, and per-
+  scenario MENA impact bubbles. Header annotates each panel with the
+  headline supply-loss magnitudes from ``synthesis_outcomes.csv``.
 * ``regional_impact_heatmap.png`` — unified-region heatmap built from
   ``regional_outcomes_unified.csv``. Rows are ``(model, value_label)``,
   columns are unified regions; one panel per scenario. The headline
@@ -659,6 +672,28 @@ def _pick_x_column(cols: list[str]) -> str | None:
     return None
 
 
+def _is_metadata_series_stem(stem: str) -> bool:
+    """Skip CSVs that aren't analytical outputs.
+
+    The export layer emits adapter bookkeeping (e.g. ``pycge___upstream_overrides``,
+    ``mam___upstream_overrides``) as long-form CSVs. Filename schema is
+    ``<model>__<series>``; the bookkeeping series have a leading underscore on the
+    series name, which produces a triple-underscore in the stem. Plotting them as a
+    "time series" is degenerate — they have a categorical x-axis (override name)
+    and one or two numeric columns (LLM vs computed value), so the resulting PNG
+    looks like data but encodes none.
+    """
+    if stem.endswith("__scalars"):
+        return True
+    if "___" in stem:  # <model>___<underscore_series>
+        return True
+    if "__" in stem:
+        _, series = stem.split("__", 1)
+        if series.startswith("_"):
+            return True
+    return False
+
+
 def plot_timeseries_csvs(run_id: str) -> list[Path]:
     """Walk csv/raw/<scenario>/<model>__<series>.csv and emit one
     PNG per CSV. Returns the list of generated paths."""
@@ -675,7 +710,7 @@ def plot_timeseries_csvs(run_id: str) -> list[Path]:
         scenario = scen_dir.name
         for csv_path in sorted(scen_dir.glob("*.csv")):
             stem = csv_path.stem
-            if stem.endswith("__scalars"):
+            if _is_metadata_series_stem(stem):
                 continue
             try:
                 rows = _read_csv(csv_path)
@@ -754,6 +789,138 @@ def plot_timeseries_csvs(run_id: str) -> list[Path]:
                 plt.close("all")
     if written:
         logger.info(f"wrote {len(written)} time-series PNG(s) under {out_root}")
+    return written
+
+
+# --------------------------------------------------------------------
+# Cross-scenario time-series overlays.
+#
+# For each (model, series) that appears under more than one scenario,
+# overlay every scenario's path on a single chart. This is the headline
+# "how do scenarios diverge?" view -- otherwise the per-CSV plots only
+# answer "what does series X look like under scenario Y?" one at a time.
+# --------------------------------------------------------------------
+
+
+_SCENARIO_COLORS = {
+    "swift_contained":          "#1f77b4",
+    "prolonged_contained":      "#ff7f0e",
+    "swift_escalated":          "#9467bd",
+    "prolonged_escalated":      "#d62728",
+    "infrastructure_collapse":  "#8c564b",
+}
+
+
+def _scenario_color(scen: str, idx: int) -> str:
+    if scen in _SCENARIO_COLORS:
+        return _SCENARIO_COLORS[scen]
+    palette = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
+               "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]
+    return palette[idx % len(palette)]
+
+
+def plot_crossscenario_timeseries(run_id: str) -> list[Path]:
+    """Overlay all scenarios for each ``(model, series)`` time-series CSV.
+
+    Walks the same ``csv/raw/<scenario>/<model>__<series>.csv`` tree as
+    :func:`plot_timeseries_csvs`, groups by ``(model, series)``, and emits one
+    PNG per group with one line per scenario. Skips groups that exist for only
+    a single scenario (no comparison to draw).
+    """
+    written: list[Path] = []
+    if not HAS_MPL:
+        return written
+    raw_dir = csv_root(run_id) / "raw"
+    if not raw_dir.exists():
+        return written
+    out_root = figures_root(run_id) / "crossscenario"
+    out_root.mkdir(parents=True, exist_ok=True)
+
+    # group: (model, series_stem) -> {scenario -> rows}
+    groups: dict[tuple[str, str], dict[str, list[dict]]] = defaultdict(dict)
+    for scen_dir in sorted(raw_dir.iterdir()):
+        if not scen_dir.is_dir():
+            continue
+        scenario = scen_dir.name
+        for csv_path in sorted(scen_dir.glob("*.csv")):
+            stem = csv_path.stem
+            if _is_metadata_series_stem(stem):
+                continue
+            if "__" not in stem:
+                continue
+            model, series = stem.split("__", 1)
+            try:
+                rows = _read_csv(csv_path)
+            except Exception:
+                continue
+            if not rows:
+                continue
+            groups[(model, series)][scenario] = rows
+
+    for (model, series), by_scen in sorted(groups.items()):
+        if len(by_scen) < 2:
+            continue
+        # Pick x and y columns from the first scenario; require the same
+        # schema across scenarios (sanity check).
+        any_rows = next(iter(by_scen.values()))
+        cols = list(any_rows[0].keys())
+        x_col = _pick_x_column(cols) or cols[0]
+        y_candidates = [c for c in cols if c != x_col]
+        # Prefer the first numeric y column.
+        y_col: str | None = None
+        for c in y_candidates:
+            if any(_coerce_float(r.get(c)) is not None for r in any_rows):
+                y_col = c
+                break
+        if y_col is None:
+            continue
+
+        try:
+            fig, ax = plt.subplots(figsize=(10, 5))
+            plotted_any = False
+            for idx, (scen, rows) in enumerate(sorted(by_scen.items())):
+                xs_raw = [r.get(x_col, "") for r in rows]
+                xs_num = [_coerce_float(v) for v in xs_raw]
+                ys = [_coerce_float(r.get(y_col)) for r in rows]
+                if all(v is None for v in xs_num):
+                    xs: list[Any] = list(range(len(rows)))
+                else:
+                    xs = [
+                        v if v is not None else i
+                        for i, v in enumerate(xs_num)
+                    ]
+                pairs = [(x, y) for x, y in zip(xs, ys) if y is not None]
+                if not pairs:
+                    continue
+                xx, yy = zip(*pairs)
+                ax.plot(
+                    xx, yy, marker="o", linewidth=1.8,
+                    color=_scenario_color(scen, idx), label=scen,
+                )
+                plotted_any = True
+            if not plotted_any:
+                plt.close(fig)
+                continue
+            ax.set_xlabel(x_col)
+            ax.set_ylabel(y_col)
+            ax.set_title(f"{model} · {series} — across scenarios")
+            ax.legend(fontsize=8, loc="best")
+            ax.grid(True, alpha=0.3)
+            fig.tight_layout()
+            out_path = out_root / f"{model}__{series}.png"
+            fig.savefig(out_path, dpi=140)
+            plt.close(fig)
+            written.append(out_path)
+        except Exception:
+            logger.warning(
+                f"crossscenario plot failed for {model}/{series}: "
+                f"{traceback.format_exc().splitlines()[-1]}"
+            )
+            plt.close("all")
+    if written:
+        logger.info(
+            f"wrote {len(written)} cross-scenario time-series PNG(s) under {out_root}"
+        )
     return written
 
 
@@ -1035,6 +1202,360 @@ def plot_native_vs_unified_audit(
 
 
 # --------------------------------------------------------------------
+# Schematic regional maps (matplotlib-only, no GIS dependency).
+#
+# We don't ship a shapefile or depend on cartopy/geopandas; instead we
+# render approximate region centroids on a bare world bbox and a
+# zoomed-in Persian Gulf bbox. The resulting maps are schematic but
+# correctly convey the geographic ordering of impacts -- the goal is
+# to surface "which regions are hit, and in what relative magnitude",
+# not pixel-accurate cartography.
+# --------------------------------------------------------------------
+
+
+# (lon, lat) centroids for the unified-region taxonomy. Approximate
+# population/economic centroids; chosen to render legibly on a world
+# bbox without overlap.
+_UNIFIED_REGION_CENTROIDS: dict[str, tuple[float, float]] = {
+    "US":         (-98.0, 39.5),
+    "CHN":        (104.0, 35.0),
+    "IND":        ( 78.0, 22.0),
+    "EU":         ( 10.0, 50.0),
+    "MENA_GCC":   ( 50.0, 25.0),   # Saudi/UAE/Qatar core
+    "MENA_OTHER": ( 35.0, 32.0),   # Iraq/Iran/Egypt centroid
+    "SSA":        ( 20.0,  0.0),
+    "LAC":        (-60.0,-15.0),
+    "ROW":        ( 90.0, -5.0),   # Indo-Pacific catch-all
+    "GLOBAL":     (  0.0, 60.0),   # render in the empty Arctic strip
+}
+
+
+def _draw_world_basemap(ax) -> None:
+    """Draw a stylised world bbox with continent guidelines.
+
+    No external GIS dependency. We just shade the ocean and sketch
+    rough continent rectangles to give viewers a sense of where
+    centroids sit.
+    """
+    ax.set_xlim(-170, 180)
+    ax.set_ylim(-60, 80)
+    ax.set_facecolor("#eaf3f8")  # ocean
+    # Coarse landmass rectangles (lon_min, lat_min, lon_max, lat_max)
+    landmasses = [
+        (-168, 15, -50, 75),  # North America
+        ( -82,-56, -34, 13),  # South America
+        ( -18,  0,  52, 38),  # Africa (north)
+        ( -18,-35,  52,  0),  # Africa (south)
+        (  -9, 36,  60, 72),  # Europe + western Russia
+        (  60,  5, 150, 78),  # Asia
+        ( 110,-45, 155,-10),  # Australia
+        ( 100, -8, 145,  8),  # SE Asia islands
+    ]
+    for x0, y0, x1, y1 in landmasses:
+        ax.add_patch(plt.Rectangle(
+            (x0, y0), x1 - x0, y1 - y0,
+            facecolor="#f4ecd8", edgecolor="#c9b98c", linewidth=0.6, zorder=1,
+        ))
+    ax.set_xticks([])
+    ax.set_yticks([])
+    for spine in ax.spines.values():
+        spine.set_color("#c9b98c")
+
+
+def _scenario_panel_grid(n: int) -> tuple[int, int]:
+    """Pick (rows, cols) for a panel grid given n scenarios."""
+    if n <= 1:
+        return 1, 1
+    if n <= 2:
+        return 1, 2
+    if n <= 4:
+        return 2, 2
+    if n <= 6:
+        return 2, 3
+    return ((n + 2) // 3), 3
+
+
+def plot_world_regional_map(
+    rows: list[dict], out: Path,
+) -> Path | None:
+    """Per-scenario bubble map of unified-region impact magnitudes.
+
+    Bubble size is proportional to ``|value|`` (max absolute value in the
+    panel), bubble colour is signed (red for negative, green for
+    positive). The headline value series picked per (scenario) is the
+    same one used by ``plot_regional_distribution_per_scenario`` so the
+    map and the bar chart agree.
+    """
+    if not HAS_MPL or not rows:
+        return None
+    by_scen = _group_regional_by_scenario(rows)
+    scenarios = sorted(by_scen.keys())
+    if not scenarios:
+        return None
+
+    nrows, ncols = _scenario_panel_grid(len(scenarios))
+    fig, axes = plt.subplots(
+        nrows, ncols,
+        figsize=(7.0 * ncols, 4.2 * nrows),
+        squeeze=False,
+    )
+    rendered_any = False
+    for idx, scen in enumerate(scenarios):
+        ax = axes[idx // ncols][idx % ncols]
+        _draw_world_basemap(ax)
+        cells = by_scen[scen]
+        key = _pick_headline_value_label(cells)
+        if key is None:
+            ax.set_title(f"{scen}\n(no regional data)", fontsize=10)
+            continue
+        region_vals = cells[key]
+        max_abs = max((abs(v) for v in region_vals.values()), default=0.0)
+        if max_abs <= 0:
+            ax.set_title(f"{scen}\n(zero magnitudes)", fontsize=10)
+            continue
+        rendered_any = True
+        for region, value in region_vals.items():
+            centroid = _UNIFIED_REGION_CENTROIDS.get(region)
+            if centroid is None:
+                continue
+            lon, lat = centroid
+            # Area scales with magnitude; 60..1400 pt^2 keeps the
+            # bubbles legible without dominating the panel.
+            size = 60 + 1340 * (abs(value) / max_abs)
+            color = "#d62728" if value < 0 else "#2ca02c"
+            ax.scatter(
+                lon, lat, s=size, color=color, alpha=0.75,
+                edgecolor="black", linewidth=0.6, zorder=3,
+            )
+            ax.annotate(
+                f"{region}\n{value:+.2f}",
+                xy=(lon, lat), xytext=(0, 0),
+                textcoords="offset points",
+                ha="center", va="center", fontsize=7, zorder=4,
+                color="white" if abs(value) / max_abs > 0.55 else "black",
+            )
+        ax.set_title(
+            f"{scen}\n{key[0]} · {key[1]} · {key[2]}",
+            fontsize=10,
+        )
+    for idx in range(len(scenarios), nrows * ncols):
+        axes[idx // ncols][idx % ncols].axis("off")
+    if not rendered_any:
+        plt.close(fig)
+        return None
+    fig.suptitle(
+        "Regional impact map (unified taxonomy, bubble area = |value|)",
+        fontsize=13,
+    )
+    fig.tight_layout(rect=(0, 0, 1, 0.96))
+    fig.savefig(out, dpi=140)
+    plt.close(fig)
+    return out
+
+
+# Persian Gulf / Strait of Hormuz schematic. Centroids approximate the
+# real chokepoints, oil/LNG terminals, and desalination clusters that
+# the Hormuz scenarios touch. Coloured points overlay the schematic
+# coastlines so analysts can see where each unified region sits
+# relative to the chokepoint.
+_GULF_FEATURES = [
+    # (lon, lat, label, kind, label_dx_dy_pts)
+    ( 56.30,  26.55, "Strait of Hormuz",      "chokepoint",   ( 6,  6)),
+    ( 50.00,  26.10, "Ras Tanura (SAU)",      "oil_terminal", (-72, -10)),
+    ( 51.55,  25.30, "Ras Laffan (QAT, LNG)", "lng_terminal", ( 6,  6)),
+    ( 56.34,  25.16, "Fujairah (UAE)",        "oil_terminal", ( 6, -10)),
+    ( 54.50,  24.45, "Jebel Dhanna (UAE)",    "oil_terminal", ( 6, -10)),
+    ( 50.55,  26.55, "Bahrain",               "desalination", (-50,  4)),
+    ( 51.20,  25.80, "Qatar (desal)",         "desalination", (-60,  4)),
+    ( 47.95,  29.35, "Kuwait",                "oil_terminal", ( 6,  4)),
+    ( 53.70,  29.50, "Iran (S. coast)",       "actor",        ( 6,  4)),
+    ( 47.78,  30.50, "Iraq (Basra)",          "oil_terminal", (-78,  4)),
+]
+
+
+def _draw_gulf_basemap(ax) -> None:
+    ax.set_xlim(44, 62)
+    ax.set_ylim(20, 32)
+    ax.set_facecolor("#cfe6f0")  # gulf water
+    # Coarse landmass polygons covering Arabia, Iran, Iraq.
+    landmasses = [
+        # (lon_min, lat_min, lon_max, lat_max, label)
+        (44.0, 20.0, 56.0, 25.5, "Arabia (SAU/UAE)"),
+        (54.0, 24.0, 57.0, 26.6, "UAE coast"),
+        (50.5, 25.0, 51.7, 26.4, "Qatar"),
+        (50.4, 25.9, 50.7, 26.4, "Bahrain"),
+        (47.0, 28.5, 50.5, 32.0, "Kuwait/N. Iraq"),
+        (52.0, 25.5, 62.0, 32.0, "Iran"),
+    ]
+    for x0, y0, x1, y1, label in landmasses:
+        ax.add_patch(plt.Rectangle(
+            (x0, y0), x1 - x0, y1 - y0,
+            facecolor="#f0e3c0", edgecolor="#a99a6f", linewidth=0.6, zorder=1,
+        ))
+        ax.text(
+            (x0 + x1) / 2, (y0 + y1) / 2, label,
+            ha="center", va="center", fontsize=6.5, color="#6b5e34", zorder=2,
+        )
+    # Mark the Strait of Hormuz with a constriction line. The feature
+    # marker + annotation in _GULF_FEATURES carries the label so we
+    # avoid double-tagging the strait here.
+    ax.plot(
+        [56.0, 56.6], [26.4, 26.7],
+        color="#0a3d62", linewidth=2.0, zorder=3,
+    )
+    ax.set_xticks([])
+    ax.set_yticks([])
+    for spine in ax.spines.values():
+        spine.set_color("#a99a6f")
+
+
+_GULF_KIND_MARKERS = {
+    "chokepoint":    ("X", "#0a3d62", 180),
+    "oil_terminal":  ("o", "#2c2c2c", 90),
+    "lng_terminal":  ("s", "#cc7a00", 90),
+    "desalination":  ("D", "#1f77b4", 70),
+    "actor":         ("^", "#7f0000", 110),
+}
+
+
+def plot_gulf_chokepoint_map(
+    unified_rows: list[dict],
+    synthesis_rows: list[dict] | None,
+    out: Path,
+) -> Path | None:
+    """Schematic Strait of Hormuz map annotated with scenario impacts.
+
+    For each scenario, the panel shows the Persian Gulf coastline, the
+    Strait of Hormuz, oil/LNG terminals, desalination clusters, and the
+    headline MENA_GCC / MENA_OTHER regional impact (when present). The
+    panel header also surfaces the headline scenario-level supply-loss
+    figure (oil/LNG mb/d) so the chokepoint context isn't divorced
+    from the magnitude of the disruption.
+    """
+    if not HAS_MPL:
+        return None
+    by_scen_unified = _group_regional_by_scenario(unified_rows or [])
+
+    # Pull supply-loss-style headline numbers from synthesis_outcomes if
+    # available; these are the "physical" disruption magnitudes the map
+    # is meant to contextualise.
+    supply_lookups = ("supply_loss_mbd", "supply_loss_pct_of_global",
+                      "lng_export_capacity_loss_pct", "qatar_helium_supply_loss_pct")
+    supply_by_scen: dict[str, dict[str, float]] = defaultdict(dict)
+    for r in synthesis_rows or []:
+        var = (r.get("outcome_variable") or "").lower()
+        if var not in supply_lookups:
+            continue
+        scen = r.get("scenario_id") or "?"
+        v = _coerce_float(r.get("value"))
+        if v is None:
+            continue
+        # Pick the biggest magnitude observed per (scenario, var) -- duration
+        # variants of the same key emit duplicate rows.
+        if abs(v) > abs(supply_by_scen[scen].get(var, 0.0)):
+            supply_by_scen[scen][var] = v
+
+    scenarios = sorted(set(by_scen_unified.keys()) | set(supply_by_scen.keys()))
+    if not scenarios:
+        return None
+
+    nrows, ncols = _scenario_panel_grid(len(scenarios))
+    fig, axes = plt.subplots(
+        nrows, ncols,
+        figsize=(6.5 * ncols, 4.0 * nrows),
+        squeeze=False,
+    )
+    for idx, scen in enumerate(scenarios):
+        ax = axes[idx // ncols][idx % ncols]
+        _draw_gulf_basemap(ax)
+        # Markers for chokepoint / terminals / actors.
+        for lon, lat, label, kind, (dx, dy) in _GULF_FEATURES:
+            marker, color, size = _GULF_KIND_MARKERS.get(
+                kind, ("o", "black", 50)
+            )
+            ax.scatter(
+                lon, lat, marker=marker, c=color, s=size,
+                edgecolor="white", linewidth=0.6, zorder=5,
+            )
+            ax.annotate(
+                label, xy=(lon, lat), xytext=(dx, dy),
+                textcoords="offset points", fontsize=6.5, zorder=6,
+            )
+        # Overlay the regional impact bubble for MENA_GCC / MENA_OTHER
+        # if a value series is present for this scenario.
+        cells = by_scen_unified.get(scen, {})
+        key = _pick_headline_value_label(cells) if cells else None
+        if key is not None:
+            region_vals = cells[key]
+            mena_overlay: list[tuple[str, float]] = []
+            for region in ("MENA_GCC", "MENA_OTHER"):
+                v = region_vals.get(region)
+                if v is None:
+                    continue
+                mena_overlay.append((region, v))
+            if mena_overlay:
+                max_abs = max(abs(v) for _, v in mena_overlay) or 1.0
+                for region, v in mena_overlay:
+                    lon, lat = _UNIFIED_REGION_CENTROIDS[region]
+                    if region == "MENA_OTHER":
+                        # Pull the centroid into the map bbox so the
+                        # bubble actually lands on the Iran/Iraq shore.
+                        lon, lat = 53.5, 30.5
+                    color = "#d62728" if v < 0 else "#2ca02c"
+                    ax.scatter(
+                        lon, lat, s=200 + 1200 * (abs(v) / max_abs),
+                        color=color, alpha=0.35,
+                        edgecolor="black", linewidth=0.8, zorder=4,
+                    )
+                    ax.annotate(
+                        f"{region}\n{v:+.2f}",
+                        xy=(lon, lat), xytext=(0, 0),
+                        textcoords="offset points",
+                        ha="center", va="center",
+                        fontsize=7, color="black", zorder=6,
+                    )
+        # Header strip with supply-loss figures.
+        header_bits: list[str] = []
+        sl = supply_by_scen.get(scen, {})
+        if "supply_loss_mbd" in sl:
+            header_bits.append(f"oil −{sl['supply_loss_mbd']:.2f} mb/d")
+        if "supply_loss_pct_of_global" in sl:
+            header_bits.append(f"({sl['supply_loss_pct_of_global']:.1f}% global)")
+        if "lng_export_capacity_loss_pct" in sl:
+            header_bits.append(f"LNG −{sl['lng_export_capacity_loss_pct']:.1f}%")
+        if "qatar_helium_supply_loss_pct" in sl:
+            header_bits.append(f"He −{sl['qatar_helium_supply_loss_pct']:.1f}%")
+        header = "; ".join(header_bits) if header_bits else ""
+        ax.set_title(
+            f"{scen}" + (f"\n{header}" if header else ""),
+            fontsize=9,
+        )
+    for idx in range(len(scenarios), nrows * ncols):
+        axes[idx // ncols][idx % ncols].axis("off")
+    # Single shared legend.
+    legend_handles = [
+        plt.scatter(
+            [], [], marker=marker, c=color, s=size, edgecolor="white",
+            linewidth=0.6, label=kind.replace("_", " "),
+        )
+        for kind, (marker, color, size) in _GULF_KIND_MARKERS.items()
+    ]
+    fig.legend(
+        handles=legend_handles, loc="lower center",
+        ncol=len(_GULF_KIND_MARKERS), fontsize=8, frameon=False,
+        bbox_to_anchor=(0.5, 0.01),
+    )
+    fig.suptitle(
+        "Strait of Hormuz chokepoint map — features + scenario impact bubbles",
+        fontsize=13,
+    )
+    fig.tight_layout(rect=(0, 0.04, 1, 0.96))
+    fig.savefig(out, dpi=140)
+    plt.close(fig)
+    return out
+
+
+# --------------------------------------------------------------------
 # HTML dashboard. Self-contained: figures embedded as base64 so the
 # index.html renders even when shipped off-cluster as a single file.
 # --------------------------------------------------------------------
@@ -1201,6 +1722,7 @@ def write_index_html(
     sectoral_distribution_pngs: list[Path] | None = None,
     synthesis_distributions_rows: list[dict] | None = None,
     unified_rows: list[dict] | None = None,
+    crossscenario_pngs: list[Path] | None = None,
 ) -> Path:
     fig_dir = figures_root(run_id)
     out = fig_dir / "index.html"
@@ -1251,9 +1773,26 @@ def write_index_html(
             body += f"<h3>{html.escape(label)}</h3>" + _embed_image(p)
         sections.append(f"<section><h2>Run-wide figures</h2>{body}</section>")
 
+    # --- Cross-scenario time-series overlays (the headline "how do scenarios diverge?" view) ---
+    cs_pngs = sorted(crossscenario_pngs or [])
+    if cs_pngs:
+        body = (
+            "<p class='meta'>One panel per <code>(model, series)</code> "
+            "that reported data under two or more scenarios. Lines are colour-coded "
+            "by scenario; this is the headline view for spotting where the "
+            "scenarios diverge over the analytical horizon.</p>"
+        )
+        for p in cs_pngs:
+            body += f"<h3>{html.escape(p.stem)}</h3>" + _embed_image(p)
+        sections.append(
+            f"<section><h2>Cross-scenario time series</h2>{body}</section>"
+        )
+
     # --- Distributional impacts (regional + sectoral) ---
     dist_blocks: list[str] = []
     for label, key in (
+        ("World regional impact map (per-scenario bubble overlay)", "world_map"),
+        ("Strait of Hormuz chokepoint map", "gulf_map"),
         ("Regional impact heatmap (unified taxonomy, per-scenario panels)",
          "regional_heatmap"),
         ("Native -> unified region crosswalk audit", "regional_audit"),
@@ -1419,6 +1958,12 @@ def write_index_html(
             artefact_links.append(
                 f"<a href='timeseries/{fname}'>figures/timeseries/{fname}</a>"
             )
+    cs_dir = fig_dir / "crossscenario"
+    if cs_dir.exists():
+        for fname in sorted(p.name for p in cs_dir.glob("*.png")):
+            artefact_links.append(
+                f"<a href='crossscenario/{fname}'>figures/crossscenario/{fname}</a>"
+            )
     sections.append(
         "<section class='toc'><h2>All generated artefacts</h2>"
         + "".join(artefact_links)
@@ -1551,6 +2096,17 @@ def main(argv: list[str] | None = None) -> int:
         )
         if p:
             figures["regional_audit"] = p
+        p = plot_world_regional_map(
+            regional_unified_rows, fig_dir / "world_regional_map.png"
+        )
+        if p:
+            figures["world_map"] = p
+        p = plot_gulf_chokepoint_map(
+            regional_unified_rows, synthesis_rows,
+            fig_dir / "gulf_chokepoint_map.png",
+        )
+        if p:
+            figures["gulf_map"] = p
         for label, p in figures.items():
             logger.info(f"wrote {p}")
     except Exception:
@@ -1581,11 +2137,19 @@ def main(argv: list[str] | None = None) -> int:
         )
 
     timeseries_pngs: list[Path] = []
+    crossscenario_pngs: list[Path] = []
     if not args.no_timeseries:
         try:
             timeseries_pngs = plot_timeseries_csvs(run_id)
         except Exception:
             logger.error("Timeseries figure generation failed:\n" + traceback.format_exc())
+        try:
+            crossscenario_pngs = plot_crossscenario_timeseries(run_id)
+        except Exception:
+            logger.error(
+                "Cross-scenario timeseries figure generation failed:\n"
+                + traceback.format_exc()
+            )
 
     try:
         write_index_html(
@@ -1599,6 +2163,7 @@ def main(argv: list[str] | None = None) -> int:
             sectoral_distribution_pngs=sectoral_distribution_pngs,
             synthesis_distributions_rows=synthesis_dist_rows,
             unified_rows=regional_unified_rows,
+            crossscenario_pngs=crossscenario_pngs,
         )
     except Exception:
         logger.error("HTML dashboard generation failed:\n" + traceback.format_exc())
