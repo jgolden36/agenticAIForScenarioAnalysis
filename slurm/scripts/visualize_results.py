@@ -36,6 +36,13 @@ bundle under ``data/reports/<run_id>/figures/``:
   chokepoint, oil/LNG terminals, desalination clusters, and per-
   scenario MENA impact bubbles. Header annotates each panel with the
   headline supply-loss magnitudes from ``synthesis_outcomes.csv``.
+* ``world_choropleth_map.png`` — cartographic world choropleth
+  (cartopy + Natural Earth 110m). Country polygons coloured by their
+  unified-region's value on a diverging colormap. Emitted only when
+  cartopy is installed and the Natural Earth shapefile is fetchable.
+* ``mena_choropleth_map.png`` — same data, zoomed to MENA with
+  country labels and the Strait of Hormuz marked. Targets the policy
+  audience that wants country-level detail around the chokepoint.
 * ``regional_impact_heatmap.png`` — unified-region heatmap built from
   ``regional_outcomes_unified.csv``. Rows are ``(model, value_label)``,
   columns are unified regions; one panel per scenario. The headline
@@ -116,6 +123,18 @@ try:  # markdown -> HTML for the dashboard narrative blocks.
 except Exception:
     _markdown_lib = None  # type: ignore[assignment]
     HAS_MARKDOWN = False
+
+try:  # cartopy drives the choropleth world / MENA maps.
+    import cartopy.crs as ccrs  # noqa: WPS433
+    import cartopy.feature as cfeature  # noqa: WPS433
+    from cartopy.io import shapereader as _cartopy_shapereader  # noqa: WPS433
+    HAS_CARTOPY = True
+except Exception as _cartopy_exc:
+    ccrs = None  # type: ignore[assignment]
+    cfeature = None  # type: ignore[assignment]
+    _cartopy_shapereader = None  # type: ignore[assignment]
+    HAS_CARTOPY = False
+    _CARTOPY_ERR = str(_cartopy_exc)
 
 
 # --------------------------------------------------------------------
@@ -1556,6 +1575,375 @@ def plot_gulf_chokepoint_map(
 
 
 # --------------------------------------------------------------------
+# Cartographic maps (cartopy + Natural Earth).
+#
+# The schematic maps above keep the script useful in minimal
+# environments. When cartopy is installed, we additionally render
+# proper choropleth maps (real coastlines, country boundaries, country
+# polygons coloured by their unified-region's impact value).
+#
+# Country -> unified region is baked in below because the unified
+# taxonomy itself is fixed (10 buckets) and the ISO_A3 codes used by
+# Natural Earth are stable. ROW is the implicit default for every
+# country not enumerated.
+# --------------------------------------------------------------------
+
+
+# ISO_A3 (Natural Earth) -> unified region. Only the regions we
+# actually want to colour need entries; everything else falls through
+# to ROW. The taxonomy mirrors `_UNIFIED_REGION_ORDER`.
+_ISO3_TO_UNIFIED: dict[str, str] = {
+    # US
+    "USA": "US",
+    # CHN
+    "CHN": "CHN",
+    "TWN": "CHN",  # PRC + Taiwan -> CHN bucket for the global view
+    # IND
+    "IND": "IND",
+    # EU (EU-27 + Norway/Switzerland for the choropleth)
+    "AUT": "EU", "BEL": "EU", "BGR": "EU", "HRV": "EU", "CYP": "EU",
+    "CZE": "EU", "DNK": "EU", "EST": "EU", "FIN": "EU", "FRA": "EU",
+    "DEU": "EU", "GRC": "EU", "HUN": "EU", "IRL": "EU", "ITA": "EU",
+    "LVA": "EU", "LTU": "EU", "LUX": "EU", "MLT": "EU", "NLD": "EU",
+    "POL": "EU", "PRT": "EU", "ROU": "EU", "SVK": "EU", "SVN": "EU",
+    "ESP": "EU", "SWE": "EU", "NOR": "EU", "CHE": "EU",
+    # MENA_GCC
+    "SAU": "MENA_GCC", "ARE": "MENA_GCC", "QAT": "MENA_GCC",
+    "KWT": "MENA_GCC", "OMN": "MENA_GCC", "BHR": "MENA_GCC",
+    # MENA_OTHER
+    "IRN": "MENA_OTHER", "IRQ": "MENA_OTHER", "ISR": "MENA_OTHER",
+    "JOR": "MENA_OTHER", "LBN": "MENA_OTHER", "SYR": "MENA_OTHER",
+    "YEM": "MENA_OTHER", "EGY": "MENA_OTHER", "TUR": "MENA_OTHER",
+    "PSE": "MENA_OTHER",
+    # SSA (Sub-Saharan Africa, by Natural Earth NAME convention)
+    "DZA": "MENA_OTHER", "MAR": "MENA_OTHER", "TUN": "MENA_OTHER",
+    "LBY": "MENA_OTHER", "SDN": "MENA_OTHER", "SSD": "SSA",
+    "AGO": "SSA", "BEN": "SSA", "BWA": "SSA", "BFA": "SSA",
+    "BDI": "SSA", "CMR": "SSA", "CPV": "SSA", "CAF": "SSA",
+    "TCD": "SSA", "COM": "SSA", "COG": "SSA", "COD": "SSA",
+    "CIV": "SSA", "DJI": "SSA", "GNQ": "SSA", "ERI": "SSA",
+    "SWZ": "SSA", "ETH": "SSA", "GAB": "SSA", "GMB": "SSA",
+    "GHA": "SSA", "GIN": "SSA", "GNB": "SSA", "KEN": "SSA",
+    "LSO": "SSA", "LBR": "SSA", "MDG": "SSA", "MWI": "SSA",
+    "MLI": "SSA", "MRT": "SSA", "MUS": "SSA", "MOZ": "SSA",
+    "NAM": "SSA", "NER": "SSA", "NGA": "SSA", "RWA": "SSA",
+    "STP": "SSA", "SEN": "SSA", "SYC": "SSA", "SLE": "SSA",
+    "SOM": "SSA", "ZAF": "SSA", "TZA": "SSA", "TGO": "SSA",
+    "UGA": "SSA", "ZMB": "SSA", "ZWE": "SSA",
+    # LAC
+    "MEX": "LAC", "BLZ": "LAC", "CRI": "LAC", "CUB": "LAC",
+    "DOM": "LAC", "SLV": "LAC", "GTM": "LAC", "HTI": "LAC",
+    "HND": "LAC", "JAM": "LAC", "NIC": "LAC", "PAN": "LAC",
+    "PRI": "LAC", "TTO": "LAC", "BHS": "LAC",
+    "ARG": "LAC", "BOL": "LAC", "BRA": "LAC", "CHL": "LAC",
+    "COL": "LAC", "ECU": "LAC", "GUY": "LAC", "PRY": "LAC",
+    "PER": "LAC", "SUR": "LAC", "URY": "LAC", "VEN": "LAC",
+}
+
+
+def _natural_earth_countries():
+    """Return the Natural Earth 110m countries shapefile reader.
+
+    Returns None on any failure (offline cluster, locked filesystem)
+    so callers can skip the cartographic figure without crashing the
+    stage. Cached under ``~/.local/share/cartopy/shapefiles/`` after
+    the first download.
+    """
+    if not HAS_CARTOPY:
+        return None
+    try:
+        path = _cartopy_shapereader.natural_earth(
+            resolution="110m",
+            category="cultural",
+            name="admin_0_countries",
+        )
+        return _cartopy_shapereader.Reader(path)
+    except Exception as exc:
+        logger.warning(
+            f"natural_earth shapefile unavailable; skipping choropleth "
+            f"map: {exc}"
+        )
+        return None
+
+
+def _country_iso(record) -> str | None:
+    """Pull a stable ISO_A3 code from a Natural Earth record.
+
+    Natural Earth ships with a few "-99" sentinel rows (disputed
+    territories like W. Sahara) where ISO_A3 is unset; ADM0_A3 is
+    the canonical fallback.
+    """
+    a = record.attributes
+    iso = (a.get("ISO_A3") or "").strip()
+    if iso and iso != "-99":
+        return iso
+    iso = (a.get("ADM0_A3") or "").strip()
+    if iso and iso != "-99":
+        return iso
+    return None
+
+
+def _signed_norm(value: float, max_abs: float) -> float:
+    """Map a signed value into [-1, 1] given the panel's max |value|."""
+    if max_abs <= 0:
+        return 0.0
+    return max(-1.0, min(1.0, value / max_abs))
+
+
+def _draw_choropleth_panel(
+    ax,
+    region_vals: dict[str, float],
+    extent: tuple[float, float, float, float] | None,
+    label_countries: bool,
+    cmap_name: str = "RdYlBu_r",
+) -> None:
+    """Render one choropleth panel onto a cartopy GeoAxes.
+
+    ``region_vals`` maps a unified-region id to a signed value. Country
+    polygons are coloured by their unified-region's value via
+    ``_ISO3_TO_UNIFIED``; uncoloured countries (ROW or no data) get a
+    neutral fill so they still appear on the basemap.
+
+    When ``label_countries`` is True, each country whose centroid falls
+    inside the panel extent is labelled with its name (and value, if
+    available). Centroid-outside-extent records are skipped so labels
+    don't leak past the panel border. The text artists are also
+    ``clip_on=True`` as belt-and-braces.
+    """
+    reader = _natural_earth_countries()
+    if reader is None:
+        ax.text(
+            0.5, 0.5, "natural_earth shapefile unavailable",
+            transform=ax.transAxes, ha="center", va="center",
+            color="gray", fontsize=10,
+        )
+        return
+
+    if extent is not None:
+        ax.set_extent(extent, crs=ccrs.PlateCarree())
+    ax.add_feature(cfeature.OCEAN, facecolor="#eaf3f8", zorder=0)
+    ax.add_feature(cfeature.LAND, facecolor="#f4ecd8", zorder=0)
+    ax.add_feature(cfeature.COASTLINE, edgecolor="#7a6a3f", linewidth=0.4, zorder=2)
+    ax.add_feature(cfeature.BORDERS, edgecolor="#a99a6f", linewidth=0.3, zorder=2)
+
+    cmap = matplotlib.cm.get_cmap(cmap_name)
+    max_abs = max((abs(v) for v in region_vals.values()), default=0.0)
+
+    def _in_extent(lon: float, lat: float) -> bool:
+        if extent is None:
+            return True
+        x0, x1, y0, y1 = extent
+        return x0 <= lon <= x1 and y0 <= lat <= y1
+
+    for record in reader.records():
+        iso = _country_iso(record)
+        if iso is None:
+            continue
+        unified = _ISO3_TO_UNIFIED.get(iso, "ROW")
+        value = region_vals.get(unified)
+        if value is not None:
+            # Map signed value into [0, 1] for the diverging colormap.
+            norm = (_signed_norm(value, max_abs) + 1.0) / 2.0
+            ax.add_geometries(
+                [record.geometry], crs=ccrs.PlateCarree(),
+                facecolor=cmap(norm),
+                edgecolor="#555555", linewidth=0.25, zorder=1,
+            )
+
+        if label_countries:
+            try:
+                centroid = record.geometry.centroid
+            except Exception:
+                continue
+            if not _in_extent(centroid.x, centroid.y):
+                continue
+            name = record.attributes.get("NAME") or iso
+            label = f"{name}\n{value:+.2f}" if value is not None else name
+            txt = ax.text(
+                centroid.x, centroid.y, label,
+                transform=ccrs.PlateCarree(),
+                ha="center", va="center",
+                fontsize=6.5 if value is not None else 6.0,
+                color="black" if value is not None else "#555555",
+                zorder=4,
+            )
+            txt.set_clip_on(True)
+
+
+def _add_cbar(fig, ax, max_abs: float, label: str, cmap_name: str = "RdYlBu_r") -> None:
+    """Attach a shared diverging colorbar to a cartopy figure.
+
+    Anchored to the right of the last axis; uses the same diverging
+    map as ``_draw_choropleth_panel`` so the legend reads correctly
+    for signed values.
+    """
+    cmap = matplotlib.cm.get_cmap(cmap_name)
+    norm = matplotlib.colors.Normalize(vmin=-max_abs, vmax=max_abs)
+    sm = matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap)
+    sm.set_array([])
+    cbar = fig.colorbar(
+        sm, ax=ax, orientation="horizontal",
+        fraction=0.04, pad=0.04, aspect=40, shrink=0.7,
+    )
+    cbar.set_label(label, fontsize=9)
+
+
+def plot_world_choropleth_map(
+    rows: list[dict], out: Path,
+) -> Path | None:
+    """Per-scenario choropleth on a real world map (cartopy).
+
+    Each scenario gets its own panel with country polygons coloured by
+    their unified-region's value (red = negative, blue = positive on
+    a diverging colormap). The headline value series is the same one
+    picked by ``plot_world_regional_map`` so the schematic + cartographic
+    views answer the same question.
+    """
+    if not HAS_MPL or not HAS_CARTOPY or not rows:
+        return None
+    by_scen = _group_regional_by_scenario(rows)
+    scenarios = sorted(by_scen.keys())
+    if not scenarios:
+        return None
+
+    nrows, ncols = _scenario_panel_grid(len(scenarios))
+    fig = plt.figure(figsize=(7.5 * ncols, 4.4 * nrows))
+    rendered_any = False
+    last_ax = None
+    panel_max_abs = 0.0
+    panel_label = ""
+
+    for idx, scen in enumerate(scenarios):
+        ax = fig.add_subplot(
+            nrows, ncols, idx + 1, projection=ccrs.Robinson(),
+        )
+        last_ax = ax
+        cells = by_scen[scen]
+        key = _pick_headline_value_label(cells)
+        if key is None:
+            ax.set_global()
+            ax.add_feature(cfeature.OCEAN, facecolor="#eaf3f8")
+            ax.add_feature(cfeature.LAND, facecolor="#f4ecd8")
+            ax.add_feature(cfeature.COASTLINE, linewidth=0.4)
+            ax.set_title(f"{scen}\n(no regional data)", fontsize=10)
+            continue
+        region_vals = cells[key]
+        if not region_vals:
+            ax.set_title(f"{scen}\n(no regional data)", fontsize=10)
+            continue
+        rendered_any = True
+        max_abs = max(abs(v) for v in region_vals.values())
+        if max_abs > panel_max_abs:
+            panel_max_abs = max_abs
+            panel_label = f"{key[2]} ({key[0]} · {key[1]})"
+        _draw_choropleth_panel(
+            ax, region_vals, extent=None, label_countries=False,
+        )
+        ax.set_title(
+            f"{scen}\n{key[0]} · {key[1]} · {key[2]}", fontsize=10,
+        )
+    if not rendered_any:
+        plt.close(fig)
+        return None
+    if last_ax is not None and panel_max_abs > 0:
+        _add_cbar(
+            fig, last_ax, panel_max_abs,
+            label=f"signed value — {panel_label}",
+        )
+    fig.suptitle(
+        "World choropleth — country polygons coloured by unified-region impact",
+        fontsize=13,
+    )
+    fig.tight_layout(rect=(0, 0.05, 1, 0.96))
+    fig.savefig(out, dpi=140)
+    plt.close(fig)
+    return out
+
+
+# Bounding box (lon_min, lon_max, lat_min, lat_max) for the MENA zoom.
+_MENA_EXTENT = (24.0, 70.0, 10.0, 42.0)
+
+
+def plot_mena_choropleth_map(
+    rows: list[dict], out: Path,
+) -> Path | None:
+    """Zoomed-in MENA choropleth so policymakers can read country detail.
+
+    Same data path as ``plot_world_choropleth_map`` but extent-clipped
+    to the Eastern Mediterranean / Gulf and labelled per country. Each
+    panel is annotated with the chokepoint location so the map ties
+    back to the Strait of Hormuz schematic.
+    """
+    if not HAS_MPL or not HAS_CARTOPY or not rows:
+        return None
+    by_scen = _group_regional_by_scenario(rows)
+    scenarios = sorted(by_scen.keys())
+    if not scenarios:
+        return None
+
+    nrows, ncols = _scenario_panel_grid(len(scenarios))
+    fig = plt.figure(figsize=(7.5 * ncols, 4.6 * nrows))
+    rendered_any = False
+    last_ax = None
+    panel_max_abs = 0.0
+    panel_label = ""
+
+    for idx, scen in enumerate(scenarios):
+        ax = fig.add_subplot(
+            nrows, ncols, idx + 1, projection=ccrs.PlateCarree(),
+        )
+        last_ax = ax
+        cells = by_scen[scen]
+        key = _pick_headline_value_label(cells)
+        if key is None:
+            region_vals: dict[str, float] = {}
+        else:
+            region_vals = cells[key]
+        if region_vals:
+            rendered_any = True
+            max_abs = max(abs(v) for v in region_vals.values())
+            if max_abs > panel_max_abs:
+                panel_max_abs = max_abs
+                panel_label = f"{key[2]} ({key[0]} · {key[1]})"
+        _draw_choropleth_panel(
+            ax, region_vals,
+            extent=_MENA_EXTENT, label_countries=True,
+        )
+        # Strait of Hormuz reference marker on every panel.
+        ax.scatter(
+            56.30, 26.55, marker="X", color="#0a3d62",
+            s=120, edgecolor="white", linewidth=0.8,
+            transform=ccrs.PlateCarree(), zorder=5,
+        )
+        ax.text(
+            56.6, 26.9, "Strait of Hormuz",
+            transform=ccrs.PlateCarree(),
+            fontsize=7, color="#0a3d62", zorder=6,
+        )
+        title_extra = (
+            f"\n{key[0]} · {key[1]} · {key[2]}"
+            if key is not None else "\n(no regional data)"
+        )
+        ax.set_title(f"{scen}{title_extra}", fontsize=10)
+    if not rendered_any:
+        plt.close(fig)
+        return None
+    if last_ax is not None and panel_max_abs > 0:
+        _add_cbar(
+            fig, last_ax, panel_max_abs,
+            label=f"signed value — {panel_label}",
+        )
+    fig.suptitle(
+        "MENA choropleth — country detail around the Strait of Hormuz",
+        fontsize=13,
+    )
+    fig.tight_layout(rect=(0, 0.05, 1, 0.96))
+    fig.savefig(out, dpi=140)
+    plt.close(fig)
+    return out
+
+
+# --------------------------------------------------------------------
 # HTML dashboard. Self-contained: figures embedded as base64 so the
 # index.html renders even when shipped off-cluster as a single file.
 # --------------------------------------------------------------------
@@ -1791,8 +2179,12 @@ def write_index_html(
     # --- Distributional impacts (regional + sectoral) ---
     dist_blocks: list[str] = []
     for label, key in (
-        ("World regional impact map (per-scenario bubble overlay)", "world_map"),
-        ("Strait of Hormuz chokepoint map", "gulf_map"),
+        ("World choropleth map (cartopy; country polygons coloured by impact)",
+         "world_choropleth"),
+        ("MENA choropleth (cartopy; country detail around the Strait of Hormuz)",
+         "mena_choropleth"),
+        ("World regional impact map (schematic bubble overlay)", "world_map"),
+        ("Strait of Hormuz chokepoint map (schematic)", "gulf_map"),
         ("Regional impact heatmap (unified taxonomy, per-scenario panels)",
          "regional_heatmap"),
         ("Native -> unified region crosswalk audit", "regional_audit"),
@@ -2027,6 +2419,12 @@ def main(argv: list[str] | None = None) -> int:
             "markdown package not available; narrative blocks will use a "
             "stdlib fallback renderer."
         )
+    if not HAS_CARTOPY:
+        logger.info(
+            f"cartopy not available ({_CARTOPY_ERR if not HAS_CARTOPY else ''}); "
+            "the cartographic world / MENA choropleths will be skipped. "
+            "The schematic regional maps still render."
+        )
 
     fig_dir = figures_root(run_id)
     csv_dir = csv_root(run_id)
@@ -2107,6 +2505,16 @@ def main(argv: list[str] | None = None) -> int:
         )
         if p:
             figures["gulf_map"] = p
+        p = plot_world_choropleth_map(
+            regional_unified_rows, fig_dir / "world_choropleth_map.png"
+        )
+        if p:
+            figures["world_choropleth"] = p
+        p = plot_mena_choropleth_map(
+            regional_unified_rows, fig_dir / "mena_choropleth_map.png"
+        )
+        if p:
+            figures["mena_choropleth"] = p
         for label, p in figures.items():
             logger.info(f"wrote {p}")
     except Exception:

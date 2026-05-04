@@ -121,6 +121,12 @@ viz = [
     # Markdown -> HTML rendering for the qualitative narrative blocks
     # embedded in the dashboard. Pure Python; no native deps.
     "markdown>=3.5",
+    # cartopy drives the cartographic world / MENA choropleths in
+    # Stage 6. Has native deps (PROJ, GEOS, shapely); the script
+    # degrades to schematic maps when cartopy is missing or its
+    # Natural Earth shapefile cache is unreachable, so this remains
+    # genuinely optional.
+    "cartopy>=0.22",
 ]
 news = [
     # News/data ingestion adapters used by the temporal weekly
