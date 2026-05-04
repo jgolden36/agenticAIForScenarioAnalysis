@@ -68,7 +68,16 @@ class ResourceRequirements(BaseModel):
 
 
 class ModelOutput(BaseModel):
-    """Standardized model output container."""
+    """Standardized model output container.
+
+    Adapters that have a native uncertainty mechanism (Monte Carlo
+    sampling, posterior draws, ensemble members) should populate
+    ``uncertainty`` directly. Adapters that do not have such a
+    mechanism leave it ``None`` — the executor will then optionally
+    wrap their ``execute()`` with a perturbation-based replication
+    loop (see ``src.models.uncertainty``) and fill it in after the
+    fact.
+    """
 
     model_id: str
     outputs: dict[str, Any] = Field(default_factory=dict)
@@ -80,6 +89,68 @@ class ModelOutput(BaseModel):
     )
     gpu_device: int | None = Field(
         default=None, description="CUDA device index used (if GPU model)"
+    )
+    uncertainty: "UncertaintyReport | None" = Field(
+        default=None,
+        description=(
+            "Per-output quantiles, std, and provenance. Populated either "
+            "by the adapter (native UQ) or by the executor's perturbation "
+            "wrapper. None means no UQ was performed."
+        ),
+    )
+
+
+class UncertaintyEstimate(BaseModel):
+    """Per-output uncertainty estimate for a single scalar output key."""
+
+    mean: float
+    std: float
+    quantiles: dict[str, float] = Field(
+        default_factory=dict,
+        description=(
+            "Quantile name -> value. Keys are stringified percentiles "
+            "such as 'p05', 'p25', 'p50', 'p75', 'p95'."
+        ),
+    )
+    n_samples: int = Field(
+        default=0,
+        description="Number of replications used to compute this estimate.",
+    )
+
+    @property
+    def ci90_low(self) -> float | None:
+        return self.quantiles.get("p05")
+
+    @property
+    def ci90_high(self) -> float | None:
+        return self.quantiles.get("p95")
+
+
+class UncertaintyReport(BaseModel):
+    """Bundle of per-output uncertainty estimates plus method metadata."""
+
+    method: str = Field(
+        description=(
+            "UncertaintyMethod value: 'none', 'native', 'perturbation', "
+            "or 'bootstrap'."
+        ),
+    )
+    n_replicates: int = 0
+    perturbation_pct: float | None = Field(
+        default=None,
+        description=(
+            "For method='perturbation', the +/- multiplicative noise "
+            "(percent) applied to numeric inputs."
+        ),
+    )
+    estimates: dict[str, UncertaintyEstimate] = Field(
+        default_factory=dict,
+        description="Per-output-key uncertainty estimate.",
+    )
+    notes: str = ""
+    failures: int = Field(
+        default=0,
+        description="Number of replicate runs that raised an exception.",
     )
 
 
@@ -170,3 +241,7 @@ class ModelAdapter(ABC):
         Returns:
             Standardized ModelOutput.
         """
+
+
+# Resolve forward reference on ModelOutput.uncertainty.
+ModelOutput.model_rebuild()

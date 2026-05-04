@@ -23,6 +23,7 @@ from src.common.logging import get_logger
 from src.common.types import ANALYTICAL_LEVEL_ORDER, ModelExecutionStatus, Scenario
 from src.models.base import ModelAdapter, ModelOutput, ResourceRequirements
 from src.models.registry import ModelRegistry
+from src.models.uncertainty import UncertaintyConfig, run_with_uncertainty
 from src.pipeline.config import ExecutionConfig
 from src.pipeline.state import ModelExecutionResult
 
@@ -46,10 +47,12 @@ def _run_model_in_process(
     adapter_init_kwargs: dict,
     native_inputs: Any,
     env_overrides: dict[str, str],
+    uncertainty_config: UncertaintyConfig | None = None,
 ) -> ModelOutput:
     """Top-level function for ProcessPoolExecutor (must be picklable).
 
-    Reconstructs the adapter in the child process and executes it.
+    Reconstructs the adapter in the child process and executes it,
+    optionally wrapped by the uncertainty quantification loop.
     """
     original_env = {}
     for k, v in env_overrides.items():
@@ -57,6 +60,8 @@ def _run_model_in_process(
         os.environ[k] = v
     try:
         adapter = adapter_class(**adapter_init_kwargs)
+        if uncertainty_config is not None and uncertainty_config.enabled:
+            return run_with_uncertainty(adapter, native_inputs, uncertainty_config)
         return adapter.execute(native_inputs)
     finally:
         for k, orig in original_env.items():
@@ -267,6 +272,8 @@ class ModelExecutor:
             native_inputs = adapter.translate_inputs(params)
 
             loop = asyncio.get_event_loop()
+            uq_cfg = self.config.uncertainty
+            uq_enabled = uq_cfg.enabled
 
             if reqs.prefers_process_isolation and isinstance(self._pool, ProcessPoolExecutor):
                 output: ModelOutput = await asyncio.wait_for(
@@ -277,6 +284,7 @@ class ModelExecutor:
                         adapter.__dict__,
                         native_inputs,
                         env_overrides,
+                        uq_cfg if uq_enabled else None,
                     ),
                     timeout=self.config.default_timeout_seconds,
                 )
@@ -287,10 +295,24 @@ class ModelExecutor:
                     original_env[k] = os.environ.get(k)
                     os.environ[k] = v
                 try:
-                    output = await asyncio.wait_for(
-                        loop.run_in_executor(self._pool, adapter.execute, native_inputs),
-                        timeout=self.config.default_timeout_seconds,
-                    )
+                    if uq_enabled:
+                        output = await asyncio.wait_for(
+                            loop.run_in_executor(
+                                self._pool,
+                                run_with_uncertainty,
+                                adapter,
+                                native_inputs,
+                                uq_cfg,
+                            ),
+                            timeout=self.config.default_timeout_seconds,
+                        )
+                    else:
+                        output = await asyncio.wait_for(
+                            loop.run_in_executor(
+                                self._pool, adapter.execute, native_inputs
+                            ),
+                            timeout=self.config.default_timeout_seconds,
+                        )
                 finally:
                     for k, orig in original_env.items():
                         if orig is None:
@@ -303,6 +325,8 @@ class ModelExecutor:
 
             result.status = ModelExecutionStatus.COMPLETED
             result.outputs = output.outputs
+            if output.uncertainty is not None:
+                result.uncertainty = output.uncertainty.model_dump()
             result.completed_at = datetime.now(timezone.utc)
             if result.started_at:
                 result.runtime_seconds = (

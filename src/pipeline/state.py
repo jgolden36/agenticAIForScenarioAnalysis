@@ -41,7 +41,14 @@ class ModelParameterSet(BaseModel):
 
 
 class ModelExecutionResult(BaseModel):
-    """Result of a single domain model execution."""
+    """Result of a single domain model execution.
+
+    The optional ``uncertainty`` field carries per-output quantiles
+    (mean / std / p05-p95) when uncertainty quantification is enabled
+    via ``UncertaintyConfig``. It is populated by either the adapter
+    itself (native UQ — preferred) or the executor's perturbation
+    wrapper (``src.models.uncertainty``).
+    """
 
     scenario_id: Scenario
     model_id: str
@@ -53,6 +60,13 @@ class ModelExecutionResult(BaseModel):
     completed_at: datetime | None = None
     stdout: str | None = None
     stderr: str | None = None
+    uncertainty: dict[str, Any] | None = Field(
+        default=None,
+        description=(
+            "Serialized UncertaintyReport (see src.models.base). "
+            "None when UQ was not performed."
+        ),
+    )
 
 
 class ConsistencyFlag(BaseModel):

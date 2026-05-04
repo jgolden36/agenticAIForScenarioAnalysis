@@ -108,3 +108,23 @@ class ModelExecutionStatus(str, Enum):
     COMPLETED = "completed"
     FAILED = "failed"
     SKIPPED = "skipped"
+
+
+class UncertaintyMethod(str, Enum):
+    """How an adapter's output uncertainty was quantified.
+
+    ``NATIVE`` — the adapter ran its own internal uncertainty mechanism
+    (Monte Carlo, posterior draws, ensemble members) and returned a
+    distribution natively.
+    ``PERTURBATION`` — the executor wrapped the adapter and re-ran it N
+    times with multiplicative Gaussian noise on numeric inputs.
+    ``BOOTSTRAP`` — the executor wrapped the adapter and re-ran it N
+    times with resampled / jittered numeric inputs to estimate sampling
+    error.
+    ``NONE`` — no uncertainty quantification was performed.
+    """
+
+    NONE = "none"
+    NATIVE = "native"
+    PERTURBATION = "perturbation"
+    BOOTSTRAP = "bootstrap"
