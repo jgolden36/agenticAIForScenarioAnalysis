@@ -1,0 +1,24 @@
+{
+  "brent_price_path_usd_per_bbl": [
+    121.46,
+    115.54,
+    109.61,
+    103.69,
+    97.77,
+    91.85,
+    85.92,
+    80.0,
+    80.0,
+    80.0,
+    80.0,
+    80.0
+  ],
+  "peak_price_usd_per_bbl": 121.46,
+  "peak_price_change_pct": 51.82,
+  "baseline_price_usd_per_bbl": 80.0,
+  "rerouting_volume_mbd": 4.3,
+  "substitution_volume_mbd": 0.0,
+  "disruption_duration_months": 7.0,
+  "supply_loss_mbd": 4.3,
+  "supply_loss_pct_of_global": 4.216
+}

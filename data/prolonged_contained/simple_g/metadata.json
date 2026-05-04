@@ -1,0 +1,14 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "prolonged_contained",
+  "model_id": "simple_g",
+  "task_id": 70,
+  "status": "failed",
+  "started_at": "2026-05-04T04:35:50.870611+00:00",
+  "completed_at": "2026-05-04T04:35:51.702385+00:00",
+  "runtime_seconds": null,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": "Validation failed: 'trade_disruption_index' = 30.0 is out of range; expected a value in [0.0, 1.0] where 0 = no disruption and 1 = full closure"
+}

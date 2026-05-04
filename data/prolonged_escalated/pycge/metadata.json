@@ -1,0 +1,36 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "prolonged_escalated",
+  "model_id": "pycge",
+  "task_id": 9,
+  "status": "completed",
+  "started_at": "2026-05-04T04:36:58.485320+00:00",
+  "completed_at": "2026-05-04T04:37:02.847047+00:00",
+  "runtime_seconds": 3.509661730378866,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": null,
+  "upstream_overrides": [
+    {
+      "name": "oil_price_shock_pct",
+      "target_key": null,
+      "llm_value": 0.0,
+      "computed_value": 51.82,
+      "source_model_id": "poles_jrc",
+      "source_field": "peak_price_change_pct",
+      "transform": "identity",
+      "deviation_pct": 200.0
+    },
+    {
+      "name": "commodity_price_shocks",
+      "target_key": "helium",
+      "llm_value": 30.0,
+      "computed_value": 30.0,
+      "source_model_id": "world_helium_model",
+      "source_field": "price_change_pct",
+      "transform": "identity",
+      "deviation_pct": 0.0
+    }
+  ]
+}

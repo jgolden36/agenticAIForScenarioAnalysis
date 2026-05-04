@@ -1,0 +1,14 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "prolonged_escalated",
+  "model_id": "nrel",
+  "task_id": 6,
+  "status": "skipped",
+  "started_at": "2026-05-04T04:36:48.328396+00:00",
+  "completed_at": "2026-05-04T04:36:49.196028+00:00",
+  "runtime_seconds": null,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": "Not yet implemented: NRELAdapter.execute() is not yet implemented. Real implementation requires: (1) access to the NREL ReEDS model or Cambium dataset (available via NREL's open-source repository or data API), (2) scenario configuration files specifying natural gas price overrides for the disruption period, (3) a Python environment with the NREL model dependencies, and (4) post-processing scripts to extract dispatch mix, retail electricity prices, and capacity utilization from ReEDS output files."
+}

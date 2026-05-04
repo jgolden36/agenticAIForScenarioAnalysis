@@ -1,0 +1,30 @@
+{
+  "forward_price_curves": {
+    "oil": [
+      1.21,
+      1.1828,
+      1.1592,
+      1.1385
+    ],
+    "LNG": [
+      1.21,
+      1.1828,
+      1.1592,
+      1.1385
+    ]
+  },
+  "peak_price_index_per_commodity": {
+    "oil": 1.21,
+    "LNG": 1.21
+  },
+  "time_to_normalization_months_per_commodity": {
+    "oil": null,
+    "LNG": null
+  },
+  "forecast_horizon_months": 4,
+  "initial_price_shock_pct": 21.0,
+  "commodities": [
+    "oil",
+    "LNG"
+  ]
+}

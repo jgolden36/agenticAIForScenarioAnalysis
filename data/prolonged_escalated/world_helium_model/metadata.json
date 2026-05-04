@@ -1,0 +1,14 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "prolonged_escalated",
+  "model_id": "world_helium_model",
+  "task_id": 15,
+  "status": "completed",
+  "started_at": "2026-05-04T04:34:26.652188+00:00",
+  "completed_at": "2026-05-04T04:34:27.503825+00:00",
+  "runtime_seconds": 0.00010300800204277039,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": null
+}

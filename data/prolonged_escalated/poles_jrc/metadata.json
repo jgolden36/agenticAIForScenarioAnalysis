@@ -1,0 +1,14 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "prolonged_escalated",
+  "model_id": "poles_jrc",
+  "task_id": 8,
+  "status": "completed",
+  "started_at": "2026-05-04T04:34:15.831745+00:00",
+  "completed_at": "2026-05-04T04:34:16.679784+00:00",
+  "runtime_seconds": 6.904825568199158e-05,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": null
+}

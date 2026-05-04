@@ -1,0 +1,14 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "prolonged_escalated",
+  "model_id": "ais_project",
+  "task_id": 24,
+  "status": "skipped",
+  "started_at": "2026-05-04T04:34:40.260008+00:00",
+  "completed_at": "2026-05-04T04:34:41.111094+00:00",
+  "runtime_seconds": null,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": "Not yet implemented: AIS_project adapter is a stub. Real implementation requires: (1) a processed AIS vessel track dataset covering Strait of Hormuz transits, (2) route geometry and distance tables for the Cape of Good Hope corridor, (3) a fleet composition inventory (vessel counts by type and deadweight tonnage), and (4) voyage simulation logic to compute additional sea days and tanker rate impacts."
+}

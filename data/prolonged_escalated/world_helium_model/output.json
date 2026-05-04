@@ -1,0 +1,24 @@
+{
+  "equilibrium_price_usd_per_mscf": 364.0,
+  "baseline_price_usd_per_mscf": 280.0,
+  "price_change_pct": 30.0,
+  "effective_supply_gap_pct": 9.0,
+  "demand_rationing_mmscf": 297.5,
+  "sector_allocation_share": {
+    "mri_medical": 0.3022,
+    "semiconductors": 0.2613,
+    "cryogenics_research": 0.1733,
+    "aerospace_defense": 0.1066,
+    "other": 0.0666
+  },
+  "rationing_share_by_sector": {
+    "mri_medical": 0.198,
+    "semiconductors": 0.2079,
+    "cryogenics_research": 0.297,
+    "aerospace_defense": 0.1485,
+    "other": 0.1485
+  },
+  "inventory_drawdown_months": 0.0,
+  "qatar_helium_supply_loss_pct": 30.0,
+  "disruption_duration_months": 7.0
+}

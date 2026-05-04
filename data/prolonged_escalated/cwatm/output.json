@@ -1,0 +1,10 @@
+{
+  "scenario_id": "prolonged_escalated",
+  "unmet_demand_pct": 0.0,
+  "mean_discharge_deviation_pct": -0.0,
+  "cumulative_water_deficit_pct_months": 0.0,
+  "desalination_capacity_factor": 1.0,
+  "demand_factor": 1.0,
+  "supply_infrastructure_status": "damaged",
+  "disruption_duration_months": 7.0
+}

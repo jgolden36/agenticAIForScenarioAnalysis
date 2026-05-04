@@ -1,0 +1,14 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "prolonged_escalated",
+  "model_id": "fed_oil",
+  "task_id": 2,
+  "status": "skipped",
+  "started_at": "2026-05-04T04:36:41.690741+00:00",
+  "completed_at": "2026-05-04T04:36:42.540130+00:00",
+  "runtime_seconds": null,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": "Not yet implemented: FedOilAdapter.execute() is not yet implemented. Integration requires: (1) the Baumeister-Hamilton SVAR model codebase (available from the authors' replication archives for AER 2019), (2) baseline macroeconomic time series from FRED (US CPI, GDP, federal funds rate, oil prices, industrial production), (3) a MATLAB or R execution environment with the required econometric packages, and (4) output parsers for IRF and FEVD tables covering GDP, CPI, federal funds rate, and unemployment responses."
+}

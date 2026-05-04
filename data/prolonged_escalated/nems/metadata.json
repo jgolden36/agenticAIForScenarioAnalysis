@@ -1,0 +1,14 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "prolonged_escalated",
+  "model_id": "nems",
+  "task_id": 4,
+  "status": "skipped",
+  "started_at": "2026-05-04T04:36:44.716486+00:00",
+  "completed_at": "2026-05-04T04:36:45.581825+00:00",
+  "runtime_seconds": null,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": "Not yet implemented: NEMS output directory not found: data/nems_outputs/Hormuz_ScenarioD\nRun NEMS externally and place outputs at this path, or update NEMSConfig.scenario_dir_mapping."
+}

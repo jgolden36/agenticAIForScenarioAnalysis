@@ -1,0 +1,14 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "prolonged_contained",
+  "model_id": "energy_flux_gas_power",
+  "task_id": 62,
+  "status": "completed",
+  "started_at": "2026-05-04T04:35:38.765854+00:00",
+  "completed_at": "2026-05-04T04:35:39.607532+00:00",
+  "runtime_seconds": 0.0002841837704181671,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": null
+}

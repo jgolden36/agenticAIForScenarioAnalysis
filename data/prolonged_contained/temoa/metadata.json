@@ -1,0 +1,14 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "prolonged_contained",
+  "model_id": "temoa",
+  "task_id": 48,
+  "status": "skipped",
+  "started_at": "2026-05-04T04:38:37.586884+00:00",
+  "completed_at": "2026-05-04T04:38:38.487167+00:00",
+  "runtime_seconds": null,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": "Not yet implemented: TEMOA baseline DB not found: Models/Energy/TEMOA/data_files/utopia.sqlite. Vendor a baseline SQLite (e.g. utopia.sqlite) under Models/Energy/TEMOA/data_files/ or override TEMOAConfig.baseline_db_path."
+}

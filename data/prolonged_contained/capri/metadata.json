@@ -1,0 +1,14 @@
+{
+  "run_id": "20260504_032106",
+  "scenario_id": "prolonged_contained",
+  "model_id": "capri",
+  "task_id": 67,
+  "status": "skipped",
+  "started_at": "2026-05-04T04:35:46.309170+00:00",
+  "completed_at": "2026-05-04T04:35:47.144366+00:00",
+  "runtime_seconds": null,
+  "node": "tesla1",
+  "slurm_job_id": "25649",
+  "resource_class": "cpu",
+  "error_message": "Not yet implemented: CAPRIAdapter.execute is not yet implemented. Real integration requires: (1) a GAMS installation with the CAPRI model repository, (2) writing scenario shock files to the CAPRI scenario directory, (3) invoking the CAPRI GAMS entry point via subprocess, and (4) parsing the CAPRI results database (GDX or CSV output)."
+}
