@@ -40,6 +40,16 @@ pycge:
   sectoral_output_pct_change:
     kind: sectoral_dict
     value_label: output_pct_change
+  # PyCGE attaches a kernel-derived regional breakdown
+  # (compute_regional_macro_outcomes) to both the analytical-MVP and
+  # real cge_modeling paths so the synthesis layer always sees per-
+  # region GDP / CPI / consumption / welfare from this adapter, not
+  # just sectoral aggregates.
+  regional_vars:
+    kind: regional
+    region_col: region
+    value_cols: [gdp_impact_pct, cpi_inflation_pct, consumption_impact_pct,
+                 welfare_pct_change, wage_impact_pct, interest_rate_impact_pct]
 
 opencge:
   # OG-Core paths are arrays; the regional layer treats them as the US
@@ -50,6 +60,21 @@ opencge:
   wage_pct_change_path:
     kind: sectoral_dict
     value_label: wage_path_pct
+  # OG-Core is a single-country US OLG model. ``regional_vars`` is the
+  # US-only headline row from the native solve.
+  regional_vars:
+    kind: regional
+    region_col: region
+    value_cols: [gdp_impact_pct, cpi_inflation_pct, consumption_impact_pct,
+                 welfare_pct_change, wage_impact_pct, interest_rate_impact_pct]
+  # Multi-region cross-section derived from the shared elasticity
+  # kernel for analyst context. Tagged separately so dashboards can
+  # distinguish the kernel-derived rows from OG-Core's native US row.
+  regional_context_vars:
+    kind: regional
+    region_col: region
+    value_cols: [gdp_impact_pct, cpi_inflation_pct, consumption_impact_pct,
+                 welfare_pct_change, wage_impact_pct, interest_rate_impact_pct]
 
 temoa:
   Output_VFlow_Out:

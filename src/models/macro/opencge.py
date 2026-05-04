@@ -513,6 +513,26 @@ class OpenCGEAdapter(ModelAdapter):
             outputs["_applied_shocks"] = inputs.get("applied_shocks", {})
             outputs["_duration_years"] = inputs.get("duration_years")
 
+            # OG-Core is single-country (US) by construction. Surface
+            # the headline US response as a one-row ``regional_vars``
+            # table so the synthesizer's regional layer can consume it
+            # alongside MIRAGRODEP / PyCGE / energy-tier outputs. Also
+            # attach a kernel-derived multi-region context row set
+            # tagged ``regional_context_vars`` so analysts comparing the
+            # US OG-Core answer to PyCGE / MIRAGRODEP have a calibrated
+            # cross-region benchmark from the shared elasticity table.
+            applied = inputs.get("applied_shocks", {}) or {}
+            duration_years = float(inputs.get("duration_years") or 0.5)
+            duration_months = duration_years * 12.0
+            outputs["regional_vars"] = self._build_us_regional_row(outputs)
+            from src.models.macro.macro_kernel import (
+                compute_regional_macro_outcomes,
+            )
+            outputs["regional_context_vars"] = compute_regional_macro_outcomes(
+                applied, duration_months, regime="long_run"
+            )
+            outputs["_regional_source"] = "ogcore_us_native_plus_kernel_context"
+
             return ModelOutput(
                 model_id=self.model_id,
                 outputs=outputs,
@@ -613,6 +633,29 @@ class OpenCGEAdapter(ModelAdapter):
             out["wage_impact_pct"] = float(out["wage_pct_change_path"][0])
 
         return out
+
+    @staticmethod
+    def _build_us_regional_row(outputs: dict[str, Any]) -> list[dict[str, Any]]:
+        """Build a single-row ``regional_vars`` table for OG-Core's US response.
+
+        OG-Core is a single-country US OLG model, so its native regional
+        granularity is exactly one region. Surfacing a one-row table
+        keeps the synthesizer's regional layer happy (it can read the
+        ``regional`` spec uniformly across PyCGE, MIRAGRODEP, OpenCGE,
+        and the energy adapters) without pretending the model produced
+        ROW or MENA outcomes it did not solve for.
+        """
+        row: dict[str, Any] = {"region": "US"}
+        if "gdp_impact_pct" in outputs:
+            row["gdp_impact_pct"] = float(outputs["gdp_impact_pct"])
+        if "wage_impact_pct" in outputs:
+            row["wage_impact_pct"] = float(outputs["wage_impact_pct"])
+        if "welfare_pct_change" in outputs and outputs["welfare_pct_change"] is not None:
+            row["welfare_pct_change"] = float(outputs["welfare_pct_change"])
+        cons = outputs.get("consumption_pct_change")
+        if isinstance(cons, list) and cons:
+            row["consumption_impact_pct"] = float(cons[0])
+        return [row]
 
     @staticmethod
     def _safe_pickle(path: Path) -> dict[str, Any] | None:

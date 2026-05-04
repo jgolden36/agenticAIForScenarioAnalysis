@@ -68,17 +68,39 @@ miragrodep:
   "*": ROW
 
 pycge:
-  # PyCGE is sectoral, not regional; the sole "region" is the modelled
-  # economy (typically the US 2-region SAM). Map to US so its sectoral
-  # outputs appear under the US column when the unified heatmap is
-  # rendered alongside multi-region models.
+  # PyCGE attaches a kernel-derived ``regional_vars`` table whose native
+  # ids are already the unified taxonomy (US, CHN, IND, EU, MENA_GCC,
+  # MENA_OTHER, SSA, LAC, ROW). Map each one to itself so the
+  # crosswalk preserves the per-region rows; the wildcard still routes
+  # any sectoral_dict-derived sectoral rows (which carry an empty
+  # native_region) to the US column.
+  US: US
+  CHN: CHN
+  IND: IND
+  EU: EU
+  MENA_GCC: MENA_GCC
+  MENA_OTHER: MENA_OTHER
+  SSA: SSA
+  LAC: LAC
+  ROW: ROW
   "*": US
 
 opencge:
-  # OG-Core / OG-USA is a single-country US model. Surface as US so
-  # its national paths appear in the unified taxonomy.
+  # OG-Core / OG-USA is a single-country US model; its native
+  # ``regional_vars`` row is "US". The kernel-derived
+  # ``regional_context_vars`` rows carry the unified taxonomy ids and
+  # need explicit mappings so the wildcard (which routes sectoral
+  # rollups to US) does not collapse them.
   USA: US
   US: US
+  CHN: CHN
+  IND: IND
+  EU: EU
+  MENA_GCC: MENA_GCC
+  MENA_OTHER: MENA_OTHER
+  SSA: SSA
+  LAC: LAC
+  ROW: ROW
   "*": US
 
 mam:

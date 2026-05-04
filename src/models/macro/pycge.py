@@ -470,6 +470,21 @@ class PyCGEAdapter(ModelAdapter):
         out["_overrides"] = overrides
         out["_execution_mode"] = "cge_modeling"
 
+        # The bundled SAMs cge_modeling ships (Hosoe 2-region) do not
+        # cover the unified-taxonomy regions the synthesizer reports in
+        # heatmaps. Attach a kernel-derived regional breakdown alongside
+        # the cge_modeling-solved aggregates so PyCGE always exposes
+        # regional_vars to Module 4. Tagged ``_regional_source`` so
+        # downstream code can distinguish kernel-derived rows from
+        # native CGE solves.
+        from src.models.macro.macro_kernel import compute_regional_macro_outcomes
+        applied = inputs.get("applied_shocks", {}) or {}
+        duration_months = float(inputs.get("duration_months", 6.0) or 6.0)
+        out["regional_vars"] = compute_regional_macro_outcomes(
+            applied, duration_months, regime="short_run"
+        )
+        out["_regional_source"] = "macro_kernel_derived"
+
         return ModelOutput(
             model_id=self.model_id,
             outputs=out,
@@ -517,6 +532,7 @@ class PyCGEAdapter(ModelAdapter):
         out["_overrides"] = inputs.get("parameter_overrides", {})
         out["_used_analytical_mvp"] = True
         out["_execution_mode"] = "analytical_mvp"
+        out["_regional_source"] = "macro_kernel_derived"
         out["_provenance_note"] = (
             "PyCGE analytical-MVP closed-form macro kernel (literature-"
             "calibrated elasticities). Activates when the optional "

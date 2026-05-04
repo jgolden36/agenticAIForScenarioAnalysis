@@ -194,6 +194,97 @@ CAPEX_TO_CPI_PASSTHROUGH: float = 0.3
 
 
 # ---------------------------------------------------------------------------
+# Regional disaggregation
+# ---------------------------------------------------------------------------
+#
+# The aggregate kernel above is calibrated against US/OECD-average
+# elasticities. Regions differ from that baseline along three axes:
+#
+#   1. Net-trade position in each commodity (oil, gas, fertilizer).
+#      Net exporters (MENA_GCC for oil + LNG, parts of MENA_OTHER and
+#      ROW for oil) gain on a positive price shock; net importers
+#      (CHN, IND, EU, SSA) lose more than the US baseline.
+#   2. Energy + food intensity of the local consumption basket. Lower-
+#      and middle-income regions (IND, SSA, parts of LAC) have larger
+#      pass-through of commodity price shocks into headline CPI because
+#      food + transport are a larger share of the basket.
+#   3. Direct exposure to the chokepoint (water destruction in the
+#      Persian Gulf, helium concentration in semiconductor producers).
+#
+# The ``REGIONAL_GDP_MULTIPLIERS`` and ``REGIONAL_CPI_MULTIPLIERS`` dicts
+# below encode these differences as multiplicative scaling factors on
+# the US-baseline elasticities. A value of 1.0 reproduces the US
+# response; values > 1.0 amplify it; values < 0 flip the sign (used to
+# make oil exporters benefit from a positive oil price shock).
+#
+# Calibration sources:
+#   * IMF (2022) "Regional Economic Outlook: Middle East" -- net oil
+#     exporter / importer cross-country GDP elasticities (Table 1.1).
+#   * Choi et al. (2018) "Oil Prices and Inflation Dynamics: Evidence
+#     from Advanced and Developing Economies" -- regional CPI pass-
+#     through (broadly 2x US in EM, especially India and SSA).
+#   * Fueki et al. (2018) IMF WP "The Macroeconomic Impact of Oil Price
+#     Shocks: A Global Perspective" -- China and India GDP responses.
+#   * IEA (2023) "World Energy Outlook 2023" -- LNG-import dependence
+#     by region (EU 2023 is roughly 3x the US share of import-driven
+#     gas exposure).
+#   * World Bank (2023) "Commodity Markets Outlook -- Africa Special
+#     Focus" -- SSA fertilizer pass-through (~3x US ag-PPI sensitivity).
+#   * UN-Water (2024) Progress Report -- water-stress concentration in
+#     the Persian Gulf / MENA region.
+
+UNIFIED_REGIONS: tuple[str, ...] = (
+    "US",
+    "CHN",
+    "IND",
+    "EU",
+    "MENA_GCC",
+    "MENA_OTHER",
+    "SSA",
+    "LAC",
+    "ROW",
+)
+
+# Regional multipliers on the US-baseline GDP elasticities (per commodity).
+# Negative values denote a sign flip — i.e. the region's GDP responds in
+# the opposite direction (net exporters benefit from a positive price
+# shock). Magnitudes scale with import-dependence and trade-share data
+# from IMF / IEA / World Bank sources cited above.
+REGIONAL_GDP_MULTIPLIERS: dict[str, dict[str, float]] = {
+    "US":         {"oil": 1.0,  "lng":  0.5, "fertilizer": 1.0, "helium": 2.0,  "water": 0.2},
+    "CHN":        {"oil": 1.4,  "lng":  1.5, "fertilizer": 1.5, "helium": 2.5,  "water": 0.5},
+    "IND":        {"oil": 2.0,  "lng":  2.0, "fertilizer": 2.5, "helium": 0.5,  "water": 1.5},
+    "EU":         {"oil": 1.5,  "lng":  3.0, "fertilizer": 1.2, "helium": 1.5,  "water": 0.3},
+    "MENA_GCC":   {"oil": -3.5, "lng": -3.0, "fertilizer": 0.5, "helium": -1.0, "water": 8.0},
+    "MENA_OTHER": {"oil": -1.0, "lng": -0.5, "fertilizer": 1.5, "helium":  0.0, "water": 4.0},
+    "SSA":        {"oil": 1.8,  "lng":  0.5, "fertilizer": 3.0, "helium":  0.0, "water": 2.0},
+    "LAC":        {"oil": 0.5,  "lng":  0.5, "fertilizer": 1.2, "helium":  0.0, "water": 0.5},
+    "ROW":        {"oil": 1.0,  "lng":  1.0, "fertilizer": 1.0, "helium":  0.5, "water": 0.5},
+}
+
+# Regional multipliers on the US-baseline CPI elasticities. Higher in
+# EM economies because food + energy weights in their CPI baskets are
+# larger (Choi et al. 2018). MENA_GCC pass-through is suppressed for
+# energy because most GCC states subsidize fuel and utilities.
+REGIONAL_CPI_MULTIPLIERS: dict[str, dict[str, float]] = {
+    "US":         {"oil": 1.0, "lng": 1.0, "fertilizer": 1.0, "helium": 0.0, "water": 0.5},
+    "CHN":        {"oil": 1.2, "lng": 1.2, "fertilizer": 1.5, "helium": 0.0, "water": 0.8},
+    "IND":        {"oil": 2.0, "lng": 1.8, "fertilizer": 2.5, "helium": 0.0, "water": 2.5},
+    "EU":         {"oil": 1.5, "lng": 2.5, "fertilizer": 1.2, "helium": 0.0, "water": 0.5},
+    "MENA_GCC":   {"oil": 0.3, "lng": 0.3, "fertilizer": 0.8, "helium": 0.0, "water": 5.0},
+    "MENA_OTHER": {"oil": 1.5, "lng": 1.0, "fertilizer": 2.0, "helium": 0.0, "water": 4.0},
+    "SSA":        {"oil": 2.5, "lng": 0.8, "fertilizer": 3.5, "helium": 0.0, "water": 2.5},
+    "LAC":        {"oil": 1.2, "lng": 0.8, "fertilizer": 1.5, "helium": 0.0, "water": 0.8},
+    "ROW":        {"oil": 1.0, "lng": 1.0, "fertilizer": 1.0, "helium": 0.0, "water": 0.5},
+}
+
+# Default multiplier for any commodity not listed in the per-region
+# table above. Picks up unrecognised shocks (e.g. ``ammonia``) so they
+# still propagate regionally rather than silently zero.
+DEFAULT_REGIONAL_MULTIPLIER: float = 1.0
+
+
+# ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
 
@@ -381,6 +472,9 @@ def compute_macro_outcomes(
     gdp_growth_pct = gdp_pct * min(1.0, 12.0 / months)
 
     sectoral = _sectoral_response(shocks, gdp_pct, scaler)
+    regional = compute_regional_macro_outcomes(
+        shocks, duration_months, regime=regime
+    )
 
     return {
         "gdp_impact_pct": round(gdp_pct, 4),
@@ -393,6 +487,7 @@ def compute_macro_outcomes(
         "wage_impact_pct": round(wage_pct, 4),
         "interest_rate_impact_pct": round(interest_rate_pct, 4),
         "sectoral_output_pct_change": sectoral,
+        "regional_vars": regional,
         "_inputs": {
             "commodity_shocks": shocks,
             "duration_months": float(duration_months),
@@ -409,6 +504,88 @@ def compute_macro_outcomes(
             "UN-Water (2024) Progress Report -- water shortage GDP impact",
         ],
     }
+
+
+def compute_regional_macro_outcomes(
+    commodity_shocks: dict[str, float],
+    duration_months: float,
+    *,
+    regime: Regime = "short_run",
+    regions: tuple[str, ...] | list[str] | None = None,
+) -> list[dict[str, Any]]:
+    """Translate commodity shocks into a per-region macro response table.
+
+    Returns one row per region with the same headline macro fields the
+    aggregate kernel produces (``gdp_impact_pct``, ``cpi_inflation_pct``,
+    ``consumption_impact_pct``, ``welfare_pct_change``, ``wage_impact_pct``,
+    ``interest_rate_impact_pct``), each scaled by the per-region
+    elasticity multipliers in ``REGIONAL_GDP_MULTIPLIERS`` and
+    ``REGIONAL_CPI_MULTIPLIERS``. The output is shaped for the
+    synthesizer's ``regional`` distributional spec
+    (``configs/distributional_outputs.yaml``): a list of dicts with a
+    ``region`` column and numeric value columns.
+
+    Sign conventions match :func:`compute_macro_outcomes`: positive
+    commodity shocks denote price rises; negative GDP impacts denote
+    output contraction. Net oil + gas exporters (MENA_GCC, parts of
+    MENA_OTHER) flip sign through their negative GDP multipliers, so
+    they show GDP gains on a positive oil shock.
+
+    Args:
+        commodity_shocks: same shape as :func:`compute_macro_outcomes`.
+        duration_months: same as :func:`compute_macro_outcomes`.
+        regime: same as :func:`compute_macro_outcomes`.
+        regions: subset of ``UNIFIED_REGIONS`` to report. ``None`` (the
+            default) reports every region.
+
+    Returns:
+        List of dicts in stable region order. Empty list if no
+        ``commodity_shocks`` are provided. ``GLOBAL`` is intentionally
+        excluded — it is reserved for true world aggregates produced by
+        multi-region models like MIRAGRODEP.
+    """
+    shocks: dict[str, float] = {}
+    for k, v in (commodity_shocks or {}).items():
+        if isinstance(v, bool):
+            continue
+        try:
+            shocks[str(k).lower()] = float(v)
+        except (TypeError, ValueError):
+            continue
+
+    target_regions = tuple(regions) if regions else UNIFIED_REGIONS
+    scaler = _duration_scaler(duration_months, regime)
+
+    rows: list[dict[str, Any]] = []
+    for region in target_regions:
+        gdp_mult_table = REGIONAL_GDP_MULTIPLIERS.get(region, {})
+        cpi_mult_table = REGIONAL_CPI_MULTIPLIERS.get(region, {})
+
+        gdp_pct = 0.0
+        cpi_pct = 0.0
+        for commodity, shock in shocks.items():
+            gdp_mult = gdp_mult_table.get(commodity, DEFAULT_REGIONAL_MULTIPLIER)
+            cpi_mult = cpi_mult_table.get(commodity, DEFAULT_REGIONAL_MULTIPLIER)
+            gdp_pct += _gdp_elasticity_for(commodity) * shock * gdp_mult
+            cpi_pct += _cpi_elasticity_for(commodity) * shock * cpi_mult
+        gdp_pct *= scaler
+        cpi_pct *= min(1.2, max(0.5, scaler))
+
+        consumption_pct = gdp_pct - 0.4 * cpi_pct
+        welfare_pct = consumption_pct
+        wage_pct = WAGE_PASSTHROUGH_TO_CPI * cpi_pct + 0.5 * gdp_pct
+        interest_rate_pct = INTEREST_RATE_RESPONSE_TO_CPI * cpi_pct + 0.25 * gdp_pct
+
+        rows.append({
+            "region": region,
+            "gdp_impact_pct": round(gdp_pct, 4),
+            "cpi_inflation_pct": round(cpi_pct, 4),
+            "consumption_impact_pct": round(consumption_pct, 4),
+            "welfare_pct_change": round(welfare_pct, 4),
+            "wage_impact_pct": round(wage_pct, 4),
+            "interest_rate_impact_pct": round(interest_rate_pct, 4),
+        })
+    return rows
 
 
 def derive_macro_from_energy_shocks(
@@ -528,9 +705,13 @@ def derive_macro_from_energy_shocks(
 
 __all__ = [
     "compute_macro_outcomes",
+    "compute_regional_macro_outcomes",
     "derive_macro_from_energy_shocks",
     "GDP_ELASTICITY_TO_OIL_PCT",
     "CPI_ELASTICITY_TO_OIL_PCT",
     "GLOBAL_OIL_SUPPLY_MBD",
     "GLOBAL_GAS_SUPPLY_BCFD",
+    "REGIONAL_GDP_MULTIPLIERS",
+    "REGIONAL_CPI_MULTIPLIERS",
+    "UNIFIED_REGIONS",
 ]
