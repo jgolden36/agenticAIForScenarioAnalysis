@@ -5,9 +5,11 @@ Summary: Agentic AI orchestration framework for multi-model crisis scenario anal
 Requires-Python: >=3.11
 Requires-Dist: langchain>=0.3.0
 Requires-Dist: langchain-core>=0.3.0
+Requires-Dist: langchain-openai>=0.2.0
 Requires-Dist: langgraph>=0.3.0
 Requires-Dist: pydantic>=2.0
 Requires-Dist: pyyaml>=6.0
+Requires-Dist: tiktoken>=0.7.0
 Provides-Extra: dev
 Requires-Dist: pytest>=8.0; extra == "dev"
 Requires-Dist: pytest-asyncio>=0.23; extra == "dev"
@@ -25,11 +27,12 @@ Provides-Extra: r
 Requires-Dist: rpy2>=3.5; extra == "r"
 Provides-Extra: macro
 Requires-Dist: ogcore>=0.13.0; extra == "macro"
-Requires-Dist: ogusa>=0.13.0; extra == "macro"
 Requires-Dist: dask[distributed]>=2024.1.0; extra == "macro"
-Requires-Dist: cge-modeling>=0.4.0; extra == "macro"
+Requires-Dist: cge-modeling>=0.0.6; extra == "macro"
 Requires-Dist: openpyxl>=3.1; extra == "macro"
 Requires-Dist: pandas>=2.0; extra == "macro"
+Provides-Extra: macro-us
+Requires-Dist: ogusa>=0.2.0; extra == "macro-us"
 Provides-Extra: water
 Requires-Dist: netCDF4>=1.6; extra == "water"
 Requires-Dist: xarray>=2024.1; extra == "water"
@@ -37,8 +40,17 @@ Provides-Extra: energy
 Requires-Dist: otoole>=1.0; extra == "energy"
 Requires-Dist: message-ix>=3.7; extra == "energy"
 Requires-Dist: ixmp>=3.7; extra == "energy"
-Requires-Dist: temoa-energysystem>=0.1; extra == "energy"
 Requires-Dist: pyomo>=6.7; extra == "energy"
 Requires-Dist: pandas>=2.0; extra == "energy"
 Provides-Extra: wandb
 Requires-Dist: wandb>=0.16; extra == "wandb"
+Provides-Extra: viz
+Requires-Dist: matplotlib>=3.8; extra == "viz"
+Requires-Dist: pandas>=2.0; extra == "viz"
+Requires-Dist: markdown>=3.5; extra == "viz"
+Requires-Dist: cartopy>=0.22; extra == "viz"
+Provides-Extra: news
+Requires-Dist: requests>=2.31; extra == "news"
+Provides-Extra: llm-providers
+Requires-Dist: langchain-anthropic>=0.3.0; extra == "llm-providers"
+Requires-Dist: langchain-aws>=0.2.0; extra == "llm-providers"

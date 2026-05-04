@@ -1,8 +1,10 @@
 langchain>=0.3.0
 langchain-core>=0.3.0
+langchain-openai>=0.2.0
 langgraph>=0.3.0
 pydantic>=2.0
 pyyaml>=6.0
+tiktoken>=0.7.0
 
 [adapters]
 openpyxl>=3.1
@@ -16,7 +18,6 @@ pytest-asyncio>=0.23
 otoole>=1.0
 message-ix>=3.7
 ixmp>=3.7
-temoa-energysystem>=0.1
 pyomo>=6.7
 pandas>=2.0
 
@@ -30,16 +31,31 @@ gamsapi[transfer]>=52.0
 [julia]
 juliacall>=0.9.20
 
+[llm-providers]
+langchain-anthropic>=0.3.0
+langchain-aws>=0.2.0
+
 [macro]
 ogcore>=0.13.0
-ogusa>=0.13.0
 dask[distributed]>=2024.1.0
-cge-modeling>=0.4.0
+cge-modeling>=0.0.6
 openpyxl>=3.1
 pandas>=2.0
 
+[macro-us]
+ogusa>=0.2.0
+
+[news]
+requests>=2.31
+
 [r]
 rpy2>=3.5
+
+[viz]
+matplotlib>=3.8
+pandas>=2.0
+markdown>=3.5
+cartopy>=0.22
 
 [wandb]
 wandb>=0.16

@@ -27,6 +27,31 @@ from src.common.types import AnalyticalLevel, CommoditySystem
 from src.models.adapters.excel_adapter import CellMapping, ExcelAdapter, ExcelConfig
 from src.models.base import ModelOutput, ValidationResult
 
+# ---------------------------------------------------------------------------
+# Analytical-MVP calibration constants
+# ---------------------------------------------------------------------------
+# Annual LNG export volumes (bcm). Qatar ~110 bcm/yr (QatarEnergy 2024
+# disclosures), UAE ~8 bcm/yr (ADNOC LNG / Das Island, IEA Gas 2024).
+_QATAR_ANNUAL_LNG_BCM: float = 110.0
+_UAE_ANNUAL_LNG_BCM: float = 8.0
+# Hub reference prices ($/MMBtu), 2025 reference levels (EIA STEO 2025;
+# IEA Gas 2024). Used as the baseline on top of which spot multipliers
+# and supply-shortfall premia are applied.
+_HENRY_HUB_BASELINE: float = 3.0
+_TTF_BASELINE: float = 11.0
+_JKM_BASELINE: float = 13.0
+# Implied price-to-supply elasticity for global LNG. IEA Gas 2024 and
+# Bordoff & Stern (2023) suggest ~0.4 in the short run.
+_LNG_SUPPLY_ELASTICITY: float = 0.4
+# Regional pass-through coefficients for the LNG shortfall. TTF (Europe)
+# is most exposed to Qatari shortfall; JKM (Asia-Pacific) is also heavily
+# exposed; Henry Hub (US) is least exposed since the US is a net exporter.
+_HUB_SHORTFALL_PASSTHROUGH: dict[str, float] = {
+    "henry_hub": 0.3,
+    "ttf": 1.0,
+    "jkm": 0.9,
+}
+
 # Parameters required by this model. Each entry is (name, description, unit).
 _REQUIRED_PARAMS: list[tuple[str, str, str]] = [
     (
@@ -222,18 +247,112 @@ class LNGSTAdapter(ExcelAdapter):
         """Execute the LNG Spreadsheet Tool.
 
         When an ExcelConfig is provided, the ExcelAdapter base class handles
-        workbook I/O (openpyxl or xlwings). Until the actual LNGST workbook
-        is available, raises NotImplementedError.
+        workbook I/O (openpyxl or xlwings). Otherwise this method runs a
+        closed-form LNG market fallback using QatarEnergy / ADNOC export
+        volumes and IEA Gas 2024 hub elasticities so the LNG tier has a
+        Qatar+UAE-specific second runnable model alongside the Energy
+        Flux adapters.
+
+        Mechanics:
+
+          * ``lng_loss_bcm = 110 * qatar_pct/100 + 8 * uae_pct/100``
+            (Qatar 110 bcm/yr; UAE 8 bcm/yr).
+          * Global supply-shortfall percent =
+            ``loss_bcm / 540 * 100`` (global LNG trade ~540 bcm/yr).
+          * Spot price impulse: ``dP/P = shortfall_pct / 0.4``
+            (constant supply elasticity).
+          * Per-hub price = baseline * spot multiplier *
+            (1 + impulse * passthrough). Passthroughs encode that
+            TTF/JKM are more exposed than Henry Hub.
         """
         if self._config is not None:
             return super().execute(inputs)
 
-        raise NotImplementedError(
-            "LNGSTAdapter.execute is not yet implemented. "
-            "Provide an ExcelConfig with the workbook path to enable execution. "
-            "The ExcelAdapter base class handles openpyxl (headless) or xlwings "
-            "(full recalculation) based on config. Update input_mappings and "
-            "output_mappings once the actual workbook cell layout is known."
+        params = inputs if isinstance(inputs, dict) else dict(inputs)
+
+        qatar_pct = float(params["qatar_export_reduction_pct"])
+        uae_pct = float(params["uae_export_reduction_pct"])
+        spot_mult = float(params["spot_price_multiplier"])
+        duration_months = float(params["disruption_duration_months"])
+
+        lng_loss_bcm_annualised = (
+            _QATAR_ANNUAL_LNG_BCM * qatar_pct / 100.0
+            + _UAE_ANNUAL_LNG_BCM * uae_pct / 100.0
+        )
+        # Realised supply shortfall over the disruption window (bcm).
+        lng_loss_bcm_window = (
+            lng_loss_bcm_annualised * max(duration_months, 0.0) / 12.0
+        )
+
+        # Global LNG trade ~540 bcm/yr (IEA Gas 2024).
+        _GLOBAL_LNG_BCM = 540.0
+        shortfall_pct = (
+            (lng_loss_bcm_annualised / _GLOBAL_LNG_BCM) * 100.0
+            if _GLOBAL_LNG_BCM > 0
+            else 0.0
+        )
+        impulse = shortfall_pct / max(_LNG_SUPPLY_ELASTICITY, 0.01) / 100.0
+
+        hub_price = {
+            "henry_hub": _HENRY_HUB_BASELINE,
+            "ttf": _TTF_BASELINE,
+            "jkm": _JKM_BASELINE,
+        }
+        hub_new = {}
+        for hub, baseline in hub_price.items():
+            passthrough = _HUB_SHORTFALL_PASSTHROUGH[hub]
+            hub_new[hub] = round(
+                baseline * spot_mult * (1.0 + impulse * passthrough),
+                3,
+            )
+
+        # Single composite LNG price (TTF-anchored, since TTF tracks
+        # marginal European delivered cost during Hormuz-style shocks).
+        lng_price_usd_mmbtu = hub_new["ttf"]
+
+        outputs: dict[str, Any] = {
+            "qatar_export_reduction_pct": qatar_pct,
+            "uae_export_reduction_pct": uae_pct,
+            "spot_price_multiplier": spot_mult,
+            "disruption_duration_months": duration_months,
+            "supply_shortfall_bcm": round(lng_loss_bcm_window, 3),
+            "supply_shortfall_bcm_annualised": round(lng_loss_bcm_annualised, 3),
+            "global_supply_shortfall_pct": round(shortfall_pct, 3),
+            "implied_price_impulse_pct": round(impulse * 100.0, 3),
+            "henry_hub_price": hub_new["henry_hub"],
+            "ttf_price": hub_new["ttf"],
+            "jkm_price": hub_new["jkm"],
+            "lng_price_usd_mmbtu": lng_price_usd_mmbtu,
+            "hub_baseline_prices": hub_price,
+            "hub_passthrough_coefficients": dict(_HUB_SHORTFALL_PASSTHROUGH),
+        }
+
+        return ModelOutput(
+            model_id=self.model_id,
+            outputs=outputs,
+            convergence_status="converged",
+            metadata={
+                "adapter": self.__class__.__name__,
+                "mode": "analytical_mvp",
+                "calibration_source": (
+                    "QatarEnergy (2024) Qatar LNG export disclosures; "
+                    "ADNOC LNG (2024) UAE export figures; IEA Gas 2024 "
+                    "(global LNG trade volumes, hub elasticities); "
+                    "Bordoff & Stern (2023) LNG market analysis."
+                ),
+                "qatar_annual_lng_bcm": _QATAR_ANNUAL_LNG_BCM,
+                "uae_annual_lng_bcm": _UAE_ANNUAL_LNG_BCM,
+                "lng_supply_elasticity": _LNG_SUPPLY_ELASTICITY,
+                "hub_shortfall_passthrough": dict(_HUB_SHORTFALL_PASSTHROUGH),
+                "note": (
+                    "Analytical MVP path. Provide an ExcelConfig in "
+                    "configs/model_configs/lngst.yaml to invoke the "
+                    "real LNGST workbook via openpyxl or xlwings. The "
+                    "input_mappings / output_mappings cells above are "
+                    "placeholders -- update them once the workbook layout "
+                    "is known."
+                ),
+            },
         )
 
     def parse_outputs(self, raw: Any) -> ModelOutput:

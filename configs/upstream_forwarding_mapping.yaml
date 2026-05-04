@@ -128,6 +128,40 @@ models:
     # shock from the helium market -- left LLM-extracted.
 
   # =====================================================================
+  # COMMODITY tier: shipping outputs -> oil model rerouting parameters
+  # =====================================================================
+  #
+  # AISDB and AIS_project (SHIPPING) compute rerouting costs and war-risk
+  # insurance premia from closed-form Cape-of-Good-Hope detour math. The
+  # OIL adapter POLES-JRC accepts these as friction parameters and
+  # propagates them into the Brent price path. AIS_project is listed as
+  # a fallback for the cost multiplier so analysts who only run one of
+  # the two SHIPPING adapters still get the override.
+  #
+  # NOTE: aisdb / ais_project / poles_jrc all sit at AnalyticalLevel.
+  # COMMODITY today, so they currently run in parallel. The forwarding
+  # rules below take effect once SHIPPING outputs are available before
+  # the OIL adapter consumes them -- typically when the executor's
+  # within-level scheduling places SHIPPING earlier, or when the
+  # adapter is reclassified to COMMODITY_DOWNSTREAM (a future YAML
+  # tweak documented under "intra-tier dependencies" in CLAUDE.md).
+  # ---------------------------------------------------------------------
+  poles_jrc:
+    rerouting_cost_multiplier:
+      sources:
+        - source_model: aisdb
+          source_field: rerouting_cost_multiplier
+          transform: identity
+        - source_model: ais_project
+          source_field: rerouting_cost_multiplier
+          transform: identity
+    insurance_premium_increase_pct:
+      sources:
+        - source_model: aisdb
+          source_field: war_risk_insurance_premium_pct
+          transform: identity
+
+  # =====================================================================
   # MACRO tier: commodity outputs -> macro shocks
   # =====================================================================
 
@@ -180,6 +214,13 @@ models:
       target_param: commodity_price_shocks
       target_key: fertilizer
       sources:
+        # World Fertilizer Model (analytical MVP) emits a direct percent
+        # index; preferred over the AR(1) decay path from `futures` when
+        # both run, since it carries the natural-gas-feedstock and ME-
+        # production-loss channels.
+        - source_model: world_fertilizer
+          source_field: fertilizer_price_index_pct
+          transform: identity
         - source_model: futures
           source_field: peak_price_index_per_commodity
           transform: mean_of_keys
@@ -197,6 +238,9 @@ models:
       sources:
         - source_model: cwatm
           source_field: unmet_demand_pct
+          transform: identity
+        - source_model: weap_mena
+          source_field: aggregate_unmet_demand_pct
           transform: identity
         - source_model: sahysmod
           source_field: irrigation_water_reduction_pct
@@ -237,6 +281,9 @@ models:
       target_param: commodity_price_shocks
       target_key: fertilizer
       sources:
+        - source_model: world_fertilizer
+          source_field: fertilizer_price_index_pct
+          transform: identity
         - source_model: futures
           source_field: peak_price_index_per_commodity
           transform: mean_of_keys
@@ -249,6 +296,9 @@ models:
       sources:
         - source_model: cwatm
           source_field: unmet_demand_pct
+          transform: identity
+        - source_model: weap_mena
+          source_field: aggregate_unmet_demand_pct
           transform: identity
         - source_model: sahysmod
           source_field: irrigation_water_reduction_pct
@@ -274,6 +324,10 @@ models:
           source_field: average_ttf_netback
           transform: level_to_pct
           baseline: 10.0
+        - source_model: lngst
+          source_field: ttf_price
+          transform: level_to_pct
+          baseline: 11.0
     commodity_price_shocks__helium:
       target_param: commodity_price_shocks
       target_key: helium
@@ -285,6 +339,9 @@ models:
       target_param: commodity_price_shocks
       target_key: fertilizer
       sources:
+        - source_model: world_fertilizer
+          source_field: fertilizer_price_index_pct
+          transform: identity
         - source_model: futures
           source_field: peak_price_index_per_commodity
           transform: mean_of_keys
@@ -298,8 +355,24 @@ models:
         - source_model: cwatm
           source_field: unmet_demand_pct
           transform: identity
+        - source_model: weap_mena
+          source_field: aggregate_unmet_demand_pct
+          transform: identity
         - source_model: sahysmod
           source_field: irrigation_water_reduction_pct
+          transform: identity
+    # Trade-disruption spec (dict-valued downstream param). The aisdb
+    # rerouting cost multiplier is forwarded to the
+    # ``trade_cost_multiplier`` sub-key, which the MPSGE.jl analytical
+    # fallback translates into a synthetic capex shock.
+    trade_disruption_spec:
+      target_key: trade_cost_multiplier
+      sources:
+        - source_model: aisdb
+          source_field: rerouting_cost_multiplier
+          transform: identity
+        - source_model: ais_project
+          source_field: rerouting_cost_multiplier
           transform: identity
 
   # ------------------------------------------------------------
@@ -364,3 +437,62 @@ models:
           transform: identity
     natural_gas_price_path:
       sources: []
+
+  # ------------------------------------------------------------
+  # Fed Workhorse Oil Model (Baumeister-Hamilton SVAR, analytical
+  # MVP). Consumes the upstream-computed oil price impulse rather
+  # than the LLM extraction so the IRF magnitudes line up with
+  # POLES-JRC / BKR.
+  # ------------------------------------------------------------
+  fed_oil:
+    oil_price_change_pct:
+      sources:
+        - source_model: poles_jrc
+          source_field: peak_price_change_pct
+          transform: identity
+        - source_model: bornstein_krusell_rebelo
+          source_field: oil_price_peak_pct_eps_u_no
+          transform: identity
+
+  # ------------------------------------------------------------
+  # MarketSim (BOEM partial-equilibrium consumer-surplus model,
+  # analytical MVP). Consumes the upstream oil price impulse and
+  # an LNG-derived gas price impulse so welfare estimates use the
+  # same shock vector as the macro tier.
+  # ------------------------------------------------------------
+  marketsim:
+    oil_price_shock_pct:
+      sources:
+        - source_model: poles_jrc
+          source_field: peak_price_change_pct
+          transform: identity
+        - source_model: bornstein_krusell_rebelo
+          source_field: oil_price_peak_pct_eps_u_no
+          transform: identity
+    natural_gas_price_change_pct:
+      sources:
+        - source_model: energy_flux_lng_profits
+          source_field: average_ttf_netback
+          transform: level_to_pct
+          baseline: 10.0
+        - source_model: lngst
+          source_field: ttf_price
+          transform: level_to_pct
+          baseline: 11.0
+
+  # ------------------------------------------------------------
+  # NREL electricity-sector model (analytical MVP). Receives the
+  # upstream gas-price impulse so retail-electricity / dispatch /
+  # CO2 outputs are coherent with the LNG tier.
+  # ------------------------------------------------------------
+  nrel:
+    natural_gas_price_change_pct:
+      sources:
+        - source_model: energy_flux_lng_profits
+          source_field: average_ttf_netback
+          transform: level_to_pct
+          baseline: 10.0
+        - source_model: lngst
+          source_field: ttf_price
+          transform: level_to_pct
+          baseline: 11.0

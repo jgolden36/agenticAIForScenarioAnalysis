@@ -366,12 +366,22 @@ class TestUpdatedModelStubs:
         assert adapter.model_id == "mpsge_jl"
         assert adapter.julia_function_name == "solve_mpsge"
 
-    def test_mpsge_jl_raises_not_implemented_without_config(self):
+    def test_mpsge_jl_runs_analytical_fallback_without_config(self):
+        """Without a JuliaConfig, the adapter falls through to the
+        macro_kernel-backed analytical MVP path instead of raising."""
         from src.models.macro.mpsge_jl import MPSGEJLAdapter
 
         adapter = MPSGEJLAdapter()
-        with pytest.raises(NotImplementedError):
-            adapter.execute({"test": 1})
+        out = adapter.execute({
+            "oil_price_shock_pct": 50.0,
+            "trade_disruption_spec": {"trade_cost_multiplier": 1.2},
+            "commodity_price_shocks": {"lng": 30.0, "fertilizer": 20.0},
+            "disruption_duration_months": 6.0,
+        })
+        assert out.convergence_status == "converged"
+        assert out.metadata.get("mode") == "analytical_mvp"
+        assert "gdp_impact_pct" in out.outputs
+        assert "regional_vars" in out.outputs
 
     def test_lngst_inherits_excel_adapter(self):
         from src.models.lng.lngst import LNGSTAdapter
@@ -382,12 +392,23 @@ class TestUpdatedModelStubs:
         assert len(adapter.input_mappings) > 0
         assert len(adapter.output_mappings) > 0
 
-    def test_lngst_raises_not_implemented_without_config(self):
+    def test_lngst_runs_analytical_fallback_without_config(self):
+        """Without an ExcelConfig, the adapter falls through to the
+        closed-form Qatar/UAE LNG market fallback."""
         from src.models.lng.lngst import LNGSTAdapter
 
         adapter = LNGSTAdapter()
-        with pytest.raises(NotImplementedError):
-            adapter.execute({"test": 1})
+        out = adapter.execute({
+            "qatar_export_reduction_pct": 80.0,
+            "uae_export_reduction_pct": 50.0,
+            "spot_price_multiplier": 1.5,
+            "disruption_duration_months": 6.0,
+        })
+        assert out.convergence_status == "converged"
+        assert out.metadata.get("mode") == "analytical_mvp"
+        for key in ("ttf_price", "henry_hub_price", "jkm_price",
+                   "supply_shortfall_bcm", "lng_price_usd_mmbtu"):
+            assert key in out.outputs
 
     def test_world_fertilizer_inherits_gams_adapter(self):
         from src.models.fertilizer.world_fertilizer import WorldFertilizerAdapter
@@ -396,12 +417,21 @@ class TestUpdatedModelStubs:
         assert isinstance(adapter, GAMSAdapter)
         assert adapter.model_id == "world_fertilizer"
 
-    def test_world_fertilizer_raises_not_implemented_without_config(self):
+    def test_world_fertilizer_runs_analytical_fallback_without_config(self):
+        """Without a GAMSConfig, the adapter falls through to the
+        closed-form NG-feedstock + ME-loss fertilizer market fallback."""
         from src.models.fertilizer.world_fertilizer import WorldFertilizerAdapter
 
         adapter = WorldFertilizerAdapter()
-        with pytest.raises(NotImplementedError):
-            adapter.execute({"test": 1})
+        out = adapter.execute({
+            "natural_gas_price_change_pct": 50.0,
+            "middle_east_production_loss_pct": 30.0,
+            "disruption_duration_months": 6.0,
+        })
+        assert out.convergence_status == "converged"
+        assert out.metadata.get("mode") == "analytical_mvp"
+        assert "fertilizer_price_index_pct" in out.outputs
+        assert "forward_price_curves" in out.outputs
 
     def test_argonne_abm_inherits_anylogic_adapter(self):
         from src.models.helium.argonne_abm import ArgonneABMAdapter
@@ -410,12 +440,23 @@ class TestUpdatedModelStubs:
         assert isinstance(adapter, AnyLogicAdapter)
         assert adapter.model_id == "argonne_abm"
 
-    def test_argonne_abm_raises_not_implemented_without_config(self):
+    def test_argonne_abm_runs_analytical_fallback_without_config(self):
+        """Without an AnyLogicConfig, the adapter falls through to the
+        20-replication stochastic stand-in built around the
+        world_helium_model elasticity formula."""
         from src.models.helium.argonne_abm import ArgonneABMAdapter
 
         adapter = ArgonneABMAdapter()
-        with pytest.raises(NotImplementedError):
-            adapter.execute({"test": 1})
+        out = adapter.execute({
+            "supply_shock_pct": 25.0,
+            "disruption_duration_months": 6.0,
+            "demand_response_elasticity": -0.15,
+        })
+        assert out.convergence_status == "converged"
+        assert out.metadata.get("mode") == "analytical_mvp"
+        assert "equilibrium_price_change_pct_mean" in out.outputs
+        assert "equilibrium_price_change_pct_std" in out.outputs
+        assert out.outputs["n_replications"] == 20
 
     def test_argonne_abm_aggregate_replications(self):
         from src.models.helium.argonne_abm import ArgonneABMAdapter
