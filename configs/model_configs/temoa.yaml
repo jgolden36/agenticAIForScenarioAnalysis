@@ -1,8 +1,11 @@
 # TEMOA Configuration
 #
 # Required to actually run:
-#   - `pip install temoa-energysystem pyomo` (or
-#     `pip install hormuz-pipeline[energy]`).
+#   - `pip install hormuz-pipeline[energy]` (installs `pyomo`).
+#     The `temoa` Python package itself is NOT pip-installed; the
+#     adapter shells out to the vendored `Models/Energy/TEMOA/`
+#     repo via `python -m temoa.temoa_run`. (The PyPI `temoa`
+#     package additionally requires Python >=3.12.)
 #   - A Pyomo-compatible solver. CBC is the default open-source choice
 #     (`apt install coinor-cbc` on Debian, `brew install cbc` on macOS,
 #     or download from https://github.com/coin-or/Cbc/releases on Windows).

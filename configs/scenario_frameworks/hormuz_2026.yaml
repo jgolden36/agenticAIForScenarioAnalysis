@@ -67,3 +67,36 @@ scenario_matrix:
     description: "Does the conflict remain contained or escalate regionally?"
     pole_low: "Contained conflict (Iran-US/Israel axis only)"
     pole_high: "Escalated conflict (broader regional actors, infrastructure destruction)"
+
+# Prescribed scenarios outside the 2x2 matrix (tail-risk / stress tests).
+# These are appended to the four matrix quadrants and run through the same
+# Modules 1-5 pipeline. Each scenario_id MUST match a value defined in
+# src.common.types.Scenario.
+additional_scenarios:
+  - scenario_id: "infrastructure_collapse"
+    label: "Infrastructure Collapse (Tail Risk)"
+    summary: >
+      A worst-case extension of the prolonged-and-escalated path (Scenario D)
+      in which sustained combat operations -- Iranian missile / drone strikes
+      against Saudi, UAE, and Qatari coastal targets, coupled with US/Israeli
+      counter-strikes against Iranian energy and water infrastructure --
+      result in destruction or severe damage to a substantial fraction of
+      Persian Gulf desalination capacity, the Ras Laffan / Qatargas LNG
+      export complex, and major Saudi (Ras Tanura, Yanbu) and UAE (Jebel
+      Dhanna, Fujairah) oil loading terminals. Even after the Strait
+      formally reopens to commercial shipping, throughput is constrained by
+      multi-year reconstruction of berths, pipelines, processing trains,
+      and reverse-osmosis lines, producing a deeper and longer supply shock
+      than Scenario D and a sustained investment / reconstruction overhang
+      across water, LNG, and oil systems.
+    narrative_seeds:
+      - "Strait of Hormuz formally reopens at month 5, but commercial throughput remains capped at 50-60% of pre-crisis volumes through year 2 due to damaged loading and processing infrastructure."
+      - "Persian Gulf desalination capacity is reduced by 60-80% across Saudi Arabia, UAE, Bahrain, Qatar, and Kuwait following direct strikes and intake-water contamination from oil/chemical fires; full restoration of pre-crisis capacity takes 24-36 months."
+      - "supply_infrastructure_status for water adapters should be reported as 'severely_damaged' or 'destroyed'; affected population dependent on disrupted desalination is 35-45 million across the GCC."
+      - "Qatari LNG exports (Ras Laffan, Qatargas trains 1-7) drop to 30-40% of nameplate capacity for 18-24 months due to damage to liquefaction trains, jetties, and feed-gas pipelines from the North Field; full LNG_volume_loss_pct sustained near 60-70% of Qatari output."
+      - "Saudi Aramco loses approximately 4-6 mb/d of crude export capacity for 9-15 months from coordinated strikes on Ras Tanura, Yanbu, and the East-West (Petroline) pipeline; UAE loses 1-2 mb/d from Jebel Dhanna and Fujairah terminal damage."
+      - "Total oil supply loss sustained at 12-15 mb/d during the first 6 months and 6-9 mb/d through month 18, materially worse and longer than Scenario D's 18-21 mb/d transient peak."
+      - "Reconstruction investment overhang of approximately USD 250-400 billion across GCC water, LNG, and oil infrastructure over 3-5 years, partially funded by Gulf sovereign wealth funds, US/EU export credit agencies, and emergency World Bank / IMF facilities."
+      - "War-risk insurance premia for Persian Gulf transits remain elevated at 5-10x pre-crisis levels through year 2; Qatar effectively loses long-term LNG market share to US, Australian, and East African suppliers."
+      - "Humanitarian water-supply emergency in coastal GCC cities through months 1-12; emergency tanker imports of potable water and accelerated build-out of inland brackish-water reverse osmosis facilities."
+      - "Helium supply (~30% of global from Qatar) drops 70-90% for 18-30 months; ripple effects into US and East Asian semiconductor fabs forcing rationing and inventory drawdowns."

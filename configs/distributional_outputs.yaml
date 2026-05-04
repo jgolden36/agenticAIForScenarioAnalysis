@@ -1,0 +1,153 @@
+---
+# Distributional outputs spec for Module 4 / Stage 5.
+#
+# Declares which keys in each model's `outputs` dict carry regional or
+# sectoral structure, what column holds the region/sector label, and
+# which numeric column(s) are the headline values worth surfacing in
+# the regional/sectoral CSVs and figures.
+#
+# Supported `kind`s:
+#   regional               Long-form list[dict]; each dict has a
+#                          `region_col` and one or more `value_cols`.
+#   regional_sectoral      Long-form list[dict] with both a `region_col`
+#                          and a `sector_col`.
+#   sectoral_dict          dict[sector_name -> float]; emits one row per
+#                          sector with `value_label`.
+#   regional_polygon_dict  dict[region/poly_id -> dict[time_key -> float]];
+#                          collapsed to the latest time step. Used by
+#                          SahysMod-style spatial outputs.
+#
+# A model section may be omitted entirely; its outputs are then treated
+# as scenario-level scalars (current behaviour).
+
+miragrodep:
+  regional_vars:
+    kind: regional
+    region_col: region
+    value_cols: [value, val, welfare_pct, gdp_pct, terms_of_trade_pct]
+  regional_sectoral_vars:
+    kind: regional_sectoral
+    region_col: region
+    sector_col: sector
+    value_cols: [value, val, output_pct, exports_pct]
+  interregional_vars:
+    kind: regional_sectoral
+    region_col: region
+    sector_col: partner_region
+    value_cols: [value, val]
+
+pycge:
+  sectoral_output_pct_change:
+    kind: sectoral_dict
+    value_label: output_pct_change
+
+opencge:
+  # OG-Core paths are arrays; the regional layer treats them as the US
+  # series. Headline scalars are picked up by the existing scalar flatten.
+  gdp_pct_change_path:
+    kind: sectoral_dict
+    value_label: gdp_path_pct
+  wage_pct_change_path:
+    kind: sectoral_dict
+    value_label: wage_path_pct
+
+temoa:
+  Output_VFlow_Out:
+    kind: regional
+    region_col: regions
+    value_cols: [vflow_out, value]
+  Output_V_Capacity:
+    kind: regional
+    region_col: regions
+    value_cols: [v_capacity, value]
+  Output_Costs:
+    kind: regional
+    region_col: regions
+    value_cols: [cost, value]
+  Output_Emissions:
+    kind: regional
+    region_col: regions
+    value_cols: [emissions, value]
+
+osemosys:
+  NewCapacity:
+    kind: regional
+    region_col: REGION
+    value_cols: [VALUE]
+  ProductionByTechnology:
+    kind: regional
+    region_col: REGION
+    value_cols: [VALUE]
+  TotalDiscountedCost:
+    kind: regional
+    region_col: REGION
+    value_cols: [VALUE]
+  AnnualEmissions:
+    kind: regional
+    region_col: REGION
+    value_cols: [VALUE]
+
+messageix:
+  PRICE_COMMODITY:
+    kind: regional
+    region_col: node
+    value_cols: [lvl, value]
+  CAP_NEW:
+    kind: regional
+    region_col: node
+    value_cols: [lvl, value]
+  ACT:
+    kind: regional
+    region_col: node
+    value_cols: [lvl, value]
+  EMISS:
+    kind: regional
+    region_col: node
+    value_cols: [lvl, value]
+
+ggm:
+  var_F_X:
+    kind: regional
+    region_col: n
+    value_cols: [level, value]
+  var_F_I:
+    kind: regional
+    region_col: n
+    value_cols: [level, value]
+  var_Q_S:
+    kind: regional
+    region_col: n
+    value_cols: [level, value]
+  var_D_A:
+    kind: regional
+    region_col: n
+    value_cols: [level, value]
+
+sahysmod:
+  soil_salinity_dS_m:
+    kind: regional_polygon_dict
+    value_label: soil_salinity_dS_m
+  groundwater_depth_m:
+    kind: regional_polygon_dict
+    value_label: groundwater_depth_m
+  relative_crop_yield:
+    kind: regional_polygon_dict
+    value_label: relative_crop_yield
+  drain_salinity_dS_m:
+    kind: regional_polygon_dict
+    value_label: drain_salinity_dS_m
+
+# Aggregator hints. By default, value_labels ending in "_pct" are
+# averaged when collapsing native -> unified regions; everything else is
+# summed. Override per (model, value_label) here.
+_aggregation_overrides:
+  # GGM gas-trade volumes should sum across nodes that map to the same
+  # unified region.
+  ggm.var_F_X.level: sum
+  ggm.var_F_I.level: sum
+  ggm.var_Q_S.level: sum
+  ggm.var_D_A.level: sum
+  # SahysMod polygon-level concentrations are averaged.
+  sahysmod.soil_salinity_dS_m: mean
+  sahysmod.groundwater_depth_m: mean
+  sahysmod.relative_crop_yield: mean

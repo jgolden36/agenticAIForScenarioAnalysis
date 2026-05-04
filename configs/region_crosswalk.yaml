@@ -1,0 +1,181 @@
+---
+# Region crosswalk for distributional reporting.
+#
+# Maps each model's NATIVE region/country/node ids to a unified taxonomy
+# that lets the synthesis layer compare distributional impacts across
+# heterogeneous models (MIRAGRODEP world regions, TEMOA US census,
+# MESSAGEix global nodes, GGM gas-market nodes, SahysMod polygons).
+#
+# Unified region ids:
+#   US           — United States
+#   CHN          — China (mainland)
+#   IND          — India
+#   EU           — European Union (any aggregation)
+#   MENA_GCC     — GCC: SAU, ARE, QAT, KWT, OMN, BHR
+#   MENA_OTHER   — non-GCC MENA: IRN, IRQ, ISR, JOR, LBN, SYR, YEM, EGY, ...
+#   SSA          — Sub-Saharan Africa
+#   LAC          — Latin America & Caribbean
+#   ROW          — Rest of World (catch-all for unmapped ids)
+#   GLOBAL       — global aggregate (single-row model totals)
+#
+# Loader behavior:
+#   * Per-model section is a flat dict {native_id: unified_id}.
+#   * A magic key "*" is the per-model default for unrecognised ids; if
+#     absent, the global default ROW is used.
+#   * Lookups are case-insensitive on the native id.
+#   * Unrecognised ids are logged once per (model_id, native_id) pair.
+
+miragrodep:
+  USA: US
+  US: US
+  CAN: ROW
+  MEX: LAC
+  CHN: CHN
+  IND: IND
+  JPN: ROW
+  KOR: ROW
+  EU27: EU
+  EU28: EU
+  EUN: EU
+  DEU: EU
+  FRA: EU
+  GBR: ROW
+  SAU: MENA_GCC
+  ARE: MENA_GCC
+  QAT: MENA_GCC
+  KWT: MENA_GCC
+  OMN: MENA_GCC
+  BHR: MENA_GCC
+  IRN: MENA_OTHER
+  IRQ: MENA_OTHER
+  ISR: MENA_OTHER
+  JOR: MENA_OTHER
+  LBN: MENA_OTHER
+  EGY: MENA_OTHER
+  YEM: MENA_OTHER
+  TUR: MENA_OTHER
+  ZAF: SSA
+  NGA: SSA
+  KEN: SSA
+  ETH: SSA
+  BRA: LAC
+  ARG: LAC
+  CHL: LAC
+  COL: LAC
+  ROW: ROW
+  WLD: GLOBAL
+  WORLD: GLOBAL
+  "*": ROW
+
+pycge:
+  # PyCGE is sectoral, not regional; the sole "region" is the modelled
+  # economy (typically the US 2-region SAM). Map to US so its sectoral
+  # outputs appear under the US column when the unified heatmap is
+  # rendered alongside multi-region models.
+  "*": US
+
+opencge:
+  # OG-Core / OG-USA is a single-country US model. Surface as US so
+  # its national paths appear in the unified taxonomy.
+  USA: US
+  US: US
+  "*": US
+
+mam:
+  # EIA Macroeconomic Activity Module — US national.
+  US: US
+  USA: US
+  "*": US
+
+nems:
+  # NEMS uses 9 EIA Census divisions internally; default to US for
+  # any cross-divisional rollup.
+  US: US
+  USA: US
+  ENC: US      # East North Central
+  ESC: US      # East South Central
+  MAT: US      # Mid Atlantic
+  MTN: US      # Mountain
+  NEN: US      # New England
+  PAC: US      # Pacific
+  SAT: US      # South Atlantic
+  WNC: US      # West North Central
+  WSC: US      # West South Central
+  "*": US
+
+temoa:
+  # TEMOA region ids depend on the dataset; the default test deck
+  # uses generic R1/R2 codes.
+  R1: US
+  R2: US
+  US: US
+  USA: US
+  "*": ROW
+
+osemosys:
+  GLOBAL: GLOBAL
+  WORLD: GLOBAL
+  USA: US
+  US: US
+  CHN: CHN
+  IND: IND
+  EU: EU
+  EU27: EU
+  SAU: MENA_GCC
+  QAT: MENA_GCC
+  ARE: MENA_GCC
+  IRN: MENA_OTHER
+  "*": ROW
+
+messageix:
+  # MESSAGEix-GLOBIOM 11-region nodes.
+  R11_NAM: US
+  R11_LAM: LAC
+  R11_WEU: EU
+  R11_EEU: EU
+  R11_FSU: ROW
+  R11_AFR: SSA
+  R11_MEA: MENA_OTHER
+  R11_SAS: IND
+  R11_CPA: CHN
+  R11_PAS: ROW
+  R11_PAO: ROW
+  World: GLOBAL
+  "*": ROW
+
+ggm:
+  # Sample of GGM gas-market node ids; the canonical list lives in
+  # Models/LNG/GGM-20190509-open-source-final/.
+  USA: US
+  CAN: ROW
+  MEX: LAC
+  CHN: CHN
+  IND: IND
+  JPN: ROW
+  KOR: ROW
+  GBR: ROW
+  DEU: EU
+  FRA: EU
+  ITA: EU
+  NLD: EU
+  ESP: EU
+  POL: EU
+  RUS: ROW
+  SAU: MENA_GCC
+  QAT: MENA_GCC
+  ARE: MENA_GCC
+  IRN: MENA_OTHER
+  EGY: MENA_OTHER
+  DZA: MENA_OTHER
+  NGA: SSA
+  ZAF: SSA
+  AUS: ROW
+  BRA: LAC
+  ARG: LAC
+  "*": ROW
+
+sahysmod:
+  # SahysMod polygons are integer ids in a Persian Gulf desalination
+  # demo configuration; treat unknown polygons as MENA_GCC since the
+  # vendored case study covers Saudi/UAE/Qatar coastal polygons.
+  "*": MENA_GCC

@@ -1,0 +1,366 @@
+# =====================================================================
+# Upstream-to-downstream feed-forward mapping (Algorithm 1, step 11)
+# =====================================================================
+#
+# Declarative mapping from upstream model OUTPUT fields to downstream
+# model INPUT parameters. Used by `src/pipeline/upstream_forwarding.py`
+# to replace LLM-extracted shocks with values computed by upstream
+# domain models. Override metadata is recorded on every replaced field
+# so analysts can audit divergence between the LLM and the upstream
+# models.
+#
+# Two level transitions are exercised today:
+#   - COMMODITY  ->  COMMODITY_DOWNSTREAM
+#       e.g. world_helium_model.effective_supply_gap_pct flows into
+#       simrlfab.helium_supply_reduction_pct and
+#       argonne_abm.supply_shock_pct so the semiconductor-fab and
+#       helium-market-ABM simulations consume the helium model's
+#       computed sectoral shortfall instead of an LLM estimate.
+#   - COMMODITY (and COMMODITY_DOWNSTREAM)  ->  SHORT_RUN_MACRO /
+#       LONG_RUN_MACRO_STRATEGIC
+#       e.g. poles_jrc.peak_price_change_pct -> opencge.oil_price_shock_pct.
+#
+# Schema:
+#   defaults:
+#     llm_vs_upstream_warn_threshold_pct: <float>
+#       Default deviation threshold (percent) above which a
+#       ConsistencyFlag is emitted by `src/synthesis/consistency.py`.
+#
+#   models:
+#     <downstream_model_id>:
+#       <rule_name>:
+#         sources:
+#           - source_model: <upstream_model_id>
+#             source_field: <output_key | dotted.path | nested[key]>
+#             transform: identity | to_percent | level_to_pct | mean_of_keys
+#             # transform-specific kwargs:
+#             baseline: <number>          (level_to_pct only)
+#             keys: [k1, k2, ...]         (mean_of_keys only)
+#             value_kind: index | level | percent  (mean_of_keys only)
+#         # Optional: target a single key inside a dict-valued
+#         # downstream parameter (e.g. commodity_price_shocks.lng).
+#         target_key: <key inside the param dict>
+#         # Optional: explicit target_param when rule_name differs.
+#         target_param: <name of the downstream param>
+#         # Optional: restrict the rule to a subset of scenarios.
+#         scenarios: [<scenario_id_1>, <scenario_id_2>, ...]
+#
+# Transforms:
+#   identity        -- pass the source value through unchanged.
+#   to_percent      -- multiply by 100 (e.g. 0.42 -> 42.0).
+#   level_to_pct    -- (value / baseline - 1) * 100. Used when the
+#                      upstream model emits a price LEVEL (USD/bbl,
+#                      USD/MMBtu, USD/Mscf) rather than a pct change.
+#   mean_of_keys    -- average over the named sub-keys of a dict-valued
+#                      source field. With value_kind=index, each value
+#                      is treated as a multiplier (1.4 -> +40%); with
+#                      value_kind=percent, values are passed through;
+#                      with value_kind=level, requires a `baseline`.
+#
+# Sources are tried in order; the first source whose run is COMPLETED,
+# has a numeric value at source_field, and successfully transforms is
+# used. If no source resolves, the LLM-extracted value is preserved
+# (graceful degradation).
+# =====================================================================
+
+defaults:
+  llm_vs_upstream_warn_threshold_pct: 50.0
+
+models:
+
+  # =====================================================================
+  # COMMODITY_DOWNSTREAM tier: helium -> semiconductor / helium ABM
+  # =====================================================================
+
+  # ------------------------------------------------------------
+  # SimRLFab (semiconductor fab simulator). Helium shortfalls are
+  # forwarded from world_helium_model. Neon supply status and the
+  # baseline fab utilisation rate stay LLM-extracted -- the helium
+  # model has nothing to say about either, and the fab utilisation
+  # is a calibration choice rather than a shock.
+  # ------------------------------------------------------------
+  simrlfab:
+    helium_supply_reduction_pct:
+      sources:
+        # Effective supply gap is already a percent (0-100), and is
+        # the most direct measure of how much of the fab's required
+        # helium throughput will be unmet under the merge_into_params
+        # rationing logic in world_helium_model.execute().
+        - source_model: world_helium_model
+          source_field: effective_supply_gap_pct
+          transform: identity
+        # Fall back to the price-side signal if the supply gap is
+        # missing (older runs, or a real upstream model swap-in).
+        - source_model: world_helium_model
+          source_field: price_change_pct
+          transform: identity
+    disruption_duration_months:
+      sources:
+        - source_model: world_helium_model
+          source_field: disruption_duration_months
+          transform: identity
+    # NOTE: neon_supply_status is categorical and not numeric; we leave
+    # it on whatever the LLM extracted from the narrative. No mapping.
+    # NOTE: fab_utilization_baseline is a calibration constant
+    # describing the pre-disruption fab regime, not a shock; also
+    # left LLM-extracted.
+
+  # ------------------------------------------------------------
+  # Argonne Helium ABM. Supply shock and disruption duration are
+  # forwarded from world_helium_model. Demand-response elasticity is
+  # a calibration parameter and stays LLM-extracted.
+  # ------------------------------------------------------------
+  argonne_abm:
+    supply_shock_pct:
+      sources:
+        - source_model: world_helium_model
+          source_field: effective_supply_gap_pct
+          transform: identity
+        - source_model: world_helium_model
+          source_field: price_change_pct
+          transform: identity
+    disruption_duration_months:
+      sources:
+        - source_model: world_helium_model
+          source_field: disruption_duration_months
+          transform: identity
+    # NOTE: demand_response_elasticity is a model calibration, not a
+    # shock from the helium market -- left LLM-extracted.
+
+  # =====================================================================
+  # MACRO tier: commodity outputs -> macro shocks
+  # =====================================================================
+
+  # ------------------------------------------------------------
+  # OpenCGE (PSL OG-Core / OG-USA): aggregates oil + commodity
+  # shocks via shock_to_productivity.
+  # ------------------------------------------------------------
+  opencge:
+    oil_price_shock_pct:
+      sources:
+        - source_model: poles_jrc
+          source_field: peak_price_change_pct
+          transform: identity
+        - source_model: bornstein_krusell_rebelo
+          source_field: oil_price_peak_pct_eps_u_no
+          transform: identity
+        - source_model: bornstein_krusell_rebelo
+          source_field: oil_price_peak_pct_eps_u
+          transform: identity
+        - source_model: bornstein_krusell_rebelo
+          source_field: oil_price_usd
+          transform: level_to_pct
+          baseline: 80.0
+    commodity_price_shocks:
+      target_key: oil
+      sources:
+        - source_model: poles_jrc
+          source_field: peak_price_change_pct
+          transform: identity
+    commodity_price_shocks__lng:
+      target_param: commodity_price_shocks
+      target_key: lng
+      sources:
+        - source_model: energy_flux_lng_profits
+          source_field: average_ttf_netback
+          transform: level_to_pct
+          baseline: 10.0
+        - source_model: energy_flux_lng_profits
+          source_field: average_jkm_netback
+          transform: level_to_pct
+          baseline: 12.0
+    commodity_price_shocks__helium:
+      target_param: commodity_price_shocks
+      target_key: helium
+      sources:
+        - source_model: world_helium_model
+          source_field: price_change_pct
+          transform: identity
+    commodity_price_shocks__fertilizer:
+      target_param: commodity_price_shocks
+      target_key: fertilizer
+      sources:
+        - source_model: futures
+          source_field: peak_price_index_per_commodity
+          transform: mean_of_keys
+          keys: [urea, dap, potash]
+          value_kind: index
+    # Water enters the macro layer ONLY under the prescribed
+    # infrastructure_collapse scenario, where the narrative and the
+    # parameter extractor force supply_infrastructure_status to
+    # severely_damaged/destroyed, so CWatM's unmet_demand_pct is
+    # materially above zero.
+    commodity_price_shocks__water:
+      target_param: commodity_price_shocks
+      target_key: water
+      scenarios: [infrastructure_collapse]
+      sources:
+        - source_model: cwatm
+          source_field: unmet_demand_pct
+          transform: identity
+        - source_model: sahysmod
+          source_field: irrigation_water_reduction_pct
+          transform: identity
+
+  # ------------------------------------------------------------
+  # PyCGE (cge_modeling): same shape as OpenCGE.
+  # ------------------------------------------------------------
+  pycge:
+    oil_price_shock_pct:
+      sources:
+        - source_model: poles_jrc
+          source_field: peak_price_change_pct
+          transform: identity
+        - source_model: bornstein_krusell_rebelo
+          source_field: oil_price_peak_pct_eps_u_no
+          transform: identity
+        - source_model: bornstein_krusell_rebelo
+          source_field: oil_price_usd
+          transform: level_to_pct
+          baseline: 80.0
+    commodity_price_shocks__lng:
+      target_param: commodity_price_shocks
+      target_key: lng
+      sources:
+        - source_model: energy_flux_lng_profits
+          source_field: average_ttf_netback
+          transform: level_to_pct
+          baseline: 10.0
+    commodity_price_shocks__helium:
+      target_param: commodity_price_shocks
+      target_key: helium
+      sources:
+        - source_model: world_helium_model
+          source_field: price_change_pct
+          transform: identity
+    commodity_price_shocks__fertilizer:
+      target_param: commodity_price_shocks
+      target_key: fertilizer
+      sources:
+        - source_model: futures
+          source_field: peak_price_index_per_commodity
+          transform: mean_of_keys
+          keys: [urea, dap, potash]
+          value_kind: index
+    commodity_price_shocks__water:
+      target_param: commodity_price_shocks
+      target_key: water
+      scenarios: [infrastructure_collapse]
+      sources:
+        - source_model: cwatm
+          source_field: unmet_demand_pct
+          transform: identity
+        - source_model: sahysmod
+          source_field: irrigation_water_reduction_pct
+          transform: identity
+
+  # ------------------------------------------------------------
+  # MPSGE.jl / GTAP: takes oil shock + a commodity_price_shocks dict.
+  # ------------------------------------------------------------
+  mpsge_jl:
+    oil_price_shock_pct:
+      sources:
+        - source_model: poles_jrc
+          source_field: peak_price_change_pct
+          transform: identity
+        - source_model: bornstein_krusell_rebelo
+          source_field: oil_price_peak_pct_eps_u_no
+          transform: identity
+    commodity_price_shocks__lng:
+      target_param: commodity_price_shocks
+      target_key: lng
+      sources:
+        - source_model: energy_flux_lng_profits
+          source_field: average_ttf_netback
+          transform: level_to_pct
+          baseline: 10.0
+    commodity_price_shocks__helium:
+      target_param: commodity_price_shocks
+      target_key: helium
+      sources:
+        - source_model: world_helium_model
+          source_field: price_change_pct
+          transform: identity
+    commodity_price_shocks__fertilizer:
+      target_param: commodity_price_shocks
+      target_key: fertilizer
+      sources:
+        - source_model: futures
+          source_field: peak_price_index_per_commodity
+          transform: mean_of_keys
+          keys: [urea, dap, potash]
+          value_kind: index
+    commodity_price_shocks__water:
+      target_param: commodity_price_shocks
+      target_key: water
+      scenarios: [infrastructure_collapse]
+      sources:
+        - source_model: cwatm
+          source_field: unmet_demand_pct
+          transform: identity
+        - source_model: sahysmod
+          source_field: irrigation_water_reduction_pct
+          transform: identity
+
+  # ------------------------------------------------------------
+  # MIRAGRODEP: oil shock (ffl sector) + fertilizer shock (crp sector).
+  # ------------------------------------------------------------
+  miragrodep:
+    oil_price_shock_pct:
+      sources:
+        - source_model: poles_jrc
+          source_field: peak_price_change_pct
+          transform: identity
+        - source_model: bornstein_krusell_rebelo
+          source_field: oil_price_peak_pct_eps_u_no
+          transform: identity
+    fertilizer_price_shock_pct:
+      sources:
+        - source_model: futures
+          source_field: peak_price_index_per_commodity
+          transform: mean_of_keys
+          keys: [urea, dap, potash]
+          value_kind: index
+
+  # ------------------------------------------------------------
+  # NEMS (EIA): scedes-style per-fuel shocks. Each maps directly to a
+  # NEMS module via src/models/macro/nems_shocks.DEFAULT_MAM_LINK_TABLE.
+  # ------------------------------------------------------------
+  nems:
+    oil_price_shock_pct:
+      sources:
+        - source_model: poles_jrc
+          source_field: peak_price_change_pct
+          transform: identity
+        - source_model: bornstein_krusell_rebelo
+          source_field: oil_price_peak_pct_eps_u_no
+          transform: identity
+    natural_gas_price_shock_pct:
+      sources:
+        - source_model: energy_flux_lng_profits
+          source_field: average_ttf_netback
+          transform: level_to_pct
+          baseline: 10.0
+    lng_price_shock_pct:
+      sources:
+        - source_model: energy_flux_lng_profits
+          source_field: average_jkm_netback
+          transform: level_to_pct
+          baseline: 12.0
+        - source_model: energy_flux_lng_profits
+          source_field: average_ttf_netback
+          transform: level_to_pct
+          baseline: 10.0
+
+  # ------------------------------------------------------------
+  # MAM (EIA Macroeconomic Activity Module): mirrors NEMS scedes
+  # (eviews_subprocess mode only; aeo_ingestion mode ignores shocks).
+  # ------------------------------------------------------------
+  mam:
+    oil_price_path:
+      sources:
+        - source_model: poles_jrc
+          source_field: brent_price_path_usd_per_bbl
+          transform: identity
+    natural_gas_price_path:
+      sources: []

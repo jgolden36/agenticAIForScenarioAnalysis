@@ -22,4 +22,4 @@ consistency:
   quantity_tolerance_pct: 15.0
   flag_on_missing_model: true
 
-num_scenarios: 4
+num_scenarios: 5  # 4 matrix quadrants (A-D) + 1 prescribed tail-risk (E: infrastructure_collapse)
