@@ -42,4 +42,5 @@ def test_scenario_set():
         ],
     )
 
-    assert len(scenario_set.scenarios) == 4
+    # 4 matrix quadrants (A-D) + 1 prescribed tail-risk (E: infrastructure_collapse)
+    assert len(scenario_set.scenarios) == 5

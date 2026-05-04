@@ -81,3 +81,67 @@ def test_registry_query_by_level():
 
     macro = registry.get_by_analytical_level(AnalyticalLevel.SHORT_RUN_MACRO)
     assert len(macro) == 1
+
+
+def test_default_config_dir_resolves_to_project_configs():
+    """default_config_dir() should find the in-tree configs/model_configs/.
+
+    This regression-tests the fix for the SLURM execution path that was
+    silently degrading every configured adapter to its default
+    (non-cluster) paths because run_model.py called
+    build_default_registry() with no config_dir.
+    """
+    from pathlib import Path
+
+    from src.models.registry import default_config_dir
+
+    cfg = default_config_dir()
+    assert cfg is not None, (
+        "default_config_dir() returned None — configs/model_configs/ should "
+        "exist at the project root"
+    )
+    assert cfg.exists()
+    assert cfg.is_dir()
+    assert cfg.name == "model_configs"
+    assert cfg.parent.name == "configs"
+    # Sanity: at least one adapter YAML lives there
+    yamls = list(cfg.glob("*.yaml"))
+    assert yamls, f"No YAML configs found in {cfg}"
+
+
+def test_build_default_registry_uses_config_dir(tmp_path):
+    """When build_default_registry receives a config_dir, OSeMOSYSConfig
+    paths should be loaded from osemosys.yaml rather than the bare
+    defaults pointed at Models/Energy/OSeMOSYS."""
+    from pathlib import Path
+
+    import yaml
+
+    from src.models.registry import build_default_registry
+
+    # Synthesize a minimal config dir with just osemosys.yaml.
+    cfg_dir = tmp_path / "model_configs"
+    cfg_dir.mkdir()
+    osemosys_dir = tmp_path / "OSeMOSYS"
+    osemosys_dir.mkdir()
+    baseline = tmp_path / "baseline"
+    baseline.mkdir()
+    output = tmp_path / "out"
+
+    with open(cfg_dir / "osemosys.yaml", "w") as f:
+        yaml.safe_dump(
+            {
+                "osemosys_dir": str(osemosys_dir),
+                "baseline_data_dir": str(baseline),
+                "output_dir": str(output),
+            },
+            f,
+        )
+
+    registry = build_default_registry(cfg_dir)
+    osemosys = registry.get("osemosys")
+    assert osemosys is not None
+    # The adapter should have picked up the YAML config rather than the
+    # default Models/Energy/OSeMOSYS path.
+    assert Path(osemosys._config.osemosys_dir) == osemosys_dir
+    assert Path(osemosys._config.baseline_data_dir) == baseline

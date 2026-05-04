@@ -123,7 +123,11 @@ class TestBuildPipelineGraph:
             "review_scenarios",
             "extract_single_parameters",
             "review_parameters",
-            "execute_single_model",
+            "execute_commodity_model",
+            "merge_upstream_into_commodity_downstream_params",
+            "execute_commodity_downstream_model",
+            "merge_upstream_into_macro_params",
+            "execute_macro_model",
             "synthesize_results",
             "review_synthesis",
         }

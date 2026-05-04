@@ -13,7 +13,8 @@ def test_default_config():
     assert config.llm.temperature == 0.0
     assert config.execution.max_parallel_models == 4
     assert config.consistency.price_tolerance_pct == 20.0
-    assert config.num_scenarios == 4
+    # 4 matrix quadrants (A-D) + 1 prescribed tail-risk (E: infrastructure_collapse)
+    assert config.num_scenarios == 5
 
 
 def test_config_from_yaml():
