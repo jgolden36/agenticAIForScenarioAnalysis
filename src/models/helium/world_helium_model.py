@@ -19,6 +19,48 @@ from typing import Any
 from src.common.types import AnalyticalLevel, CommoditySystem
 from src.models.base import ModelAdapter, ModelOutput, ValidationResult
 
+# ---------------------------------------------------------------------------
+# Analytical-MVP calibration constants
+# ---------------------------------------------------------------------------
+# Closed-form helium market equilibrium parameters used by the
+# analytical-MVP execute() path. The IFP Energies Nouvelles World
+# Helium Model proper would solve a full multi-region partial
+# equilibrium with explicit liquefaction, storage, and trade
+# routing. The values below let the HELIUM_SEMICONDUCTORS commodity
+# system contribute a working model to the MVP pipeline while the
+# licensed IFP EN binary remains unavailable.
+#
+# Qatar's share of global helium production. USGS Mineral Commodity
+# Summaries 2024 (helium chapter) — Qatar accounts for ~30% of global
+# helium output, second only to the United States.
+_QATAR_GLOBAL_SHARE: float = 0.30
+# Short-run price elasticity of helium demand. Massol & Rifaat
+# (2018), "Phasing out the U.S. Federal Helium Reserve: Policy
+# insights from a world helium model", Resource and Energy
+# Economics 54, estimate short-run demand elasticities on the order
+# of -0.3 across major end-use sectors.
+_HELIUM_DEMAND_ELASTICITY: float = -0.3
+# Reference baseline equilibrium spot price ($/Mscf). Roughly the
+# 2024 BLM Crude Helium Price Index level for Grade-A liquid helium
+# from major producers.
+_HELIUM_BASELINE_USD_PER_MSCF: float = 280.0
+# US Bureau of Land Management Cliffside reserve and private inventory
+# capacity treated as the pool from which strategic-reserve releases
+# are drawn (MMscf). Massol & Rifaat (2018) quote the BLM crude
+# helium tank capacity at ~10,000 MMscf historically; the adapter
+# accepts a release volume in MMscf via parameters and converts to a
+# share of one year of Qatari supply.
+_QATAR_ANNUAL_SUPPLY_MMSCF: float = 1_700.0  # ~30% of ~5,700 MMscf/yr global
+# End-use sector demand shares (2024 USGS, IHS Markit). Used to
+# distribute equilibrium allocation under rationing.
+_SECTOR_DEMAND_SHARES: dict[str, float] = {
+    "mri_medical": 0.32,
+    "semiconductors": 0.28,
+    "cryogenics_research": 0.20,
+    "aerospace_defense": 0.12,
+    "other": 0.08,
+}
+
 
 class WorldHeliumModelAdapter(ModelAdapter):
     """Adapter stub for the World Helium Model (IFP Energies Nouvelles).
@@ -166,44 +208,140 @@ class WorldHeliumModelAdapter(ModelAdapter):
         return params
 
     def execute(self, inputs: Any) -> ModelOutput:
-        """Execute the World Helium Model.
+        """Execute the analytical-MVP helium market equilibrium.
 
-        Not yet implemented. Requires access to the IFP Energies Nouvelles
-        World Helium Model licensed codebase and its calibration dataset.
+        Closed-form constant-elasticity equilibrium that lets the
+        HELIUM_SEMICONDUCTORS commodity system contribute a working
+        model to the MVP pipeline without the licensed IFP EN
+        World Helium Model.
 
-        Real implementation steps:
-        1. Serialize inputs to the model's native input file format.
-        2. Invoke the model binary or script via subprocess.
-        3. Monitor convergence (equilibrium solver); capture stdout/stderr.
-        4. Read output files and pass to parse_outputs.
+        Mechanics:
 
-        Args:
-            inputs: Translated inputs from translate_inputs.
+          * Effective supply gap = ``Qatar share * Qatar loss``
+            minus the strategic reserve release (converted from
+            MMscf to a share of Qatari annual output).
+          * Equilibrium price multiplier = ``1 + gap / |epsilon_d|``
+            (constant-elasticity inversion: rationing the demand
+            elasticity against the supply gap).
+          * Demand rationing volume scales linearly with the
+            unmet-share of demand.
+          * Sector allocation shares are renormalised so essential
+            sectors (MRI, semiconductors) absorb a smaller share
+            of the rationing than discretionary sectors.
 
-        Raises:
-            NotImplementedError: Until the IFP EN model is integrated.
+        Returns:
+            ModelOutput with equilibrium price, sector allocation,
+            and analytical-MVP metadata.
         """
-        raise NotImplementedError(
-            "WorldHeliumModelAdapter.execute is a stub. Real implementation requires: "
-            "(1) licensed access to the IFP Energies Nouvelles World Helium Model "
-            "codebase; (2) baseline calibration data for global helium supply, "
-            "liquefaction, storage, and end-use demand by sector; (3) documentation "
-            "of the model's native input/output file format. Contact IFP EN for "
-            "licensing terms and data access."
+        if not isinstance(inputs, dict):
+            raise TypeError(
+                "WorldHeliumModel inputs must be a dict from translate_inputs(); "
+                f"got {type(inputs)}"
+            )
+
+        qatar_loss_pct = float(inputs["qatar_helium_supply_loss_pct"])
+        duration_months = float(inputs["disruption_duration_months"])
+        reserve_release_mmscf = float(inputs["strategic_reserve_release"])
+
+        # All supply quantities expressed as monthly flows so the
+        # gross gap, reserve offset, and global supply are
+        # directly comparable. Global annual supply is implied
+        # by Qatari supply and Qatar's global share.
+        global_annual_mmscf = _QATAR_ANNUAL_SUPPLY_MMSCF / max(_QATAR_GLOBAL_SHARE, 1e-6)
+        global_monthly_mmscf = global_annual_mmscf / 12.0
+
+        gross_gap = _QATAR_GLOBAL_SHARE * (qatar_loss_pct / 100.0)
+        if duration_months > 0:
+            reserve_flow_mmscf_per_month = reserve_release_mmscf / duration_months
+            reserve_share = reserve_flow_mmscf_per_month / max(
+                global_monthly_mmscf, 1e-6
+            )
+        else:
+            reserve_share = 0.0
+        effective_gap = max(0.0, gross_gap - reserve_share)
+
+        price_multiplier = 1.0 + effective_gap / abs(_HELIUM_DEMAND_ELASTICITY)
+        equilibrium_price = _HELIUM_BASELINE_USD_PER_MSCF * price_multiplier
+        price_change_pct = (price_multiplier - 1.0) * 100.0
+
+        global_supply_lost_mmscf = (
+            global_annual_mmscf * effective_gap * (duration_months / 12.0)
+        )
+
+        priority_weights = {
+            "mri_medical": 0.5,
+            "semiconductors": 0.6,
+            "cryogenics_research": 1.2,
+            "aerospace_defense": 1.0,
+            "other": 1.5,
+        }
+        weighted = {
+            sector: _SECTOR_DEMAND_SHARES[sector] * priority_weights[sector]
+            for sector in _SECTOR_DEMAND_SHARES
+        }
+        total_weight = sum(weighted.values()) or 1.0
+        rationing_share_by_sector = {
+            sector: round(w / total_weight, 4) for sector, w in weighted.items()
+        }
+        sector_allocation_share = {
+            sector: round(
+                _SECTOR_DEMAND_SHARES[sector]
+                * (1.0 - effective_gap * rationing_share_by_sector[sector]
+                   / max(_SECTOR_DEMAND_SHARES[sector], 1e-6)),
+                4,
+            )
+            for sector in _SECTOR_DEMAND_SHARES
+        }
+
+        inventory_drawdown_months = (
+            reserve_release_mmscf
+            / max(_QATAR_ANNUAL_SUPPLY_MMSCF / 12.0, 1.0)
+            if reserve_release_mmscf > 0
+            else 0.0
+        )
+
+        outputs = {
+            "equilibrium_price_usd_per_mscf": round(equilibrium_price, 2),
+            "baseline_price_usd_per_mscf": _HELIUM_BASELINE_USD_PER_MSCF,
+            "price_change_pct": round(price_change_pct, 2),
+            "effective_supply_gap_pct": round(effective_gap * 100.0, 3),
+            "demand_rationing_mmscf": round(global_supply_lost_mmscf, 2),
+            "sector_allocation_share": sector_allocation_share,
+            "rationing_share_by_sector": rationing_share_by_sector,
+            "inventory_drawdown_months": round(inventory_drawdown_months, 2),
+            "qatar_helium_supply_loss_pct": qatar_loss_pct,
+            "disruption_duration_months": duration_months,
+        }
+
+        return ModelOutput(
+            model_id=self.model_id,
+            outputs=outputs,
+            convergence_status="converged",
+            metadata={
+                "adapter": self.__class__.__name__,
+                "mode": "analytical_mvp",
+                "calibration_source": (
+                    "USGS Mineral Commodity Summaries 2024 (helium); "
+                    "Massol & Rifaat (2018) Resource and Energy Economics 54."
+                ),
+                "qatar_global_share": _QATAR_GLOBAL_SHARE,
+                "demand_elasticity": _HELIUM_DEMAND_ELASTICITY,
+                "baseline_global_supply_mmscf": global_annual_mmscf,
+            },
         )
 
     def parse_outputs(self, raw: Any) -> ModelOutput:
-        """Pass raw model output through unchanged.
+        """Pass through ModelOutput; wrap dicts.
 
-        The real implementation will parse the IFP EN model's output files
-        (format TBD) into the standardized ModelOutput schema, extracting
-        key variables: equilibrium helium spot price ($/Mscf), allocation
-        by end-use sector, inventory trajectory, and demand rationing volume.
-
-        Args:
-            raw: Raw output from execute.
-
-        Returns:
-            The raw output, passed through as-is in this stub.
+        The analytical-MVP execute() already returns a fully formed
+        ModelOutput, so this method exists only to support the abstract
+        ``ModelAdapter`` contract and any future real-engine integration
+        that returns raw dicts.
         """
-        return raw
+        if isinstance(raw, ModelOutput):
+            return raw
+        return ModelOutput(
+            model_id=self.model_id,
+            outputs=raw if isinstance(raw, dict) else {"raw": raw},
+            metadata={"adapter": self.__class__.__name__},
+        )

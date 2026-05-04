@@ -31,6 +31,7 @@ Real implementation requirements:
 
 from __future__ import annotations
 
+import gc
 import logging
 from pathlib import Path
 from typing import Any
@@ -46,6 +47,54 @@ from src.models.base import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# JDBC backend interpreter-shutdown safety
+# ---------------------------------------------------------------------------
+#
+# ixmp's default JDBCBackend defines a ``__del__`` that calls
+# ``self.close_db()``, whose ``except java.IxException as e:`` clause
+# crashes when JPype's ``java`` proxy has already been replaced with a
+# ``types.SimpleNamespace`` during Python interpreter shutdown. The
+# resulting ``AttributeError: 'types.SimpleNamespace' object has no
+# attribute 'IxException'`` is harmless (the model has finished, every
+# scenario was solved and persisted) but produces multi-line
+# ``Exception ignored in: <function JDBCBackend.__del__ ...>`` tracebacks
+# in SLURM logs that look like real failures to anyone reading the log.
+#
+# The patch wraps ``JDBCBackend.__del__`` so any exception raised after
+# the JVM has been torn down is silently swallowed. It is idempotent
+# (won't double-wrap) and a no-op when ``ixmp`` is not importable.
+def _install_ixmp_jdbc_shutdown_safety() -> None:
+    """Silence ``JDBCBackend.__del__`` AttributeError on interpreter shutdown.
+
+    Called from :meth:`MESSAGEixAdapter.execute` immediately after
+    ``import ixmp`` succeeds. Safe to call multiple times — the patch
+    is keyed off a sentinel attribute on the wrapped function so the
+    second and later invocations short-circuit.
+    """
+    try:
+        from ixmp.backend.jdbc import JDBCBackend
+    except ImportError:
+        return
+
+    original_del = JDBCBackend.__del__
+    if getattr(original_del, "_hormuz_patched", False):
+        return
+
+    def _safe_del(self: Any) -> None:
+        try:
+            original_del(self)
+        except BaseException:
+            # ``__del__`` runs during GC / interpreter shutdown; raising
+            # from here is meaningless and only adds log noise. The
+            # actual model run has already completed and persisted its
+            # outputs by the time this fires.
+            pass
+
+    _safe_del._hormuz_patched = True  # type: ignore[attr-defined]
+    JDBCBackend.__del__ = _safe_del  # type: ignore[assignment,method-assign]
 
 
 # ---------------------------------------------------------------------------
@@ -228,6 +277,13 @@ class MESSAGEixAdapter(ModelAdapter):
                 "`pip install hormuz-pipeline[energy]` (or "
                 "`pip install message-ix ixmp`) before calling execute()."
             )
+        else:
+            # ixmp is now in sys.modules (transitively via message_ix).
+            # Install the JDBC shutdown-safety patch eagerly so any
+            # JDBCBackend instance created later in this process — even
+            # one constructed outside MESSAGEix.execute() — is cleaned
+            # up quietly at interpreter shutdown.
+            _install_ixmp_jdbc_shutdown_safety()
 
         return ValidationResult(valid=len(errors) == 0, errors=errors, warnings=warnings)
 
@@ -262,10 +318,23 @@ class MESSAGEixAdapter(ModelAdapter):
             import ixmp
             import message_ix
         except ImportError as exc:
-            raise RuntimeError(
+            # NotImplementedError → SLURM runner classifies as SKIPPED.
+            raise NotImplementedError(
                 "MESSAGEix adapter requires the 'message-ix' and 'ixmp' packages. "
-                "Install with `pip install hormuz-pipeline[energy]`."
+                "Install with `pip install -e .[energy]`."
             ) from exc
+
+        # Install the JDBC __del__ shutdown-safety patch BEFORE creating
+        # any Platform. Without this, Python's garbage collector chases
+        # JDBCBackend instances after JPype has already torn down the
+        # JVM (replacing the ``java`` proxy with a SimpleNamespace),
+        # which spams the SLURM log with multi-line tracebacks like:
+        #   Exception ignored in: <function JDBCBackend.__del__ ...>
+        #   AttributeError: 'types.SimpleNamespace' object has no
+        #                   attribute 'IxException'
+        # The model itself runs fine; this patch only silences the
+        # noise. See _install_ixmp_jdbc_shutdown_safety() above.
+        _install_ixmp_jdbc_shutdown_safety()
 
         platform = ixmp.Platform(name=cfg.platform_name)
         try:
@@ -293,6 +362,7 @@ class MESSAGEixAdapter(ModelAdapter):
 
             outputs = self._extract_outputs(scenario)
             outputs["_applied_shocks"] = inputs["shocks"]
+            self._inject_derived_macro(outputs, inputs["shocks"])
 
             cfg.output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -309,10 +379,27 @@ class MESSAGEixAdapter(ModelAdapter):
                 },
             )
         finally:
+            # Order matters: close the DB FIRST (while the JVM is still
+            # alive), then drop every Python reference to the Platform
+            # / Scenario / backend objects, then force a GC pass. This
+            # guarantees JDBCBackend.__del__ runs WHILE ``java`` is
+            # still a real JPype proxy module — not after JPype has
+            # replaced it with types.SimpleNamespace at interpreter
+            # shutdown. The JDBC __del__ shutdown-safety patch
+            # installed above already silences the resulting noise if
+            # this still races, so this is belt-and-suspenders.
             try:
                 platform.close_db()
             except Exception:  # pragma: no cover - best-effort cleanup
                 logger.warning("Failed to close ixmp Platform cleanly", exc_info=True)
+            try:
+                # Local references inside the try-block (baseline,
+                # scenario) are already out of scope here, but the
+                # ``platform`` binding still pins the JDBCBackend.
+                platform = None  # type: ignore[assignment]
+                gc.collect()
+            except Exception:  # pragma: no cover - best-effort cleanup
+                pass
 
     # ------------------------------------------------------------------
     # Output parsing
@@ -326,6 +413,59 @@ class MESSAGEixAdapter(ModelAdapter):
             outputs=raw if isinstance(raw, dict) else {"raw": raw},
             metadata={"adapter": self.__class__.__name__},
         )
+
+    @staticmethod
+    def _inject_derived_macro(
+        outputs: dict[str, Any], applied_shocks: dict[str, Any]
+    ) -> None:
+        """Append macro_kernel-derived GDP / CPI / consumption / welfare
+        fields to the MESSAGEix output dict.
+
+        MESSAGEix's translate_inputs already produces oil_supply_loss_mbd
+        and gas_supply_loss_bcfd, so this is a thin wrapper around the
+        shared kernel. Tagged ``_macro_source: messageix_derived``.
+        Skips silently when there are no operational shocks to translate.
+        """
+        if not applied_shocks:
+            return
+        try:
+            from src.models.macro.macro_kernel import (
+                derive_macro_from_energy_shocks,
+            )
+        except ImportError:
+            return
+        try:
+            derived = derive_macro_from_energy_shocks(applied_shocks)
+        except Exception as exc:  # noqa: BLE001 -- never fatal
+            logger.warning(
+                "MESSAGEix: derived macro outcomes unavailable (%s)", exc
+            )
+            return
+
+        translation = derived.get("_translation") or {}
+        if not translation:
+            return
+
+        for key in (
+            "gdp_impact_pct",
+            "gdp_growth_pct",
+            "gdp_growth_pct_year1",
+            "cpi_inflation_pct",
+            "cpi_inflation_pct_year1",
+            "consumption_impact_pct",
+            "welfare_pct_change",
+            "wage_impact_pct",
+            "interest_rate_impact_pct",
+            "sectoral_output_pct_change",
+        ):
+            if key in derived:
+                outputs[key] = derived[key]
+        outputs["_macro_source"] = "messageix_derived"
+        outputs["_macro_derivation"] = {
+            "translation": translation,
+            "calibration_sources": derived.get("_calibration_sources", []),
+            "kernel_inputs": derived.get("_inputs", {}),
+        }
 
     # ------------------------------------------------------------------
     # Internal helpers

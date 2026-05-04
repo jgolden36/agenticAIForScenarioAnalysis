@@ -123,8 +123,41 @@ _VALID_TIMESTEPS = {
 # Default location of the bridge script (relative to project root).
 _DEFAULT_BRIDGE_SCRIPT = Path("src/models/fertilizer/magpie_bridge.R")
 
-# Default location of the MAgPIE source tree (relative to project root).
-_DEFAULT_MAGPIE_ROOT = Path("Models/Fertilizer/magpie-master/magpie-master")
+# Default candidate locations for the MAgPIE source tree. We try the
+# nested layout first (it's what the upstream tarball produces when
+# extracted under Models/Fertilizer/), then the flattened layout that
+# users sometimes commit. The first candidate containing main.gms wins;
+# the MAGPIE_ROOT environment variable always wins over both.
+_DEFAULT_MAGPIE_ROOT_CANDIDATES: tuple[Path, ...] = (
+    Path("Models/Fertilizer/magpie-master/magpie-master"),
+    Path("Models/Fertilizer/magpie-master"),
+    Path("Models/Fertilizer/magpie"),
+)
+
+
+def _resolve_default_magpie_root() -> Path | None:
+    """Return the first candidate path that actually contains main.gms.
+
+    Honours the ``MAGPIE_ROOT`` env var ahead of the candidate list so
+    the SLURM driver can pin a specific tree without code changes.
+    """
+    import os
+    env_root = os.environ.get("MAGPIE_ROOT")
+    if env_root:
+        p = Path(env_root)
+        if (p / "main.gms").exists():
+            return p
+        # Even if main.gms isn't there yet, honour the explicit override
+        # so downstream warnings point at the user's intended tree.
+        return p
+    for cand in _DEFAULT_MAGPIE_ROOT_CANDIDATES:
+        if (cand / "main.gms").exists():
+            return cand
+    return None
+
+
+# Backwards-compatible re-export — older imports referenced this name.
+_DEFAULT_MAGPIE_ROOT = _DEFAULT_MAGPIE_ROOT_CANDIDATES[0]
 
 
 class MAgPIEAdapter(RAdapter):
@@ -162,7 +195,7 @@ class MAgPIEAdapter(RAdapter):
         super().__init__(config)
         self._magpie_root: Path | None = (
             Path(magpie_root) if magpie_root is not None
-            else (_DEFAULT_MAGPIE_ROOT if _DEFAULT_MAGPIE_ROOT.exists() else None)
+            else _resolve_default_magpie_root()
         )
 
     @property
@@ -386,15 +419,27 @@ class MAgPIEAdapter(RAdapter):
 
         bridge_script = Path(self._config.r_script_path)
         if not bridge_script.exists():
-            raise FileNotFoundError(
-                f"Bridge R script not found at '{bridge_script}'."
+            # NotImplementedError → SLURM runner classifies as SKIPPED.
+            raise NotImplementedError(
+                f"MAgPIE bridge R script not found at '{bridge_script}'."
             )
 
         if self._magpie_root is None or not (self._magpie_root / "main.gms").exists():
-            raise FileNotFoundError(
+            tried = self._magpie_root if self._magpie_root is not None else (
+                "none of " + ", ".join(str(p) for p in _DEFAULT_MAGPIE_ROOT_CANDIDATES)
+            )
+            raise NotImplementedError(
                 "MAgPIE source tree not found. Pass magpie_root to the "
                 "adapter constructor or set the MAGPIE_ROOT environment "
-                f"variable. Tried: {self._magpie_root}"
+                f"variable. Tried: {tried}"
+            )
+
+        # Likewise treat a missing Rscript binary as a skip.
+        from shutil import which
+        if which(self._config.r_executable) is None:
+            raise NotImplementedError(
+                f"MAgPIE adapter requires the '{self._config.r_executable}' binary on PATH "
+                "(R >= 4.3). Install R and retry."
             )
 
         return self._run_bridge_subprocess(inputs)

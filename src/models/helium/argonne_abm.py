@@ -53,7 +53,11 @@ class ArgonneABMAdapter(AnyLogicAdapter):
 
     @property
     def analytical_level(self) -> AnalyticalLevel:
-        return AnalyticalLevel.COMMODITY
+        # COMMODITY_DOWNSTREAM (rather than COMMODITY) so the orchestrator
+        # runs the ABM AFTER world_helium_model: supply_shock_pct is
+        # forwarded from world_helium_model.effective_supply_gap_pct via
+        # configs/upstream_forwarding_mapping.yaml.
+        return AnalyticalLevel.COMMODITY_DOWNSTREAM
 
     @property
     def description(self) -> str:

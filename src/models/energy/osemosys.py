@@ -304,15 +304,34 @@ class OSeMOSYSAdapter(ModelAdapter):
         scenario_id = inputs["scenario_id"]
 
         if not cfg.osemosys_dir.exists():
-            raise FileNotFoundError(
+            # NotImplementedError → SLURM runner classifies as SKIPPED.
+            # The SLURM driver auto-clones the upstream repo when
+            # HORMUZ_AUTO_VENDOR=1.
+            raise NotImplementedError(
                 f"OSeMOSYS source dir not found: {cfg.osemosys_dir}. "
                 "Vendor the OSeMOSYS repo (https://github.com/OSeMOSYS/OSeMOSYS) "
                 f"at {DEFAULT_OSEMOSYS_DIR} or override OSeMOSYSConfig.osemosys_dir."
             )
         if not cfg.baseline_data_dir.exists():
-            raise FileNotFoundError(
+            raise NotImplementedError(
                 f"OSeMOSYS baseline_data_dir not found: {cfg.baseline_data_dir}. "
                 "Provide a baseline dataset (CSV-per-parameter layout)."
+            )
+
+        # Solver and otoole binary checks. Either missing → SKIPPED
+        # rather than FAILED; the SLURM driver conda-installs glpk and
+        # coin-or-cbc when HORMUZ_AUTO_BUILD=1.
+        from shutil import which
+        if which(cfg.otoole_executable) is None:
+            raise NotImplementedError(
+                f"OSeMOSYS adapter requires the '{cfg.otoole_executable}' binary on PATH. "
+                "Install with: pip install -e .[energy]"
+            )
+        solver_bin = cfg.glpsol_executable if cfg.solver == "glpk" else cfg.cbc_executable
+        if cfg.solver in {"glpk", "cbc"} and which(solver_bin) is None:
+            raise NotImplementedError(
+                f"OSeMOSYS solver '{cfg.solver}' requires '{solver_bin}' on PATH. "
+                "Install GLPK ('glpsol') or CBC ('cbc') — e.g. `conda install -c conda-forge glpk coin-or-cbc`."
             )
 
         work_dir = Path(tempfile.mkdtemp(prefix=f"osemosys_{scenario_id}_"))
@@ -336,6 +355,7 @@ class OSeMOSYSAdapter(ModelAdapter):
 
             outputs = self._parse_results(results_dir)
             outputs["_applied_shocks"] = inputs["shocks"]
+            self._inject_derived_macro(outputs, inputs["shocks"])
 
             return ModelOutput(
                 model_id=self.model_id,
@@ -366,6 +386,85 @@ class OSeMOSYSAdapter(ModelAdapter):
             outputs=raw if isinstance(raw, dict) else {"raw": raw},
             metadata={"adapter": self.__class__.__name__},
         )
+
+    @staticmethod
+    def _inject_derived_macro(
+        outputs: dict[str, Any], applied_shocks: dict[str, Any]
+    ) -> None:
+        """Append macro_kernel-derived GDP / CPI / consumption / welfare
+        fields to the OSeMOSYS output dict.
+
+        OSeMOSYS' translate_inputs converts oil/gas supply losses into
+        PJ/yr; we convert them back to the mb/d, bcfd units the macro
+        kernel expects before forwarding. Tagged ``_macro_source:
+        osemosys_derived`` so the synthesizer can distinguish from
+        first-class CGE outputs. Skips silently when there are no
+        operational shocks to translate.
+        """
+        if not applied_shocks:
+            return
+        try:
+            from src.models.macro.macro_kernel import (
+                derive_macro_from_energy_shocks,
+                GLOBAL_OIL_SUPPLY_MBD,  # noqa: F401  (imported for visibility)
+            )
+        except ImportError:
+            return
+
+        # Convert PJ/yr -> mb/d (oil) and PJ/yr -> bcfd (gas) using the
+        # same conversion factors translate_inputs used in reverse.
+        oil_pj = float(applied_shocks.get("oil_supply_loss_pj_per_yr", 0.0) or 0.0)
+        gas_pj = float(applied_shocks.get("gas_supply_loss_pj_per_yr", 0.0) or 0.0)
+        oil_mbd = oil_pj / (365.0 * 5.8e-3) if oil_pj > 0 else 0.0
+        gas_bcfd = gas_pj / (365.0 * 1.055e-3) if gas_pj > 0 else 0.0
+
+        kernel_input: dict[str, Any] = {
+            "oil_supply_loss_mbd": oil_mbd,
+            "gas_supply_loss_bcfd": gas_bcfd,
+            "lng_export_capacity_loss_pct": float(
+                applied_shocks.get("lng_export_capacity_loss_pct", 0.0) or 0.0
+            ),
+            "capital_cost_multiplier": float(
+                applied_shocks.get("capital_cost_multiplier", 1.0) or 1.0
+            ),
+            "duration_years": float(applied_shocks.get("duration_years", 0.5) or 0.5),
+            "oil_price_path_override_usd": applied_shocks.get(
+                "oil_price_path_override_usd"
+            ),
+        }
+
+        try:
+            derived = derive_macro_from_energy_shocks(kernel_input)
+        except Exception as exc:  # noqa: BLE001 -- never fatal
+            logger.warning(
+                "OSeMOSYS: derived macro outcomes unavailable (%s)", exc
+            )
+            return
+
+        translation = derived.get("_translation") or {}
+        if not translation:
+            return
+
+        for key in (
+            "gdp_impact_pct",
+            "gdp_growth_pct",
+            "gdp_growth_pct_year1",
+            "cpi_inflation_pct",
+            "cpi_inflation_pct_year1",
+            "consumption_impact_pct",
+            "welfare_pct_change",
+            "wage_impact_pct",
+            "interest_rate_impact_pct",
+            "sectoral_output_pct_change",
+        ):
+            if key in derived:
+                outputs[key] = derived[key]
+        outputs["_macro_source"] = "osemosys_derived"
+        outputs["_macro_derivation"] = {
+            "translation": translation,
+            "calibration_sources": derived.get("_calibration_sources", []),
+            "kernel_inputs": derived.get("_inputs", {}),
+        }
 
     # ------------------------------------------------------------------
     # Internal helpers

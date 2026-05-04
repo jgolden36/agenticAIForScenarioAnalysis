@@ -20,8 +20,11 @@ and outputs both live in a SQLite database. The execution flow is:
        the standardized ``ModelOutput``.
 
 Real implementation requirements:
-    - Python: ``temoa-energysystem`` (or vendored ``Models/Energy/TEMOA/``
-      checkout) and ``pyomo`` (>=6.7).
+    - Python: a vendored ``Models/Energy/TEMOA/`` checkout (cloned by
+      ``slurm/jobs/stonybrook_ai_cluster.job`` when ``HORMUZ_AUTO_VENDOR=1``)
+      and ``pyomo`` (>=6.7). The PyPI ``temoa`` package is **not**
+      pip-installed — it requires Python >=3.12 and the adapter only
+      ever invokes TEMOA via subprocess against the vendored repo.
     - A solver Pyomo can drive (``cbc`` recommended for open-source
       installations; ``cplex``/``gurobi`` if licensed).
     - A baseline SQLite DB under ``baseline_db_path`` (the vendored repo
@@ -248,11 +251,24 @@ class TEMOAAdapter(ModelAdapter):
         scenario_id = inputs["scenario_id"]
 
         if not cfg.baseline_db_path.exists():
-            raise FileNotFoundError(
+            # NotImplementedError → SLURM runner classifies as SKIPPED.
+            # The TEMOA repo (https://github.com/TemoaProject/temoa) ships
+            # data_files/utopia.sqlite. The SLURM driver auto-clones it
+            # when HORMUZ_AUTO_VENDOR=1.
+            raise NotImplementedError(
                 f"TEMOA baseline DB not found: {cfg.baseline_db_path}. "
                 "Vendor a baseline SQLite (e.g. utopia.sqlite) under "
                 f"{DEFAULT_TEMOA_DIR}/data_files/ or override "
                 "TEMOAConfig.baseline_db_path."
+            )
+
+        # Solver check. Missing CBC/GLPK → SKIPPED (the SLURM driver
+        # conda-installs both via the _opt_install block).
+        from shutil import which
+        if cfg.solver in {"cbc", "glpk"} and which(cfg.solver) is None:
+            raise NotImplementedError(
+                f"TEMOA solver '{cfg.solver}' requires '{cfg.solver}' on PATH. "
+                "Install via `conda install -c conda-forge coin-or-cbc` (or glpk)."
             )
 
         cfg.output_dir.mkdir(parents=True, exist_ok=True)
@@ -271,6 +287,7 @@ class TEMOAAdapter(ModelAdapter):
 
         outputs = self._read_results(scenario_db)
         outputs["_applied_shocks"] = inputs["shocks"]
+        self._inject_derived_macro(outputs, inputs["shocks"])
 
         result = ModelOutput(
             model_id=self.model_id,
@@ -437,6 +454,69 @@ class TEMOAAdapter(ModelAdapter):
             ) from exc
         if result.stdout:
             logger.debug("TEMOA stdout:\n%s", result.stdout)
+
+    @staticmethod
+    def _inject_derived_macro(
+        outputs: dict[str, Any], applied_shocks: dict[str, Any]
+    ) -> None:
+        """Append macro_kernel-derived GDP / CPI / consumption / welfare
+        fields to the output dict.
+
+        Energy-systems adapters consume operational shocks (mb/d, bcfd,
+        capacity-loss percent, capital-cost multiplier) rather than the
+        price-shock vector PyCGE / OpenCGE receive. We translate those
+        into a price-shock-equivalent vector via
+        ``derive_macro_from_energy_shocks`` and forward to the shared
+        analytical kernel so synthesis sees a comparable macro answer
+        from the energy tier. Each derived field is tagged
+        ``_macro_source: "<model_id>_derived"`` so the synthesizer can
+        distinguish these from a first-class CGE solve. Skips silently
+        when applied_shocks is empty / all-zero so the energy adapter
+        degrades cleanly.
+        """
+        if not applied_shocks:
+            return
+        try:
+            from src.models.macro.macro_kernel import (
+                derive_macro_from_energy_shocks,
+            )
+        except ImportError:
+            return
+        try:
+            derived = derive_macro_from_energy_shocks(applied_shocks)
+        except Exception as exc:  # noqa: BLE001 -- never fatal
+            logger.warning(
+                "TEMOA: derived macro outcomes unavailable (%s)", exc
+            )
+            return
+
+        # If the kernel's translation produced no commodity shocks at
+        # all, the operational shocks were either missing or zero;
+        # don't pollute the output dict with zero-valued macro fields.
+        translation = derived.get("_translation") or {}
+        if not translation:
+            return
+
+        for key in (
+            "gdp_impact_pct",
+            "gdp_growth_pct",
+            "gdp_growth_pct_year1",
+            "cpi_inflation_pct",
+            "cpi_inflation_pct_year1",
+            "consumption_impact_pct",
+            "welfare_pct_change",
+            "wage_impact_pct",
+            "interest_rate_impact_pct",
+            "sectoral_output_pct_change",
+        ):
+            if key in derived:
+                outputs[key] = derived[key]
+        outputs["_macro_source"] = "temoa_derived"
+        outputs["_macro_derivation"] = {
+            "translation": translation,
+            "calibration_sources": derived.get("_calibration_sources", []),
+            "kernel_inputs": derived.get("_inputs", {}),
+        }
 
     def _read_results(self, db_path: Path) -> dict[str, Any]:
         outputs: dict[str, Any] = {}
