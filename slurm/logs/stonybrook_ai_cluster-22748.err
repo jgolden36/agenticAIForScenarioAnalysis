@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/home/dagolden/agenticAIForScenarioAnalysis/slurm/scripts/run_scenarios.py", line 148, in <module>
+    main()
+  File "/home/dagolden/agenticAIForScenarioAnalysis/slurm/scripts/run_scenarios.py", line 56, in main
+    with open(crisis_path) as f:
+         ^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/dagolden/agenticAIForScenarioAnalysis/configs/crisis_descriptions/hormuz_2026.yaml'

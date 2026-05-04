@@ -143,3 +143,50 @@ def auto_approve_enabled() -> bool:
         return cfg.get("pipeline_overrides", {}).get("auto_approve_checkpoints", False)
     except Exception:
         return False
+
+
+def resolve_llm_kwargs(config: Any) -> dict[str, Any]:
+    """Build the kwargs dict for ``src.common.llm.get_llm`` with env-var
+    precedence over the static YAML config.
+
+    The SLURM driver jobs export ``PIPELINE_LLM_PROVIDER``,
+    ``PIPELINE_LLM_MODEL`` and ``PIPELINE_LLM_BASE_URL`` based on which
+    LLM sidecar (or cloud provider) they actually started — e.g. the
+    Stony Brook AI Cluster job loads ``Llama-3.1-8B-Instruct`` while the
+    Empire AI Alpha job loads ``Llama-3.1-70B-Instruct`` with
+    tensor-parallel=4. Letting those env vars win over the static YAML
+    config means the Python stage scripts never ask vLLM for a model it
+    isn't serving (which used to surface as a 404 / ``BadRequestError``
+    deep inside ``generator.invoke()``).
+
+    Anything not set in the environment falls back to ``config.llm.*``.
+    Returns the kwargs as a plain dict so callers can splat it into
+    ``get_llm(**kwargs)``.
+    """
+    return {
+        "provider": os.environ.get("PIPELINE_LLM_PROVIDER") or config.llm.provider,
+        "model": os.environ.get("PIPELINE_LLM_MODEL") or config.llm.model,
+        "base_url": (
+            os.environ.get("PIPELINE_LLM_BASE_URL") or config.llm.base_url
+        ),
+        "temperature": config.llm.temperature,
+        "max_concurrency": config.llm.max_concurrency,
+        **config.llm.extra_kwargs,
+    }
+
+
+def resolved_llm_metadata(config: Any) -> dict[str, Any]:
+    """Return the ``(provider, model)`` actually in effect for logging.
+
+    Sidesteps having to call ``resolve_llm_kwargs`` twice (once for
+    ``get_llm``, once for the W&B run config). Pull whatever
+    ``resolve_llm_kwargs`` would pass to ``get_llm`` and keep just the
+    fields a stage typically wants in its run summary.
+    """
+    kwargs = resolve_llm_kwargs(config)
+    return {
+        "llm_provider": kwargs["provider"],
+        "llm_model": kwargs["model"],
+        "llm_temperature": kwargs["temperature"],
+        "llm_base_url": kwargs.get("base_url"),
+    }

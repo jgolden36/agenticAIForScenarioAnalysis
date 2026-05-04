@@ -37,20 +37,23 @@
 # ------------------------------------------------------------------
 # Submission examples
 # ------------------------------------------------------------------
-#   # Default: 2 GPUs, vLLM sidecar on GPU 0, full pipeline.
+#   # Default: 4 GPUs (Llama-3.1-70B-Instruct with tensor-parallel=4),
+#   # vLLM sidecar across all 4 GPUs (no other GPU room left on the
+#   # node — 70B in fp16 needs ~140GB), full pipeline.
 #   cd /mnt/home/$USER/agenticAIForScenarioAnalysis
 #   sbatch slurm/jobs/empire_ai_alpha.job
 #
-#   # Use a cloud LLM instead of local vLLM (saves 1 GPU, needs key):
+#   # Use a cloud LLM instead of local vLLM (saves the GPUs, needs key):
 #   export PIPELINE_LLM_PROVIDER=anthropic
 #   export ANTHROPIC_API_KEY=sk-ant-...
 #   export HORMUZ_USE_VLLM=0
 #   sbatch --gpus-per-node=1 slurm/jobs/empire_ai_alpha.job
 #
-#   # Larger model on 4 GPUs with tensor parallelism:
-#   export HORMUZ_VLLM_MODEL=meta-llama/Llama-3.1-70B-Instruct
-#   export HORMUZ_VLLM_TP_SIZE=4
-#   sbatch --gpus-per-node=4 slurm/jobs/empire_ai_alpha.job
+#   # Smaller model on 2 GPUs (mirrors the Stony Brook AI Cluster job
+#   # default — useful for quick smoke tests):
+#   export HORMUZ_VLLM_MODEL=meta-llama/Llama-3.1-8B-Instruct
+#   export HORMUZ_VLLM_TP_SIZE=1
+#   sbatch --gpus-per-node=2 slurm/jobs/empire_ai_alpha.job
 #
 # ------------------------------------------------------------------
 # SBATCH directives
@@ -60,13 +63,29 @@
 #SBATCH --account=suny
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --gpus-per-node=2
+# 4 GPUs because the default vLLM model on this driver is
+# Llama-3.1-70B-Instruct, which needs ~140GB of GPU memory in fp16
+# and is run with --tensor-parallel-size=4 across the four cards.
+# Override at submit time with `sbatch --gpus-per-node=N ...` when
+# pairing this job with a smaller model (e.g. HORMUZ_VLLM_MODEL=8B
+# only needs 1 GPU).
+#SBATCH --gpus-per-node=4
 #SBATCH --cpus-per-task=16
-#SBATCH --mem=128G
+#SBATCH --mem=256G
 #SBATCH --time=3-00:00:00
 #SBATCH --output=slurm/logs/empire_ai_alpha-%j.out
 #SBATCH --error=slurm/logs/empire_ai_alpha-%j.err
 #SBATCH --mail-type=END,FAIL
+# Exclude alphagpu21: as of 2026-04, slurmctld emits
+#   "NodeNames=alphagpu21 CPUs=192 match no Sockets, Sockets*CoresPerSocket
+#    or Sockets*CoresPerSocket*ThreadsPerCore. Resetting CPUs."
+# i.e. the node's declared CPU count is inconsistent with its
+# topology in slurm.conf. Jobs that land there get their
+# --cpus-per-task silently rewritten and frequently hang during
+# scheduling. Excluding the node sidesteps the issue until the
+# Empire AI ops team fixes its slurm.conf entry. Remove this line
+# once `scontrol show node alphagpu21` reports a consistent topology.
+#SBATCH --exclude=alphagpu21
 # Note: Alpha's `suny` partition uses `--gpus-per-node=N`, NOT
 # `--gres=gpu:N` (the latter is documented for some legacy CCR
 # clusters but not Alpha). Max walltime on `suny` is 7 days
@@ -89,6 +108,31 @@
 # log artefacts stay grouped by run.
 
 set -uo pipefail
+
+# ------------------------------------------------------------------
+# Output buffering. SLURM redirects stdout/stderr to files, and glibc
+# fully-buffers stdio when it isn't writing to a tty. That makes job
+# hangs diagnostically useless because the last-known-good echo can
+# live in a 4 KiB buffer that never flushes. Force line buffering so
+# every `echo` hits the .out file immediately.
+# ------------------------------------------------------------------
+if command -v stdbuf >/dev/null 2>&1; then
+    # Re-exec ourselves under stdbuf -oL -eL on first entry. The guard
+    # env var prevents an infinite loop on the re-exec.
+    if [[ -z "${HORMUZ_STDBUF_REEXEC:-}" ]]; then
+        export HORMUZ_STDBUF_REEXEC=1
+        exec stdbuf -oL -eL "$0" "$@"
+    fi
+fi
+
+# Optional trace mode. Export HORMUZ_TRACE=1 before `sbatch` (or add
+# it to the top of this script during active debugging) to get a
+# `set -x` trace of every bash command that runs. The trace goes to
+# the .err file so the .out remains readable.
+if [[ "${HORMUZ_TRACE:-0}" == "1" ]]; then
+    export PS4='+ [$(date -u +%H:%M:%S)] ${BASH_SOURCE##*/}:${LINENO}: '
+    set -x
+fi
 
 # ------------------------------------------------------------------
 # Resolve project root and source common helpers.
@@ -277,6 +321,113 @@ case "$WANDB_MODE" in
         ;;
 esac
 
+# ------------------------------------------------------------------
+# Hugging Face Hub credentials.
+#
+# vLLM (and transformers in general) downloads model weights from
+# https://huggingface.co at startup. Several models we use — notably
+# meta-llama/Llama-3.1-8B-Instruct, the default vLLM model — live in
+# *gated* repositories: a 200-OK response from /resolve/main/config.json
+# requires both (a) a valid HF user token AND (b) the user's HF account
+# being in the model's authorized list. Without either, vLLM fails with:
+#
+#   OSError: You are trying to access a gated repo.
+#   403 Client Error ... access to model meta-llama/Llama-3.1-8B-Instruct
+#   is restricted and you are not in the authorized list.
+#
+# Resolution order (mirrors the W&B block above):
+#
+#   1. HF_TOKEN or HUGGING_FACE_HUB_TOKEN already exported in the
+#      shell that ran `sbatch` (e.g. via ~/.bashrc, `huggingface-cli
+#      login`, or `export HF_TOKEN=... && sbatch ...`). PREFERRED.
+#
+#   2. A key file at ~/.huggingface_token (or at the path given by
+#      $HF_TOKEN_FILE). Mode 600 is checked. PREFERRED for headless
+#      cluster runs. Create it once with:
+#          umask 077 && echo "hf_..." > ~/.huggingface_token
+#
+#   3. The inline literal on the HF_TOKEN_INLINE line below. ONLY use
+#      this in a private clone — `.job` files are tracked by git and
+#      committing a token would leak it (and HF will revoke it).
+#
+# Once a token is resolved we export BOTH HF_TOKEN (the name
+# transformers >=4.40 / huggingface_hub >=0.23 prefer) and
+# HUGGING_FACE_HUB_TOKEN (the legacy name still read by vLLM and
+# older transformers releases) so every code path picks it up.
+#
+# Note: a valid token does NOT bypass the gated-repo authorization.
+# You must also visit the model page on huggingface.co while signed
+# into the same HF account that owns the token and click "Request
+# access" / accept the license. Without that, even a perfectly valid
+# token will still 403 on /resolve/main/config.json.
+# ------------------------------------------------------------------
+
+# === EDIT BELOW ONLY IF USING OPTION 3 ===
+# Paste your token inside the quotes (`hf_...` from
+# https://huggingface.co/settings/tokens). Leave empty to use option 1 or 2.
+HF_TOKEN_INLINE="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"
+# ==========================================
+
+# Option 2: load from a file if present.
+HF_TOKEN_FILE="${HF_TOKEN_FILE:-${HOME}/.huggingface_token}"
+
+# Accept either env var name on input; we'll re-export both at the end.
+if [[ -z "${HF_TOKEN:-}" && -n "${HUGGING_FACE_HUB_TOKEN:-}" ]]; then
+    HF_TOKEN="$HUGGING_FACE_HUB_TOKEN"
+fi
+
+if [[ -z "${HF_TOKEN:-}" ]]; then
+    if [[ -n "$HF_TOKEN_INLINE" ]]; then
+        HF_TOKEN="$HF_TOKEN_INLINE"
+        echo "[hf] using inline HF_TOKEN_INLINE (consider moving to" \
+             "$HF_TOKEN_FILE to keep secrets out of the .job file)"
+    elif [[ -r "$HF_TOKEN_FILE" ]]; then
+        # Sanity-check file permissions: 600 or 400 only.
+        hf_perms=$(stat -c '%a' "$HF_TOKEN_FILE" 2>/dev/null || \
+                   stat -f '%Lp' "$HF_TOKEN_FILE" 2>/dev/null || echo "?")
+        if [[ "$hf_perms" != "600" && "$hf_perms" != "400" && "$hf_perms" != "?" ]]; then
+            echo "[hf] WARNING: $HF_TOKEN_FILE has permissions ${hf_perms};" \
+                 "tighten with: chmod 600 $HF_TOKEN_FILE"
+        fi
+        # Read the first non-empty, non-comment line.
+        HF_TOKEN=$(grep -v '^[[:space:]]*#' "$HF_TOKEN_FILE" | \
+                   sed '/^[[:space:]]*$/d' | head -n1 | tr -d '[:space:]')
+        if [[ -n "$HF_TOKEN" ]]; then
+            echo "[hf] loaded HF token from $HF_TOKEN_FILE"
+        fi
+    fi
+fi
+
+if [[ -n "${HF_TOKEN:-}" ]]; then
+    export HF_TOKEN
+    export HUGGING_FACE_HUB_TOKEN="$HF_TOKEN"
+    # Mask all but the first 4 + last 4 characters for the banner.
+    hf_token_len=${#HF_TOKEN}
+    if [[ $hf_token_len -gt 12 ]]; then
+        hf_token_mask="${HF_TOKEN:0:4}…${HF_TOKEN: -4} (len=${hf_token_len})"
+    else
+        hf_token_mask="(short token, len=${hf_token_len})"
+    fi
+    echo "[hf] HF_TOKEN + HUGGING_FACE_HUB_TOKEN exported: ${hf_token_mask}"
+else
+    echo "[hf] no HF token found (checked env, $HF_TOKEN_FILE, inline)."
+    echo "[hf]   Gated models (e.g. meta-llama/Llama-3.1-8B-Instruct) will fail to download."
+    echo "[hf]   Fix: write your token to $HF_TOKEN_FILE with mode 600, OR"
+    echo "[hf]        export HF_TOKEN=hf_... before submitting."
+fi
+
+# Pin the HF cache under scratch (when available) so repeated job
+# submissions reuse the downloaded weights instead of re-fetching the
+# gated repo every time. transformers + huggingface_hub both honour
+# HF_HOME; vLLM honours it transitively.
+if [[ -n "${HORMUZ_RUN_SCRATCH:-}" && -d "$(dirname "$HORMUZ_RUN_SCRATCH")" ]]; then
+    export HF_HOME="${HF_HOME:-$(dirname "$HORMUZ_RUN_SCRATCH")/hf-cache}"
+else
+    export HF_HOME="${HF_HOME:-${HOME}/.cache/huggingface}"
+fi
+mkdir -p "$HF_HOME"
+echo "[hf] HF_HOME=${HF_HOME}"
+
 echo "================================================================"
 echo "  Hormuz Pipeline — Empire AI Alpha (single-node driver)"
 echo "================================================================"
@@ -303,20 +454,86 @@ echo "================================================================"
 # Modules. Alpha's module set is small; everything is best-effort so
 # missing modules are recorded, not fatal. The conda env is the
 # real source of dependencies.
+#
+# Each `module` call is wrapped in `timeout 60s` so that a broken
+# Lmod cache (rare, but observed on Alpha after partition reshuffles)
+# can't silently stall the job. Stdin is redirected from /dev/null so
+# modulefiles that try to read interactively never block.
 # ------------------------------------------------------------------
-module purge 2>/dev/null || true
-module load anaconda3        2>/dev/null || echo "[module] anaconda3 not available; relying on PATH"
-module load cuda/12.4        2>/dev/null || module load cuda 2>/dev/null || echo "[module] no cuda module loaded"
-module load cudnn/9.0        2>/dev/null || echo "[module] no cudnn module loaded"
+_hormuz_mod() {
+    # $1: human-readable label for progress logging.
+    # $@: module command, e.g. `load anaconda3`.
+    local label="$1"; shift
+    if command -v module >/dev/null 2>&1; then
+        timeout --preserve-status 60s bash -c "module $* </dev/null" 2>/dev/null
+        return $?
+    fi
+    return 127
+}
 
+echo "[progress] loading Lmod modules..."
+_hormuz_mod "purge" purge || true
+if ! _hormuz_mod "anaconda3" load anaconda3; then
+    echo "[module] anaconda3 not available; relying on PATH"
+fi
+if ! _hormuz_mod "cuda/12.4" load cuda/12.4; then
+    if ! _hormuz_mod "cuda" load cuda; then
+        echo "[module] no cuda module loaded"
+    fi
+fi
+if ! _hormuz_mod "cudnn/9.0" load cudnn/9.0; then
+    echo "[module] no cudnn module loaded"
+fi
+echo "[progress] modules done."
+
+echo "[progress] activating conda env '${HORMUZ_CONDA_ENV}'..."
 if ! hormuz_activate_conda "${HORMUZ_CONDA_ENV}"; then
     record_bash_failure "${STAGE_PREFIX}_setup" 1 \
         "hormuz_activate_conda failed for env '${HORMUZ_CONDA_ENV}' on $(hostname)"
     echo "[fatal] cannot activate conda env '${HORMUZ_CONDA_ENV}'; aborting."
     exit 1
 fi
+echo "[progress] conda env active (python=$(command -v python 2>/dev/null || echo missing))."
 
+# ------------------------------------------------------------------
+# Sanity-check core importability. The Python stage scripts cannot
+# start without these; without this guard a missing wheel surfaces
+# as a ModuleNotFoundError ~30 lines into Module 1, which is much
+# harder to diagnose. langchain-openai backs the vLLM provider in
+# src/common/llm.py, so it is required even when no cloud OpenAI
+# key is set.
+#
+# We invoke pip via `${_env_python} -m pip` so the install always
+# lands in the same site-packages the activated python imports
+# from. On shared-miniforge installs the system pip can stay first
+# on PATH after `conda activate`, producing the confusing failure
+# mode "pip says installed, import still fails" — using the
+# interpreter directly side-steps that.
+# ------------------------------------------------------------------
+echo "[progress] verifying core imports..."
+_env_python="$(command -v python)"
+echo "[progress] env python: ${_env_python} ($(${_env_python} -V 2>&1))"
+if ! "${_env_python}" -c "import langchain_openai, langchain, langgraph, pydantic" >/dev/null 2>&1; then
+    echo "[setup] core imports missing in env '${HORMUZ_CONDA_ENV}'; reinstalling pipeline package."
+    if ! "${_env_python}" -m pip install -e ".[dev,adapters]"; then
+        record_bash_failure "${STAGE_PREFIX}_setup" 1 \
+            "pip install -e .[dev,adapters] failed during import-recovery on $(hostname)"
+        echo "[fatal] could not repair env; aborting."
+        exit 1
+    fi
+    if ! "${_env_python}" -c "import langchain_openai, langchain, langgraph, pydantic" >/dev/null 2>&1; then
+        record_bash_failure "${STAGE_PREFIX}_setup" 1 \
+            "core imports still missing after pip install on $(hostname)"
+        echo "[fatal] core imports still missing after reinstall; aborting."
+        exit 1
+    fi
+    echo "[setup] core imports recovered."
+fi
+echo "[progress] core imports OK."
+
+echo "[progress] recording runtime inventory..."
 record_runtime_inventory "${STAGE_PREFIX}_setup"
+echo "[progress] runtime inventory done."
 
 # ------------------------------------------------------------------
 # Optional vLLM sidecar on the local node (default: ON).
@@ -353,14 +570,24 @@ if [[ "$HORMUZ_USE_VLLM" == "1" && "$PIPELINE_LLM_PROVIDER" == "vllm" ]]; then
         exit 1
     fi
 
-    VLLM_MODEL="${HORMUZ_VLLM_MODEL:-meta-llama/Llama-3.1-8B-Instruct}"
+    # Empire AI Alpha defaults: Llama-3.1-70B-Instruct sharded across
+    # 4 GPUs (tensor-parallel=4). 70B in fp16 needs ~140GB, so all
+    # four GPUs are claimed by vLLM and no GPU room is left for
+    # GPU-tagged domain models on the executor — they will be marked
+    # SKIPPED. Override HORMUZ_VLLM_MODEL/_TP_SIZE/_GPUS at submit
+    # time when running smaller models that leave GPU headroom.
+    VLLM_MODEL="${HORMUZ_VLLM_MODEL:-meta-llama/Llama-3.1-70B-Instruct}"
     VLLM_PORT="${HORMUZ_VLLM_PORT:-8000}"
-    VLLM_TP_SIZE="${HORMUZ_VLLM_TP_SIZE:-1}"
+    VLLM_TP_SIZE="${HORMUZ_VLLM_TP_SIZE:-4}"
     VLLM_DTYPE="${HORMUZ_VLLM_DTYPE:-auto}"
     VLLM_MAX_LEN="${HORMUZ_VLLM_MAX_LEN:-8192}"
-    # Pin vLLM to GPU 0 so the rest of the visible devices are free
-    # for any GPU-using domain models (e.g. SimRLFab on the executor).
-    VLLM_GPUS="${HORMUZ_VLLM_GPUS:-0}"
+    # GPU device list passed to the vLLM child process via
+    # CUDA_VISIBLE_DEVICES. Default keeps all 4 GPUs (0,1,2,3) for
+    # vLLM to match the default tensor-parallel=4. When running a
+    # smaller model (e.g. 8B at TP=1), set HORMUZ_VLLM_GPUS=0 so the
+    # remaining cards stay free for the executor's GPU-tagged
+    # domain models.
+    VLLM_GPUS="${HORMUZ_VLLM_GPUS:-0,1,2,3}"
 
     NODE_HOST="$(hostname -f 2>/dev/null || hostname)"
     VLLM_LOG="${RUN_LOG_DIR}/vllm.log"
@@ -381,20 +608,50 @@ if [[ "$HORMUZ_USE_VLLM" == "1" && "$PIPELINE_LLM_PROVIDER" == "vllm" ]]; then
     VLLM_PID=$!
     echo "[vllm] pid=${VLLM_PID}"
 
-    # Reserve GPU 0 for vLLM; expose the rest to the pipeline driver
-    # (and the GPU domain models it spawns).
-    if [[ -n "${SLURM_GPUS_ON_NODE:-}" && "${SLURM_GPUS_ON_NODE}" -gt 1 ]]; then
-        REST=$(seq -s, 1 $((SLURM_GPUS_ON_NODE - 1)))
+    # Reserve $VLLM_GPUS for vLLM; expose the remaining devices to the
+    # pipeline driver (and the GPU domain models it spawns).
+    #
+    # For the Empire AI Alpha default (70B + TP=4 + VLLM_GPUS=0,1,2,3)
+    # this leaves the driver with CUDA_VISIBLE_DEVICES="", which is
+    # fine because LLM calls go over HTTP and CPU adapters don't need
+    # a GPU; GPU-tagged adapters will be marked SKIPPED. Override
+    # HORMUZ_VLLM_GPUS to a smaller subset (e.g. "0") when running
+    # smaller models so GPU adapters can run too.
+    if [[ -n "${SLURM_GPUS_ON_NODE:-}" && "${SLURM_GPUS_ON_NODE}" -gt 0 ]]; then
+        # Comma-separated set difference: all SLURM-visible GPUs minus
+        # the ones we just handed to vLLM.
+        _all_gpus=$(seq -s, 0 $((SLURM_GPUS_ON_NODE - 1)))
+        REST=""
+        IFS=',' read -ra _all_arr <<< "$_all_gpus"
+        IFS=',' read -ra _vllm_arr <<< "$VLLM_GPUS"
+        for g in "${_all_arr[@]}"; do
+            keep=1
+            for v in "${_vllm_arr[@]}"; do
+                if [[ "$g" == "$v" ]]; then keep=0; break; fi
+            done
+            if [[ $keep -eq 1 ]]; then
+                REST="${REST:+${REST},}${g}"
+            fi
+        done
         export CUDA_VISIBLE_DEVICES="$REST"
-        echo "[gpu] pipeline driver sees CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES}"
+        if [[ -n "$REST" ]]; then
+            echo "[gpu] pipeline driver sees CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES}"
+        else
+            echo "[gpu] vLLM owns all ${SLURM_GPUS_ON_NODE} GPUs; pipeline driver runs CPU-only."
+            echo "[gpu]   GPU-tagged domain adapters will be marked SKIPPED."
+        fi
     else
-        # Only one GPU on this node: vLLM owns it. The pipeline driver
-        # gets none — fine because LLM calls are HTTP and CPU adapters
-        # don't need a GPU. GPU-tagged adapters will be marked SKIPPED.
         export CUDA_VISIBLE_DEVICES=""
-        echo "[gpu] single GPU on node; pipeline driver runs CPU-only."
+        echo "[gpu] no GPUs reported on this node; pipeline driver runs CPU-only."
     fi
 
+    # PIPELINE_LLM_{BASE_URL,MODEL,PROVIDER} are the source of truth
+    # for the Python stage scripts (see slurm/scripts/stage_utils.py
+    # :: resolve_llm_kwargs). They take precedence over whatever
+    # `model:` is in slurm/config/pipeline_cluster.yaml, which means
+    # changing HORMUZ_VLLM_MODEL above is enough to switch models —
+    # no YAML edit required, and no risk of asking vLLM for a model
+    # it isn't serving (404 / BadRequestError).
     export PIPELINE_LLM_BASE_URL="http://${NODE_HOST}:${VLLM_PORT}/v1"
     export PIPELINE_LLM_MODEL="${VLLM_MODEL}"
 
@@ -512,37 +769,91 @@ run_manifest_loop "${STAGE_PREFIX}_02_parameters" \
     "slurm/scripts/run_parameters.py" "$PARAM_COUNT_FILE"
 
 # ==================================================================
-#  Dispatch — model execution manifests
+#  Dispatch — commodity-tier model execution manifest (Stage 3a)
 # ==================================================================
 echo ""
-echo "════════════ Dispatch: Model Execution Manifest ════════════"
-safe_python "${STAGE_PREFIX}_dispatch_models" 0 -- \
-    python slurm/scripts/dispatch_models.py models --run-id "${HORMUZ_RUN_ID}"
+echo "════════════ Dispatch: Commodity Manifest ════════════"
+safe_python "${STAGE_PREFIX}_dispatch_models_commodity" 0 -- \
+    python slurm/scripts/dispatch_models.py models \
+        --tier commodity --run-id "${HORMUZ_RUN_ID}"
 rc=$?
 if [[ $rc -ne 0 ]]; then
-    echo "[fatal] model dispatch failed (exit=$rc); aborting."
+    echo "[fatal] commodity model dispatch failed (exit=$rc); aborting."
     exit "$rc"
 fi
 
-MODELS_COUNT_FILE="${PROJECT_ROOT}/data/pipeline_state/manifests/${HORMUZ_RUN_ID}_models_count.txt"
+COMMODITY_COUNT_FILE="${PROJECT_ROOT}/data/pipeline_state/manifests/${HORMUZ_RUN_ID}_models_commodity_count.txt"
 
 # ==================================================================
-#  Stage 3 — Module 3: Model Execution (CPU + GPU, single combined manifest)
-#
-# We run the unified "models" manifest rather than the split
-# cpu/gpu manifests because everything is on one node; the executor
-# will respect each adapter's ResourceRequirements internally and
-# any GPU-tagged adapters will use the device ids in
-# CUDA_VISIBLE_DEVICES that we reserved above.
+#  Stage 3a — Module 3: Commodity tier model execution
 # ==================================================================
 echo ""
-echo "════════════ Stage 3: Model Execution ════════════"
-# Unset the manifest-name override so run_model.py uses the default
-# combined "models" manifest (the GPU sbatch sets HORMUZ_MANIFEST_NAME
-# to "models_gpu" — we don't want that here).
+echo "════════════ Stage 3a: Commodity Tier Execution ════════════"
 unset HORMUZ_MANIFEST_NAME
-run_manifest_loop "${STAGE_PREFIX}_03_models" \
-    "slurm/scripts/run_model.py" "$MODELS_COUNT_FILE"
+export HORMUZ_MANIFEST_NAME="models_commodity"
+run_manifest_loop "${STAGE_PREFIX}_03a_models_commodity" \
+    "slurm/scripts/run_model.py" "$COMMODITY_COUNT_FILE"
+
+# ==================================================================
+#  Dispatch — commodity_downstream manifest (Stage 3a-2)
+#
+# Forwards world_helium_model outputs into SimRLFab and Argonne ABM
+# inputs via configs/upstream_forwarding_mapping.yaml. Audit at
+# data/pipeline_state/<run_id>_commodity_downstream_overrides.json.
+# ==================================================================
+echo ""
+echo "════════════ Dispatch: Commodity-Downstream Manifest (Upstream Merge) ════════════"
+safe_python "${STAGE_PREFIX}_dispatch_models_commodity_downstream" 0 -- \
+    python slurm/scripts/dispatch_models.py models \
+        --tier commodity_downstream --run-id "${HORMUZ_RUN_ID}"
+rc=$?
+if [[ $rc -ne 0 ]]; then
+    echo "[fatal] commodity_downstream model dispatch failed (exit=$rc); aborting."
+    exit "$rc"
+fi
+
+COMMODITY_DOWNSTREAM_COUNT_FILE="${PROJECT_ROOT}/data/pipeline_state/manifests/${HORMUZ_RUN_ID}_models_commodity_downstream_count.txt"
+
+# ==================================================================
+#  Stage 3a-2 — Module 3: Commodity-downstream tier execution
+# ==================================================================
+echo ""
+echo "════════════ Stage 3a-2: Commodity-Downstream Tier Execution ════════════"
+unset HORMUZ_MANIFEST_NAME
+export HORMUZ_MANIFEST_NAME="models_commodity_downstream"
+run_manifest_loop "${STAGE_PREFIX}_03a2_models_commodity_downstream" \
+    "slurm/scripts/run_model.py" "$COMMODITY_DOWNSTREAM_COUNT_FILE"
+
+# ==================================================================
+#  Dispatch — macro-tier model execution manifest (Stage 3b)
+#
+# Reads commodity AND commodity_downstream outputs from
+# data/outputs/, applies configs/upstream_forwarding_mapping.yaml,
+# and emits manifest entries whose `parameters` already reflect
+# upstream-derived shocks.
+# ==================================================================
+echo ""
+echo "════════════ Dispatch: Macro Manifest (Upstream Merge) ════════════"
+safe_python "${STAGE_PREFIX}_dispatch_models_macro" 0 -- \
+    python slurm/scripts/dispatch_models.py models \
+        --tier macro --run-id "${HORMUZ_RUN_ID}"
+rc=$?
+if [[ $rc -ne 0 ]]; then
+    echo "[fatal] macro model dispatch failed (exit=$rc); aborting."
+    exit "$rc"
+fi
+
+MACRO_COUNT_FILE="${PROJECT_ROOT}/data/pipeline_state/manifests/${HORMUZ_RUN_ID}_models_macro_count.txt"
+
+# ==================================================================
+#  Stage 3b — Module 3: Macro tier model execution
+# ==================================================================
+echo ""
+echo "════════════ Stage 3b: Macro Tier Execution ════════════"
+export HORMUZ_MANIFEST_NAME="models_macro"
+run_manifest_loop "${STAGE_PREFIX}_03b_models_macro" \
+    "slurm/scripts/run_model.py" "$MACRO_COUNT_FILE"
+unset HORMUZ_MANIFEST_NAME
 
 # ==================================================================
 #  Stage 4 — Module 4: Output Synthesis

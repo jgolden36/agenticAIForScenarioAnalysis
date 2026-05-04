@@ -1,0 +1,97 @@
+[wandb] project=hormuz-pipeline group=20260423_092438 mode=offline
+[wandb] dir=/home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260423_092438 per_task=1
+[wandb] runs will be written to /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260423_092438; sync later with:
+[wandb]   wandb sync /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260423_092438/wandb/offline-run-*
+[hf] using inline HF_TOKEN_INLINE (consider moving to /home/dagolden/.huggingface_token to keep secrets out of the .job file)
+[hf] HF_TOKEN + HUGGING_FACE_HUB_TOKEN exported: hf_o…AFmq (len=37)
+[hf] HF_HOME=/home/dagolden/.cache/huggingface
+================================================================
+  Hormuz Pipeline — Stony Brook AI Cluster (single-node driver)
+================================================================
+  Job ID:        22953
+  Run ID:        20260423_092438
+  Node:          ai05
+  Partition:     defq
+  Nodelist:      quadro2
+  CPUs:          16
+  GPUs (gres):   2
+  Memory:        131072 MB
+  Walltime cap:  from-script
+  Project root:  /home/dagolden/agenticAIForScenarioAnalysis
+  Conda env:     hormuz
+  Config:        /home/dagolden/agenticAIForScenarioAnalysis/slurm/config/pipeline_cluster.yaml
+  Scratch:       <unset, using project root>
+  Run log dir:   /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260423_092438
+  Driver out:    /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/stonybrook_ai_cluster-22953.out
+  Driver err:    /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/stonybrook_ai_cluster-22953.err
+  W&B project:   hormuz-pipeline (mode=offline, group=20260423_092438)
+  Started at:    2026-04-23T09:24:38Z
+================================================================
+[progress] loading Lmod modules...
+[module] anaconda not available; relying on PATH
+[module] no cudnn module loaded
+[progress] modules done.
+[progress] bootstrapping conda env 'hormuz' (auto-build)...
+[build] env 'hormuz' already exists at /home/dagolden/miniconda3/envs/hormuz
+[build] install marker present at /home/dagolden/miniconda3/envs/hormuz/.hormuz_install_sentinel
+[build] skipping pip install. Set HORMUZ_FORCE_REBUILD=1 to force a reinstall.
+[progress] bootstrap done.
+[progress] activating conda env 'hormuz'...
+[conda] using CONDA_EXE=/home/dagolden/miniconda3/bin/conda
+[conda] conda base: /home/dagolden/miniconda3
+[conda] activating 'hormuz'...
+[conda] activated env 'hormuz' (CONDA_PREFIX=/home/dagolden/miniconda3/envs/hormuz)
+[progress] conda env active (python=/home/dagolden/miniconda3/envs/hormuz/bin/python).
+[progress] recording runtime inventory...
+[runtime] Inventory written to /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260423_092438/runtime-stonybrook_ai_cluster_setup-22953-single.json
+[runtime] gpu=yes python=Python 3.11.15 gams=missing julia=missing R=missing java=missing cuda=missing
+[progress] runtime inventory done.
+[vllm] starting sidecar on ai05:8000
+       model=meta-llama/Llama-3.1-8B-Instruct tp=1 dtype=auto gpus=0
+       log:   /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260423_092438/vllm.log
+[vllm] pid=901072
+[gpu] pipeline driver sees CUDA_VISIBLE_DEVICES=1
+[vllm] waiting up to 1800s for http://ai05:8000/v1/models
+[failure] Recorded bash failure for stage=stonybrook_ai_cluster_vllm task=22953-single exit=1: vLLM exited before becoming healthy; see /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260423_092438/vllm.log
+[failure] /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_092438_stonybrook_ai_cluster_vllm_bash_failure_22953-single.json
+[fatal] vLLM died during startup. Tail of log:
+(APIServer pid=901072)     await run_server_worker(listen_address, sock, args, **uvicorn_kwargs)
+(APIServer pid=901072)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/vllm/entrypoints/openai/api_server.py", line 686, in run_server_worker
+(APIServer pid=901072)     async with build_async_engine_client(
+(APIServer pid=901072)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/contextlib.py", line 210, in __aenter__
+(APIServer pid=901072)     return await anext(self.gen)
+(APIServer pid=901072)            ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=901072)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/vllm/entrypoints/openai/api_server.py", line 100, in build_async_engine_client
+(APIServer pid=901072)     async with build_async_engine_client_from_engine_args(
+(APIServer pid=901072)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/contextlib.py", line 210, in __aenter__
+(APIServer pid=901072)     return await anext(self.gen)
+(APIServer pid=901072)            ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=901072)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/vllm/entrypoints/openai/api_server.py", line 136, in build_async_engine_client_from_engine_args
+(APIServer pid=901072)     async_llm = AsyncLLM.from_vllm_config(
+(APIServer pid=901072)                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=901072)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/vllm/v1/engine/async_llm.py", line 225, in from_vllm_config
+(APIServer pid=901072)     return cls(
+(APIServer pid=901072)            ^^^^
+(APIServer pid=901072)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/vllm/v1/engine/async_llm.py", line 154, in __init__
+(APIServer pid=901072)     self.engine_core = EngineCoreClient.make_async_mp_client(
+(APIServer pid=901072)                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=901072)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(APIServer pid=901072)     return func(*args, **kwargs)
+(APIServer pid=901072)            ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=901072)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/vllm/v1/engine/core_client.py", line 130, in make_async_mp_client
+(APIServer pid=901072)     return AsyncMPClient(*client_args)
+(APIServer pid=901072)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=901072)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(APIServer pid=901072)     return func(*args, **kwargs)
+(APIServer pid=901072)            ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=901072)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/vllm/v1/engine/core_client.py", line 887, in __init__
+(APIServer pid=901072)     super().__init__(
+(APIServer pid=901072)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/vllm/v1/engine/core_client.py", line 535, in __init__
+(APIServer pid=901072)     with launch_core_engines(
+(APIServer pid=901072)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/contextlib.py", line 144, in __exit__
+(APIServer pid=901072)     next(self.gen)
+(APIServer pid=901072)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/vllm/v1/engine/utils.py", line 998, in launch_core_engines
+(APIServer pid=901072)     wait_for_engine_startup(
+(APIServer pid=901072)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/vllm/v1/engine/utils.py", line 1057, in wait_for_engine_startup
+(APIServer pid=901072)     raise RuntimeError(
+(APIServer pid=901072) RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}

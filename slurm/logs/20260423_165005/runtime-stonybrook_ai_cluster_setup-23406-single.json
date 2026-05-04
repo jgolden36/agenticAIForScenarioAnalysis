@@ -1,0 +1,20 @@
+{
+  "stage": "stonybrook_ai_cluster_setup",
+  "run_id": "20260423_165005",
+  "timestamp": "2026-04-23T16:51:46Z",
+  "hostname": "ai04",
+  "slurm_job_id": "23406",
+  "slurm_array_task_id": "single",
+  "conda_env_requested": "hormuz",
+  "conda_env_active": "hormuz",
+  "gpu_visible": "yes",
+  "runtimes": {
+    "python": "Python 3.11.15",
+    "conda": "conda 24.11.3",
+    "gams": "missing",
+    "julia": "missing",
+    "R": "missing",
+    "java": "missing",
+    "cuda": "nvcc: NVIDIA (R) Cuda compiler driver"
+  }
+}

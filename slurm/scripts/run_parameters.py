@@ -23,6 +23,8 @@ from slurm.scripts.stage_utils import (
     load_state,
     log_slurm_context,
     logger,
+    resolve_llm_kwargs,
+    resolved_llm_metadata,
     save_state,
 )
 
@@ -82,6 +84,7 @@ def main() -> None:
     # single table on its own W&B run, so disabling per-task logging
     # only loses live progress visibility, not final artefacts.
     wb: WandbLogger
+    llm_meta = resolved_llm_metadata(config)
     if per_task_logging_enabled():
         wb_cm = stage_run(
             "parameters",
@@ -90,8 +93,7 @@ def main() -> None:
                 "scenario_id": scenario_id_str,
                 "model_id": model_id,
                 "task_id": task_id,
-                "llm_provider": config.llm.provider,
-                "llm_model": config.llm.model,
+                **llm_meta,
             },
             tags=["hormuz", "parameters", scenario_id_str, model_id],
         )
@@ -104,13 +106,10 @@ def main() -> None:
         wb_cm = nullcontext(WandbLogger(run=None, stage="parameters", group=run_id))
 
     with wb_cm as wb:
-        # Build LLM and extractor
-        llm = get_llm(
-            provider=config.llm.provider,
-            model=config.llm.model,
-            temperature=config.llm.temperature,
-            **config.llm.extra_kwargs,
-        )
+        # Build LLM. Env vars (PIPELINE_LLM_PROVIDER / _MODEL / _BASE_URL)
+        # win over the YAML config so the SLURM driver job — which is
+        # what actually started the vLLM sidecar — owns the model name.
+        llm = get_llm(**resolve_llm_kwargs(config))
         extractor = build_parameter_extractor(llm)
 
         scenario_obj = ScenarioNarrative(

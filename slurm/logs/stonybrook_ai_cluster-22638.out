@@ -1,0 +1,937 @@
+[wandb] project=hormuz-pipeline group=20260421_105735 mode=offline
+[wandb] dir=/home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260421_105735 per_task=1
+[wandb] runs will be written to /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260421_105735; sync later with:
+[wandb]   wandb sync /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260421_105735/wandb/offline-run-*
+================================================================
+  Hormuz Pipeline — Stony Brook AI Cluster (single-node driver)
+================================================================
+  Job ID:        22638
+  Run ID:        20260421_105735
+  Node:          ai02
+  Partition:     defq
+  Nodelist:      tesla1
+  CPUs:          16
+  GPUs (gres):   2
+  Memory:        131072 MB
+  Walltime cap:  from-script
+  Project root:  /home/dagolden/agenticAIForScenarioAnalysis
+  Conda env:     hormuz
+  Config:        /home/dagolden/agenticAIForScenarioAnalysis/slurm/config/pipeline_cluster.yaml
+  Scratch:       <unset, using project root>
+  Run log dir:   /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260421_105735
+  Driver out:    /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/stonybrook_ai_cluster-22638.out
+  Driver err:    /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/stonybrook_ai_cluster-22638.err
+  W&B project:   hormuz-pipeline (mode=offline, group=20260421_105735)
+  Started at:    2026-04-21T10:57:35Z
+================================================================
+[progress] loading Lmod modules...
+[module] anaconda not available; relying on PATH
+[module] no cuda module loaded
+[module] no cudnn module loaded
+[progress] modules done.
+[progress] bootstrapping conda env 'hormuz' (auto-build)...
+[build] env 'hormuz' already exists at /home/dagolden/miniconda3/envs/hormuz
+[build] installing pipeline package (extras=[dev,adapters])...
+[build] activating env 'hormuz' for install...
+[build] env active; python=/home/dagolden/miniconda3/envs/hormuz/bin/python, pip=/home/dagolden/.local/bin/pip
+[build] pip upgrade-tooling: starting at 11:04:40Z (timeout=1800s)
+Requirement already satisfied: pip in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (26.0.1)
+Requirement already satisfied: setuptools in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (82.0.1)
+Requirement already satisfied: wheel in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (0.46.3)
+Requirement already satisfied: packaging>=24.0 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from wheel) (26.0)
+[build] pip upgrade-tooling: exit=0 at 11:04:42Z
+[build] pip pipeline-package: starting at 11:04:42Z (timeout=1800s)
+Using pip 26.0.1 from /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/pip (python 3.11)
+Obtaining file:///home/dagolden/agenticAIForScenarioAnalysis
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Collecting langchain>=0.3.0 (from hormuz-pipeline==0.1.0)
+  Obtaining dependency information for langchain>=0.3.0 from https://files.pythonhosted.org/packages/3f/e8/a3b8cb0005553f6a876865073c81ef93bd7c5b18381bcb9ba4013af96ebc/langchain-1.2.15-py3-none-any.whl.metadata
+  Downloading langchain-1.2.15-py3-none-any.whl.metadata (5.8 kB)
+Collecting langchain-core>=0.3.0 (from hormuz-pipeline==0.1.0)
+  Obtaining dependency information for langchain-core>=0.3.0 from https://files.pythonhosted.org/packages/f8/e2/dbfa347aa072a6dc4cd38d6f9ebfc730b4c14c258c47f480f4c5c546f177/langchain_core-1.3.0-py3-none-any.whl.metadata
+  Downloading langchain_core-1.3.0-py3-none-any.whl.metadata (4.4 kB)
+Collecting langgraph>=0.3.0 (from hormuz-pipeline==0.1.0)
+  Obtaining dependency information for langgraph>=0.3.0 from https://files.pythonhosted.org/packages/22/38/c72e795f6f8fd05a8e7c3be32c04ea8534294decc6785f3b04e0ce932e8a/langgraph-1.1.8-py3-none-any.whl.metadata
+  Downloading langgraph-1.1.8-py3-none-any.whl.metadata (8.0 kB)
+Collecting pydantic>=2.0 (from hormuz-pipeline==0.1.0)
+  Obtaining dependency information for pydantic>=2.0 from https://files.pythonhosted.org/packages/f3/0a/fd7d723f8f8153418fb40cf9c940e82004fce7e987026b08a68a36dd3fe7/pydantic-2.13.3-py3-none-any.whl.metadata
+  Downloading pydantic-2.13.3-py3-none-any.whl.metadata (108 kB)
+Collecting pyyaml>=6.0 (from hormuz-pipeline==0.1.0)
+  Obtaining dependency information for pyyaml>=6.0 from https://files.pythonhosted.org/packages/71/60/917329f640924b18ff085ab889a11c763e0b573da888e8404ff486657602/pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata
+  Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+Collecting pytest>=8.0 (from hormuz-pipeline==0.1.0)
+  Obtaining dependency information for pytest>=8.0 from https://files.pythonhosted.org/packages/d4/24/a372aaf5c9b7208e7112038812994107bc65a84cd00e0354a88c2c77a617/pytest-9.0.3-py3-none-any.whl.metadata
+  Downloading pytest-9.0.3-py3-none-any.whl.metadata (7.6 kB)
+Collecting pytest-asyncio>=0.23 (from hormuz-pipeline==0.1.0)
+  Obtaining dependency information for pytest-asyncio>=0.23 from https://files.pythonhosted.org/packages/e5/35/f8b19922b6a25bc0880171a2f1a003eaeb93657475193ab516fd87cac9da/pytest_asyncio-1.3.0-py3-none-any.whl.metadata
+  Downloading pytest_asyncio-1.3.0-py3-none-any.whl.metadata (4.1 kB)
+Collecting openpyxl>=3.1 (from hormuz-pipeline==0.1.0)
+  Obtaining dependency information for openpyxl>=3.1 from https://files.pythonhosted.org/packages/c0/da/977ded879c29cbd04de313843e76868e6e13408a94ed6b987245dc7c8506/openpyxl-3.1.5-py2.py3-none-any.whl.metadata
+  Using cached openpyxl-3.1.5-py2.py3-none-any.whl.metadata (2.5 kB)
+Collecting pandas>=2.0 (from hormuz-pipeline==0.1.0)
+  Obtaining dependency information for pandas>=2.0 from https://files.pythonhosted.org/packages/20/17/ec40d981705654853726e7ac9aea9ddbb4a5d9cf54d8472222f4f3de06c2/pandas-3.0.2-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata
+  Downloading pandas-3.0.2-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (79 kB)
+Collecting jsonpatch<2.0.0,>=1.33.0 (from langchain-core>=0.3.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for jsonpatch<2.0.0,>=1.33.0 from https://files.pythonhosted.org/packages/73/07/02e16ed01e04a374e644b575638ec7987ae846d25ad97bcc9945a3ee4b0e/jsonpatch-1.33-py2.py3-none-any.whl.metadata
+  Downloading jsonpatch-1.33-py2.py3-none-any.whl.metadata (3.0 kB)
+Collecting langsmith<1.0.0,>=0.3.45 (from langchain-core>=0.3.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for langsmith<1.0.0,>=0.3.45 from https://files.pythonhosted.org/packages/f4/76/53033db34ffccd25d62c32b23b9468f7228b455da6976e1c420ae31555c4/langsmith-0.7.33-py3-none-any.whl.metadata
+  Downloading langsmith-0.7.33-py3-none-any.whl.metadata (15 kB)
+Requirement already satisfied: packaging>=23.2.0 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from langchain-core>=0.3.0->hormuz-pipeline==0.1.0) (26.0)
+Collecting tenacity!=8.4.0,<10.0.0,>=8.1.0 (from langchain-core>=0.3.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for tenacity!=8.4.0,<10.0.0,>=8.1.0 from https://files.pythonhosted.org/packages/d7/c1/eb8f9debc45d3b7918a32ab756658a0904732f75e555402972246b0b8e71/tenacity-9.1.4-py3-none-any.whl.metadata
+  Downloading tenacity-9.1.4-py3-none-any.whl.metadata (1.2 kB)
+Collecting typing-extensions<5.0.0,>=4.7.0 (from langchain-core>=0.3.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for typing-extensions<5.0.0,>=4.7.0 from https://files.pythonhosted.org/packages/18/67/36e9267722cc04a6b9f15c7f3441c2363321a3ea07da7ae0c0707beb2a9c/typing_extensions-4.15.0-py3-none-any.whl.metadata
+  Using cached typing_extensions-4.15.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting uuid-utils<1.0,>=0.12.0 (from langchain-core>=0.3.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for uuid-utils<1.0,>=0.12.0 from https://files.pythonhosted.org/packages/54/6e/dcd3fa031320921a12ec7b4672dea3bd1dd90ddffa363a91831ba834d559/uuid_utils-0.14.1-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata
+  Downloading uuid_utils-0.14.1-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.8 kB)
+Collecting jsonpointer>=1.9 (from jsonpatch<2.0.0,>=1.33.0->langchain-core>=0.3.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for jsonpointer>=1.9 from https://files.pythonhosted.org/packages/9e/6a/a83720e953b1682d2d109d3c2dbb0bc9bf28cc1cbc205be4ef4be5da709d/jsonpointer-3.1.1-py3-none-any.whl.metadata
+  Downloading jsonpointer-3.1.1-py3-none-any.whl.metadata (2.4 kB)
+Collecting langgraph-checkpoint<5.0.0,>=2.1.0 (from langgraph>=0.3.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for langgraph-checkpoint<5.0.0,>=2.1.0 from https://files.pythonhosted.org/packages/b9/5a/6dba29dd89b0a46ae21c707da0f9d17e94f27d3e481ed15bc99d6bd20aa6/langgraph_checkpoint-4.0.2-py3-none-any.whl.metadata
+  Downloading langgraph_checkpoint-4.0.2-py3-none-any.whl.metadata (5.2 kB)
+Collecting langgraph-prebuilt<1.1.0,>=1.0.9 (from langgraph>=0.3.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for langgraph-prebuilt<1.1.0,>=1.0.9 from https://files.pythonhosted.org/packages/50/49/d073375beabdc6955df6cbe570ba7786836bd4c817ae998955d35037f2fd/langgraph_prebuilt-1.0.10-py3-none-any.whl.metadata
+  Downloading langgraph_prebuilt-1.0.10-py3-none-any.whl.metadata (5.2 kB)
+Collecting langgraph-sdk<0.4.0,>=0.3.0 (from langgraph>=0.3.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for langgraph-sdk<0.4.0,>=0.3.0 from https://files.pythonhosted.org/packages/fe/ef/64d64e9f8eea47ce7b939aa6da6863b674c8d418647813c20111645fcc62/langgraph_sdk-0.3.13-py3-none-any.whl.metadata
+  Downloading langgraph_sdk-0.3.13-py3-none-any.whl.metadata (1.6 kB)
+Collecting xxhash>=3.5.0 (from langgraph>=0.3.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for xxhash>=3.5.0 from https://files.pythonhosted.org/packages/a5/86/cf2c0321dc3940a7aa73076f4fd677a0fb3e405cb297ead7d864fd90847e/xxhash-3.6.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata
+  Downloading xxhash-3.6.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (13 kB)
+Collecting ormsgpack>=1.12.0 (from langgraph-checkpoint<5.0.0,>=2.1.0->langgraph>=0.3.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for ormsgpack>=1.12.0 from https://files.pythonhosted.org/packages/1b/33/543627f323ff3c73091f51d6a20db28a1a33531af30873ea90c5ac95a9b5/ormsgpack-1.12.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata
+  Downloading ormsgpack-1.12.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (3.2 kB)
+Collecting httpx>=0.25.2 (from langgraph-sdk<0.4.0,>=0.3.0->langgraph>=0.3.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for httpx>=0.25.2 from https://files.pythonhosted.org/packages/2a/39/e50c7c3a983047577ee07d2a9e53faf5a69493943ec3f6a384bdc792deb2/httpx-0.28.1-py3-none-any.whl.metadata
+  Downloading httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+Collecting orjson>=3.11.5 (from langgraph-sdk<0.4.0,>=0.3.0->langgraph>=0.3.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for orjson>=3.11.5 from https://files.pythonhosted.org/packages/f8/fc/55e667ec9c85694038fcff00573d221b085d50777368ee3d77f38668bf3c/orjson-3.11.8-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata
+  Downloading orjson-3.11.8-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (41 kB)
+Collecting requests-toolbelt>=1.0.0 (from langsmith<1.0.0,>=0.3.45->langchain-core>=0.3.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for requests-toolbelt>=1.0.0 from https://files.pythonhosted.org/packages/3f/51/d4db610ef29373b879047326cbf6fa98b6c1969d6f6dc423279de2b1be2c/requests_toolbelt-1.0.0-py2.py3-none-any.whl.metadata
+  Downloading requests_toolbelt-1.0.0-py2.py3-none-any.whl.metadata (14 kB)
+Collecting requests>=2.0.0 (from langsmith<1.0.0,>=0.3.45->langchain-core>=0.3.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for requests>=2.0.0 from https://files.pythonhosted.org/packages/d7/8e/7540e8a2036f79a125c1d2ebadf69ed7901608859186c856fa0388ef4197/requests-2.33.1-py3-none-any.whl.metadata
+  Downloading requests-2.33.1-py3-none-any.whl.metadata (4.8 kB)
+Collecting zstandard>=0.23.0 (from langsmith<1.0.0,>=0.3.45->langchain-core>=0.3.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for zstandard>=0.23.0 from https://files.pythonhosted.org/packages/bb/1f/e9cfd801a3f9190bf3e759c422bbfd2247db9d7f3d54a56ecde70137791a/zstandard-0.25.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata
+  Downloading zstandard-0.25.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (3.3 kB)
+Collecting anyio (from httpx>=0.25.2->langgraph-sdk<0.4.0,>=0.3.0->langgraph>=0.3.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for anyio from https://files.pythonhosted.org/packages/da/42/e921fccf5015463e32a3cf6ee7f980a6ed0f395ceeaa45060b61d86486c2/anyio-4.13.0-py3-none-any.whl.metadata
+  Downloading anyio-4.13.0-py3-none-any.whl.metadata (4.5 kB)
+Collecting certifi (from httpx>=0.25.2->langgraph-sdk<0.4.0,>=0.3.0->langgraph>=0.3.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for certifi from https://files.pythonhosted.org/packages/9a/3c/c17fb3ca2d9c3acff52e30b309f538586f9f5b9c9cf454f3845fc9af4881/certifi-2026.2.25-py3-none-any.whl.metadata
+  Downloading certifi-2026.2.25-py3-none-any.whl.metadata (2.5 kB)
+Collecting httpcore==1.* (from httpx>=0.25.2->langgraph-sdk<0.4.0,>=0.3.0->langgraph>=0.3.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for httpcore==1.* from https://files.pythonhosted.org/packages/7e/f5/f66802a942d491edb555dd61e3a9961140fd64c90bce1eafd741609d334d/httpcore-1.0.9-py3-none-any.whl.metadata
+  Downloading httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+Collecting idna (from httpx>=0.25.2->langgraph-sdk<0.4.0,>=0.3.0->langgraph>=0.3.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for idna from https://files.pythonhosted.org/packages/0e/61/66938bbb5fc52dbdf84594873d5b51fb1f7c7794e9c0f5bd885f30bc507b/idna-3.11-py3-none-any.whl.metadata
+  Downloading idna-3.11-py3-none-any.whl.metadata (8.4 kB)
+Collecting h11>=0.16 (from httpcore==1.*->httpx>=0.25.2->langgraph-sdk<0.4.0,>=0.3.0->langgraph>=0.3.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for h11>=0.16 from https://files.pythonhosted.org/packages/04/4b/29cac41a4d98d144bf5f6d33995617b185d14b22401f75ca86f384e87ff1/h11-0.16.0-py3-none-any.whl.metadata
+  Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+Collecting annotated-types>=0.6.0 (from pydantic>=2.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for annotated-types>=0.6.0 from https://files.pythonhosted.org/packages/78/b6/6307fbef88d9b5ee7421e68d78a9f162e0da4900bc5f5793f6d3d0e34fb8/annotated_types-0.7.0-py3-none-any.whl.metadata
+  Downloading annotated_types-0.7.0-py3-none-any.whl.metadata (15 kB)
+Collecting pydantic-core==2.46.3 (from pydantic>=2.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for pydantic-core==2.46.3 from https://files.pythonhosted.org/packages/0a/44/93f489d16fb63fbd41c670441536541f6e8cfa1e5a69f40bc9c5d30d8c90/pydantic_core-2.46.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata
+  Downloading pydantic_core-2.46.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.6 kB)
+Collecting typing-inspection>=0.4.2 (from pydantic>=2.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for typing-inspection>=0.4.2 from https://files.pythonhosted.org/packages/dc/9b/47798a6c91d8bdb567fe2698fe81e0c6b7cb7ef4d13da4114b41d239f65d/typing_inspection-0.4.2-py3-none-any.whl.metadata
+  Downloading typing_inspection-0.4.2-py3-none-any.whl.metadata (2.6 kB)
+Collecting et-xmlfile (from openpyxl>=3.1->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for et-xmlfile from https://files.pythonhosted.org/packages/c1/8b/5fe2cc11fee489817272089c4203e679c63b570a5aaeb18d852ae3cbba6a/et_xmlfile-2.0.0-py3-none-any.whl.metadata
+  Using cached et_xmlfile-2.0.0-py3-none-any.whl.metadata (2.7 kB)
+  Link requires a different Python (3.11.15 not in: '>=3.7,<3.11'): https://files.pythonhosted.org/packages/3a/be/650f9c091ef71cb01d735775d554e068752d3ff63d7943b26316dc401749/numpy-1.21.2.zip (from https://pypi.org/simple/numpy/) (requires-python:>=3.7,<3.11)
+  Link requires a different Python (3.11.15 not in: '>=3.7,<3.11'): https://files.pythonhosted.org/packages/5f/d6/ad58ded26556eaeaa8c971e08b6466f17c4ac4d786cd3d800e26ce59cc01/numpy-1.21.3.zip (from https://pypi.org/simple/numpy/) (requires-python:>=3.7,<3.11)
+  Link requires a different Python (3.11.15 not in: '>=3.7,<3.11'): https://files.pythonhosted.org/packages/fb/48/b0708ebd7718a8933f0d3937513ef8ef2f4f04529f1f66ca86d873043921/numpy-1.21.4.zip (from https://pypi.org/simple/numpy/) (requires-python:>=3.7,<3.11)
+  Link requires a different Python (3.11.15 not in: '>=3.7,<3.11'): https://files.pythonhosted.org/packages/c2/a8/a924a09492bdfee8c2ec3094d0a13f2799800b4fdc9c890738aeeb12c72e/numpy-1.21.5.zip (from https://pypi.org/simple/numpy/) (requires-python:>=3.7,<3.11)
+  Link requires a different Python (3.11.15 not in: '>=3.7,<3.11'): https://files.pythonhosted.org/packages/45/b7/de7b8e67f2232c26af57c205aaad29fe17754f793404f59c8a730c7a191a/numpy-1.21.6.zip (from https://pypi.org/simple/numpy/) (requires-python:>=3.7,<3.11)
+Collecting numpy>=1.26.0 (from pandas>=2.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for numpy>=1.26.0 from https://files.pythonhosted.org/packages/cf/c5/9fcb7e0e69cef59cf10c746b84f7d58b08bc66a6b7d459783c5a4f6101a6/numpy-2.4.4-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata
+  Downloading numpy-2.4.4-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+Collecting python-dateutil>=2.8.2 (from pandas>=2.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for python-dateutil>=2.8.2 from https://files.pythonhosted.org/packages/ec/57/56b9bcc3c9c6a792fcbaf139543cee77261f3651ca9da0c93f5c1221264b/python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata
+  Using cached python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
+Collecting iniconfig>=1.0.1 (from pytest>=8.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for iniconfig>=1.0.1 from https://files.pythonhosted.org/packages/cb/b1/3846dd7f199d53cb17f49cba7e651e9ce294d8497c8c150530ed11865bb8/iniconfig-2.3.0-py3-none-any.whl.metadata
+  Downloading iniconfig-2.3.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting pluggy<2,>=1.5 (from pytest>=8.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for pluggy<2,>=1.5 from https://files.pythonhosted.org/packages/54/20/4d324d65cc6d9205fabedc306948156824eb9f0ee1633355a8f7ec5c66bf/pluggy-1.6.0-py3-none-any.whl.metadata
+  Downloading pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+Collecting pygments>=2.7.2 (from pytest>=8.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for pygments>=2.7.2 from https://files.pythonhosted.org/packages/f4/7e/a72dd26f3b0f4f2bf1dd8923c85f7ceb43172af56d63c7383eb62b332364/pygments-2.20.0-py3-none-any.whl.metadata
+  Downloading pygments-2.20.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting six>=1.5 (from python-dateutil>=2.8.2->pandas>=2.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for six>=1.5 from https://files.pythonhosted.org/packages/b7/ce/149a00dd41f10bc29e5921b496af8b574d8413afcd5e30dfa0ed46c2cc5e/six-1.17.0-py2.py3-none-any.whl.metadata
+  Using cached six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+Collecting charset_normalizer<4,>=2 (from requests>=2.0.0->langsmith<1.0.0,>=0.3.45->langchain-core>=0.3.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for charset_normalizer<4,>=2 from https://files.pythonhosted.org/packages/a1/fa/f74eb381a7d94ded44739e9d94de18dc5edc9c17fb8c11f0a6890696c0a9/charset_normalizer-3.4.7-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata
+  Downloading charset_normalizer-3.4.7-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (40 kB)
+Collecting urllib3<3,>=1.26 (from requests>=2.0.0->langsmith<1.0.0,>=0.3.45->langchain-core>=0.3.0->hormuz-pipeline==0.1.0)
+  Obtaining dependency information for urllib3<3,>=1.26 from https://files.pythonhosted.org/packages/39/08/aaaad47bc4e9dc8c725e68f9d04865dbcb2052843ff09c97b08904852d84/urllib3-2.6.3-py3-none-any.whl.metadata
+  Downloading urllib3-2.6.3-py3-none-any.whl.metadata (6.9 kB)
+Downloading langchain-1.2.15-py3-none-any.whl (112 kB)
+Downloading langchain_core-1.3.0-py3-none-any.whl (515 kB)
+Downloading jsonpatch-1.33-py2.py3-none-any.whl (12 kB)
+Downloading langgraph-1.1.8-py3-none-any.whl (173 kB)
+Downloading langgraph_checkpoint-4.0.2-py3-none-any.whl (51 kB)
+Downloading langgraph_prebuilt-1.0.10-py3-none-any.whl (36 kB)
+Downloading langgraph_sdk-0.3.13-py3-none-any.whl (96 kB)
+Downloading langsmith-0.7.33-py3-none-any.whl (378 kB)
+Downloading httpx-0.28.1-py3-none-any.whl (73 kB)
+Downloading httpcore-1.0.9-py3-none-any.whl (78 kB)
+Downloading pydantic-2.13.3-py3-none-any.whl (471 kB)
+Downloading pydantic_core-2.46.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.1 MB)
+Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (806 kB)
+Downloading tenacity-9.1.4-py3-none-any.whl (28 kB)
+Using cached typing_extensions-4.15.0-py3-none-any.whl (44 kB)
+Downloading uuid_utils-0.14.1-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (345 kB)
+Downloading annotated_types-0.7.0-py3-none-any.whl (13 kB)
+Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+Downloading jsonpointer-3.1.1-py3-none-any.whl (7.7 kB)
+Using cached openpyxl-3.1.5-py2.py3-none-any.whl (250 kB)
+Downloading orjson-3.11.8-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (133 kB)
+Downloading ormsgpack-1.12.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (212 kB)
+Downloading pandas-3.0.2-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (11.3 MB)
+Downloading numpy-2.4.4-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.9 MB)
+Downloading pytest-9.0.3-py3-none-any.whl (375 kB)
+Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+Downloading iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+Downloading pygments-2.20.0-py3-none-any.whl (1.2 MB)
+Downloading pytest_asyncio-1.3.0-py3-none-any.whl (15 kB)
+Using cached python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
+Downloading requests-2.33.1-py3-none-any.whl (64 kB)
+Downloading charset_normalizer-3.4.7-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (214 kB)
+Downloading idna-3.11-py3-none-any.whl (71 kB)
+Downloading urllib3-2.6.3-py3-none-any.whl (131 kB)
+Downloading certifi-2026.2.25-py3-none-any.whl (153 kB)
+Downloading requests_toolbelt-1.0.0-py2.py3-none-any.whl (54 kB)
+Using cached six-1.17.0-py2.py3-none-any.whl (11 kB)
+Downloading typing_inspection-0.4.2-py3-none-any.whl (14 kB)
+Downloading xxhash-3.6.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (193 kB)
+Downloading zstandard-0.25.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (5.6 MB)
+Downloading anyio-4.13.0-py3-none-any.whl (114 kB)
+Using cached et_xmlfile-2.0.0-py3-none-any.whl (18 kB)
+Building wheels for collected packages: hormuz-pipeline
+  Building editable for hormuz-pipeline (pyproject.toml): started
+  Building editable for hormuz-pipeline (pyproject.toml): finished with status 'done'
+  Created wheel for hormuz-pipeline: filename=hormuz_pipeline-0.1.0-0.editable-py3-none-any.whl size=3238 sha256=3a76f8462e5ec34cf1904363a220e6461630dcdcbe7e369616fda03d2eedbccb
+  Stored in directory: /tmp/pip-ephem-wheel-cache-994fym5x/wheels/f4/75/16/22eca7871bffd68d4a02419880e62c6785750dce5c43d6f70f
+Successfully built hormuz-pipeline
+Installing collected packages: zstandard, xxhash, uuid-utils, urllib3, typing-extensions, tenacity, six, pyyaml, pygments, pluggy, ormsgpack, orjson, numpy, jsonpointer, iniconfig, idna, h11, et-xmlfile, charset_normalizer, certifi, annotated-types, typing-inspection, requests, python-dateutil, pytest, pydantic-core, openpyxl, jsonpatch, httpcore, anyio, requests-toolbelt, pytest-asyncio, pydantic, pandas, httpx, langsmith, langgraph-sdk, langchain-core, langgraph-checkpoint, langgraph-prebuilt, langgraph, langchain, hormuz-pipeline
+  changing mode of /home/dagolden/miniconda3/envs/hormuz/bin/pygmentize to 755
+  changing mode of /home/dagolden/miniconda3/envs/hormuz/bin/f2py to 755
+  changing mode of /home/dagolden/miniconda3/envs/hormuz/bin/numpy-config to 755
+  changing mode of /home/dagolden/miniconda3/envs/hormuz/bin/normalizer to 755
+  changing mode of /home/dagolden/miniconda3/envs/hormuz/bin/py.test to 755
+  changing mode of /home/dagolden/miniconda3/envs/hormuz/bin/pytest to 755
+  changing mode of /home/dagolden/miniconda3/envs/hormuz/bin/httpx to 755
+Successfully installed annotated-types-0.7.0 anyio-4.13.0 certifi-2026.2.25 charset_normalizer-3.4.7 et-xmlfile-2.0.0 h11-0.16.0 hormuz-pipeline-0.1.0 httpcore-1.0.9 httpx-0.28.1 idna-3.11 iniconfig-2.3.0 jsonpatch-1.33 jsonpointer-3.1.1 langchain-1.2.15 langchain-core-1.3.0 langgraph-1.1.8 langgraph-checkpoint-4.0.2 langgraph-prebuilt-1.0.10 langgraph-sdk-0.3.13 langsmith-0.7.33 numpy-2.4.4 openpyxl-3.1.5 orjson-3.11.8 ormsgpack-1.12.2 pandas-3.0.2 pluggy-1.6.0 pydantic-2.13.3 pydantic-core-2.46.3 pygments-2.20.0 pytest-9.0.3 pytest-asyncio-1.3.0 python-dateutil-2.9.0.post0 pyyaml-6.0.3 requests-2.33.1 requests-toolbelt-1.0.0 six-1.17.0 tenacity-9.1.4 typing-extensions-4.15.0 typing-inspection-0.4.2 urllib3-2.6.3 uuid-utils-0.14.1 xxhash-3.6.0 zstandard-0.25.0
+[build] pip pipeline-package: exit=0 at 11:05:40Z
+[build] probing for optional adapter runtimes...
+[build]   - openpyxl+pandas
+[build] pip opt:openpyxl+pandas: starting at 11:05:40Z (timeout=1800s)
+Requirement already satisfied: openpyxl>=3.1 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (3.1.5)
+Requirement already satisfied: pandas>=2.0 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (3.0.2)
+Requirement already satisfied: et-xmlfile in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from openpyxl>=3.1) (2.0.0)
+Requirement already satisfied: numpy>=1.26.0 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from pandas>=2.0) (2.4.4)
+Requirement already satisfied: python-dateutil>=2.8.2 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from pandas>=2.0) (2.9.0.post0)
+Requirement already satisfied: six>=1.5 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from python-dateutil>=2.8.2->pandas>=2.0) (1.17.0)
+[build] pip opt:openpyxl+pandas: exit=0 at 11:05:41Z
+[build]   - torch + transformers + accelerate
+[build] pip opt:torch + transformers + accelerate: starting at 11:05:41Z (timeout=1800s)
+Collecting torch
+  Downloading torch-2.11.0-cp311-cp311-manylinux_2_28_x86_64.whl.metadata (29 kB)
+Collecting transformers
+  Downloading transformers-5.5.4-py3-none-any.whl.metadata (32 kB)
+Collecting accelerate
+  Downloading accelerate-1.13.0-py3-none-any.whl.metadata (19 kB)
+Collecting peft
+  Downloading peft-0.19.1-py3-none-any.whl.metadata (15 kB)
+Collecting filelock (from torch)
+  Downloading filelock-3.29.0-py3-none-any.whl.metadata (2.0 kB)
+Requirement already satisfied: typing-extensions>=4.10.0 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from torch) (4.15.0)
+Collecting setuptools<82 (from torch)
+  Downloading setuptools-81.0.0-py3-none-any.whl.metadata (6.6 kB)
+Collecting sympy>=1.13.3 (from torch)
+  Using cached sympy-1.14.0-py3-none-any.whl.metadata (12 kB)
+Collecting networkx>=2.5.1 (from torch)
+  Using cached networkx-3.6.1-py3-none-any.whl.metadata (6.8 kB)
+Collecting jinja2 (from torch)
+  Using cached jinja2-3.1.6-py3-none-any.whl.metadata (2.9 kB)
+Collecting fsspec>=0.8.5 (from torch)
+  Downloading fsspec-2026.3.0-py3-none-any.whl.metadata (10 kB)
+Collecting cuda-toolkit==13.0.2 (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch)
+  Downloading cuda_toolkit-13.0.2-py2.py3-none-any.whl.metadata (9.4 kB)
+Collecting cuda-bindings<14,>=13.0.3 (from torch)
+  Downloading cuda_bindings-13.2.0-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (2.3 kB)
+Collecting nvidia-cudnn-cu13==9.19.0.56 (from torch)
+  Downloading nvidia_cudnn_cu13-9.19.0.56-py3-none-manylinux_2_27_x86_64.whl.metadata (1.9 kB)
+Collecting nvidia-cusparselt-cu13==0.8.0 (from torch)
+  Downloading nvidia_cusparselt_cu13-0.8.0-py3-none-manylinux2014_x86_64.whl.metadata (12 kB)
+Collecting nvidia-nccl-cu13==2.28.9 (from torch)
+  Downloading nvidia_nccl_cu13-2.28.9-py3-none-manylinux_2_18_x86_64.whl.metadata (2.0 kB)
+Collecting nvidia-nvshmem-cu13==3.4.5 (from torch)
+  Downloading nvidia_nvshmem_cu13-3.4.5-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.1 kB)
+Collecting triton==3.6.0 (from torch)
+  Downloading triton-3.6.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cublas==13.1.0.3.* (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch)
+  Downloading nvidia_cublas-13.1.0.3-py3-none-manylinux_2_27_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cuda-runtime==13.0.96.* (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch)
+  Downloading nvidia_cuda_runtime-13.0.96-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cufft==12.0.0.61.* (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch)
+  Downloading nvidia_cufft-12.0.0.61-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.8 kB)
+Collecting nvidia-cufile==1.15.1.6.* (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch)
+  Downloading nvidia_cufile-1.15.1.6-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cuda-cupti==13.0.85.* (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch)
+  Downloading nvidia_cuda_cupti-13.0.85-py3-none-manylinux_2_25_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-curand==10.4.0.35.* (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch)
+  Downloading nvidia_curand-10.4.0.35-py3-none-manylinux_2_27_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cusolver==12.0.4.66.* (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch)
+  Downloading nvidia_cusolver-12.0.4.66-py3-none-manylinux_2_27_x86_64.whl.metadata (1.8 kB)
+Collecting nvidia-cusparse==12.6.3.3.* (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch)
+  Downloading nvidia_cusparse-12.6.3.3-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.8 kB)
+Collecting nvidia-nvjitlink==13.0.88.* (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch)
+  Downloading nvidia_nvjitlink-13.0.88-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cuda-nvrtc==13.0.88.* (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch)
+  Downloading nvidia_cuda_nvrtc-13.0.88-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-nvtx==13.0.85.* (from cuda-toolkit[cublas,cudart,cufft,cufile,cupti,curand,cusolver,cusparse,nvjitlink,nvrtc,nvtx]==13.0.2; platform_system == "Linux"->torch)
+  Downloading nvidia_nvtx-13.0.85-py3-none-manylinux1_x86_64.manylinux_2_5_x86_64.whl.metadata (1.8 kB)
+Collecting cuda-pathfinder~=1.1 (from cuda-bindings<14,>=13.0.3->torch)
+  Downloading cuda_pathfinder-1.5.3-py3-none-any.whl.metadata (1.9 kB)
+Collecting huggingface-hub<2.0,>=1.5.0 (from transformers)
+  Downloading huggingface_hub-1.11.0-py3-none-any.whl.metadata (14 kB)
+Requirement already satisfied: numpy>=1.17 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from transformers) (2.4.4)
+Requirement already satisfied: packaging>=20.0 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from transformers) (26.0)
+Requirement already satisfied: pyyaml>=5.1 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from transformers) (6.0.3)
+Collecting regex>=2025.10.22 (from transformers)
+  Downloading regex-2026.4.4-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (40 kB)
+Collecting tokenizers<=0.23.0,>=0.22.0 (from transformers)
+  Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (7.3 kB)
+Collecting typer (from transformers)
+  Downloading typer-0.24.1-py3-none-any.whl.metadata (16 kB)
+Collecting safetensors>=0.4.3 (from transformers)
+  Downloading safetensors-0.7.0-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.1 kB)
+Collecting tqdm>=4.27 (from transformers)
+  Downloading tqdm-4.67.3-py3-none-any.whl.metadata (57 kB)
+Collecting hf-xet<2.0.0,>=1.4.3 (from huggingface-hub<2.0,>=1.5.0->transformers)
+  Downloading hf_xet-1.4.3-cp37-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (4.9 kB)
+Requirement already satisfied: httpx<1,>=0.23.0 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from huggingface-hub<2.0,>=1.5.0->transformers) (0.28.1)
+Requirement already satisfied: anyio in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from httpx<1,>=0.23.0->huggingface-hub<2.0,>=1.5.0->transformers) (4.13.0)
+Requirement already satisfied: certifi in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from httpx<1,>=0.23.0->huggingface-hub<2.0,>=1.5.0->transformers) (2026.2.25)
+Requirement already satisfied: httpcore==1.* in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from httpx<1,>=0.23.0->huggingface-hub<2.0,>=1.5.0->transformers) (1.0.9)
+Requirement already satisfied: idna in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from httpx<1,>=0.23.0->huggingface-hub<2.0,>=1.5.0->transformers) (3.11)
+Requirement already satisfied: h11>=0.16 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from httpcore==1.*->httpx<1,>=0.23.0->huggingface-hub<2.0,>=1.5.0->transformers) (0.16.0)
+Collecting psutil (from accelerate)
+  Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl.metadata (22 kB)
+Collecting mpmath<1.4,>=1.1.0 (from sympy>=1.13.3->torch)
+  Using cached mpmath-1.3.0-py3-none-any.whl.metadata (8.6 kB)
+Collecting MarkupSafe>=2.0 (from jinja2->torch)
+  Downloading markupsafe-3.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+Collecting click>=8.2.1 (from typer->transformers)
+  Downloading click-8.3.2-py3-none-any.whl.metadata (2.6 kB)
+Collecting shellingham>=1.3.0 (from typer->transformers)
+  Downloading shellingham-1.5.4-py2.py3-none-any.whl.metadata (3.5 kB)
+Collecting rich>=12.3.0 (from typer->transformers)
+  Downloading rich-15.0.0-py3-none-any.whl.metadata (18 kB)
+Collecting annotated-doc>=0.0.2 (from typer->transformers)
+  Downloading annotated_doc-0.0.4-py3-none-any.whl.metadata (6.6 kB)
+Collecting markdown-it-py>=2.2.0 (from rich>=12.3.0->typer->transformers)
+  Downloading markdown_it_py-4.0.0-py3-none-any.whl.metadata (7.3 kB)
+Requirement already satisfied: pygments<3.0.0,>=2.13.0 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from rich>=12.3.0->typer->transformers) (2.20.0)
+Collecting mdurl~=0.1 (from markdown-it-py>=2.2.0->rich>=12.3.0->typer->transformers)
+  Downloading mdurl-0.1.2-py3-none-any.whl.metadata (1.6 kB)
+Downloading torch-2.11.0-cp311-cp311-manylinux_2_28_x86_64.whl (530.6 MB)
+Downloading cuda_toolkit-13.0.2-py2.py3-none-any.whl (2.4 kB)
+Downloading nvidia_cudnn_cu13-9.19.0.56-py3-none-manylinux_2_27_x86_64.whl (366.1 MB)
+Downloading nvidia_cusparselt_cu13-0.8.0-py3-none-manylinux2014_x86_64.whl (169.9 MB)
+Downloading nvidia_nccl_cu13-2.28.9-py3-none-manylinux_2_18_x86_64.whl (196.5 MB)
+Downloading nvidia_nvshmem_cu13-3.4.5-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (60.4 MB)
+Downloading triton-3.6.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (188.2 MB)
+Downloading cuda_bindings-13.2.0-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (6.3 MB)
+Downloading cuda_pathfinder-1.5.3-py3-none-any.whl (49 kB)
+Downloading nvidia_cublas-13.1.0.3-py3-none-manylinux_2_27_x86_64.whl (423.1 MB)
+Downloading nvidia_cuda_cupti-13.0.85-py3-none-manylinux_2_25_x86_64.whl (10.7 MB)
+Downloading nvidia_cuda_nvrtc-13.0.88-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl (90.2 MB)
+Downloading nvidia_cuda_runtime-13.0.96-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (2.2 MB)
+Downloading nvidia_cufft-12.0.0.61-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (214.1 MB)
+Downloading nvidia_cufile-1.15.1.6-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (1.2 MB)
+Downloading nvidia_curand-10.4.0.35-py3-none-manylinux_2_27_x86_64.whl (59.5 MB)
+Downloading nvidia_cusolver-12.0.4.66-py3-none-manylinux_2_27_x86_64.whl (200.9 MB)
+Downloading nvidia_cusparse-12.6.3.3-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (145.9 MB)
+Downloading nvidia_nvjitlink-13.0.88-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl (40.7 MB)
+Downloading nvidia_nvtx-13.0.85-py3-none-manylinux1_x86_64.manylinux_2_5_x86_64.whl (148 kB)
+Downloading setuptools-81.0.0-py3-none-any.whl (1.1 MB)
+Downloading transformers-5.5.4-py3-none-any.whl (10.2 MB)
+Downloading huggingface_hub-1.11.0-py3-none-any.whl (645 kB)
+Downloading hf_xet-1.4.3-cp37-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (4.2 MB)
+Downloading tokenizers-0.22.2-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.3 MB)
+Downloading accelerate-1.13.0-py3-none-any.whl (383 kB)
+Downloading peft-0.19.1-py3-none-any.whl (680 kB)
+Downloading filelock-3.29.0-py3-none-any.whl (39 kB)
+Downloading fsspec-2026.3.0-py3-none-any.whl (202 kB)
+Using cached networkx-3.6.1-py3-none-any.whl (2.1 MB)
+Downloading regex-2026.4.4-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (799 kB)
+Downloading safetensors-0.7.0-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (507 kB)
+Using cached sympy-1.14.0-py3-none-any.whl (6.3 MB)
+Using cached mpmath-1.3.0-py3-none-any.whl (536 kB)
+Downloading tqdm-4.67.3-py3-none-any.whl (78 kB)
+Using cached jinja2-3.1.6-py3-none-any.whl (134 kB)
+Downloading markupsafe-3.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (22 kB)
+Downloading psutil-7.2.2-cp36-abi3-manylinux2010_x86_64.manylinux_2_12_x86_64.manylinux_2_28_x86_64.whl (155 kB)
+Downloading typer-0.24.1-py3-none-any.whl (56 kB)
+Downloading annotated_doc-0.0.4-py3-none-any.whl (5.3 kB)
+Downloading click-8.3.2-py3-none-any.whl (108 kB)
+Downloading rich-15.0.0-py3-none-any.whl (310 kB)
+Downloading markdown_it_py-4.0.0-py3-none-any.whl (87 kB)
+Downloading mdurl-0.1.2-py3-none-any.whl (10.0 kB)
+Downloading shellingham-1.5.4-py2.py3-none-any.whl (9.8 kB)
+Installing collected packages: nvidia-cusparselt-cu13, mpmath, cuda-toolkit, triton, tqdm, sympy, shellingham, setuptools, safetensors, regex, psutil, nvidia-nvtx, nvidia-nvshmem-cu13, nvidia-nvjitlink, nvidia-nccl-cu13, nvidia-curand, nvidia-cufile, nvidia-cuda-runtime, nvidia-cuda-nvrtc, nvidia-cuda-cupti, nvidia-cublas, networkx, mdurl, MarkupSafe, hf-xet, fsspec, filelock, cuda-pathfinder, click, annotated-doc, nvidia-cusparse, nvidia-cufft, nvidia-cudnn-cu13, markdown-it-py, jinja2, cuda-bindings, rich, nvidia-cusolver, typer, torch, huggingface-hub, tokenizers, accelerate, transformers, peft
+  Attempting uninstall: setuptools
+    Found existing installation: setuptools 82.0.1
+    Uninstalling setuptools-82.0.1:
+      Successfully uninstalled setuptools-82.0.1
+Successfully installed MarkupSafe-3.0.3 accelerate-1.13.0 annotated-doc-0.0.4 click-8.3.2 cuda-bindings-13.2.0 cuda-pathfinder-1.5.3 cuda-toolkit-13.0.2 filelock-3.29.0 fsspec-2026.3.0 hf-xet-1.4.3 huggingface-hub-1.11.0 jinja2-3.1.6 markdown-it-py-4.0.0 mdurl-0.1.2 mpmath-1.3.0 networkx-3.6.1 nvidia-cublas-13.1.0.3 nvidia-cuda-cupti-13.0.85 nvidia-cuda-nvrtc-13.0.88 nvidia-cuda-runtime-13.0.96 nvidia-cudnn-cu13-9.19.0.56 nvidia-cufft-12.0.0.61 nvidia-cufile-1.15.1.6 nvidia-curand-10.4.0.35 nvidia-cusolver-12.0.4.66 nvidia-cusparse-12.6.3.3 nvidia-cusparselt-cu13-0.8.0 nvidia-nccl-cu13-2.28.9 nvidia-nvjitlink-13.0.88 nvidia-nvshmem-cu13-3.4.5 nvidia-nvtx-13.0.85 peft-0.19.1 psutil-7.2.2 regex-2026.4.4 rich-15.0.0 safetensors-0.7.0 setuptools-81.0.0 shellingham-1.5.4 sympy-1.14.0 tokenizers-0.22.2 torch-2.11.0 tqdm-4.67.3 transformers-5.5.4 triton-3.6.0 typer-0.24.1
+[build] pip opt:torch + transformers + accelerate: exit=0 at 11:09:12Z
+[build]   - vllm
+[build] pip opt:vllm: starting at 11:09:12Z (timeout=1800s)
+Collecting vllm
+  Downloading vllm-0.19.1-cp38-abi3-manylinux_2_31_x86_64.whl.metadata (10 kB)
+Requirement already satisfied: regex in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from vllm) (2026.4.4)
+Collecting cachetools (from vllm)
+  Downloading cachetools-7.0.6-py3-none-any.whl.metadata (5.9 kB)
+Requirement already satisfied: psutil in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from vllm) (7.2.2)
+Collecting sentencepiece (from vllm)
+  Downloading sentencepiece-0.2.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (10 kB)
+Requirement already satisfied: numpy in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from vllm) (2.4.4)
+Requirement already satisfied: requests>=2.26.0 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from vllm) (2.33.1)
+Requirement already satisfied: tqdm in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from vllm) (4.67.3)
+Collecting blake3 (from vllm)
+  Downloading blake3-1.0.8-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.6 kB)
+Collecting py-cpuinfo (from vllm)
+  Downloading py_cpuinfo-9.0.0-py3-none-any.whl.metadata (794 bytes)
+Requirement already satisfied: transformers!=5.0.*,!=5.1.*,!=5.2.*,!=5.3.*,!=5.4.*,!=5.5.0,>=4.56.0 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from vllm) (5.5.4)
+Requirement already satisfied: tokenizers>=0.21.1 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from vllm) (0.22.2)
+Collecting protobuf!=6.30.*,!=6.31.*,!=6.32.*,!=6.33.0.*,!=6.33.1.*,!=6.33.2.*,!=6.33.3.*,!=6.33.4.*,>=5.29.6 (from vllm)
+  Downloading protobuf-7.34.1-cp310-abi3-manylinux2014_x86_64.whl.metadata (595 bytes)
+Collecting fastapi>=0.115.0 (from fastapi[standard]>=0.115.0->vllm)
+  Downloading fastapi-0.136.0-py3-none-any.whl.metadata (28 kB)
+Collecting aiohttp>=3.13.3 (from vllm)
+  Downloading aiohttp-3.13.5-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (8.1 kB)
+Collecting openai>=2.0.0 (from vllm)
+  Downloading openai-2.32.0-py3-none-any.whl.metadata (31 kB)
+Requirement already satisfied: pydantic>=2.12.0 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from vllm) (2.13.3)
+Collecting prometheus_client>=0.18.0 (from vllm)
+  Downloading prometheus_client-0.25.0-py3-none-any.whl.metadata (2.1 kB)
+Collecting pillow (from vllm)
+  Downloading pillow-12.2.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (8.8 kB)
+Collecting prometheus-fastapi-instrumentator>=7.0.0 (from vllm)
+  Downloading prometheus_fastapi_instrumentator-7.1.0-py3-none-any.whl.metadata (13 kB)
+Collecting tiktoken>=0.6.0 (from vllm)
+  Downloading tiktoken-0.12.0-cp311-cp311-manylinux_2_28_x86_64.whl.metadata (6.7 kB)
+Collecting lm-format-enforcer==0.11.3 (from vllm)
+  Downloading lm_format_enforcer-0.11.3-py3-none-any.whl.metadata (17 kB)
+Collecting llguidance<1.4.0,>=1.3.0 (from vllm)
+  Downloading llguidance-1.3.0-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (10 kB)
+Collecting outlines_core==0.2.11 (from vllm)
+  Downloading outlines_core-0.2.11-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (5.8 kB)
+Collecting diskcache==5.6.3 (from vllm)
+  Downloading diskcache-5.6.3-py3-none-any.whl.metadata (20 kB)
+Collecting lark==1.2.2 (from vllm)
+  Downloading lark-1.2.2-py3-none-any.whl.metadata (1.8 kB)
+Collecting xgrammar<1.0.0,>=0.1.32 (from vllm)
+  Downloading xgrammar-0.1.33-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (7.6 kB)
+Requirement already satisfied: typing_extensions>=4.10 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from vllm) (4.15.0)
+Requirement already satisfied: filelock>=3.16.1 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from vllm) (3.29.0)
+Collecting partial-json-parser (from vllm)
+  Downloading partial_json_parser-0.2.1.1.post7-py3-none-any.whl.metadata (6.1 kB)
+Collecting pyzmq>=25.0.0 (from vllm)
+  Downloading pyzmq-27.1.0-cp311-cp311-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl.metadata (6.0 kB)
+Collecting msgspec (from vllm)
+  Downloading msgspec-0.21.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (5.8 kB)
+Collecting gguf>=0.17.0 (from vllm)
+  Downloading gguf-0.18.0-py3-none-any.whl.metadata (4.5 kB)
+Collecting mistral_common>=1.10.0 (from mistral_common[image]>=1.10.0->vllm)
+  Downloading mistral_common-1.11.0-py3-none-any.whl.metadata (5.9 kB)
+Collecting opencv-python-headless>=4.13.0 (from vllm)
+  Downloading opencv_python_headless-4.13.0.92-cp37-abi3-manylinux_2_28_x86_64.whl.metadata (19 kB)
+Requirement already satisfied: pyyaml in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from vllm) (6.0.3)
+Collecting einops (from vllm)
+  Downloading einops-0.8.2-py3-none-any.whl.metadata (13 kB)
+Collecting compressed-tensors==0.15.0.1 (from vllm)
+  Downloading compressed_tensors-0.15.0.1-py3-none-any.whl.metadata (4.7 kB)
+Collecting depyf==0.20.0 (from vllm)
+  Downloading depyf-0.20.0-py3-none-any.whl.metadata (7.3 kB)
+Collecting cloudpickle (from vllm)
+  Using cached cloudpickle-3.1.2-py3-none-any.whl.metadata (7.1 kB)
+Collecting watchfiles (from vllm)
+  Downloading watchfiles-1.1.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.9 kB)
+Collecting python-json-logger (from vllm)
+  Downloading python_json_logger-4.1.0-py3-none-any.whl.metadata (3.7 kB)
+Collecting ninja (from vllm)
+  Downloading ninja-1.13.0-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (5.1 kB)
+Collecting pybase64 (from vllm)
+  Downloading pybase64-1.4.3-cp311-cp311-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_5_x86_64.whl.metadata (8.7 kB)
+Collecting cbor2 (from vllm)
+  Downloading cbor2-5.9.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (5.5 kB)
+Collecting ijson (from vllm)
+  Downloading ijson-3.5.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (23 kB)
+Collecting setproctitle (from vllm)
+  Downloading setproctitle-1.3.7-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (10 kB)
+Collecting openai-harmony>=0.0.3 (from vllm)
+  Downloading openai_harmony-0.0.8-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (8.0 kB)
+Collecting anthropic>=0.71.0 (from vllm)
+  Downloading anthropic-0.96.0-py3-none-any.whl.metadata (3.1 kB)
+Collecting model-hosting-container-standards<1.0.0,>=0.1.13 (from vllm)
+  Downloading model_hosting_container_standards-0.1.14-py3-none-any.whl.metadata (24 kB)
+Collecting mcp (from vllm)
+  Downloading mcp-1.27.0-py3-none-any.whl.metadata (8.2 kB)
+Collecting opentelemetry-sdk>=1.27.0 (from vllm)
+  Downloading opentelemetry_sdk-1.41.0-py3-none-any.whl.metadata (1.7 kB)
+Collecting opentelemetry-api>=1.27.0 (from vllm)
+  Downloading opentelemetry_api-1.41.0-py3-none-any.whl.metadata (1.5 kB)
+Collecting opentelemetry-exporter-otlp>=1.27.0 (from vllm)
+  Downloading opentelemetry_exporter_otlp-1.41.0-py3-none-any.whl.metadata (2.4 kB)
+Collecting opentelemetry-semantic-conventions-ai>=0.4.1 (from vllm)
+  Downloading opentelemetry_semantic_conventions_ai-0.5.1-py3-none-any.whl.metadata (997 bytes)
+Collecting numba==0.61.2 (from vllm)
+  Downloading numba-0.61.2-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.8 kB)
+Collecting torch==2.10.0 (from vllm)
+  Downloading torch-2.10.0-3-cp311-cp311-manylinux_2_28_x86_64.whl.metadata (31 kB)
+Collecting torchaudio==2.10.0 (from vllm)
+  Downloading torchaudio-2.10.0-cp311-cp311-manylinux_2_28_x86_64.whl.metadata (6.9 kB)
+Collecting torchvision==0.25.0 (from vllm)
+  Downloading torchvision-0.25.0-cp311-cp311-manylinux_2_28_x86_64.whl.metadata (5.4 kB)
+Collecting flashinfer-python==0.6.6 (from vllm)
+  Downloading flashinfer_python-0.6.6-py3-none-any.whl.metadata (11 kB)
+Collecting flashinfer-cubin==0.6.6 (from vllm)
+  Downloading flashinfer_cubin-0.6.6-py3-none-any.whl.metadata (1.3 kB)
+Collecting nvidia-cudnn-frontend<1.19.0,>=1.13.0 (from vllm)
+  Downloading nvidia_cudnn_frontend-1.18.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (4.4 kB)
+Collecting nvidia-cutlass-dsl>=4.4.0.dev1 (from vllm)
+  Downloading nvidia_cutlass_dsl-4.5.0.dev0-py3-none-any.whl.metadata (2.8 kB)
+Collecting quack-kernels>=0.2.7 (from vllm)
+  Downloading quack_kernels-0.3.11-py3-none-any.whl.metadata (619 bytes)
+Collecting loguru (from compressed-tensors==0.15.0.1->vllm)
+  Downloading loguru-0.7.3-py3-none-any.whl.metadata (22 kB)
+Collecting astor (from depyf==0.20.0->vllm)
+  Downloading astor-0.8.1-py2.py3-none-any.whl.metadata (4.2 kB)
+Collecting dill (from depyf==0.20.0->vllm)
+  Downloading dill-0.4.1-py3-none-any.whl.metadata (10 kB)
+Collecting apache-tvm-ffi!=0.1.8,!=0.1.8.post0,<0.2,>=0.1.6 (from flashinfer-python==0.6.6->vllm)
+  Downloading apache_tvm_ffi-0.1.10-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (6.1 kB)
+Requirement already satisfied: click in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from flashinfer-python==0.6.6->vllm) (8.3.2)
+Collecting nvidia-ml-py (from flashinfer-python==0.6.6->vllm)
+  Downloading nvidia_ml_py-13.595.45-py3-none-any.whl.metadata (9.7 kB)
+Requirement already satisfied: packaging>=24.2 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from flashinfer-python==0.6.6->vllm) (26.0)
+Collecting tabulate (from flashinfer-python==0.6.6->vllm)
+  Downloading tabulate-0.10.0-py3-none-any.whl.metadata (40 kB)
+Collecting interegular>=0.3.2 (from lm-format-enforcer==0.11.3->vllm)
+  Downloading interegular-0.3.3-py37-none-any.whl.metadata (3.0 kB)
+Collecting llvmlite<0.45,>=0.44.0dev0 (from numba==0.61.2->vllm)
+  Downloading llvmlite-0.44.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.8 kB)
+Collecting numpy (from vllm)
+  Downloading numpy-2.2.6-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (62 kB)
+Requirement already satisfied: sympy>=1.13.3 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from torch==2.10.0->vllm) (1.14.0)
+Requirement already satisfied: networkx>=2.5.1 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from torch==2.10.0->vllm) (3.6.1)
+Requirement already satisfied: jinja2 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from torch==2.10.0->vllm) (3.1.6)
+Requirement already satisfied: fsspec>=0.8.5 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from torch==2.10.0->vllm) (2026.3.0)
+Collecting cuda-bindings==12.9.4 (from torch==2.10.0->vllm)
+  Downloading cuda_bindings-12.9.4-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (2.6 kB)
+Collecting nvidia-cuda-nvrtc-cu12==12.8.93 (from torch==2.10.0->vllm)
+  Using cached nvidia_cuda_nvrtc_cu12-12.8.93-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cuda-runtime-cu12==12.8.90 (from torch==2.10.0->vllm)
+  Using cached nvidia_cuda_runtime_cu12-12.8.90-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cuda-cupti-cu12==12.8.90 (from torch==2.10.0->vllm)
+  Using cached nvidia_cuda_cupti_cu12-12.8.90-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cudnn-cu12==9.10.2.21 (from torch==2.10.0->vllm)
+  Using cached nvidia_cudnn_cu12-9.10.2.21-py3-none-manylinux_2_27_x86_64.whl.metadata (1.8 kB)
+Collecting nvidia-cublas-cu12==12.8.4.1 (from torch==2.10.0->vllm)
+  Using cached nvidia_cublas_cu12-12.8.4.1-py3-none-manylinux_2_27_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cufft-cu12==11.3.3.83 (from torch==2.10.0->vllm)
+  Using cached nvidia_cufft_cu12-11.3.3.83-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-curand-cu12==10.3.9.90 (from torch==2.10.0->vllm)
+  Using cached nvidia_curand_cu12-10.3.9.90-py3-none-manylinux_2_27_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cusolver-cu12==11.7.3.90 (from torch==2.10.0->vllm)
+  Using cached nvidia_cusolver_cu12-11.7.3.90-py3-none-manylinux_2_27_x86_64.whl.metadata (1.8 kB)
+Collecting nvidia-cusparse-cu12==12.5.8.93 (from torch==2.10.0->vllm)
+  Using cached nvidia_cusparse_cu12-12.5.8.93-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.8 kB)
+Collecting nvidia-cusparselt-cu12==0.7.1 (from torch==2.10.0->vllm)
+  Using cached nvidia_cusparselt_cu12-0.7.1-py3-none-manylinux2014_x86_64.whl.metadata (7.0 kB)
+Collecting nvidia-nccl-cu12==2.27.5 (from torch==2.10.0->vllm)
+  Using cached nvidia_nccl_cu12-2.27.5-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.0 kB)
+Collecting nvidia-nvshmem-cu12==3.4.5 (from torch==2.10.0->vllm)
+  Downloading nvidia_nvshmem_cu12-3.4.5-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.1 kB)
+Collecting nvidia-nvtx-cu12==12.8.90 (from torch==2.10.0->vllm)
+  Using cached nvidia_nvtx_cu12-12.8.90-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.8 kB)
+Collecting nvidia-nvjitlink-cu12==12.8.93 (from torch==2.10.0->vllm)
+  Using cached nvidia_nvjitlink_cu12-12.8.93-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl.metadata (1.7 kB)
+Collecting nvidia-cufile-cu12==1.13.1.3 (from torch==2.10.0->vllm)
+  Using cached nvidia_cufile_cu12-1.13.1.3-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (1.7 kB)
+Requirement already satisfied: triton==3.6.0 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from torch==2.10.0->vllm) (3.6.0)
+Requirement already satisfied: cuda-pathfinder~=1.1 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from cuda-bindings==12.9.4->torch==2.10.0->vllm) (1.5.3)
+Requirement already satisfied: httpx in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from model-hosting-container-standards<1.0.0,>=0.1.13->vllm) (0.28.1)
+Collecting jmespath (from model-hosting-container-standards<1.0.0,>=0.1.13->vllm)
+  Downloading jmespath-1.1.0-py3-none-any.whl.metadata (7.6 kB)
+Requirement already satisfied: setuptools in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from model-hosting-container-standards<1.0.0,>=0.1.13->vllm) (81.0.0)
+Collecting starlette>=0.49.1 (from model-hosting-container-standards<1.0.0,>=0.1.13->vllm)
+  Downloading starlette-1.0.0-py3-none-any.whl.metadata (6.3 kB)
+Collecting supervisor>=4.2.0 (from model-hosting-container-standards<1.0.0,>=0.1.13->vllm)
+  Downloading supervisor-4.3.0-py2.py3-none-any.whl.metadata (87 kB)
+Collecting aiohappyeyeballs>=2.5.0 (from aiohttp>=3.13.3->vllm)
+  Downloading aiohappyeyeballs-2.6.1-py3-none-any.whl.metadata (5.9 kB)
+Collecting aiosignal>=1.4.0 (from aiohttp>=3.13.3->vllm)
+  Downloading aiosignal-1.4.0-py3-none-any.whl.metadata (3.7 kB)
+Collecting attrs>=17.3.0 (from aiohttp>=3.13.3->vllm)
+  Downloading attrs-26.1.0-py3-none-any.whl.metadata (8.8 kB)
+Collecting frozenlist>=1.1.1 (from aiohttp>=3.13.3->vllm)
+  Downloading frozenlist-1.8.0-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (20 kB)
+Collecting multidict<7.0,>=4.5 (from aiohttp>=3.13.3->vllm)
+  Downloading multidict-6.7.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (5.3 kB)
+Collecting propcache>=0.2.0 (from aiohttp>=3.13.3->vllm)
+  Downloading propcache-0.4.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (13 kB)
+Collecting yarl<2.0,>=1.17.0 (from aiohttp>=3.13.3->vllm)
+  Downloading yarl-1.23.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (79 kB)
+Requirement already satisfied: idna>=2.0 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from yarl<2.0,>=1.17.0->aiohttp>=3.13.3->vllm) (3.11)
+Requirement already satisfied: anyio<5,>=3.5.0 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from anthropic>=0.71.0->vllm) (4.13.0)
+Collecting distro<2,>=1.7.0 (from anthropic>=0.71.0->vllm)
+  Downloading distro-1.9.0-py3-none-any.whl.metadata (6.8 kB)
+Collecting docstring-parser<1,>=0.15 (from anthropic>=0.71.0->vllm)
+  Downloading docstring_parser-0.18.0-py3-none-any.whl.metadata (3.5 kB)
+Collecting jiter<1,>=0.4.0 (from anthropic>=0.71.0->vllm)
+  Downloading jiter-0.14.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (5.2 kB)
+Collecting sniffio (from anthropic>=0.71.0->vllm)
+  Downloading sniffio-1.3.1-py3-none-any.whl.metadata (3.9 kB)
+Requirement already satisfied: certifi in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from httpx->model-hosting-container-standards<1.0.0,>=0.1.13->vllm) (2026.2.25)
+Requirement already satisfied: httpcore==1.* in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from httpx->model-hosting-container-standards<1.0.0,>=0.1.13->vllm) (1.0.9)
+Requirement already satisfied: h11>=0.16 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from httpcore==1.*->httpx->model-hosting-container-standards<1.0.0,>=0.1.13->vllm) (0.16.0)
+Requirement already satisfied: annotated-types>=0.6.0 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from pydantic>=2.12.0->vllm) (0.7.0)
+Requirement already satisfied: pydantic-core==2.46.3 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from pydantic>=2.12.0->vllm) (2.46.3)
+Requirement already satisfied: typing-inspection>=0.4.2 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from pydantic>=2.12.0->vllm) (0.4.2)
+Requirement already satisfied: annotated-doc>=0.0.2 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from fastapi>=0.115.0->fastapi[standard]>=0.115.0->vllm) (0.0.4)
+Collecting fastapi-cli>=0.0.8 (from fastapi-cli[standard]>=0.0.8; extra == "standard"->fastapi[standard]>=0.115.0->vllm)
+  Downloading fastapi_cli-0.0.24-py3-none-any.whl.metadata (6.4 kB)
+Collecting fastar>=0.9.0 (from fastapi[standard]>=0.115.0->vllm)
+  Downloading fastar-0.11.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.0 kB)
+Collecting python-multipart>=0.0.18 (from fastapi[standard]>=0.115.0->vllm)
+  Downloading python_multipart-0.0.26-py3-none-any.whl.metadata (2.1 kB)
+Collecting email-validator>=2.0.0 (from fastapi[standard]>=0.115.0->vllm)
+  Downloading email_validator-2.3.0-py3-none-any.whl.metadata (26 kB)
+Collecting uvicorn>=0.12.0 (from uvicorn[standard]>=0.12.0; extra == "standard"->fastapi[standard]>=0.115.0->vllm)
+  Downloading uvicorn-0.45.0-py3-none-any.whl.metadata (6.7 kB)
+Collecting pydantic-settings>=2.0.0 (from fastapi[standard]>=0.115.0->vllm)
+  Downloading pydantic_settings-2.14.0-py3-none-any.whl.metadata (3.4 kB)
+Collecting pydantic-extra-types>=2.0.0 (from fastapi[standard]>=0.115.0->vllm)
+  Downloading pydantic_extra_types-2.11.1-py3-none-any.whl.metadata (4.2 kB)
+Collecting dnspython>=2.0.0 (from email-validator>=2.0.0->fastapi[standard]>=0.115.0->vllm)
+  Downloading dnspython-2.8.0-py3-none-any.whl.metadata (5.7 kB)
+Requirement already satisfied: typer>=0.16.0 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from fastapi-cli>=0.0.8->fastapi-cli[standard]>=0.0.8; extra == "standard"->fastapi[standard]>=0.115.0->vllm) (0.24.1)
+Collecting rich-toolkit>=0.14.8 (from fastapi-cli>=0.0.8->fastapi-cli[standard]>=0.0.8; extra == "standard"->fastapi[standard]>=0.115.0->vllm)
+  Downloading rich_toolkit-0.19.7-py3-none-any.whl.metadata (1.0 kB)
+Collecting fastapi-cloud-cli>=0.1.1 (from fastapi-cli[standard]>=0.0.8; extra == "standard"->fastapi[standard]>=0.115.0->vllm)
+  Downloading fastapi_cloud_cli-0.17.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting rignore>=0.5.1 (from fastapi-cloud-cli>=0.1.1->fastapi-cli[standard]>=0.0.8; extra == "standard"->fastapi[standard]>=0.115.0->vllm)
+  Downloading rignore-0.7.6-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.2 kB)
+Collecting sentry-sdk>=2.20.0 (from fastapi-cloud-cli>=0.1.1->fastapi-cli[standard]>=0.0.8; extra == "standard"->fastapi[standard]>=0.115.0->vllm)
+  Downloading sentry_sdk-2.58.0-py2.py3-none-any.whl.metadata (10 kB)
+Requirement already satisfied: MarkupSafe>=2.0 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from jinja2->torch==2.10.0->vllm) (3.0.3)
+Collecting jsonschema>=4.21.1 (from mistral_common>=1.10.0->mistral_common[image]>=1.10.0->vllm)
+  Downloading jsonschema-4.26.0-py3-none-any.whl.metadata (7.6 kB)
+Collecting jsonschema-specifications>=2023.03.6 (from jsonschema>=4.21.1->mistral_common>=1.10.0->mistral_common[image]>=1.10.0->vllm)
+  Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl.metadata (2.9 kB)
+Collecting referencing>=0.28.4 (from jsonschema>=4.21.1->mistral_common>=1.10.0->mistral_common[image]>=1.10.0->vllm)
+  Downloading referencing-0.37.0-py3-none-any.whl.metadata (2.8 kB)
+Collecting rpds-py>=0.25.0 (from jsonschema>=4.21.1->mistral_common>=1.10.0->mistral_common[image]>=1.10.0->vllm)
+  Downloading rpds_py-0.30.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.1 kB)
+Collecting nvidia-cutlass-dsl-libs-base==4.5.0.dev0 (from nvidia-cutlass-dsl>=4.4.0.dev1->vllm)
+  Downloading nvidia_cutlass_dsl_libs_base-4.5.0.dev0-cp311-cp311-manylinux_2_28_x86_64.whl.metadata (2.7 kB)
+Collecting cuda-python>=12.8 (from nvidia-cutlass-dsl-libs-base==4.5.0.dev0->nvidia-cutlass-dsl>=4.4.0.dev1->vllm)
+  Downloading cuda_python-13.2.0-py3-none-any.whl.metadata (6.5 kB)
+INFO: pip is looking at multiple versions of cuda-python to determine which version is compatible with other requirements. This could take a while.
+  Downloading cuda_python-13.1.1-py3-none-any.whl.metadata (6.2 kB)
+  Downloading cuda_python-13.1.0-py3-none-any.whl.metadata (4.8 kB)
+  Downloading cuda_python-13.0.3-py3-none-any.whl.metadata (4.7 kB)
+  Downloading cuda_python-13.0.2-py3-none-any.whl.metadata (4.7 kB)
+  Downloading cuda_python-13.0.1-py3-none-any.whl.metadata (4.7 kB)
+  Downloading cuda_python-13.0.0-py3-none-any.whl.metadata (4.7 kB)
+  Downloading cuda_python-12.9.6-py3-none-any.whl.metadata (4.7 kB)
+INFO: pip is still looking at multiple versions of cuda-python to determine which version is compatible with other requirements. This could take a while.
+  Downloading cuda_python-12.9.5-py3-none-any.whl.metadata (4.7 kB)
+  Downloading cuda_python-12.9.4-py3-none-any.whl.metadata (4.7 kB)
+Collecting importlib-metadata<8.8.0,>=6.0 (from opentelemetry-api>=1.27.0->vllm)
+  Downloading importlib_metadata-8.7.1-py3-none-any.whl.metadata (4.7 kB)
+Collecting zipp>=3.20 (from importlib-metadata<8.8.0,>=6.0->opentelemetry-api>=1.27.0->vllm)
+  Downloading zipp-3.23.1-py3-none-any.whl.metadata (3.6 kB)
+Collecting opentelemetry-exporter-otlp-proto-grpc==1.41.0 (from opentelemetry-exporter-otlp>=1.27.0->vllm)
+  Downloading opentelemetry_exporter_otlp_proto_grpc-1.41.0-py3-none-any.whl.metadata (2.6 kB)
+Collecting opentelemetry-exporter-otlp-proto-http==1.41.0 (from opentelemetry-exporter-otlp>=1.27.0->vllm)
+  Downloading opentelemetry_exporter_otlp_proto_http-1.41.0-py3-none-any.whl.metadata (2.5 kB)
+Collecting googleapis-common-protos~=1.57 (from opentelemetry-exporter-otlp-proto-grpc==1.41.0->opentelemetry-exporter-otlp>=1.27.0->vllm)
+  Downloading googleapis_common_protos-1.74.0-py3-none-any.whl.metadata (9.2 kB)
+Collecting grpcio<2.0.0,>=1.63.2 (from opentelemetry-exporter-otlp-proto-grpc==1.41.0->opentelemetry-exporter-otlp>=1.27.0->vllm)
+  Downloading grpcio-1.80.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (3.8 kB)
+Collecting opentelemetry-exporter-otlp-proto-common==1.41.0 (from opentelemetry-exporter-otlp-proto-grpc==1.41.0->opentelemetry-exporter-otlp>=1.27.0->vllm)
+  Downloading opentelemetry_exporter_otlp_proto_common-1.41.0-py3-none-any.whl.metadata (1.9 kB)
+Collecting opentelemetry-proto==1.41.0 (from opentelemetry-exporter-otlp-proto-grpc==1.41.0->opentelemetry-exporter-otlp>=1.27.0->vllm)
+  Downloading opentelemetry_proto-1.41.0-py3-none-any.whl.metadata (2.4 kB)
+Collecting protobuf!=6.30.*,!=6.31.*,!=6.32.*,!=6.33.0.*,!=6.33.1.*,!=6.33.2.*,!=6.33.3.*,!=6.33.4.*,>=5.29.6 (from vllm)
+  Downloading protobuf-6.33.6-cp39-abi3-manylinux2014_x86_64.whl.metadata (593 bytes)
+Collecting opentelemetry-semantic-conventions==0.62b0 (from opentelemetry-sdk>=1.27.0->vllm)
+  Downloading opentelemetry_semantic_conventions-0.62b0-py3-none-any.whl.metadata (2.5 kB)
+Requirement already satisfied: charset_normalizer<4,>=2 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from requests>=2.26.0->vllm) (3.4.7)
+Requirement already satisfied: urllib3<3,>=1.26 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from requests>=2.26.0->vllm) (2.6.3)
+Collecting starlette>=0.49.1 (from model-hosting-container-standards<1.0.0,>=0.1.13->vllm)
+  Downloading starlette-0.52.1-py3-none-any.whl.metadata (6.3 kB)
+Collecting pycountry>=23 (from pydantic-extra-types[pycountry]>=2.10.5->mistral_common>=1.10.0->mistral_common[image]>=1.10.0->vllm)
+  Downloading pycountry-26.2.16-py3-none-any.whl.metadata (12 kB)
+Collecting python-dotenv>=0.21.0 (from pydantic-settings>=2.0.0->fastapi[standard]>=0.115.0->vllm)
+  Downloading python_dotenv-1.2.2-py3-none-any.whl.metadata (27 kB)
+Collecting torch-c-dlpack-ext (from quack-kernels>=0.2.7->vllm)
+  Downloading torch_c_dlpack_ext-0.1.5-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (14 kB)
+Requirement already satisfied: rich>=13.7.1 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from rich-toolkit>=0.14.8->fastapi-cli>=0.0.8->fastapi-cli[standard]>=0.0.8; extra == "standard"->fastapi[standard]>=0.115.0->vllm) (15.0.0)
+Requirement already satisfied: markdown-it-py>=2.2.0 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from rich>=13.7.1->rich-toolkit>=0.14.8->fastapi-cli>=0.0.8->fastapi-cli[standard]>=0.0.8; extra == "standard"->fastapi[standard]>=0.115.0->vllm) (4.0.0)
+Requirement already satisfied: pygments<3.0.0,>=2.13.0 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from rich>=13.7.1->rich-toolkit>=0.14.8->fastapi-cli>=0.0.8->fastapi-cli[standard]>=0.0.8; extra == "standard"->fastapi[standard]>=0.115.0->vllm) (2.20.0)
+Requirement already satisfied: mdurl~=0.1 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from markdown-it-py>=2.2.0->rich>=13.7.1->rich-toolkit>=0.14.8->fastapi-cli>=0.0.8->fastapi-cli[standard]>=0.0.8; extra == "standard"->fastapi[standard]>=0.115.0->vllm) (0.1.2)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from sympy>=1.13.3->torch==2.10.0->vllm) (1.3.0)
+Requirement already satisfied: huggingface-hub<2.0,>=0.16.4 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from tokenizers>=0.21.1->vllm) (1.11.0)
+Requirement already satisfied: hf-xet<2.0.0,>=1.4.3 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from huggingface-hub<2.0,>=0.16.4->tokenizers>=0.21.1->vllm) (1.4.3)
+Requirement already satisfied: safetensors>=0.4.3 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from transformers!=5.0.*,!=5.1.*,!=5.2.*,!=5.3.*,!=5.4.*,!=5.5.0,>=4.56.0->vllm) (0.7.0)
+Requirement already satisfied: shellingham>=1.3.0 in /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages (from typer>=0.16.0->fastapi-cli>=0.0.8->fastapi-cli[standard]>=0.0.8; extra == "standard"->fastapi[standard]>=0.115.0->vllm) (1.5.4)
+Collecting httptools>=0.6.3 (from uvicorn[standard]>=0.12.0; extra == "standard"->fastapi[standard]>=0.115.0->vllm)
+  Downloading httptools-0.7.1-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (3.5 kB)
+Collecting uvloop>=0.15.1 (from uvicorn[standard]>=0.12.0; extra == "standard"->fastapi[standard]>=0.115.0->vllm)
+  Downloading uvloop-0.22.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (4.9 kB)
+Collecting websockets>=10.4 (from uvicorn[standard]>=0.12.0; extra == "standard"->fastapi[standard]>=0.115.0->vllm)
+  Downloading websockets-16.0-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl.metadata (6.8 kB)
+Collecting httpx-sse>=0.4 (from mcp->vllm)
+  Downloading httpx_sse-0.4.3-py3-none-any.whl.metadata (9.7 kB)
+Collecting pyjwt>=2.10.1 (from pyjwt[crypto]>=2.10.1->mcp->vllm)
+  Downloading pyjwt-2.12.1-py3-none-any.whl.metadata (4.1 kB)
+Collecting sse-starlette>=1.6.1 (from mcp->vllm)
+  Downloading sse_starlette-3.3.4-py3-none-any.whl.metadata (14 kB)
+Collecting cryptography>=3.4.0 (from pyjwt[crypto]>=2.10.1->mcp->vllm)
+  Downloading cryptography-46.0.7-cp311-abi3-manylinux_2_34_x86_64.whl.metadata (5.7 kB)
+Collecting cffi>=2.0.0 (from cryptography>=3.4.0->pyjwt[crypto]>=2.10.1->mcp->vllm)
+  Downloading cffi-2.0.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.6 kB)
+Collecting pycparser (from cffi>=2.0.0->cryptography>=3.4.0->pyjwt[crypto]>=2.10.1->mcp->vllm)
+  Downloading pycparser-3.0-py3-none-any.whl.metadata (8.2 kB)
+Downloading vllm-0.19.1-cp38-abi3-manylinux_2_31_x86_64.whl (433.1 MB)
+Downloading compressed_tensors-0.15.0.1-py3-none-any.whl (194 kB)
+Downloading depyf-0.20.0-py3-none-any.whl (39 kB)
+Downloading diskcache-5.6.3-py3-none-any.whl (45 kB)
+Downloading flashinfer_cubin-0.6.6-py3-none-any.whl (267.7 MB)
+Downloading flashinfer_python-0.6.6-py3-none-any.whl (7.8 MB)
+Downloading lark-1.2.2-py3-none-any.whl (111 kB)
+Downloading lm_format_enforcer-0.11.3-py3-none-any.whl (45 kB)
+Downloading numba-0.61.2-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (3.8 MB)
+Downloading outlines_core-0.2.11-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.3 MB)
+Downloading torch-2.10.0-3-cp311-cp311-manylinux_2_28_x86_64.whl (915.5 MB)
+Downloading cuda_bindings-12.9.4-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (12.2 MB)
+Using cached nvidia_cublas_cu12-12.8.4.1-py3-none-manylinux_2_27_x86_64.whl (594.3 MB)
+Using cached nvidia_cuda_cupti_cu12-12.8.90-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (10.2 MB)
+Using cached nvidia_cuda_nvrtc_cu12-12.8.93-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl (88.0 MB)
+Using cached nvidia_cuda_runtime_cu12-12.8.90-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (954 kB)
+Using cached nvidia_cudnn_cu12-9.10.2.21-py3-none-manylinux_2_27_x86_64.whl (706.8 MB)
+Using cached nvidia_cufft_cu12-11.3.3.83-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (193.1 MB)
+Using cached nvidia_cufile_cu12-1.13.1.3-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (1.2 MB)
+Using cached nvidia_curand_cu12-10.3.9.90-py3-none-manylinux_2_27_x86_64.whl (63.6 MB)
+Using cached nvidia_cusolver_cu12-11.7.3.90-py3-none-manylinux_2_27_x86_64.whl (267.5 MB)
+Using cached nvidia_cusparse_cu12-12.5.8.93-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (288.2 MB)
+Using cached nvidia_cusparselt_cu12-0.7.1-py3-none-manylinux2014_x86_64.whl (287.2 MB)
+Using cached nvidia_nccl_cu12-2.27.5-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (322.3 MB)
+Using cached nvidia_nvjitlink_cu12-12.8.93-py3-none-manylinux2010_x86_64.manylinux_2_12_x86_64.whl (39.3 MB)
+Downloading nvidia_nvshmem_cu12-3.4.5-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (139.1 MB)
+Using cached nvidia_nvtx_cu12-12.8.90-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (89 kB)
+Downloading torchaudio-2.10.0-cp311-cp311-manylinux_2_28_x86_64.whl (1.9 MB)
+Downloading torchvision-0.25.0-cp311-cp311-manylinux_2_28_x86_64.whl (8.1 MB)
+Downloading apache_tvm_ffi-0.1.10-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (2.6 MB)
+Downloading llguidance-1.3.0-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.0 MB)
+Downloading llvmlite-0.44.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (42.4 MB)
+Downloading model_hosting_container_standards-0.1.14-py3-none-any.whl (121 kB)
+Downloading numpy-2.2.6-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (16.8 MB)
+Downloading nvidia_cudnn_frontend-1.18.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (2.2 MB)
+Downloading xgrammar-0.1.33-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (42.2 MB)
+Downloading aiohttp-3.13.5-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (1.8 MB)
+Downloading multidict-6.7.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (246 kB)
+Downloading yarl-1.23.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (102 kB)
+Downloading aiohappyeyeballs-2.6.1-py3-none-any.whl (15 kB)
+Downloading aiosignal-1.4.0-py3-none-any.whl (7.5 kB)
+Downloading anthropic-0.96.0-py3-none-any.whl (635 kB)
+Downloading distro-1.9.0-py3-none-any.whl (20 kB)
+Downloading docstring_parser-0.18.0-py3-none-any.whl (22 kB)
+Downloading jiter-0.14.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (358 kB)
+Downloading attrs-26.1.0-py3-none-any.whl (67 kB)
+Downloading fastapi-0.136.0-py3-none-any.whl (117 kB)
+Downloading email_validator-2.3.0-py3-none-any.whl (35 kB)
+Downloading dnspython-2.8.0-py3-none-any.whl (331 kB)
+Downloading fastapi_cli-0.0.24-py3-none-any.whl (12 kB)
+Downloading fastapi_cloud_cli-0.17.0-py3-none-any.whl (33 kB)
+Downloading fastar-0.11.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (822 kB)
+Downloading frozenlist-1.8.0-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (231 kB)
+Downloading gguf-0.18.0-py3-none-any.whl (114 kB)
+Downloading interegular-0.3.3-py37-none-any.whl (23 kB)
+Downloading mistral_common-1.11.0-py3-none-any.whl (6.5 MB)
+Downloading jsonschema-4.26.0-py3-none-any.whl (90 kB)
+Downloading jsonschema_specifications-2025.9.1-py3-none-any.whl (18 kB)
+Downloading nvidia_cutlass_dsl-4.5.0.dev0-py3-none-any.whl (10 kB)
+Downloading nvidia_cutlass_dsl_libs_base-4.5.0.dev0-cp311-cp311-manylinux_2_28_x86_64.whl (74.4 MB)
+Downloading cuda_python-12.9.4-py3-none-any.whl (7.6 kB)
+Downloading openai-2.32.0-py3-none-any.whl (1.2 MB)
+Downloading openai_harmony-0.0.8-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (3.0 MB)
+Downloading opencv_python_headless-4.13.0.92-cp37-abi3-manylinux_2_28_x86_64.whl (60.4 MB)
+Downloading opentelemetry_api-1.41.0-py3-none-any.whl (69 kB)
+Downloading importlib_metadata-8.7.1-py3-none-any.whl (27 kB)
+Downloading opentelemetry_exporter_otlp-1.41.0-py3-none-any.whl (7.0 kB)
+Downloading opentelemetry_exporter_otlp_proto_grpc-1.41.0-py3-none-any.whl (20 kB)
+Downloading opentelemetry_exporter_otlp_proto_common-1.41.0-py3-none-any.whl (18 kB)
+Downloading opentelemetry_exporter_otlp_proto_http-1.41.0-py3-none-any.whl (22 kB)
+Downloading opentelemetry_proto-1.41.0-py3-none-any.whl (72 kB)
+Downloading googleapis_common_protos-1.74.0-py3-none-any.whl (300 kB)
+Downloading grpcio-1.80.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (6.8 MB)
+Downloading opentelemetry_sdk-1.41.0-py3-none-any.whl (180 kB)
+Downloading opentelemetry_semantic_conventions-0.62b0-py3-none-any.whl (231 kB)
+Downloading protobuf-6.33.6-cp39-abi3-manylinux2014_x86_64.whl (323 kB)
+Downloading opentelemetry_semantic_conventions_ai-0.5.1-py3-none-any.whl (11 kB)
+Downloading pillow-12.2.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (7.1 MB)
+Downloading prometheus_client-0.25.0-py3-none-any.whl (64 kB)
+Downloading prometheus_fastapi_instrumentator-7.1.0-py3-none-any.whl (19 kB)
+Downloading starlette-0.52.1-py3-none-any.whl (74 kB)
+Downloading propcache-0.4.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (210 kB)
+Downloading pydantic_extra_types-2.11.1-py3-none-any.whl (79 kB)
+Downloading pycountry-26.2.16-py3-none-any.whl (8.0 MB)
+Downloading pydantic_settings-2.14.0-py3-none-any.whl (60 kB)
+Downloading python_dotenv-1.2.2-py3-none-any.whl (22 kB)
+Downloading python_multipart-0.0.26-py3-none-any.whl (28 kB)
+Downloading pyzmq-27.1.0-cp311-cp311-manylinux_2_26_x86_64.manylinux_2_28_x86_64.whl (857 kB)
+Downloading quack_kernels-0.3.11-py3-none-any.whl (240 kB)
+Downloading referencing-0.37.0-py3-none-any.whl (26 kB)
+Downloading rich_toolkit-0.19.7-py3-none-any.whl (32 kB)
+Downloading rignore-0.7.6-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (959 kB)
+Downloading rpds_py-0.30.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (390 kB)
+Downloading sentry_sdk-2.58.0-py2.py3-none-any.whl (460 kB)
+Downloading supervisor-4.3.0-py2.py3-none-any.whl (320 kB)
+Downloading tiktoken-0.12.0-cp311-cp311-manylinux_2_28_x86_64.whl (1.2 MB)
+Downloading uvicorn-0.45.0-py3-none-any.whl (69 kB)
+Downloading httptools-0.7.1-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (456 kB)
+Downloading uvloop-0.22.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (3.8 MB)
+Downloading watchfiles-1.1.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (456 kB)
+Downloading websockets-16.0-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (184 kB)
+Downloading zipp-3.23.1-py3-none-any.whl (10 kB)
+Downloading astor-0.8.1-py2.py3-none-any.whl (27 kB)
+Downloading blake3-1.0.8-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (387 kB)
+Downloading cachetools-7.0.6-py3-none-any.whl (13 kB)
+Downloading cbor2-5.9.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (262 kB)
+Using cached cloudpickle-3.1.2-py3-none-any.whl (22 kB)
+Downloading dill-0.4.1-py3-none-any.whl (120 kB)
+Downloading einops-0.8.2-py3-none-any.whl (65 kB)
+Downloading ijson-3.5.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (135 kB)
+Downloading jmespath-1.1.0-py3-none-any.whl (20 kB)
+Downloading loguru-0.7.3-py3-none-any.whl (61 kB)
+Downloading mcp-1.27.0-py3-none-any.whl (215 kB)
+Downloading httpx_sse-0.4.3-py3-none-any.whl (9.0 kB)
+Downloading pyjwt-2.12.1-py3-none-any.whl (29 kB)
+Downloading cryptography-46.0.7-cp311-abi3-manylinux_2_34_x86_64.whl (4.5 MB)
+Downloading cffi-2.0.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (215 kB)
+Downloading sse_starlette-3.3.4-py3-none-any.whl (14 kB)
+Downloading msgspec-0.21.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (219 kB)
+Downloading ninja-1.13.0-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (180 kB)
+Downloading nvidia_ml_py-13.595.45-py3-none-any.whl (51 kB)
+Downloading partial_json_parser-0.2.1.1.post7-py3-none-any.whl (10 kB)
+Downloading py_cpuinfo-9.0.0-py3-none-any.whl (22 kB)
+Downloading pybase64-1.4.3-cp311-cp311-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_5_x86_64.whl (71 kB)
+Downloading pycparser-3.0-py3-none-any.whl (48 kB)
+Downloading python_json_logger-4.1.0-py3-none-any.whl (15 kB)
+Downloading sentencepiece-0.2.1-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (1.4 MB)
+Downloading setproctitle-1.3.7-cp311-cp311-manylinux1_x86_64.manylinux_2_28_x86_64.manylinux_2_5_x86_64.whl (32 kB)
+Downloading sniffio-1.3.1-py3-none-any.whl (10 kB)
+Downloading tabulate-0.10.0-py3-none-any.whl (39 kB)
+Downloading torch_c_dlpack_ext-0.1.5-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (897 kB)
+Installing collected packages: supervisor, py-cpuinfo, nvidia-ml-py, nvidia-cusparselt-cu12, zipp, websockets, uvloop, uvicorn, tabulate, sniffio, setproctitle, sentry-sdk, sentencepiece, rpds-py, rignore, pyzmq, python-multipart, python-json-logger, python-dotenv, pyjwt, pycparser, pycountry, pybase64, protobuf, propcache, prometheus_client, pillow, partial-json-parser, outlines_core, nvidia-nvtx-cu12, nvidia-nvshmem-cu12, nvidia-nvjitlink-cu12, nvidia-nccl-cu12, nvidia-curand-cu12, nvidia-cufile-cu12, nvidia-cudnn-frontend, nvidia-cuda-runtime-cu12, nvidia-cuda-nvrtc-cu12, nvidia-cuda-cupti-cu12, nvidia-cublas-cu12, numpy, ninja, multidict, msgspec, loguru, llvmlite, llguidance, lark, jmespath, jiter, interegular, ijson, httpx-sse, httptools, grpcio, frozenlist, flashinfer-cubin, fastar, einops, docstring-parser, dnspython, distro, diskcache, dill, cuda-bindings, cloudpickle, cbor2, cachetools, blake3, attrs, astor, apache-tvm-ffi, aiohappyeyeballs, yarl, watchfiles, tiktoken, starlette, referencing, opentelemetry-proto, opencv-python-headless, nvidia-cusparse-cu12, nvidia-cufft-cu12, nvidia-cudnn-cu12, numba, importlib-metadata, googleapis-common-protos, gguf, email-validator, depyf, cuda-python, cffi, aiosignal, sse-starlette, rich-toolkit, pydantic-settings, pydantic-extra-types, prometheus-fastapi-instrumentator, opentelemetry-exporter-otlp-proto-common, opentelemetry-api, openai-harmony, openai, nvidia-cutlass-dsl-libs-base, nvidia-cusolver-cu12, lm-format-enforcer, jsonschema-specifications, fastapi, cryptography, anthropic, aiohttp, torch, opentelemetry-semantic-conventions, nvidia-cutlass-dsl, model-hosting-container-standards, jsonschema, fastapi-cloud-cli, fastapi-cli, torchvision, torchaudio, torch-c-dlpack-ext, opentelemetry-sdk, mistral_common, mcp, flashinfer-python, quack-kernels, opentelemetry-semantic-conventions-ai, opentelemetry-exporter-otlp-proto-http, opentelemetry-exporter-otlp-proto-grpc, xgrammar, opentelemetry-exporter-otlp, compressed-tensors, vllm
+  Attempting uninstall: numpy
+    Found existing installation: numpy 2.4.4
+    Uninstalling numpy-2.4.4:
+      Successfully uninstalled numpy-2.4.4
+  Attempting uninstall: cuda-bindings
+    Found existing installation: cuda-bindings 13.2.0
+    Uninstalling cuda-bindings-13.2.0:
+      Successfully uninstalled cuda-bindings-13.2.0
+  Attempting uninstall: torch
+    Found existing installation: torch 2.11.0
+    Uninstalling torch-2.11.0:
+      Successfully uninstalled torch-2.11.0
+Successfully installed aiohappyeyeballs-2.6.1 aiohttp-3.13.5 aiosignal-1.4.0 anthropic-0.96.0 apache-tvm-ffi-0.1.10 astor-0.8.1 attrs-26.1.0 blake3-1.0.8 cachetools-7.0.6 cbor2-5.9.0 cffi-2.0.0 cloudpickle-3.1.2 compressed-tensors-0.15.0.1 cryptography-46.0.7 cuda-bindings-12.9.4 cuda-python-12.9.4 depyf-0.20.0 dill-0.4.1 diskcache-5.6.3 distro-1.9.0 dnspython-2.8.0 docstring-parser-0.18.0 einops-0.8.2 email-validator-2.3.0 fastapi-0.136.0 fastapi-cli-0.0.24 fastapi-cloud-cli-0.17.0 fastar-0.11.0 flashinfer-cubin-0.6.6 flashinfer-python-0.6.6 frozenlist-1.8.0 gguf-0.18.0 googleapis-common-protos-1.74.0 grpcio-1.80.0 httptools-0.7.1 httpx-sse-0.4.3 ijson-3.5.0 importlib-metadata-8.7.1 interegular-0.3.3 jiter-0.14.0 jmespath-1.1.0 jsonschema-4.26.0 jsonschema-specifications-2025.9.1 lark-1.2.2 llguidance-1.3.0 llvmlite-0.44.0 lm-format-enforcer-0.11.3 loguru-0.7.3 mcp-1.27.0 mistral_common-1.11.0 model-hosting-container-standards-0.1.14 msgspec-0.21.1 multidict-6.7.1 ninja-1.13.0 numba-0.61.2 numpy-2.2.6 nvidia-cublas-cu12-12.8.4.1 nvidia-cuda-cupti-cu12-12.8.90 nvidia-cuda-nvrtc-cu12-12.8.93 nvidia-cuda-runtime-cu12-12.8.90 nvidia-cudnn-cu12-9.10.2.21 nvidia-cudnn-frontend-1.18.0 nvidia-cufft-cu12-11.3.3.83 nvidia-cufile-cu12-1.13.1.3 nvidia-curand-cu12-10.3.9.90 nvidia-cusolver-cu12-11.7.3.90 nvidia-cusparse-cu12-12.5.8.93 nvidia-cusparselt-cu12-0.7.1 nvidia-cutlass-dsl-4.5.0.dev0 nvidia-cutlass-dsl-libs-base-4.5.0.dev0 nvidia-ml-py-13.595.45 nvidia-nccl-cu12-2.27.5 nvidia-nvjitlink-cu12-12.8.93 nvidia-nvshmem-cu12-3.4.5 nvidia-nvtx-cu12-12.8.90 openai-2.32.0 openai-harmony-0.0.8 opencv-python-headless-4.13.0.92 opentelemetry-api-1.41.0 opentelemetry-exporter-otlp-1.41.0 opentelemetry-exporter-otlp-proto-common-1.41.0 opentelemetry-exporter-otlp-proto-grpc-1.41.0 opentelemetry-exporter-otlp-proto-http-1.41.0 opentelemetry-proto-1.41.0 opentelemetry-sdk-1.41.0 opentelemetry-semantic-conventions-0.62b0 opentelemetry-semantic-conventions-ai-0.5.1 outlines_core-0.2.11 partial-json-parser-0.2.1.1.post7 pillow-12.2.0 prometheus-fastapi-instrumentator-7.1.0 prometheus_client-0.25.0 propcache-0.4.1 protobuf-6.33.6 py-cpuinfo-9.0.0 pybase64-1.4.3 pycountry-26.2.16 pycparser-3.0 pydantic-extra-types-2.11.1 pydantic-settings-2.14.0 pyjwt-2.12.1 python-dotenv-1.2.2 python-json-logger-4.1.0 python-multipart-0.0.26 pyzmq-27.1.0 quack-kernels-0.3.11 referencing-0.37.0 rich-toolkit-0.19.7 rignore-0.7.6 rpds-py-0.30.0 sentencepiece-0.2.1 sentry-sdk-2.58.0 setproctitle-1.3.7 sniffio-1.3.1 sse-starlette-3.3.4 starlette-0.52.1 supervisor-4.3.0 tabulate-0.10.0 tiktoken-0.12.0 torch-2.10.0 torch-c-dlpack-ext-0.1.5 torchaudio-2.10.0 torchvision-0.25.0 uvicorn-0.45.0 uvloop-0.22.1 vllm-0.19.1 watchfiles-1.1.1 websockets-16.0 xgrammar-0.1.33 yarl-1.23.0 zipp-3.23.1
+[build] pip opt:vllm: exit=0 at 11:15:46Z
+[build] install complete; marker: /home/dagolden/miniconda3/envs/hormuz/.hormuz_install_sentinel
+[progress] bootstrap done.
+[progress] activating conda env 'hormuz'...
+[conda] using CONDA_EXE=/home/dagolden/miniconda3/bin/conda
+[conda] conda base: /home/dagolden/miniconda3
+[conda] activating 'hormuz'...
+[conda] activated env 'hormuz' (CONDA_PREFIX=/home/dagolden/miniconda3/envs/hormuz)
+[progress] conda env active (python=/home/dagolden/miniconda3/envs/hormuz/bin/python).
+[progress] recording runtime inventory...
+[runtime] Inventory written to /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260421_105735/runtime-stonybrook_ai_cluster_setup-22638-single.json
+[runtime] gpu=yes python=Python 3.11.15 gams=missing julia=missing R=missing java=missing cuda=missing
+[progress] runtime inventory done.
+[vllm] starting sidecar on ai02:8000
+       model=meta-llama/Llama-3.1-8B-Instruct tp=1 dtype=auto gpus=0
+       log:   /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260421_105735/vllm.log
+[vllm] pid=4044449
+[gpu] pipeline driver sees CUDA_VISIBLE_DEVICES=1
+[vllm] waiting up to 1800s for http://ai02:8000/v1/models
+[failure] Recorded bash failure for stage=stonybrook_ai_cluster_vllm task=22638-single exit=1: vLLM exited before becoming healthy; see /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260421_105735/vllm.log
+[failure] /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260421_105735_stonybrook_ai_cluster_vllm_bash_failure_22638-single.json
+[fatal] vLLM died during startup. Tail of log:
+(APIServer pid=4044449)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/uvloop/__init__.py", line 48, in wrapper
+(APIServer pid=4044449)     return await main
+(APIServer pid=4044449)            ^^^^^^^^^^
+(APIServer pid=4044449)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/vllm/entrypoints/openai/api_server.py", line 672, in run_server
+(APIServer pid=4044449)     await run_server_worker(listen_address, sock, args, **uvicorn_kwargs)
+(APIServer pid=4044449)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/vllm/entrypoints/openai/api_server.py", line 686, in run_server_worker
+(APIServer pid=4044449)     async with build_async_engine_client(
+(APIServer pid=4044449)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/contextlib.py", line 210, in __aenter__
+(APIServer pid=4044449)     return await anext(self.gen)
+(APIServer pid=4044449)            ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=4044449)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/vllm/entrypoints/openai/api_server.py", line 100, in build_async_engine_client
+(APIServer pid=4044449)     async with build_async_engine_client_from_engine_args(
+(APIServer pid=4044449)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/contextlib.py", line 210, in __aenter__
+(APIServer pid=4044449)     return await anext(self.gen)
+(APIServer pid=4044449)            ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=4044449)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/vllm/entrypoints/openai/api_server.py", line 124, in build_async_engine_client_from_engine_args
+(APIServer pid=4044449)     vllm_config = engine_args.create_engine_config(usage_context=usage_context)
+(APIServer pid=4044449)                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=4044449)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/vllm/engine/arg_utils.py", line 1539, in create_engine_config
+(APIServer pid=4044449)     maybe_override_with_speculators(
+(APIServer pid=4044449)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/vllm/transformers_utils/config.py", line 583, in maybe_override_with_speculators
+(APIServer pid=4044449)     config_dict, _ = PretrainedConfig.get_config_dict(
+(APIServer pid=4044449)                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=4044449)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/transformers/configuration_utils.py", line 670, in get_config_dict
+(APIServer pid=4044449)     config_dict, kwargs = cls._get_config_dict(pretrained_model_name_or_path, **kwargs)
+(APIServer pid=4044449)                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=4044449)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/transformers/configuration_utils.py", line 725, in _get_config_dict
+(APIServer pid=4044449)     resolved_config_file = cached_file(
+(APIServer pid=4044449)                            ^^^^^^^^^^^^
+(APIServer pid=4044449)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/transformers/utils/hub.py", line 278, in cached_file
+(APIServer pid=4044449)     file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+(APIServer pid=4044449)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=4044449)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/transformers/utils/hub.py", line 488, in cached_files
+(APIServer pid=4044449)     raise OSError(
+(APIServer pid=4044449) OSError: You are trying to access a gated repo.
+(APIServer pid=4044449) Make sure to have access to it at https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct.
+(APIServer pid=4044449) 403 Client Error. (Request ID: Root=1-69e75c8c-03bcf4d35262a06209d29c4f;65d1f4d2-b03d-44d5-999b-30667ef67136)
+(APIServer pid=4044449) 
+(APIServer pid=4044449) Cannot access gated repo for url https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct/resolve/main/config.json.
+(APIServer pid=4044449) Access to model meta-llama/Llama-3.1-8B-Instruct is restricted and you are not in the authorized list. Visit https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct to ask for access.

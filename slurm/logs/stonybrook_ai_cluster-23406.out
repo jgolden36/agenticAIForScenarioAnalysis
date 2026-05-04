@@ -1,0 +1,1701 @@
+[wandb] project=hormuz-pipeline group=20260423_165005 mode=offline
+[wandb] dir=/home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260423_165005 per_task=1
+[wandb] runs will be written to /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260423_165005; sync later with:
+[wandb]   wandb sync /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260423_165005/wandb/offline-run-*
+[hf] using inline HF_TOKEN_INLINE (consider moving to /home/dagolden/.huggingface_token to keep secrets out of the .job file)
+[hf] HF_TOKEN + HUGGING_FACE_HUB_TOKEN exported: hf_o…AFmq (len=37)
+[hf] HF_HOME=/home/dagolden/.cache/huggingface
+================================================================
+  Hormuz Pipeline — Stony Brook AI Cluster (single-node driver)
+================================================================
+  Job ID:        23406
+  Run ID:        20260423_165005
+  Node:          ai04
+  Partition:     defq
+  Nodelist:      quadro1
+  CPUs:          16
+  GPUs (gres):   2
+  Memory:        131072 MB
+  Walltime cap:  from-script
+  Project root:  /home/dagolden/agenticAIForScenarioAnalysis
+  Conda env:     hormuz
+  Config:        /home/dagolden/agenticAIForScenarioAnalysis/slurm/config/pipeline_cluster.yaml
+  Scratch:       <unset, using project root>
+  Run log dir:   /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260423_165005
+  Driver out:    /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/stonybrook_ai_cluster-23406.out
+  Driver err:    /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/stonybrook_ai_cluster-23406.err
+  W&B project:   hormuz-pipeline (mode=offline, group=20260423_165005)
+  Started at:    2026-04-23T16:50:05Z
+================================================================
+[progress] loading Lmod modules...
+[module] anaconda not available; relying on PATH
+[module] no cudnn module loaded
+[progress] modules done.
+[cuda] resolving CUDA toolkit / nvcc...
+[cuda] CUDA_HOME=/shared/software/cuda/12.6 (nvcc release 12.6)
+[progress] bootstrapping conda env 'hormuz' (auto-build)...
+[build] env 'hormuz' already exists at /home/dagolden/miniconda3/envs/hormuz
+[build] install marker present at /home/dagolden/miniconda3/envs/hormuz/.hormuz_install_sentinel
+[build] skipping pip install. Set HORMUZ_FORCE_REBUILD=1 to force a reinstall.
+[vendor] auto-vendoring optional model assets...
+[vendor]   - cloning OSeMOSYS into Models/Energy/OSeMOSYS
+[vendor]   - cloning TEMOA into Models/Energy/TEMOA
+[vendor]   - downloading AEO2025 macro XLSX -> /home/dagolden/agenticAIForScenarioAnalysis/data/eia/AEO2025_Tables_19_20.xlsx
+[vendor]   - exported HORMUZ_MAM_AEO_XLSX_PATH=/home/dagolden/agenticAIForScenarioAnalysis/data/eia/AEO2025_Tables_19_20.xlsx
+[vendor] auto-vendor done.
+[progress] bootstrap done.
+[progress] activating conda env 'hormuz'...
+[conda] using CONDA_EXE=/home/dagolden/miniconda3/bin/conda
+[conda] conda base: /home/dagolden/miniconda3
+[conda] activating 'hormuz'...
+[conda] activated env 'hormuz' (CONDA_PREFIX=/home/dagolden/miniconda3/envs/hormuz)
+[progress] conda env active (python=/home/dagolden/miniconda3/envs/hormuz/bin/python).
+[cuda] nvcc=/shared/software/cuda/12.6/bin/nvcc (release 12.6)
+[progress] recording runtime inventory...
+[runtime] Inventory written to /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260423_165005/runtime-stonybrook_ai_cluster_setup-23406-single.json
+[runtime] gpu=yes python=Python 3.11.15 gams=missing julia=missing R=missing java=missing cuda=nvcc: NVIDIA (R) Cuda compiler driver
+[progress] runtime inventory done.
+[vllm] starting sidecar on ai04:8000
+       model=meta-llama/Llama-3.1-8B-Instruct tp=1 dtype=auto gpus=0
+       log:   /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260423_165005/vllm.log
+[vllm] pid=503511
+[gpu] pipeline driver sees CUDA_VISIBLE_DEVICES=1
+[vllm] waiting up to 1800s for http://ai04:8000/v1/models
+[vllm] healthy at http://ai04:8000/v1
+
+════════════ Stage 1: Scenario Generation ════════════
+[safe_python] stage=stonybrook_ai_cluster_01_scenarios continue_on_failure=0 cmd: python slurm/scripts/run_scenarios.py
+2026-04-23 16:53:26,228 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "N/A",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 16:53:26,229 [INFO] hormuz.slurm: === Module 1: Scenario Generation (run_id=20260423_165005) ===
+2026-04-23 16:53:26,267 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 16:53:27,648 [INFO] hormuz.slurm: Generating scenario narratives...
+2026-04-23 16:54:06,154 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 16:54:06,172 [INFO] hormuz.slurm: Generated 4 scenario narratives
+2026-04-23 16:54:06,178 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_scenarios.json
+2026-04-23 16:54:06,178 [INFO] hormuz.slurm: Auto-approve enabled — scenarios approved automatically
+[safe_python] stage=stonybrook_ai_cluster_01_scenarios completed successfully.
+
+════════════ Dispatch: Parameter Manifest ════════════
+[safe_python] stage=stonybrook_ai_cluster_dispatch_params continue_on_failure=0 cmd: python slurm/scripts/dispatch_models.py parameters --run-id 20260423_165005
+2026-04-23 16:54:10 | INFO     | src.models.registry | MAgPIEAdapter: loaded RConfig from magpie.yaml
+2026-04-23 16:54:10,527 [INFO] src.models.registry: MAgPIEAdapter: loaded RConfig from magpie.yaml
+2026-04-23 16:54:10 | INFO     | src.models.registry | NEMSAdapter: loaded NEMSConfig from nems.yaml
+2026-04-23 16:54:10,539 [INFO] src.models.registry: NEMSAdapter: loaded NEMSConfig from nems.yaml
+2026-04-23 16:54:10 | INFO     | src.models.registry | MAMAdapter: loaded MAMConfig from mam.yaml
+2026-04-23 16:54:10,546 [INFO] src.models.registry: MAMAdapter: loaded MAMConfig from mam.yaml
+2026-04-23 16:54:10 | INFO     | src.models.registry | OpenCGEAdapter: loaded OpenCGEConfig from opencge.yaml
+2026-04-23 16:54:10,557 [INFO] src.models.registry: OpenCGEAdapter: loaded OpenCGEConfig from opencge.yaml
+2026-04-23 16:54:10 | INFO     | src.models.registry | PyCGEAdapter: loaded PyCGEConfig from pycge.yaml
+2026-04-23 16:54:10,565 [INFO] src.models.registry: PyCGEAdapter: loaded PyCGEConfig from pycge.yaml
+2026-04-23 16:54:10 | INFO     | src.models.registry | MIRAGRODEPAdapter: loaded MIRAGRODEPConfig from miragrodep.yaml
+2026-04-23 16:54:10,572 [INFO] src.models.registry: MIRAGRODEPAdapter: loaded MIRAGRODEPConfig from miragrodep.yaml
+2026-04-23 16:54:10 | INFO     | src.models.registry | SahysModAdapter: loaded SahysModConfig from sahysmod.yaml
+2026-04-23 16:54:10,692 [INFO] src.models.registry: SahysModAdapter: loaded SahysModConfig from sahysmod.yaml
+2026-04-23 16:54:10 | INFO     | src.models.registry | BornsteinKrusellRebeloAdapter: loaded BornsteinKrusellRebeloConfig from bornstein_krusell_rebelo.yaml
+2026-04-23 16:54:10,700 [INFO] src.models.registry: BornsteinKrusellRebeloAdapter: loaded BornsteinKrusellRebeloConfig from bornstein_krusell_rebelo.yaml
+2026-04-23 16:54:10 | INFO     | src.models.registry | OSeMOSYSAdapter: loaded OSeMOSYSConfig from osemosys.yaml
+2026-04-23 16:54:10,991 [INFO] src.models.registry: OSeMOSYSAdapter: loaded OSeMOSYSConfig from osemosys.yaml
+2026-04-23 16:54:10 | INFO     | src.models.registry | MESSAGEixAdapter: loaded MESSAGEixConfig from messageix.yaml
+2026-04-23 16:54:10,999 [INFO] src.models.registry: MESSAGEixAdapter: loaded MESSAGEixConfig from messageix.yaml
+2026-04-23 16:54:11 | INFO     | src.models.registry | TEMOAAdapter: loaded TEMOAConfig from temoa.yaml
+2026-04-23 16:54:11,007 [INFO] src.models.registry: TEMOAAdapter: loaded TEMOAConfig from temoa.yaml
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: ggm (lng/commodity)
+2026-04-23 16:54:11,007 [INFO] src.models.registry: Registered model: ggm (lng/commodity)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: magpie (fertilizer_agriculture/commodity)
+2026-04-23 16:54:11,007 [INFO] src.models.registry: Registered model: magpie (fertilizer_agriculture/commodity)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: nems (macroeconomic/short_run_macro)
+2026-04-23 16:54:11,007 [INFO] src.models.registry: Registered model: nems (macroeconomic/short_run_macro)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: mam (macroeconomic/short_run_macro)
+2026-04-23 16:54:11,007 [INFO] src.models.registry: Registered model: mam (macroeconomic/short_run_macro)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: opencge (macroeconomic/long_run_macro_strategic)
+2026-04-23 16:54:11,008 [INFO] src.models.registry: Registered model: opencge (macroeconomic/long_run_macro_strategic)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: pycge (macroeconomic/long_run_macro_strategic)
+2026-04-23 16:54:11,008 [INFO] src.models.registry: Registered model: pycge (macroeconomic/long_run_macro_strategic)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: miragrodep (macroeconomic/long_run_macro_strategic)
+2026-04-23 16:54:11,008 [INFO] src.models.registry: Registered model: miragrodep (macroeconomic/long_run_macro_strategic)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: sahysmod (water/commodity)
+2026-04-23 16:54:11,008 [INFO] src.models.registry: Registered model: sahysmod (water/commodity)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: cwatm (water/commodity)
+2026-04-23 16:54:11,008 [INFO] src.models.registry: Registered model: cwatm (water/commodity)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: weap_mena (water/commodity)
+2026-04-23 16:54:11,008 [INFO] src.models.registry: Registered model: weap_mena (water/commodity)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: watergap2 (water/commodity)
+2026-04-23 16:54:11,008 [INFO] src.models.registry: Registered model: watergap2 (water/commodity)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: bornstein_krusell_rebelo (oil/commodity)
+2026-04-23 16:54:11,008 [INFO] src.models.registry: Registered model: bornstein_krusell_rebelo (oil/commodity)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: osemosys (energy_systems/long_run_macro_strategic)
+2026-04-23 16:54:11,008 [INFO] src.models.registry: Registered model: osemosys (energy_systems/long_run_macro_strategic)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: messageix (energy_systems/long_run_macro_strategic)
+2026-04-23 16:54:11,009 [INFO] src.models.registry: Registered model: messageix (energy_systems/long_run_macro_strategic)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: temoa (energy_systems/long_run_macro_strategic)
+2026-04-23 16:54:11,009 [INFO] src.models.registry: Registered model: temoa (energy_systems/long_run_macro_strategic)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: poles_jrc (oil/commodity)
+2026-04-23 16:54:11,009 [INFO] src.models.registry: Registered model: poles_jrc (oil/commodity)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: marketsim (oil/commodity)
+2026-04-23 16:54:11,009 [INFO] src.models.registry: Registered model: marketsim (oil/commodity)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: fed_oil (oil/short_run_macro)
+2026-04-23 16:54:11,009 [INFO] src.models.registry: Registered model: fed_oil (oil/short_run_macro)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: energy_flux_gas_power (lng/commodity)
+2026-04-23 16:54:11,009 [INFO] src.models.registry: Registered model: energy_flux_gas_power (lng/commodity)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: energy_flux_lng_profits (lng/commodity)
+2026-04-23 16:54:11,009 [INFO] src.models.registry: Registered model: energy_flux_lng_profits (lng/commodity)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: lngst (lng/commodity)
+2026-04-23 16:54:11,009 [INFO] src.models.registry: Registered model: lngst (lng/commodity)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: world_helium_model (helium_semiconductors/commodity)
+2026-04-23 16:54:11,009 [INFO] src.models.registry: Registered model: world_helium_model (helium_semiconductors/commodity)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: argonne_abm (helium_semiconductors/commodity)
+2026-04-23 16:54:11,010 [INFO] src.models.registry: Registered model: argonne_abm (helium_semiconductors/commodity)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: simrlfab (helium_semiconductors/commodity)
+2026-04-23 16:54:11,010 [INFO] src.models.registry: Registered model: simrlfab (helium_semiconductors/commodity)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: capri (fertilizer_agriculture/commodity)
+2026-04-23 16:54:11,010 [INFO] src.models.registry: Registered model: capri (fertilizer_agriculture/commodity)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: simple_g (fertilizer_agriculture/commodity)
+2026-04-23 16:54:11,010 [INFO] src.models.registry: Registered model: simple_g (fertilizer_agriculture/commodity)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: world_fertilizer (fertilizer_agriculture/commodity)
+2026-04-23 16:54:11,010 [INFO] src.models.registry: Registered model: world_fertilizer (fertilizer_agriculture/commodity)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: gtap (fertilizer_agriculture/long_run_macro_strategic)
+2026-04-23 16:54:11,010 [INFO] src.models.registry: Registered model: gtap (fertilizer_agriculture/long_run_macro_strategic)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: apsim (fertilizer_agriculture/commodity)
+2026-04-23 16:54:11,010 [INFO] src.models.registry: Registered model: apsim (fertilizer_agriculture/commodity)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: futures (fertilizer_agriculture/commodity)
+2026-04-23 16:54:11,010 [INFO] src.models.registry: Registered model: futures (fertilizer_agriculture/commodity)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: aisdb (shipping/commodity)
+2026-04-23 16:54:11,010 [INFO] src.models.registry: Registered model: aisdb (shipping/commodity)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: ais_project (shipping/commodity)
+2026-04-23 16:54:11,011 [INFO] src.models.registry: Registered model: ais_project (shipping/commodity)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: nrel (macroeconomic/short_run_macro)
+2026-04-23 16:54:11,011 [INFO] src.models.registry: Registered model: nrel (macroeconomic/short_run_macro)
+2026-04-23 16:54:11 | INFO     | src.models.registry | Registered model: mpsge_jl (macroeconomic/long_run_macro_strategic)
+2026-04-23 16:54:11,011 [INFO] src.models.registry: Registered model: mpsge_jl (macroeconomic/long_run_macro_strategic)
+2026-04-23 16:54:11,011 [INFO] hormuz.slurm: Routing sets from registry: 0 GPU model(s), 0 high-memory model(s)
+2026-04-23 16:54:11,344 [INFO] hormuz.slurm: Manifest saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/manifests/20260423_165005_parameters.json (136 entries)
+2026-04-23 16:54:11,348 [INFO] hormuz.slurm: Manifest count sidecar written: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/manifests/20260423_165005_parameters_count.txt -> 136
+2026-04-23 16:54:11,348 [INFO] hormuz.slurm: Parameter manifest: 136 entries (4 scenarios × 34 models)
+MANIFEST_COUNT=136
+[safe_python] stage=stonybrook_ai_cluster_dispatch_params completed successfully.
+
+════════════ Stage 2: Parameter Extraction ════════════
+[stonybrook_ai_cluster_02_parameters] dispatching 136 task(s) serially on this node
+─── [stonybrook_ai_cluster_02_parameters] task 0/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 16:54:19,297 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "0",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 16:54:19,297 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=0) ===
+2026-04-23 16:54:19,299 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=weap_mena
+2026-04-23 16:54:19,301 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 16:54:31,999 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 16:54:32,019 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_0.json
+2026-04-23 16:54:32,019 [INFO] hormuz.slurm: Extracted 5 parameters for swift_contained/weap_mena in 11.4s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 1/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 16:54:44,884 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "1",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 16:54:44,884 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=1) ===
+2026-04-23 16:54:44,886 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=sahysmod
+2026-04-23 16:54:44,887 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 16:54:54,006 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 16:54:54,135 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_1.json
+2026-04-23 16:54:54,135 [INFO] hormuz.slurm: Extracted 3 parameters for swift_contained/sahysmod in 8.1s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 2/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 16:55:01,683 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "2",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 16:55:01,683 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=2) ===
+2026-04-23 16:55:01,685 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=watergap2
+2026-04-23 16:55:01,686 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 16:55:10,337 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 16:55:10,373 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_2.json
+2026-04-23 16:55:10,373 [INFO] hormuz.slurm: Extracted 3 parameters for swift_contained/watergap2 in 7.7s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 3/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 16:55:18,184 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "3",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 16:55:18,184 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=3) ===
+2026-04-23 16:55:18,186 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=cwatm
+2026-04-23 16:55:18,187 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 16:55:26,516 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 16:55:26,533 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_3.json
+2026-04-23 16:55:26,533 [INFO] hormuz.slurm: Extracted 3 parameters for swift_contained/cwatm in 7.3s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 4/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 16:55:35,446 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "4",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 16:55:35,446 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=4) ===
+2026-04-23 16:55:35,448 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=bornstein_krusell_rebelo
+2026-04-23 16:55:35,449 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 16:55:49,137 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 16:55:49,156 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_4.json
+2026-04-23 16:55:49,156 [INFO] hormuz.slurm: Extracted 5 parameters for swift_contained/bornstein_krusell_rebelo in 12.7s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 5/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 16:56:01,537 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "5",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 16:56:01,537 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=5) ===
+2026-04-23 16:56:01,539 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=poles_jrc
+2026-04-23 16:56:01,541 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 16:56:13,334 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 16:56:13,394 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_5.json
+2026-04-23 16:56:13,394 [INFO] hormuz.slurm: Extracted 5 parameters for swift_contained/poles_jrc in 10.8s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 6/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 16:56:20,322 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "6",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 16:56:20,322 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=6) ===
+2026-04-23 16:56:20,324 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=marketsim
+2026-04-23 16:56:20,325 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 16:56:28,602 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 16:56:28,638 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_6.json
+2026-04-23 16:56:28,638 [INFO] hormuz.slurm: Extracted 3 parameters for swift_contained/marketsim in 7.3s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 7/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 16:56:37,288 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "7",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 16:56:37,288 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=7) ===
+2026-04-23 16:56:37,290 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=fed_oil
+2026-04-23 16:56:37,291 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 16:56:48,550 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 16:56:48,572 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_7.json
+2026-04-23 16:56:48,572 [INFO] hormuz.slurm: Extracted 4 parameters for swift_contained/fed_oil in 10.2s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 8/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 16:56:56,310 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "8",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 16:56:56,310 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=8) ===
+2026-04-23 16:56:56,312 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=energy_flux_gas_power
+2026-04-23 16:56:56,313 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 16:57:17,233 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 16:57:17 | WARNING  | src.parameters.extractor | Parameter extraction validation failed on attempt 1/3 for energy_flux_gas_power: 1 validation error for ModelParameterExtraction
+parameters.1
+  Value error, Parameter 'custom_build_cap_mw_yr' has expected_type='positive_number' but value is null. Provide a best-effort numeric/string estimate; if truly unknown, leave the parameter out rather than emitting null. [type=value_error, input_value={'name': 'custom_build_ca...ype': 'positive_number'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.13/v/value_error
+2026-04-23 16:57:17,244 [WARNING] src.parameters.extractor: Parameter extraction validation failed on attempt 1/3 for energy_flux_gas_power: 1 validation error for ModelParameterExtraction
+parameters.1
+  Value error, Parameter 'custom_build_cap_mw_yr' has expected_type='positive_number' but value is null. Provide a best-effort numeric/string estimate; if truly unknown, leave the parameter out rather than emitting null. [type=value_error, input_value={'name': 'custom_build_ca...ype': 'positive_number'}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.13/v/value_error
+2026-04-23 16:57:49,304 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 16:57:49,316 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_8.json
+2026-04-23 16:57:49,316 [INFO] hormuz.slurm: Extracted 9 parameters for swift_contained/energy_flux_gas_power in 52.0s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 9/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 16:58:03,158 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "9",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 16:58:03,158 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=9) ===
+2026-04-23 16:58:03,160 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=energy_flux_lng_profits
+2026-04-23 16:58:03,162 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 16:58:15,884 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 16:58:15,909 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_9.json
+2026-04-23 16:58:15,910 [INFO] hormuz.slurm: Extracted 4 parameters for swift_contained/energy_flux_lng_profits in 11.7s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 10/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 16:58:23,182 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "10",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 16:58:23,182 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=10) ===
+2026-04-23 16:58:23,184 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=ggm
+2026-04-23 16:58:23,185 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 16:58:37,931 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 16:58:37,953 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_10.json
+2026-04-23 16:58:37,953 [INFO] hormuz.slurm: Extracted 6 parameters for swift_contained/ggm in 13.8s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 11/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 16:58:45,640 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "11",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 16:58:45,640 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=11) ===
+2026-04-23 16:58:45,642 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=lngst
+2026-04-23 16:58:45,643 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 16:58:56,820 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 16:58:56,960 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_11.json
+2026-04-23 16:58:56,960 [INFO] hormuz.slurm: Extracted 4 parameters for swift_contained/lngst in 10.2s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 12/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 16:59:10,601 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "12",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 16:59:10,601 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=12) ===
+2026-04-23 16:59:10,603 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=world_helium_model
+2026-04-23 16:59:10,605 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 16:59:19,905 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 16:59:19,927 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_12.json
+2026-04-23 16:59:19,927 [INFO] hormuz.slurm: Extracted 3 parameters for swift_contained/world_helium_model in 8.3s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 13/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 16:59:27,716 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "13",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 16:59:27,716 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=13) ===
+2026-04-23 16:59:27,717 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=argonne_abm
+2026-04-23 16:59:27,719 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 16:59:36,057 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 16:59:36,080 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_13.json
+2026-04-23 16:59:36,080 [INFO] hormuz.slurm: Extracted 3 parameters for swift_contained/argonne_abm in 7.4s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 14/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 16:59:44,010 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "14",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 16:59:44,011 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=14) ===
+2026-04-23 16:59:44,013 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=simrlfab
+2026-04-23 16:59:44,014 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 16:59:54,668 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 16:59:54,685 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_14.json
+2026-04-23 16:59:54,685 [INFO] hormuz.slurm: Extracted 4 parameters for swift_contained/simrlfab in 9.7s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 15/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:00:02,754 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "15",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:00:02,754 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=15) ===
+2026-04-23 17:00:02,756 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=capri
+2026-04-23 17:00:02,758 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:00:11,628 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:00:11,654 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_15.json
+2026-04-23 17:00:11,654 [INFO] hormuz.slurm: Extracted 3 parameters for swift_contained/capri in 7.5s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 16/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:00:23,985 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "16",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:00:23,985 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=16) ===
+2026-04-23 17:00:23,987 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=magpie
+2026-04-23 17:00:23,988 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:00:32,057 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:00:32,078 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_16.json
+2026-04-23 17:00:32,078 [INFO] hormuz.slurm: Extracted 3 parameters for swift_contained/magpie in 7.1s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 17/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:00:40,035 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "17",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:00:40,035 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=17) ===
+2026-04-23 17:00:40,037 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=simple_g
+2026-04-23 17:00:40,038 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:00:47,628 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:00:47,651 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_17.json
+2026-04-23 17:00:47,651 [INFO] hormuz.slurm: Extracted 3 parameters for swift_contained/simple_g in 6.6s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 18/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:00:55,382 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "18",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:00:55,382 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=18) ===
+2026-04-23 17:00:55,384 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=world_fertilizer
+2026-04-23 17:00:55,385 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:01:03,957 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:01:03,982 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_18.json
+2026-04-23 17:01:03,983 [INFO] hormuz.slurm: Extracted 3 parameters for swift_contained/world_fertilizer in 7.6s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 19/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:01:12,387 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "19",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:01:12,387 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=19) ===
+2026-04-23 17:01:12,389 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=gtap
+2026-04-23 17:01:12,391 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:01:24,497 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:01:24,519 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_19.json
+2026-04-23 17:01:24,519 [INFO] hormuz.slurm: Extracted 4 parameters for swift_contained/gtap in 11.1s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 20/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:01:37,636 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "20",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:01:37,637 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=20) ===
+2026-04-23 17:01:37,638 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=apsim
+2026-04-23 17:01:37,640 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:01:46,851 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:01:46,938 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_20.json
+2026-04-23 17:01:46,938 [INFO] hormuz.slurm: Extracted 3 parameters for swift_contained/apsim in 8.2s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 21/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:01:55,283 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "21",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:01:55,283 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=21) ===
+2026-04-23 17:01:55,284 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=futures
+2026-04-23 17:01:55,285 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:02:04,646 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:02:04,960 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_21.json
+2026-04-23 17:02:04,960 [INFO] hormuz.slurm: Extracted 3 parameters for swift_contained/futures in 8.3s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 22/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:02:13,218 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "22",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:02:13,219 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=22) ===
+2026-04-23 17:02:13,220 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=aisdb
+2026-04-23 17:02:13,222 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:02:34,036 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:02:34,059 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_22.json
+2026-04-23 17:02:34,059 [INFO] hormuz.slurm: Extracted 9 parameters for swift_contained/aisdb in 19.7s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 23/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:02:47,519 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "23",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:02:47,519 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=23) ===
+2026-04-23 17:02:47,521 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=ais_project
+2026-04-23 17:02:47,522 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:02:58,736 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:02:58,803 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_23.json
+2026-04-23 17:02:58,803 [INFO] hormuz.slurm: Extracted 4 parameters for swift_contained/ais_project in 10.2s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 24/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:03:09,730 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "24",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:03:09,730 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=24) ===
+2026-04-23 17:03:09,732 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=nems
+2026-04-23 17:03:09,734 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:03:25,068 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:03:25,157 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_24.json
+2026-04-23 17:03:25,157 [INFO] hormuz.slurm: Extracted 6 parameters for swift_contained/nems in 13.8s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 25/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:03:34,247 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "25",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:03:34,247 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=25) ===
+2026-04-23 17:03:34,250 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=mam
+2026-04-23 17:03:34,252 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:03:49,880 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:03:49,965 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_25.json
+2026-04-23 17:03:49,965 [INFO] hormuz.slurm: Extracted 6 parameters for swift_contained/mam in 14.4s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 26/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:04:07,056 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "26",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:04:07,056 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=26) ===
+2026-04-23 17:04:07,058 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=nrel
+2026-04-23 17:04:07,059 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:04:16,640 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:04:16,721 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_26.json
+2026-04-23 17:04:16,721 [INFO] hormuz.slurm: Extracted 3 parameters for swift_contained/nrel in 8.5s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 27/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:04:25,228 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "27",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:04:25,228 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=27) ===
+2026-04-23 17:04:25,230 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=mpsge_jl
+2026-04-23 17:04:25,231 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:04:38,413 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:04:38,435 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_27.json
+2026-04-23 17:04:38,435 [INFO] hormuz.slurm: Extracted 4 parameters for swift_contained/mpsge_jl in 12.2s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 28/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:04:46,257 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "28",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:04:46,257 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=28) ===
+2026-04-23 17:04:46,259 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=opencge
+2026-04-23 17:04:46,260 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:04:55,160 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:04:55,184 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_28.json
+2026-04-23 17:04:55,184 [INFO] hormuz.slurm: Extracted 3 parameters for swift_contained/opencge in 7.9s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 29/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:05:07,828 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "29",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:05:07,828 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=29) ===
+2026-04-23 17:05:07,829 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=pycge
+2026-04-23 17:05:07,831 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:05:17,589 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:05:17,611 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_29.json
+2026-04-23 17:05:17,611 [INFO] hormuz.slurm: Extracted 3 parameters for swift_contained/pycge in 8.8s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 30/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:05:26,346 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "30",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:05:26,346 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=30) ===
+2026-04-23 17:05:26,348 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=miragrodep
+2026-04-23 17:05:26,350 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:05:37,829 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:05:37,850 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_30.json
+2026-04-23 17:05:37,851 [INFO] hormuz.slurm: Extracted 4 parameters for swift_contained/miragrodep in 10.5s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 31/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:05:45,339 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "31",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:05:45,339 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=31) ===
+2026-04-23 17:05:45,341 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=osemosys
+2026-04-23 17:05:45,343 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:05:59,187 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:05:59,247 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_31.json
+2026-04-23 17:05:59,248 [INFO] hormuz.slurm: Extracted 6 parameters for swift_contained/osemosys in 12.8s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 32/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:06:12,448 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "32",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:06:12,449 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=32) ===
+2026-04-23 17:06:12,451 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=messageix
+2026-04-23 17:06:12,452 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:06:26,571 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:06:26,595 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_32.json
+2026-04-23 17:06:26,595 [INFO] hormuz.slurm: Extracted 6 parameters for swift_contained/messageix in 13.1s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 33/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:06:35,186 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "33",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:06:35,186 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=33) ===
+2026-04-23 17:06:35,188 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_contained, model=temoa
+2026-04-23 17:06:35,189 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:06:49,138 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:06:49,383 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_33.json
+2026-04-23 17:06:49,383 [INFO] hormuz.slurm: Extracted 6 parameters for swift_contained/temoa in 12.9s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 34/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:06:57,213 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "34",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:06:57,213 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=34) ===
+2026-04-23 17:06:57,215 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=weap_mena
+2026-04-23 17:06:57,216 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:07:11,272 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:07:11,496 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_34.json
+2026-04-23 17:07:11,497 [INFO] hormuz.slurm: Extracted 5 parameters for prolonged_contained/weap_mena in 13.1s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 35/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:07:24,604 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "35",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:07:24,604 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=35) ===
+2026-04-23 17:07:24,606 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=sahysmod
+2026-04-23 17:07:24,607 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:07:34,929 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:07:34,952 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_35.json
+2026-04-23 17:07:34,952 [INFO] hormuz.slurm: Extracted 3 parameters for prolonged_contained/sahysmod in 9.3s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 36/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:07:43,371 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "36",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:07:43,371 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=36) ===
+2026-04-23 17:07:43,372 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=watergap2
+2026-04-23 17:07:43,374 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:07:51,288 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:07:51,423 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_36.json
+2026-04-23 17:07:51,423 [INFO] hormuz.slurm: Extracted 3 parameters for prolonged_contained/watergap2 in 7.0s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 37/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:07:58,915 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "37",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:07:58,915 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=37) ===
+2026-04-23 17:07:58,917 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=cwatm
+2026-04-23 17:07:58,918 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:08:06,362 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:08:06,384 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_37.json
+2026-04-23 17:08:06,384 [INFO] hormuz.slurm: Extracted 3 parameters for prolonged_contained/cwatm in 6.5s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 38/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:08:14,197 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "38",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:08:14,197 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=38) ===
+2026-04-23 17:08:14,199 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=bornstein_krusell_rebelo
+2026-04-23 17:08:14,200 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:08:26,984 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:08:27,013 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_38.json
+2026-04-23 17:08:27,013 [INFO] hormuz.slurm: Extracted 5 parameters for prolonged_contained/bornstein_krusell_rebelo in 11.8s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 39/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:08:40,454 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "39",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:08:40,454 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=39) ===
+2026-04-23 17:08:40,456 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=poles_jrc
+2026-04-23 17:08:40,457 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:08:52,183 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:08:52,399 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_39.json
+2026-04-23 17:08:52,399 [INFO] hormuz.slurm: Extracted 5 parameters for prolonged_contained/poles_jrc in 10.6s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 40/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:09:00,533 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "40",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:09:00,534 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=40) ===
+2026-04-23 17:09:00,535 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=marketsim
+2026-04-23 17:09:00,536 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:09:09,644 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:09:09,706 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_40.json
+2026-04-23 17:09:09,706 [INFO] hormuz.slurm: Extracted 3 parameters for prolonged_contained/marketsim in 8.1s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 41/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:09:17,525 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "41",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:09:17,525 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=41) ===
+2026-04-23 17:09:17,527 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=fed_oil
+2026-04-23 17:09:17,528 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:09:29,013 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:09:29,138 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_41.json
+2026-04-23 17:09:29,138 [INFO] hormuz.slurm: Extracted 4 parameters for prolonged_contained/fed_oil in 10.4s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 42/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:09:43,572 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "42",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:09:43,572 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=42) ===
+2026-04-23 17:09:43,574 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=energy_flux_gas_power
+2026-04-23 17:09:43,575 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:10:10,665 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:10:10,695 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_42.json
+2026-04-23 17:10:10,696 [INFO] hormuz.slurm: Extracted 11 parameters for prolonged_contained/energy_flux_gas_power in 25.8s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 43/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:10:18,911 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "43",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:10:18,911 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=43) ===
+2026-04-23 17:10:18,913 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=energy_flux_lng_profits
+2026-04-23 17:10:18,914 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:10:30,669 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:10:30,692 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_43.json
+2026-04-23 17:10:30,692 [INFO] hormuz.slurm: Extracted 4 parameters for prolonged_contained/energy_flux_lng_profits in 10.7s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 44/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:10:44,059 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "44",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:10:44,059 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=44) ===
+2026-04-23 17:10:44,061 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=ggm
+2026-04-23 17:10:44,062 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:10:58,765 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:10:58,788 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_44.json
+2026-04-23 17:10:58,788 [INFO] hormuz.slurm: Extracted 6 parameters for prolonged_contained/ggm in 13.5s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 45/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:11:06,428 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "45",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:11:06,428 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=45) ===
+2026-04-23 17:11:06,430 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=lngst
+2026-04-23 17:11:06,431 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:11:16,970 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:11:17,004 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_45.json
+2026-04-23 17:11:17,004 [INFO] hormuz.slurm: Extracted 4 parameters for prolonged_contained/lngst in 9.6s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 46/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:11:24,984 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "46",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:11:24,984 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=46) ===
+2026-04-23 17:11:24,986 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=world_helium_model
+2026-04-23 17:11:24,987 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:11:32,990 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:11:33,015 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_46.json
+2026-04-23 17:11:33,015 [INFO] hormuz.slurm: Extracted 3 parameters for prolonged_contained/world_helium_model in 7.0s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 47/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:11:47,037 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "47",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:11:47,037 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=47) ===
+2026-04-23 17:11:47,039 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=argonne_abm
+2026-04-23 17:11:47,041 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:11:58,542 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:11:58,564 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_47.json
+2026-04-23 17:11:58,564 [INFO] hormuz.slurm: Extracted 4 parameters for prolonged_contained/argonne_abm in 10.3s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 48/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:12:06,307 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "48",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:12:06,307 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=48) ===
+2026-04-23 17:12:06,309 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=simrlfab
+2026-04-23 17:12:06,311 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:12:16,594 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:12:16,619 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_48.json
+2026-04-23 17:12:16,619 [INFO] hormuz.slurm: Extracted 4 parameters for prolonged_contained/simrlfab in 9.3s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 49/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:12:24,396 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "49",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:12:24,396 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=49) ===
+2026-04-23 17:12:24,398 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=capri
+2026-04-23 17:12:24,399 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:12:33,644 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:12:33,668 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_49.json
+2026-04-23 17:12:33,668 [INFO] hormuz.slurm: Extracted 3 parameters for prolonged_contained/capri in 8.3s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 50/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:12:45,977 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "50",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:12:45,977 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=50) ===
+2026-04-23 17:12:45,979 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=magpie
+2026-04-23 17:12:45,980 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:12:55,036 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:12:55,058 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_50.json
+2026-04-23 17:12:55,058 [INFO] hormuz.slurm: Extracted 3 parameters for prolonged_contained/magpie in 8.1s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 51/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:13:03,634 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "51",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:13:03,635 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=51) ===
+2026-04-23 17:13:03,636 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=simple_g
+2026-04-23 17:13:03,637 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:13:11,341 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:13:11,370 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_51.json
+2026-04-23 17:13:11,370 [INFO] hormuz.slurm: Extracted 3 parameters for prolonged_contained/simple_g in 6.7s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 52/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:13:19,324 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "52",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:13:19,324 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=52) ===
+2026-04-23 17:13:19,326 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=world_fertilizer
+2026-04-23 17:13:19,327 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:13:28,577 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:13:28,656 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_52.json
+2026-04-23 17:13:28,657 [INFO] hormuz.slurm: Extracted 3 parameters for prolonged_contained/world_fertilizer in 8.3s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 53/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:13:36,469 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "53",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:13:36,469 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=53) ===
+2026-04-23 17:13:36,471 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=gtap
+2026-04-23 17:13:36,472 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:13:48,116 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:13:48,175 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_53.json
+2026-04-23 17:13:48,175 [INFO] hormuz.slurm: Extracted 4 parameters for prolonged_contained/gtap in 10.6s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 54/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:14:01,356 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "54",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:14:01,356 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=54) ===
+2026-04-23 17:14:01,358 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=apsim
+2026-04-23 17:14:01,359 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:14:09,848 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:14:10,015 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_54.json
+2026-04-23 17:14:10,015 [INFO] hormuz.slurm: Extracted 3 parameters for prolonged_contained/apsim in 7.4s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 55/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:14:17,913 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "55",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:14:17,913 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=55) ===
+2026-04-23 17:14:17,914 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=futures
+2026-04-23 17:14:17,916 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:14:27,586 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:14:27,610 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_55.json
+2026-04-23 17:14:27,610 [INFO] hormuz.slurm: Extracted 3 parameters for prolonged_contained/futures in 8.7s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 56/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:14:35,170 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "56",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:14:35,170 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=56) ===
+2026-04-23 17:14:35,172 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=aisdb
+2026-04-23 17:14:35,173 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:14:53,867 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:14:54,151 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_56.json
+2026-04-23 17:14:54,151 [INFO] hormuz.slurm: Extracted 7 parameters for prolonged_contained/aisdb in 17.7s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 57/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:15:07,683 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "57",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:15:07,683 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=57) ===
+2026-04-23 17:15:07,685 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=ais_project
+2026-04-23 17:15:07,686 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:15:18,521 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:15:18,848 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_57.json
+2026-04-23 17:15:18,848 [INFO] hormuz.slurm: Extracted 4 parameters for prolonged_contained/ais_project in 9.7s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 58/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:15:27,102 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "58",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:15:27,102 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=58) ===
+2026-04-23 17:15:27,104 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=nems
+2026-04-23 17:15:27,105 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:15:34,812 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:15:34,838 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_58.json
+2026-04-23 17:15:34,838 [INFO] hormuz.slurm: Extracted 3 parameters for prolonged_contained/nems in 6.6s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 59/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:15:43,049 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "59",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:15:43,049 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=59) ===
+2026-04-23 17:15:43,051 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=mam
+2026-04-23 17:15:43,053 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:15:52,208 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:15:52,348 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_59.json
+2026-04-23 17:15:52,349 [INFO] hormuz.slurm: Extracted 4 parameters for prolonged_contained/mam in 8.1s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 60/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:16:00,379 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "60",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:16:00,379 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=60) ===
+2026-04-23 17:16:00,381 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=nrel
+2026-04-23 17:16:00,383 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:16:09,171 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:16:09,467 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_60.json
+2026-04-23 17:16:09,467 [INFO] hormuz.slurm: Extracted 3 parameters for prolonged_contained/nrel in 7.6s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 61/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:16:22,329 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "61",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:16:22,329 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=61) ===
+2026-04-23 17:16:22,331 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=mpsge_jl
+2026-04-23 17:16:22,332 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:16:33,055 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:16:33,077 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_61.json
+2026-04-23 17:16:33,077 [INFO] hormuz.slurm: Extracted 4 parameters for prolonged_contained/mpsge_jl in 9.8s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 62/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:16:41,221 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "62",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:16:41,222 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=62) ===
+2026-04-23 17:16:41,223 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=opencge
+2026-04-23 17:16:41,225 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:16:50,129 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:16:50,151 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_62.json
+2026-04-23 17:16:50,151 [INFO] hormuz.slurm: Extracted 3 parameters for prolonged_contained/opencge in 7.9s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 63/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:16:58,226 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "63",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:16:58,226 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=63) ===
+2026-04-23 17:16:58,228 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=pycge
+2026-04-23 17:16:58,230 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:17:07,125 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:17:07,147 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_63.json
+2026-04-23 17:17:07,147 [INFO] hormuz.slurm: Extracted 3 parameters for prolonged_contained/pycge in 7.9s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 64/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:17:15,710 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "64",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:17:15,710 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=64) ===
+2026-04-23 17:17:15,712 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=miragrodep
+2026-04-23 17:17:15,713 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:17:27,873 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:17:27,897 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_64.json
+2026-04-23 17:17:27,897 [INFO] hormuz.slurm: Extracted 4 parameters for prolonged_contained/miragrodep in 11.0s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 65/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:17:40,836 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "65",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:17:40,836 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=65) ===
+2026-04-23 17:17:40,838 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=osemosys
+2026-04-23 17:17:40,839 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:17:55,067 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:17:55,089 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_65.json
+2026-04-23 17:17:55,089 [INFO] hormuz.slurm: Extracted 6 parameters for prolonged_contained/osemosys in 13.2s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 66/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:18:03,235 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "66",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:18:03,235 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=66) ===
+2026-04-23 17:18:03,236 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=messageix
+2026-04-23 17:18:03,238 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:18:17,187 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:18:17,209 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_66.json
+2026-04-23 17:18:17,209 [INFO] hormuz.slurm: Extracted 6 parameters for prolonged_contained/messageix in 12.9s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 67/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:18:25,832 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "67",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:18:25,832 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=67) ===
+2026-04-23 17:18:25,833 [INFO] hormuz.slurm: Extracting parameters for scenario=prolonged_contained, model=temoa
+2026-04-23 17:18:25,835 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:18:39,694 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:18:39,719 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_67.json
+2026-04-23 17:18:39,719 [INFO] hormuz.slurm: Extracted 6 parameters for prolonged_contained/temoa in 12.9s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 68/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:18:52,691 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "68",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:18:52,692 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=68) ===
+2026-04-23 17:18:52,694 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_escalated, model=weap_mena
+2026-04-23 17:18:52,695 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:19:05,781 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:19:05,805 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_68.json
+2026-04-23 17:19:05,805 [INFO] hormuz.slurm: Extracted 5 parameters for swift_escalated/weap_mena in 12.1s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 69/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:19:13,901 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "69",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:19:13,901 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=69) ===
+2026-04-23 17:19:13,903 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_escalated, model=sahysmod
+2026-04-23 17:19:13,904 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:19:22,944 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:19:22,981 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_69.json
+2026-04-23 17:19:22,981 [INFO] hormuz.slurm: Extracted 3 parameters for swift_escalated/sahysmod in 8.0s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 70/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:19:31,708 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "70",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:19:31,709 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=70) ===
+2026-04-23 17:19:31,710 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_escalated, model=watergap2
+2026-04-23 17:19:31,712 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:19:39,716 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:19:39,740 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_70.json
+2026-04-23 17:19:39,740 [INFO] hormuz.slurm: Extracted 3 parameters for swift_escalated/watergap2 in 7.0s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 71/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:19:53,089 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "71",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:19:53,089 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=71) ===
+2026-04-23 17:19:53,091 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_escalated, model=cwatm
+2026-04-23 17:19:53,092 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:20:00,854 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:20:00,899 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_71.json
+2026-04-23 17:20:00,899 [INFO] hormuz.slurm: Extracted 3 parameters for swift_escalated/cwatm in 6.7s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 72/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:20:08,263 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "72",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:20:08,263 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=72) ===
+2026-04-23 17:20:08,265 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_escalated, model=bornstein_krusell_rebelo
+2026-04-23 17:20:08,266 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:20:22,184 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:20:22,207 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_72.json
+2026-04-23 17:20:22,208 [INFO] hormuz.slurm: Extracted 5 parameters for swift_escalated/bornstein_krusell_rebelo in 12.8s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 73/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:20:30,465 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "73",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:20:30,465 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=73) ===
+2026-04-23 17:20:30,466 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_escalated, model=poles_jrc
+2026-04-23 17:20:30,467 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:20:42,734 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:20:42,758 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_73.json
+2026-04-23 17:20:42,759 [INFO] hormuz.slurm: Extracted 5 parameters for swift_escalated/poles_jrc in 11.0s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 74/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:20:55,625 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "74",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:20:55,625 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=74) ===
+2026-04-23 17:20:55,627 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_escalated, model=marketsim
+2026-04-23 17:20:55,628 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:21:03,373 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:21:03,509 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_74.json
+2026-04-23 17:21:03,510 [INFO] hormuz.slurm: Extracted 3 parameters for swift_escalated/marketsim in 6.7s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 75/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:21:11,527 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "75",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:21:11,527 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=75) ===
+2026-04-23 17:21:11,529 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_escalated, model=fed_oil
+2026-04-23 17:21:11,530 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:21:21,557 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:21:21,579 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_75.json
+2026-04-23 17:21:21,579 [INFO] hormuz.slurm: Extracted 4 parameters for swift_escalated/fed_oil in 9.0s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 76/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:21:29,012 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "76",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:21:29,012 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=76) ===
+2026-04-23 17:21:29,014 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_escalated, model=energy_flux_gas_power
+2026-04-23 17:21:29,016 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:21:56,060 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:21:56,437 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_76.json
+2026-04-23 17:21:56,438 [INFO] hormuz.slurm: Extracted 8 parameters for swift_escalated/energy_flux_gas_power in 26.0s
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 77/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:22:10,219 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "77",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:22:10,219 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=77) ===
+2026-04-23 17:22:10,221 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_escalated, model=energy_flux_lng_profits
+2026-04-23 17:22:10,222 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:22:24,229 [INFO] httpx: HTTP Request: POST http://ai04:8000/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-23 17:22:24,251 [INFO] hormuz.slurm: State saved: /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_params_77.json
+2026-04-23 17:22:24,251 [INFO] hormuz.slurm: Extracted 4 parameters for swift_escalated/energy_flux_lng_profits in 13.0s
+[vllm] stopping sidecar (pid=503511)
+[safe_python] stage=stonybrook_ai_cluster_02_parameters completed successfully.
+─── [stonybrook_ai_cluster_02_parameters] task 78/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py
+2026-04-23 17:22:33,568 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "23406",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "78",
+  "SLURMD_NODENAME": "quadro1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-23 17:22:33,568 [INFO] hormuz.slurm: === Module 2: Parameter Extraction (run_id=20260423_165005, task=78) ===
+2026-04-23 17:22:33,570 [INFO] hormuz.slurm: Extracting parameters for scenario=swift_escalated, model=ggm
+2026-04-23 17:22:33,571 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+2026-04-23 17:22:34,529 [INFO] openai._base_client: Retrying request to /chat/completions in 0.468677 seconds
+2026-04-23 17:22:34,998 [INFO] openai._base_client: Retrying request to /chat/completions in 0.806664 seconds
+[failure] Recorded bash failure for stage=stonybrook_ai_cluster_02_parameters task=23406-78 exit=1: Python invocation exited with code 1: python slurm/scripts/run_parameters.py
+[failure] /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260423_165005_stonybrook_ai_cluster_02_parameters_bash_failure_23406-78.json
+[safe_python] continue_on_failure=1 -> sbatch task will exit 0 to preserve dependency chain.
+─── [stonybrook_ai_cluster_02_parameters] task 79/136 ────────────────────────────────
+[safe_python] stage=stonybrook_ai_cluster_02_parameters continue_on_failure=1 cmd: python slurm/scripts/run_parameters.py

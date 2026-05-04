@@ -72,8 +72,12 @@ if ! python -c "import torch; print(f'CUDA available: {torch.cuda.is_available()
     record_bash_failure "$STAGE" 0 "PyTorch GPU probe failed on $(hostname); models requiring CUDA may be skipped"
 fi
 
-# Override manifest name to use GPU-only manifest.
-export HORMUZ_MANIFEST_NAME="models_gpu"
+# Default manifest is the legacy `models_gpu`. Stage 3 split into
+# commodity / macro tiers (Algorithm 1, step 11) overrides this from
+# submit_pipeline.sh by setting HORMUZ_MANIFEST_NAME=models_commodity_gpu
+# or models_macro_gpu before sbatch'ing this script.
+: "${HORMUZ_MANIFEST_NAME:=models_gpu}"
+export HORMUZ_MANIFEST_NAME
 
 # continue_on_failure=1: one task's interpreter crash must not break
 # the afterok dependency to Module 4 (synthesis).

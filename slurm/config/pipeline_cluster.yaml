@@ -4,13 +4,23 @@
 
 llm:
   # Default cluster route: local vLLM on a GPU node.
-  # The endpoint URL is taken from PIPELINE_LLM_BASE_URL at runtime
-  # (set by submit_pipeline.sh, populated either manually or by the
-  # 00_vllm.sbatch sidecar). Override provider via PIPELINE_LLM_PROVIDER
-  # to switch back to "anthropic" / "openai" / "bedrock" when an API
-  # key is exported and outbound HTTPS is reachable.
+  #
+  # Source of truth at runtime is the environment, NOT this YAML —
+  # see slurm/scripts/stage_utils.py::resolve_llm_kwargs. The SLURM
+  # driver jobs each export PIPELINE_LLM_{PROVIDER,MODEL,BASE_URL}
+  # to match whatever vLLM sidecar (or cloud provider) they actually
+  # started, and the Python stage scripts let those env vars win
+  # over the values below. The fields here are only the fallback
+  # used when the corresponding env vars are unset (e.g. running
+  # `python -m src.pipeline.graph` outside SLURM with no vLLM up).
+  #
+  # Per-driver defaults (override with HORMUZ_VLLM_MODEL, etc.):
+  #   * stonybrook_ai_cluster.job → meta-llama/Llama-3.1-8B-Instruct,
+  #     tensor-parallel=1, 2x V100/RTX 8000 GPUs.
+  #   * empire_ai_alpha.job       → meta-llama/Llama-3.1-70B-Instruct,
+  #     tensor-parallel=4, 4 GPUs.
   provider: "vllm"
-  model: "meta-llama/Llama-3.1-70B-Instruct"
+  model: "meta-llama/Llama-3.1-8B-Instruct"
   base_url: null   # filled from PIPELINE_LLM_BASE_URL env var
   temperature: 0.0
   max_concurrency: 8
@@ -40,7 +50,7 @@ consistency:
   quantity_tolerance_pct: 15.0
   flag_on_missing_model: true
 
-num_scenarios: 4
+num_scenarios: 5  # 4 matrix quadrants (A-D) + 1 prescribed tail-risk (E: infrastructure_collapse)
 
 # Optional Weights & Biases integration. The pipeline gracefully
 # no-ops when wandb is not installed, WANDB_DISABLED=true, or

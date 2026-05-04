@@ -1,0 +1,98 @@
+[wandb] project=hormuz-pipeline group=20260421_122150 mode=offline
+[wandb] dir=/home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260421_122150 per_task=1
+[wandb] runs will be written to /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260421_122150; sync later with:
+[wandb]   wandb sync /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260421_122150/wandb/offline-run-*
+[hf] using inline HF_TOKEN_INLINE (consider moving to /home/dagolden/.huggingface_token to keep secrets out of the .job file)
+[hf] HF_TOKEN + HUGGING_FACE_HUB_TOKEN exported: hf_o…AFmq (len=37)
+[hf] HF_HOME=/home/dagolden/.cache/huggingface
+================================================================
+  Hormuz Pipeline — Stony Brook AI Cluster (single-node driver)
+================================================================
+  Job ID:        22639
+  Run ID:        20260421_122150
+  Node:          ai02
+  Partition:     defq
+  Nodelist:      tesla1
+  CPUs:          16
+  GPUs (gres):   2
+  Memory:        131072 MB
+  Walltime cap:  from-script
+  Project root:  /home/dagolden/agenticAIForScenarioAnalysis
+  Conda env:     hormuz
+  Config:        /home/dagolden/agenticAIForScenarioAnalysis/slurm/config/pipeline_cluster.yaml
+  Scratch:       <unset, using project root>
+  Run log dir:   /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260421_122150
+  Driver out:    /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/stonybrook_ai_cluster-22639.out
+  Driver err:    /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/stonybrook_ai_cluster-22639.err
+  W&B project:   hormuz-pipeline (mode=offline, group=20260421_122150)
+  Started at:    2026-04-21T12:21:50Z
+================================================================
+[progress] loading Lmod modules...
+[module] anaconda not available; relying on PATH
+[module] no cuda module loaded
+[module] no cudnn module loaded
+[progress] modules done.
+[progress] bootstrapping conda env 'hormuz' (auto-build)...
+[build] env 'hormuz' already exists at /home/dagolden/miniconda3/envs/hormuz
+[build] install marker present at /home/dagolden/miniconda3/envs/hormuz/.hormuz_install_sentinel
+[build] skipping pip install. Set HORMUZ_FORCE_REBUILD=1 to force a reinstall.
+[progress] bootstrap done.
+[progress] activating conda env 'hormuz'...
+[conda] using CONDA_EXE=/home/dagolden/miniconda3/bin/conda
+[conda] conda base: /home/dagolden/miniconda3
+[conda] activating 'hormuz'...
+[conda] activated env 'hormuz' (CONDA_PREFIX=/home/dagolden/miniconda3/envs/hormuz)
+[progress] conda env active (python=/home/dagolden/miniconda3/envs/hormuz/bin/python).
+[progress] recording runtime inventory...
+[runtime] Inventory written to /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260421_122150/runtime-stonybrook_ai_cluster_setup-22639-single.json
+[runtime] gpu=yes python=Python 3.11.15 gams=missing julia=missing R=missing java=missing cuda=missing
+[progress] runtime inventory done.
+[vllm] starting sidecar on ai02:8000
+       model=meta-llama/Llama-3.1-8B-Instruct tp=1 dtype=auto gpus=0
+       log:   /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260421_122150/vllm.log
+[vllm] pid=4050744
+[gpu] pipeline driver sees CUDA_VISIBLE_DEVICES=1
+[vllm] waiting up to 1800s for http://ai02:8000/v1/models
+[failure] Recorded bash failure for stage=stonybrook_ai_cluster_vllm task=22639-single exit=1: vLLM exited before becoming healthy; see /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260421_122150/vllm.log
+[failure] /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260421_122150_stonybrook_ai_cluster_vllm_bash_failure_22639-single.json
+[fatal] vLLM died during startup. Tail of log:
+(APIServer pid=4050744)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/uvloop/__init__.py", line 48, in wrapper
+(APIServer pid=4050744)     return await main
+(APIServer pid=4050744)            ^^^^^^^^^^
+(APIServer pid=4050744)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/vllm/entrypoints/openai/api_server.py", line 672, in run_server
+(APIServer pid=4050744)     await run_server_worker(listen_address, sock, args, **uvicorn_kwargs)
+(APIServer pid=4050744)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/vllm/entrypoints/openai/api_server.py", line 686, in run_server_worker
+(APIServer pid=4050744)     async with build_async_engine_client(
+(APIServer pid=4050744)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/contextlib.py", line 210, in __aenter__
+(APIServer pid=4050744)     return await anext(self.gen)
+(APIServer pid=4050744)            ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=4050744)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/vllm/entrypoints/openai/api_server.py", line 100, in build_async_engine_client
+(APIServer pid=4050744)     async with build_async_engine_client_from_engine_args(
+(APIServer pid=4050744)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/contextlib.py", line 210, in __aenter__
+(APIServer pid=4050744)     return await anext(self.gen)
+(APIServer pid=4050744)            ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=4050744)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/vllm/entrypoints/openai/api_server.py", line 124, in build_async_engine_client_from_engine_args
+(APIServer pid=4050744)     vllm_config = engine_args.create_engine_config(usage_context=usage_context)
+(APIServer pid=4050744)                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=4050744)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/vllm/engine/arg_utils.py", line 1539, in create_engine_config
+(APIServer pid=4050744)     maybe_override_with_speculators(
+(APIServer pid=4050744)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/vllm/transformers_utils/config.py", line 583, in maybe_override_with_speculators
+(APIServer pid=4050744)     config_dict, _ = PretrainedConfig.get_config_dict(
+(APIServer pid=4050744)                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=4050744)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/transformers/configuration_utils.py", line 670, in get_config_dict
+(APIServer pid=4050744)     config_dict, kwargs = cls._get_config_dict(pretrained_model_name_or_path, **kwargs)
+(APIServer pid=4050744)                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=4050744)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/transformers/configuration_utils.py", line 725, in _get_config_dict
+(APIServer pid=4050744)     resolved_config_file = cached_file(
+(APIServer pid=4050744)                            ^^^^^^^^^^^^
+(APIServer pid=4050744)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/transformers/utils/hub.py", line 278, in cached_file
+(APIServer pid=4050744)     file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+(APIServer pid=4050744)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=4050744)   File "/home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/transformers/utils/hub.py", line 488, in cached_files
+(APIServer pid=4050744)     raise OSError(
+(APIServer pid=4050744) OSError: You are trying to access a gated repo.
+(APIServer pid=4050744) Make sure to have access to it at https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct.
+(APIServer pid=4050744) 403 Client Error. (Request ID: Root=1-69e76da0-30e5e9891a82e55671df3a90;0d9b58a1-5579-4e9d-9ec9-6924c5387ab3)
+(APIServer pid=4050744) 
+(APIServer pid=4050744) Cannot access gated repo for url https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct/resolve/main/config.json.
+(APIServer pid=4050744) Access to model meta-llama/Llama-3.1-8B-Instruct is restricted and you are not in the authorized list. Visit https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct to ask for access.

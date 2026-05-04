@@ -17,14 +17,18 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from slurm.scripts.stage_utils import (
     auto_approve_enabled,
     get_pipeline_config_path,
+    get_project_root,
     get_run_id,
     load_state,
     log_slurm_context,
     logger,
+    resolve_llm_kwargs,
+    resolved_llm_metadata,
     save_state,
     state_dir,
 )
 
+from src.common.context_budget import budget_snapshot
 from src.common.llm import get_llm
 from src.common.types import ModelExecutionStatus, Scenario, ValidationStatus
 from src.common.wandb_logger import log_synthesis_summary, stage_run
@@ -33,8 +37,10 @@ from src.pipeline.state import (
     ModelExecutionResult,
     ScenarioNarrativeState,
 )
-from src.synthesis.consistency import check_consistency
-from src.synthesis.synthesizer import build_synthesizer
+from src.synthesis.synthesizer import (
+    render_scenario_markdown,
+    synthesize_by_section,
+)
 
 
 def collect_model_results(run_id: str) -> list[dict]:
@@ -86,6 +92,90 @@ def summarise_bash_failures(failures: list[dict]) -> dict[str, int]:
     return counts
 
 
+def reports_dir(run_id: str) -> Path:
+    """Return data/reports/<run_id>/, creating it if necessary."""
+    d = get_project_root() / "data" / "reports" / run_id
+    d.mkdir(parents=True, exist_ok=True)
+    return d
+
+
+def write_synthesis_artifacts(
+    run_id: str,
+    synthesis_state: dict,
+    per_scenario: list[dict],
+) -> None:
+    """Write the per-run report files to data/reports/<run_id>/.
+
+    Files written:
+    - ``synthesis.json``  — full synthesis state dict
+    - ``summary.json``    — counts (completed / skipped / failed) plus
+                            per-scenario outcome and consistency-flag counts
+    - ``<scenario>.md``   — Markdown rendering of each ScenarioSynthesis
+    - ``synthesis.md``    — top-level cross-scenario index linking to each
+                            per-scenario file
+    """
+    out = reports_dir(run_id)
+
+    with open(out / "synthesis.json", "w") as f:
+        json.dump(synthesis_state, f, indent=2, default=str)
+
+    summary = {
+        "run_id": run_id,
+        "completed": synthesis_state.get("completed", 0),
+        "skipped": synthesis_state.get("skipped", 0),
+        "failed": synthesis_state.get("failed", 0),
+        "consistency_flags": len(synthesis_state.get("consistency_flags", []) or []),
+        "outcomes_total": len(synthesis_state.get("synthesis_results", []) or []),
+        "scenarios": [
+            {
+                "scenario_id": entry["scenario_id"],
+                "label": entry["label"],
+                "outcomes": entry["outcome_count"],
+                "consistency_flags": entry["consistency_flag_count"],
+                "failed_models": entry["failed_models"],
+                "completed_models": entry["completed_models"],
+                "skipped_models": entry["skipped_models"],
+            }
+            for entry in per_scenario
+        ],
+    }
+    with open(out / "summary.json", "w") as f:
+        json.dump(summary, f, indent=2, default=str)
+
+    index_lines: list[str] = [
+        f"# Hormuz pipeline synthesis — run `{run_id}`",
+        "",
+        f"- Completed model runs: **{summary['completed']}**",
+        f"- Skipped model runs:   **{summary['skipped']}**",
+        f"- Failed model runs:    **{summary['failed']}**",
+        f"- Total synthesized outcomes: **{summary['outcomes_total']}**",
+        f"- Cross-model consistency flags: **{summary['consistency_flags']}**",
+        "",
+        "## Scenarios",
+        "",
+    ]
+    for entry in per_scenario:
+        scenario_md_path = out / f"{entry['scenario_id']}.md"
+        with open(scenario_md_path, "w") as f:
+            f.write(entry["markdown"])
+        index_lines.append(
+            f"### [{entry['label']}]({entry['scenario_id']}.md)"
+        )
+        index_lines.append("")
+        index_lines.append(
+            f"- Outcomes: {entry['outcome_count']}; "
+            f"consistency flags: {entry['consistency_flag_count']}; "
+            f"completed/skipped/failed: "
+            f"{entry['completed_models']} / {entry['skipped_models']} / {entry['failed_models']}"
+        )
+        index_lines.append("")
+
+    with open(out / "synthesis.md", "w") as f:
+        f.write("\n".join(index_lines))
+
+    logger.info(f"Synthesis report written to {out}")
+
+
 def main() -> None:
     log_slurm_context()
     run_id = get_run_id()
@@ -124,6 +214,18 @@ def main() -> None:
     # set + consistency flag + synthesised outcome. The state files and
     # synthesis report are also uploaded as a W&B Artifact so the
     # auditable provenance chain is reachable from the W&B UI.
+    llm_meta = resolved_llm_metadata(config)
+    # Snapshot of the LLM context budget that will apply to every
+    # per-section call below. Logged once up-front so post-hoc analysis
+    # of truncation events has a reliable reference point.
+    budget = budget_snapshot()
+    logger.info(
+        f"LLM context budget: window={budget['context_window']} "
+        f"prompt={budget['prompt_budget_tokens']} "
+        f"completion={budget['completion_budget_tokens']} "
+        f"tiktoken_available={budget['tiktoken_available']}"
+    )
+
     with stage_run(
         "synthesis",
         config={
@@ -131,22 +233,26 @@ def main() -> None:
             "parameter_sets": len(param_results),
             "bash_failures": len(bash_failures),
             "auto_approve": auto_approve_enabled(),
-            "llm_provider": config.llm.provider,
-            "llm_model": config.llm.model,
+            "context_budget": budget,
+            **llm_meta,
         },
-        notes="Module 4: cross-model consistency check + synthesis",
+        notes="Module 4: cross-model consistency check + section-chunked synthesis",
     ) as wb:
-        # Build LLM
-        llm = get_llm(
-            provider=config.llm.provider,
-            model=config.llm.model,
-            temperature=config.llm.temperature,
-            **config.llm.extra_kwargs,
-        )
-        synthesizer = build_synthesizer(llm)
+        # Build LLM. Env vars (PIPELINE_LLM_PROVIDER / _MODEL / _BASE_URL)
+        # win over the YAML config so the SLURM driver job — which is
+        # what actually started the vLLM sidecar — owns the model name.
+        llm = get_llm(**resolve_llm_kwargs(config))
 
         all_flags = []
         all_synthesis = []
+        per_scenario_artifacts: list[dict] = []
+        # Per-(scenario, section) telemetry — what each LLM call sent
+        # in tokens and whether the overflow retry kicked in. Surfaced
+        # as a single context_budget_events list on the synthesis state
+        # so the W&B run + the synthesis.json report both have the
+        # detail downstream consumers need to diagnose silent
+        # truncations.
+        context_budget_events: list[dict] = []
 
         for scenario in Scenario:
             scenario_results = [
@@ -177,21 +283,61 @@ def main() -> None:
                 consistency_notes=narrative_data.get("consistency_notes", ""),
             )
 
-            # Consistency checks
-            logger.info(f"Running consistency checks for scenario {scenario.value}...")
-            flags = check_consistency(scenario, scenario_results, config.consistency)
+            # Section-chunked synthesis — one LLM call per
+            # (time_horizon, outcome_scope) pair instead of one
+            # monolithic per-scenario call. Each call carries only the
+            # model outputs routed to that section by
+            # src/synthesis/sectioning.py and is wrapped with the
+            # overflow retry from src.common.llm so a context-length
+            # error halves the prompt and retries once before failing.
+            logger.info(
+                f"Synthesizing results for scenario {scenario.value} "
+                f"(section-chunked, ≤6 LLM calls)..."
+            )
+            flags, synthesis, section_metrics = synthesize_by_section(
+                llm,
+                scenario_id=scenario,
+                narrative=narrative_state,
+                results=scenario_results,
+                consistency_config=config.consistency,
+            )
             all_flags.extend([f.model_dump() for f in flags])
 
-            # LLM synthesis
-            logger.info(f"Synthesizing results for scenario {scenario.value}...")
-            synthesis = synthesizer.invoke({
-                "narrative": narrative_state,
-                "results": scenario_results,
-                "consistency_flags": flags,
-            })
+            # Surface per-section telemetry into the run state.
+            for section_key, metrics in section_metrics.items():
+                context_budget_events.append({
+                    "scenario_id": scenario.value,
+                    "time_horizon": section_key.time_horizon.value,
+                    "outcome_scope": section_key.outcome_scope.value,
+                    **metrics,
+                })
+                if metrics["status"] == "failed":
+                    logger.warning(
+                        f"[synthesis] scenario={scenario.value} "
+                        f"section={section_key.label()} FAILED "
+                        f"(prompt_tokens≈{metrics['prompt_tokens']}, "
+                        f"truncations={metrics['truncation_attempts']}, "
+                        f"error={metrics.get('error')})"
+                    )
+                elif metrics["truncation_attempts"] > 0:
+                    logger.warning(
+                        f"[synthesis] scenario={scenario.value} "
+                        f"section={section_key.label()} OK after "
+                        f"{metrics['truncation_attempts']} truncation retry(ies) "
+                        f"(prompt_tokens≈{metrics['prompt_tokens']})"
+                    )
+                else:
+                    logger.info(
+                        f"[synthesis] scenario={scenario.value} "
+                        f"section={section_key.label()} {metrics['status']} "
+                        f"(models={metrics['model_count']}, "
+                        f"prompt_tokens≈{metrics['prompt_tokens']})"
+                    )
 
+            scenario_outcome_count = 0
             for section in synthesis.sections:
                 for outcome in section.outcomes:
+                    scenario_outcome_count += 1
                     all_synthesis.append({
                         "scenario_id": scenario.value,
                         "time_horizon": section.time_horizon.value,
@@ -201,6 +347,43 @@ def main() -> None:
                         "source_model_id": outcome.source_model_id,
                         "narrative_summary": outcome.narrative,
                     })
+
+            scenario_completed = sum(
+                1 for r in scenario_results
+                if r.status == ModelExecutionStatus.COMPLETED
+            )
+            scenario_skipped = sum(
+                1 for r in scenario_results
+                if r.status == ModelExecutionStatus.SKIPPED
+            )
+            scenario_failed = sum(
+                1 for r in scenario_results
+                if r.status == ModelExecutionStatus.FAILED
+            )
+
+            per_scenario_artifacts.append({
+                "scenario_id": scenario.value,
+                "label": narrative_data["label"],
+                "markdown": render_scenario_markdown(synthesis),
+                "outcome_count": scenario_outcome_count,
+                "consistency_flag_count": len(flags),
+                "completed_models": scenario_completed,
+                "skipped_models": scenario_skipped,
+                "failed_models": scenario_failed,
+            })
+
+        # Roll the per-section telemetry up so the W&B summary and any
+        # post-hoc analysis can answer "which sections needed
+        # truncation, which ones failed?" in one query.
+        truncations_total = sum(
+            ev.get("truncation_attempts", 0) for ev in context_budget_events
+        )
+        sections_failed = sum(
+            1 for ev in context_budget_events if ev.get("status") == "failed"
+        )
+        sections_truncated = sum(
+            1 for ev in context_budget_events if ev.get("truncation_attempts", 0) > 0
+        )
 
         synthesis_state = {
             "run_id": run_id,
@@ -214,8 +397,17 @@ def main() -> None:
             "consistency_flags": all_flags,
             "synthesis_results": all_synthesis,
             "synthesis_validated": auto_approve_enabled(),
+            "context_budget": budget,
+            "context_budget_events": context_budget_events,
+            "context_budget_summary": {
+                "section_calls": len(context_budget_events),
+                "sections_failed": sections_failed,
+                "sections_truncated": sections_truncated,
+                "truncation_attempts_total": truncations_total,
+            },
         }
         save_state(run_id, "synthesis", synthesis_state)
+        write_synthesis_artifacts(run_id, synthesis_state, per_scenario_artifacts)
 
         # ----- W&B aggregations -----
         log_synthesis_summary(

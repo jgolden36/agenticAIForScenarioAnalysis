@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/home/dagolden/agenticAIForScenarioAnalysis/slurm/scripts/run_scenarios.py", line 146, in <module>
+    main()
+  File "/home/dagolden/agenticAIForScenarioAnalysis/slurm/scripts/run_scenarios.py", line 84, in main
+    llm = get_llm(**resolve_llm_kwargs(config))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dagolden/agenticAIForScenarioAnalysis/src/common/llm.py", line 60, in get_llm
+    llm = _create_provider(provider, model, temperature, base_url, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dagolden/agenticAIForScenarioAnalysis/src/common/llm.py", line 102, in _create_provider
+    from langchain_openai import ChatOpenAI
+ModuleNotFoundError: No module named 'langchain_openai'

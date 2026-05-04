@@ -1,0 +1,1765 @@
+#!/bin/bash
+# ==================================================================
+# Hormuz Crisis Analysis Pipeline — Stony Brook AI Cluster Driver
+#
+# Single self-contained SLURM batch script for the Stony Brook
+# University AI Innovation Institute compute environment. The AI
+# Cluster is a heterogeneous SLURM cluster reached through a single
+# submit node:
+#
+#   submit.ai.stonybrook.edu : 22   (SSH with NetID; SLURM submit only)
+#
+# See:
+#   https://ai.stonybrook.edu/resources/computingresources
+#
+# Hardware (as of 2026, summarised from the AI Institute page):
+#   tesla1, tesla2 : 8x Tesla V100-SXM2 32GB + NVLink, 384GB RAM
+#   quadro1, quadro2 : 8x Quadro RTX 8000 48GB + NVLink, 384GB RAM
+#   h100  (cluster) : 4x H100 80GB, AMD EPYC 9124, 384GB DDR5
+#   AI orion  : 4x V100-SXM2 (128GB total GPU) + 1.5TB RAM, CPU-heavy
+#   DGX A100  (standalone) : 8x A100 40GB — Docker only, NOT via SLURM
+#   HGX H100  (standalone) : 8x H100 80GB — separate Google Form access
+#
+# Storage:
+#   75TB shared all-flash array, 500GB per-user quota (request bump if
+#   needed). Home directory is shared across nodes via 100Gb Ethernet.
+#
+# Why one job instead of the multi-stage chain in submit_pipeline.sh?
+#   * Per the AI Institute Usage Policy, long-running and multi-job
+#     workflows are encouraged to consolidate so the submit node and
+#     the scheduler aren't flooded with hundreds of array tasks. A
+#     single driver job with an internal task loop achieves the same
+#     fan-out as the per-stage chain (~150 parameter tasks + ~150
+#     model tasks for a default 4-scenario run) without spamming the
+#     queue.
+#   * Co-locating vLLM and the pipeline driver on one multi-GPU node
+#     avoids a second submission for the LLM sidecar and removes the
+#     cross-node networking dance — the submit node has no compute,
+#     so cross-node coordination would otherwise require a second
+#     compute reservation.
+#   * The cluster has no homogeneous "gpu" partition; requesting
+#     specific node types (tesla1, quadro1, h100) via --nodelist gives
+#     deterministic GPU memory and architecture, which matters for
+#     vLLM model selection (V100 = no bf16; H100 = best perf).
+#
+# Pipeline executed (Algorithm 1 in the paper):
+#   00.  (optional) launch local vLLM on GPU 0
+#   01.  Module 1 — scenario generation
+#   --   dispatch parameter manifest
+#   02.  Module 2 — parameter extraction (loop over manifest)
+#   --   dispatch model manifests
+#   03.  Module 3 — model execution    (loop over manifest)
+#   04.  Module 4 — synthesis
+#   05.  Quantitative CSV + qualitative narrative export
+#        (writes data/reports/<run_id>/csv/  and  qualitative/).
+#        In addition to the headline tables (model_status.csv,
+#        synthesis_outcomes.csv, quantitative_results.csv,
+#        consistency_flags.csv, raw/<scenario>/<model>__*.csv),
+#        Stage 5 also writes the *distributional* tables when the
+#        opt-in YAMLs configs/distributional_outputs.yaml and
+#        configs/region_crosswalk.yaml are present:
+#          - regional_outcomes_native.csv   one row per
+#            scenario × model × output_key × native_region × value_label
+#          - regional_outcomes_unified.csv  same data rolled up to the
+#            unified taxonomy {US, CHN, IND, EU, MENA_GCC, MENA_OTHER,
+#            SSA, LAC, ROW, GLOBAL} via the crosswalk
+#          - sectoral_outcomes.csv          PyCGE / OG-Core / MIRAGRODEP
+#            regional_sectoral rows flattened by sector
+#          - synthesis_distributions.csv    long-form view of every
+#            regional_distribution / sectoral_distribution dict the
+#            synthesizer attached to a SynthesizedOutcome
+#        The Stage-5 qualitative-narrative LLM prompt is also enriched
+#        with a per-(scenario, model) regional dispersion summary so
+#        the per-model paragraphs explicitly call out winners/losers.
+#        A second LLM inference pass reads qualitative/cross_scenario.md
+#        (narratives grouped by model) and writes
+#        qualitative/user_executive_summary.md for the principal user.
+#        Disable with HORMUZ_EXPORT_EXEC_SUMMARY_LLM=0 or
+#        export_results.py --no-exec-summary.
+#   06.  Visualization suite — PNG figures + self-contained
+#        index.html dashboard built from the Stage 5 CSVs and
+#        qualitative narratives (writes data/reports/<run_id>/figures/).
+#        New distributional figures (also gated by the opt-in YAMLs):
+#          - regional_impact_heatmap.png        per-scenario heatmap of
+#            unified regions x (model, value_label)
+#          - regional_distribution_<scenario>.png  sorted horizontal-bar
+#            chart of unified-region effects per scenario
+#          - sectoral_distribution_<scenario>.png  sectoral bar chart
+#            per scenario (PyCGE, MIRAGRODEP regional_sectoral, OG-Core)
+#          - regional_crosswalk_audit.png       sanity check of how
+#            native ids rolled up into the unified taxonomy
+#        index.html gains a "Distributional impacts (regional &
+#        sectoral)" section and a per-scenario "Regional / sectoral
+#        spotlight" sub-section listing the synthesizer's per-outcome
+#        distribution_note.
+#
+# All HITL checkpoints are auto-approved; for interactive review run
+# `python -m src.pipeline.graph` locally instead.
+#
+# ------------------------------------------------------------------
+# LLM defaults for THIS driver (companion to empire_ai_alpha.job)
+# ------------------------------------------------------------------
+#   * vLLM model:            meta-llama/Llama-3.1-8B-Instruct (fp16)
+#   * tensor-parallel-size:  1
+#   * GPUs requested:        2 (vLLM owns GPU 0, executor sees GPU 1)
+#
+# This is the right pairing for Tesla V100 / Quadro RTX 8000 nodes,
+# which are widely available on the SBU AI Cluster but cannot fit
+# 70B models in their 32–48GB of per-GPU memory. For 70B-class runs
+# use the Empire AI Alpha driver (slurm/jobs/empire_ai_alpha.job),
+# which defaults to Llama-3.1-70B-Instruct with tensor-parallel=4
+# across 4 GPUs and is provisioned for the larger memory footprint.
+#
+# The model name advertised to the pipeline (`PIPELINE_LLM_MODEL`)
+# is auto-exported below to whatever vLLM actually loaded, so the
+# Python stage scripts pick it up automatically — no need to edit
+# slurm/config/pipeline_cluster.yaml when changing models.
+#
+# ------------------------------------------------------------------
+# Submission examples (run from the submit node)
+# ------------------------------------------------------------------
+#   ssh <netid>@submit.ai.stonybrook.edu
+#   cd ~/agenticAIForScenarioAnalysis
+#
+#   # Default: 2 V100 GPUs on tesla1 or tesla2, vLLM Llama-3.1-8B-Instruct
+#   # sidecar on GPU 0, full pipeline. The default node list keeps you
+#   # on Volta-class cards which are widely available and have NVLink.
+#   sbatch slurm/jobs/stonybrook_ai_cluster.job
+#
+#   # Quadro RTX 8000 nodes (48GB per GPU, no bf16 but plenty of VRAM):
+#   sbatch --nodelist=quadro1 slurm/jobs/stonybrook_ai_cluster.job
+#
+#   # H100 cluster node — fine for 8B as well; if you want to actually
+#   # exploit the H100s for a 70B model, use empire_ai_alpha.job instead.
+#   sbatch --nodelist=h100 --gres=gpu:2 slurm/jobs/stonybrook_ai_cluster.job
+#
+#   # Use a cloud LLM instead of local vLLM (saves 1 GPU, needs key):
+#   export PIPELINE_LLM_PROVIDER=anthropic
+#   export ANTHROPIC_API_KEY=sk-ant-...
+#   export HORMUZ_USE_VLLM=0
+#   sbatch --gres=gpu:1 slurm/jobs/stonybrook_ai_cluster.job
+#
+#   # CPU-heavy preprocessing run on AI orion (4 V100 + 1.5TB RAM).
+#   # Disable vLLM since 1.5TB RAM + V100s is wasted on inference;
+#   # rely on a cloud LLM endpoint instead.
+#   export HORMUZ_USE_VLLM=0
+#   export PIPELINE_LLM_PROVIDER=anthropic
+#   export ANTHROPIC_API_KEY=sk-ant-...
+#   sbatch --nodelist=orion --mem=512G slurm/jobs/stonybrook_ai_cluster.job
+#
+# ------------------------------------------------------------------
+# Environment bootstrap (new)
+# ------------------------------------------------------------------
+# The first time this job runs on a node where the conda env
+# $HORMUZ_CONDA_ENV (default: 'hormuz') does NOT exist yet, the job
+# will:
+#   1. Locate an existing Miniconda/Anaconda at $HOME/miniconda3 or
+#      $HOME/anaconda3 (no cluster-wide anaconda module is required).
+#   2. Run `conda create -y -n hormuz python=3.11`.
+#   3. `pip install -e ".[dev,adapters,macro,energy,viz,wandb]"`
+#      (editable install of the repository that sbatch was submitted
+#      from — NO `git clone` or `git pull`; the repo is used in place
+#      at $SLURM_SUBMIT_DIR). The macro + energy extras pull pure-
+#      Python CGE / energy-systems packages (cge-modeling, ogcore,
+#      otoole, message-ix, ixmp, pyomo, dask) so pycge / opencge /
+#      messageix / temoa adapters can import without needing extra
+#      opt-in flags. (TEMOA itself is not pip-installed; the adapter
+#      drives a vendored Models/Energy/TEMOA clone via subprocess.
+#      OG-USA is in a separate `[macro-us]` extra because every
+#      ogusa wheel on PyPI requires Python >=3.12.) `viz` enables the
+#      Stage 6 figure renderer; `wandb` enables Weights & Biases
+#      logging (no-op when missing).
+#   4. Probe for optional runtimes (gams, julia, R, nvidia-smi) and
+#      install matching adapter extras best-effort. A missing wheel
+#      is non-fatal; the corresponding adapter gets marked SKIPPED.
+#      Also conda-installs glpk + coin-or-cbc from conda-forge so
+#      OSeMOSYS (glpsol) and TEMOA (cbc) have working solvers.
+#   5. (HORMUZ_AUTO_VENDOR=1, default) shallow-clone OSeMOSYS and
+#      TEMOA upstream repos under Models/Energy/ if missing, and
+#      curl AEO2025 macro tables to data/eia/ for MAM ingestion.
+#   6. Write a sentinel at $ENV_PREFIX/.hormuz_install_sentinel so
+#      subsequent submissions short-circuit the install step (cold
+#      start drops from ~minutes to ~seconds).
+#
+# Relevant environment variables (exportable before `sbatch`):
+#   HORMUZ_AUTO_BUILD=0      skip bootstrap entirely (bring your own env)
+#   HORMUZ_FORCE_REBUILD=1   force pip-reinstall even if marker exists
+#   HORMUZ_PY_VERSION=3.11   python version for `conda create`
+#   HORMUZ_PIP_EXTRAS="dev,adapters,macro,energy,viz,wandb"   extras passed to `pip install -e`
+#   HORMUZ_AUTO_VENDOR=0     skip auto-cloning OSeMOSYS/TEMOA + AEO XLSX
+#   MAGPIE_ROOT=/path/to/magpie  override MAgPIE source-tree resolution
+#
+# Example — first-time submission; env is built automatically:
+#   sbatch slurm/jobs/stonybrook_ai_cluster.job
+#
+# Example — force a clean reinstall of deps (e.g. pyproject changed):
+#   HORMUZ_FORCE_REBUILD=1 sbatch slurm/jobs/stonybrook_ai_cluster.job
+#
+# Example — bring your own pre-built env, don't let the job touch it:
+#   HORMUZ_AUTO_BUILD=0 HORMUZ_CONDA_ENV=my-env \
+#       sbatch slurm/jobs/stonybrook_ai_cluster.job
+#
+# ------------------------------------------------------------------
+# SBATCH directives
+# ------------------------------------------------------------------
+#SBATCH --job-name=hormuz-pipeline
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --gres=gpu:2
+#SBATCH --cpus-per-task=16
+#SBATCH --mem=128G
+#SBATCH --time=2-00:00:00
+#SBATCH --output=slurm/logs/stonybrook_ai_cluster-%j.out
+#SBATCH --error=slurm/logs/stonybrook_ai_cluster-%j.err
+#SBATCH --mail-type=END,FAIL
+# Notes:
+#   * The SBU AI Cluster uses the GRES syntax `--gres=gpu:N`. The
+#     `--gpus-per-node=N` form used by some newer SLURM clusters
+#     (Empire AI Alpha) does NOT work here.
+#   * No `--partition` or `--account` directive is required: the
+#     AI Cluster has a single default queue and no per-project
+#     accounting on top of NetID-level access control.
+#   * `--nodelist` is intentionally NOT set in the directives so that
+#     SLURM picks any tesla*/quadro*/h100 node with free GPUs. Override
+#     at submit time with `sbatch --nodelist=<node> ...` to pin to a
+#     specific architecture.
+#   * Submit with `sbatch --mail-user=<netid>@stonybrook.edu ...` to
+#     receive completion notifications (mail relay only delivers to
+#     stonybrook.edu addresses by default).
+#   * Long-running jobs (multi-day) should be reserved for the AI
+#     Cluster, not the standalone DGX/HGX servers, per the usage
+#     policy. 2 days is conservative; bump to a week if needed.
+#
+# Logging layout (relative to the project root, i.e. SLURM_SUBMIT_DIR):
+#   slurm/logs/stonybrook_ai_cluster-<jobid>.out  driver stdout (SBATCH)
+#   slurm/logs/stonybrook_ai_cluster-<jobid>.err  driver stderr (SBATCH)
+#   slurm/logs/<run_id>/                          per-run sink for everything else:
+#       driver-<jobid>.out / .err                 symlinks to the SBATCH files
+#       vllm.log                                  vLLM sidecar stdout+stderr
+#       runtime-*-<job>-<task>.json               per-stage runtime inventories
+#                                                 (written by _common.sh)
+# The SBATCH driver log paths must be set at submission time (before
+# this script runs), so they live at the top of slurm/logs/. Modern
+# slurmd auto-creates that parent directory. Everything else is
+# routed into the per-run subfolder once HORMUZ_RUN_ID is known, so
+# log artefacts stay grouped by run.
+
+set -uo pipefail
+
+# ------------------------------------------------------------------
+# Output buffering. SLURM redirects stdout/stderr to files, and glibc
+# fully-buffers stdio when it isn't writing to a tty. That makes job
+# hangs diagnostically useless because the last-known-good echo can
+# live in a 4 KiB buffer that never flushes. Force line buffering so
+# every `echo` hits the .out file immediately.
+# ------------------------------------------------------------------
+if command -v stdbuf >/dev/null 2>&1; then
+    # Re-exec ourselves under stdbuf -oL -eL on first entry. The guard
+    # env var prevents an infinite loop on the re-exec.
+    if [[ -z "${HORMUZ_STDBUF_REEXEC:-}" ]]; then
+        export HORMUZ_STDBUF_REEXEC=1
+        exec stdbuf -oL -eL "$0" "$@"
+    fi
+fi
+
+# Optional trace mode. Export HORMUZ_TRACE=1 before `sbatch` (or add
+# it to the top of this script during active debugging) to get a
+# `set -x` trace of every bash command that runs. The trace goes to
+# the .err file so the .out remains readable.
+if [[ "${HORMUZ_TRACE:-0}" == "1" ]]; then
+    export PS4='+ [$(date -u +%H:%M:%S)] ${BASH_SOURCE##*/}:${LINENO}: '
+    set -x
+fi
+
+# ------------------------------------------------------------------
+# Resolve project root and source common helpers.
+# ------------------------------------------------------------------
+PROJECT_ROOT="${SLURM_SUBMIT_DIR:-$(pwd)}"
+cd "$PROJECT_ROOT"
+
+# shellcheck source=./_common.sh
+source "${PROJECT_ROOT}/slurm/jobs/_common.sh"
+
+STAGE_PREFIX="stonybrook_ai_cluster"
+
+# ------------------------------------------------------------------
+# Run identification + state directories.
+# ------------------------------------------------------------------
+export HORMUZ_RUN_ID="${HORMUZ_RUN_ID:-$(date -u +%Y%m%d_%H%M%S)}"
+export HORMUZ_CONDA_ENV="${HORMUZ_CONDA_ENV:-hormuz}"
+export HORMUZ_CONFIG="${HORMUZ_CONFIG:-${PROJECT_ROOT}/slurm/config/pipeline_cluster.yaml}"
+export HORMUZ_AUTO_APPROVE=1   # SLURM cannot prompt; HITL is auto-approved.
+
+# SBU AI Cluster: home is shared across all nodes via 100Gb Ethernet
+# and has a 500GB per-user quota. There is no project-wide scratch
+# tier, so per-run artefacts also live under home unless the user
+# supplies an alternative. We probe a couple of common scratch
+# layouts (in case the institute provisions one in the future) and
+# otherwise fall back to project-local data/ directories.
+SBU_SCRATCH_DEFAULT=""
+for candidate in "/scratch/${USER}" "/state/partition1/${USER}" "/data/${USER}"; do
+    if [[ -d "$candidate" && -w "$candidate" ]]; then
+        SBU_SCRATCH_DEFAULT="${candidate}/hormuz/${HORMUZ_RUN_ID}"
+        break
+    fi
+done
+export HORMUZ_RUN_SCRATCH="${HORMUZ_RUN_SCRATCH:-$SBU_SCRATCH_DEFAULT}"
+
+mkdir -p "${PROJECT_ROOT}/slurm/logs"
+mkdir -p "${PROJECT_ROOT}/data/pipeline_state/manifests"
+mkdir -p "${PROJECT_ROOT}/data/inputs" "${PROJECT_ROOT}/data/outputs" "${PROJECT_ROOT}/data/reports"
+if [[ -n "$HORMUZ_RUN_SCRATCH" ]]; then
+    mkdir -p "$HORMUZ_RUN_SCRATCH"
+fi
+
+# ------------------------------------------------------------------
+# Per-run log directory. Everything written *during* this job (vLLM,
+# runtime inventories, bash failure records that come from
+# _common.sh) is routed in here so each pipeline run owns a tidy
+# folder that can be tarred up or shipped off the cluster as a unit.
+#
+# We override HORMUZ_LOG_DIR (originally set by _common.sh to point
+# at slurm/logs/ flat) so that record_runtime_inventory and
+# record_bash_failure deposit their JSON files into the per-run
+# subfolder. Those helpers re-read $HORMUZ_LOG_DIR on every call,
+# so post-source overrides take effect.
+# ------------------------------------------------------------------
+RUN_LOG_DIR="${PROJECT_ROOT}/slurm/logs/${HORMUZ_RUN_ID}"
+mkdir -p "$RUN_LOG_DIR"
+export HORMUZ_LOG_DIR="$RUN_LOG_DIR"
+
+# Symlink the SBATCH driver out/err into the per-run folder for
+# convenience. The SBATCH paths themselves are fixed by the
+# directives above (SLURM resolves them before this script runs),
+# but a symlink under the run dir gives a single jumping-off point.
+SBATCH_OUT="${PROJECT_ROOT}/slurm/logs/stonybrook_ai_cluster-${SLURM_JOB_ID:-local}.out"
+SBATCH_ERR="${PROJECT_ROOT}/slurm/logs/stonybrook_ai_cluster-${SLURM_JOB_ID:-local}.err"
+if [[ -n "${SLURM_JOB_ID:-}" ]]; then
+    ln -sf "$SBATCH_OUT" "${RUN_LOG_DIR}/driver-${SLURM_JOB_ID}.out" 2>/dev/null || true
+    ln -sf "$SBATCH_ERR" "${RUN_LOG_DIR}/driver-${SLURM_JOB_ID}.err" 2>/dev/null || true
+fi
+
+# ------------------------------------------------------------------
+# Weights & Biases configuration.
+#
+# The pipeline gracefully no-ops when wandb is unavailable, so this
+# block is best-effort: missing keys / packages just disable W&B
+# logging instead of failing the job. See src/common/wandb_logger.py
+# for the activation rules.
+#
+# SBU AI Cluster compute nodes generally DO have outbound HTTPS (the
+# usage policy assumes researchers download datasets, container
+# images, and model weights directly from compute nodes), so the
+# safe default below is "online" once an API key is detected. Set
+# `export WANDB_MODE=offline` before submission if your particular
+# node currently can't reach wandb.ai (e.g. transient firewall) and
+# sync later from the submit node with `wandb sync`.
+#
+# Override any of these by exporting the var before `sbatch ...`:
+#     export WANDB_PROJECT=hormuz-pipeline
+#     export WANDB_ENTITY=stonybrook-yourteam
+#     export WANDB_MODE=offline           # if outbound HTTPS is blocked
+#     export WANDB_API_KEY=...            # required when MODE=online
+#     export HORMUZ_WANDB_LOG_PER_TASK=0  # silence per-task runs
+# ------------------------------------------------------------------
+export WANDB_PROJECT="${WANDB_PROJECT:-hormuz-pipeline}"
+export WANDB_RUN_GROUP="${WANDB_RUN_GROUP:-${HORMUZ_RUN_ID}}"
+export WANDB_MODE="${WANDB_MODE:-offline}"
+
+# ╔════════════════════════════════════════════════════════════════╗
+# ║  W&B API KEY — PUT YOUR KEY HERE (or use one of the safer       ║
+# ║  alternatives listed below). The job is resolved in this order: ║
+# ║                                                                  ║
+# ║   1. WANDB_API_KEY already exported in the shell that ran        ║
+# ║      `sbatch` (e.g. via ~/.bashrc, a module file, `wandb login`, ║
+# ║      or `export WANDB_API_KEY=... && sbatch ...`). PREFERRED.    ║
+# ║                                                                  ║
+# ║   2. A key file at ~/.wandb_api_key, or at the path given by     ║
+# ║      $WANDB_API_KEY_FILE. Mode 600 is checked. PREFERRED for     ║
+# ║      headless cluster runs.                                      ║
+# ║                                                                  ║
+# ║   3. The inline literal on the WANDB_API_KEY_INLINE line below.  ║
+# ║      ONLY use this in a private clone of the repo — `.job` files ║
+# ║      are tracked by git and committing a key would leak it.      ║
+# ║                                                                  ║
+# ║  When a key is found AND WANDB_MODE was left at the default      ║
+# ║  ("offline"), the job auto-flips to "online" so you actually     ║
+# ║  see runs in the wandb.ai UI. Force one or the other by          ║
+# ║  exporting WANDB_MODE explicitly before submission.              ║
+# ╚════════════════════════════════════════════════════════════════╝
+
+# === EDIT BELOW ONLY IF USING OPTION 3 ===
+# Paste your key inside the quotes (40-character hex string from
+# https://wandb.ai/authorize). Leave empty to use option 1 or 2.
+WANDB_API_KEY_INLINE=""
+# ==========================================
+
+# Option 2: load from a file if present.
+WANDB_API_KEY_FILE="${WANDB_API_KEY_FILE:-${HOME}/.wandb_api_key}"
+
+if [[ -z "${WANDB_API_KEY:-}" ]]; then
+    if [[ -n "$WANDB_API_KEY_INLINE" ]]; then
+        export WANDB_API_KEY="$WANDB_API_KEY_INLINE"
+        echo "[wandb] using inline WANDB_API_KEY_INLINE (consider moving to" \
+             "$WANDB_API_KEY_FILE to keep secrets out of the .job file)"
+    elif [[ -r "$WANDB_API_KEY_FILE" ]]; then
+        # Sanity-check file permissions: 600 or 400 only. Anything more
+        # permissive is a leak risk on the shared SBU AI home filesystem.
+        perms=$(stat -c '%a' "$WANDB_API_KEY_FILE" 2>/dev/null || \
+                stat -f '%Lp' "$WANDB_API_KEY_FILE" 2>/dev/null || echo "?")
+        if [[ "$perms" != "600" && "$perms" != "400" && "$perms" != "?" ]]; then
+            echo "[wandb] WARNING: $WANDB_API_KEY_FILE has permissions ${perms};" \
+                 "tighten with: chmod 600 $WANDB_API_KEY_FILE"
+        fi
+        # Read the first non-empty, non-comment line.
+        WANDB_API_KEY=$(grep -v '^[[:space:]]*#' "$WANDB_API_KEY_FILE" | \
+                        sed '/^[[:space:]]*$/d' | head -n1 | tr -d '[:space:]')
+        if [[ -n "$WANDB_API_KEY" ]]; then
+            export WANDB_API_KEY
+            echo "[wandb] loaded WANDB_API_KEY from $WANDB_API_KEY_FILE"
+        fi
+    fi
+fi
+
+# Auto-promote to online mode IF the user provided a key AND didn't
+# explicitly set WANDB_MODE before sbatch. SBU AI nodes generally have
+# outbound HTTPS, so going online by default is the right call.
+if [[ -n "${WANDB_API_KEY:-}" && "$WANDB_MODE" == "offline" \
+      && -z "${HORMUZ_WANDB_FORCE_OFFLINE:-}" ]]; then
+    export WANDB_MODE="online"
+    echo "[wandb] WANDB_API_KEY detected; auto-switching WANDB_MODE=online." \
+         "Set HORMUZ_WANDB_FORCE_OFFLINE=1 to keep offline mode anyway."
+fi
+
+# Pin wandb's local cache + run dir under the per-run logs folder so
+# every artefact for this pipeline run is colocated and easy to ship.
+export WANDB_DIR="${WANDB_DIR:-${RUN_LOG_DIR}}"
+export WANDB_CACHE_DIR="${WANDB_CACHE_DIR:-${RUN_LOG_DIR}/wandb-cache}"
+export WANDB_CONFIG_DIR="${WANDB_CONFIG_DIR:-${RUN_LOG_DIR}/wandb-config}"
+mkdir -p "$WANDB_DIR" "$WANDB_CACHE_DIR" "$WANDB_CONFIG_DIR"
+# Silence wandb's tty output; we have our own logging.
+export WANDB_SILENT="${WANDB_SILENT:-true}"
+export WANDB_CONSOLE="${WANDB_CONSOLE:-off}"
+# Per-task logging toggle (1=on, 0=off). On by default; flip to 0
+# when running large grids to keep the project dashboard clean.
+export HORMUZ_WANDB_LOG_PER_TASK="${HORMUZ_WANDB_LOG_PER_TASK:-1}"
+
+# Best-effort visibility of the chosen W&B settings.
+echo "[wandb] project=${WANDB_PROJECT} group=${WANDB_RUN_GROUP} mode=${WANDB_MODE}"
+echo "[wandb] dir=${WANDB_DIR} per_task=${HORMUZ_WANDB_LOG_PER_TASK}"
+case "$WANDB_MODE" in
+    online)
+        if [[ -z "${WANDB_API_KEY:-}" ]]; then
+            echo "[wandb] WARNING: WANDB_MODE=online but WANDB_API_KEY is unset."
+            echo "[wandb]          The Python wrapper will downgrade to disabled."
+            echo "[wandb]          Set WANDB_API_KEY or WANDB_MODE=offline to fix."
+        fi
+        ;;
+    offline)
+        echo "[wandb] runs will be written to ${WANDB_DIR}; sync later with:"
+        echo "[wandb]   wandb sync ${WANDB_DIR}/wandb/offline-run-*"
+        ;;
+    disabled)
+        echo "[wandb] disabled via WANDB_MODE; pipeline runs without tracking."
+        ;;
+esac
+
+# ------------------------------------------------------------------
+# Hugging Face Hub credentials.
+#
+# vLLM (and transformers in general) downloads model weights from
+# https://huggingface.co at startup. Several models we use — notably
+# meta-llama/Llama-3.1-8B-Instruct, the default vLLM model — live in
+# *gated* repositories: a 200-OK response from /resolve/main/config.json
+# requires both (a) a valid HF user token AND (b) the user's HF account
+# being in the model's authorized list. Without either, vLLM fails with:
+#
+#   OSError: You are trying to access a gated repo.
+#   403 Client Error ... access to model meta-llama/Llama-3.1-8B-Instruct
+#   is restricted and you are not in the authorized list.
+#
+# Resolution order (mirrors the W&B block above):
+#
+#   1. HF_TOKEN or HUGGING_FACE_HUB_TOKEN already exported in the
+#      shell that ran `sbatch` (e.g. via ~/.bashrc, `huggingface-cli
+#      login`, or `export HF_TOKEN=... && sbatch ...`). PREFERRED.
+#
+#   2. A key file at ~/.huggingface_token (or at the path given by
+#      $HF_TOKEN_FILE). Mode 600 is checked. PREFERRED for headless
+#      cluster runs. Create it once with:
+#          umask 077 && echo "hf_..." > ~/.huggingface_token
+#
+#   3. The inline literal on the HF_TOKEN_INLINE line below. ONLY use
+#      this in a private clone — `.job` files are tracked by git and
+#      committing a token would leak it (and HF will revoke it).
+#
+# Once a token is resolved we export BOTH HF_TOKEN (the name
+# transformers >=4.40 / huggingface_hub >=0.23 prefer) and
+# HUGGING_FACE_HUB_TOKEN (the legacy name still read by vLLM and
+# older transformers releases) so every code path picks it up.
+#
+# Note: a valid token does NOT bypass the gated-repo authorization.
+# You must also visit the model page on huggingface.co while signed
+# into the same HF account that owns the token and click "Request
+# access" / accept the license. Without that, even a perfectly valid
+# token will still 403 on /resolve/main/config.json.
+# ------------------------------------------------------------------
+
+# === EDIT BELOW ONLY IF USING OPTION 3 ===
+# Paste your token inside the quotes (`hf_...` from
+# https://huggingface.co/settings/tokens). Leave empty to use option 1 or 2.
+HF_TOKEN_INLINE="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"
+# ==========================================
+
+# Option 2: load from a file if present.
+HF_TOKEN_FILE="${HF_TOKEN_FILE:-${HOME}/.huggingface_token}"
+
+# Accept either env var name on input; we'll re-export both at the end.
+if [[ -z "${HF_TOKEN:-}" && -n "${HUGGING_FACE_HUB_TOKEN:-}" ]]; then
+    HF_TOKEN="$HUGGING_FACE_HUB_TOKEN"
+fi
+
+if [[ -z "${HF_TOKEN:-}" ]]; then
+    if [[ -n "$HF_TOKEN_INLINE" ]]; then
+        HF_TOKEN="$HF_TOKEN_INLINE"
+        echo "[hf] using inline HF_TOKEN_INLINE (consider moving to" \
+             "$HF_TOKEN_FILE to keep secrets out of the .job file)"
+    elif [[ -r "$HF_TOKEN_FILE" ]]; then
+        # Sanity-check file permissions: 600 or 400 only. The shared
+        # SBU AI home filesystem is readable by other users by default.
+        hf_perms=$(stat -c '%a' "$HF_TOKEN_FILE" 2>/dev/null || \
+                   stat -f '%Lp' "$HF_TOKEN_FILE" 2>/dev/null || echo "?")
+        if [[ "$hf_perms" != "600" && "$hf_perms" != "400" && "$hf_perms" != "?" ]]; then
+            echo "[hf] WARNING: $HF_TOKEN_FILE has permissions ${hf_perms};" \
+                 "tighten with: chmod 600 $HF_TOKEN_FILE"
+        fi
+        # Read the first non-empty, non-comment line.
+        HF_TOKEN=$(grep -v '^[[:space:]]*#' "$HF_TOKEN_FILE" | \
+                   sed '/^[[:space:]]*$/d' | head -n1 | tr -d '[:space:]')
+        if [[ -n "$HF_TOKEN" ]]; then
+            echo "[hf] loaded HF token from $HF_TOKEN_FILE"
+        fi
+    fi
+fi
+
+if [[ -n "${HF_TOKEN:-}" ]]; then
+    export HF_TOKEN
+    export HUGGING_FACE_HUB_TOKEN="$HF_TOKEN"
+    # Mask all but the first 4 + last 4 characters for the banner.
+    hf_token_len=${#HF_TOKEN}
+    if [[ $hf_token_len -gt 12 ]]; then
+        hf_token_mask="${HF_TOKEN:0:4}…${HF_TOKEN: -4} (len=${hf_token_len})"
+    else
+        hf_token_mask="(short token, len=${hf_token_len})"
+    fi
+    echo "[hf] HF_TOKEN + HUGGING_FACE_HUB_TOKEN exported: ${hf_token_mask}"
+else
+    echo "[hf] no HF token found (checked env, $HF_TOKEN_FILE, inline)."
+    echo "[hf]   Gated models (e.g. meta-llama/Llama-3.1-8B-Instruct) will fail to download."
+    echo "[hf]   Fix: write your token to $HF_TOKEN_FILE with mode 600, OR"
+    echo "[hf]        export HF_TOKEN=hf_... before submitting."
+fi
+
+# Pin the HF cache under \$HOME (or scratch when available) so repeated
+# job submissions reuse the downloaded weights instead of re-fetching
+# the gated repo every time. transformers + huggingface_hub both honour
+# HF_HOME; vLLM honours it transitively.
+if [[ -n "${HORMUZ_RUN_SCRATCH:-}" && -d "$(dirname "$HORMUZ_RUN_SCRATCH")" ]]; then
+    # Scratch parent (e.g. /scratch/$USER/hormuz) — share the HF cache
+    # across runs by hoisting it one level above the per-run scratch dir.
+    export HF_HOME="${HF_HOME:-$(dirname "$HORMUZ_RUN_SCRATCH")/hf-cache}"
+else
+    export HF_HOME="${HF_HOME:-${HOME}/.cache/huggingface}"
+fi
+mkdir -p "$HF_HOME"
+echo "[hf] HF_HOME=${HF_HOME}"
+
+echo "================================================================"
+echo "  Hormuz Pipeline — Stony Brook AI Cluster (single-node driver)"
+echo "================================================================"
+echo "  Job ID:        ${SLURM_JOB_ID:-N/A}"
+echo "  Run ID:        ${HORMUZ_RUN_ID}"
+echo "  Node:          $(hostname -f 2>/dev/null || hostname)"
+echo "  Partition:     ${SLURM_JOB_PARTITION:-default}"
+echo "  Nodelist:      ${SLURM_JOB_NODELIST:-?}"
+echo "  CPUs:          ${SLURM_CPUS_PER_TASK:-?}"
+echo "  GPUs (gres):   ${SLURM_GPUS_ON_NODE:-${SLURM_JOB_GPUS:-?}}"
+echo "  Memory:        ${SLURM_MEM_PER_NODE:-?} MB"
+echo "  Walltime cap:  ${SBATCH_TIMELIMIT:-from-script}"
+echo "  Project root:  ${PROJECT_ROOT}"
+echo "  Conda env:     ${HORMUZ_CONDA_ENV}"
+echo "  Config:        ${HORMUZ_CONFIG}"
+echo "  Scratch:       ${HORMUZ_RUN_SCRATCH:-<unset, using project root>}"
+echo "  Run log dir:   ${RUN_LOG_DIR}"
+echo "  Driver out:    ${SBATCH_OUT}"
+echo "  Driver err:    ${SBATCH_ERR}"
+echo "  W&B project:   ${WANDB_PROJECT} (mode=${WANDB_MODE}, group=${WANDB_RUN_GROUP})"
+echo "  Started at:    $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+echo "================================================================"
+
+# ------------------------------------------------------------------
+# Modules. SBU AI Cluster nodes use Lmod with a small module set
+# (Anaconda + CUDA toolkits). Everything is best-effort so missing
+# modules are recorded, not fatal. The conda env is the real source
+# of dependencies.
+#
+# Each `module` call is wrapped in `timeout 60s` so that a broken
+# Lmod cache (rare, but observed after cluster upgrades on tesla1/2)
+# can't silently stall the job. Stdin is redirected from /dev/null so
+# modulefiles that try to read interactively never block.
+# ------------------------------------------------------------------
+_hormuz_mod() {
+    # $1: human-readable label for progress logging.
+    # $@: module command, e.g. `load anaconda3`.
+    #
+    # IMPORTANT: `module` is a shell function provided by Lmod that
+    # mutates the *current* shell's environment (PATH, LD_LIBRARY_PATH,
+    # CUDA_HOME, etc.). If we run it inside `bash -c "..."` the
+    # mutations die with that subshell and the parent job sees nothing
+    # — that is exactly how this script used to silently lose CUDA_HOME
+    # and trigger the vLLM `Could not find nvcc and default
+    # cuda_home='/usr/local/cuda' doesn't exist` failure.
+    #
+    # So we invoke `module` directly in *this* shell, with a coarse
+    # bash-level timeout via `timeout` only when the module call would
+    # otherwise be unbounded (we don't have that risk in practice on
+    # SBU AI, but the structured logging is still useful).
+    local label="$1"; shift
+    if command -v module >/dev/null 2>&1; then
+        # Redirect stdin so modulefiles that probe a tty don't block.
+        module "$@" </dev/null
+        return $?
+    fi
+    return 127
+}
+
+echo "[progress] loading Lmod modules..."
+_hormuz_mod "purge" purge || true
+if ! _hormuz_mod "anaconda3" load anaconda3; then
+    if ! _hormuz_mod "anaconda" load anaconda; then
+        echo "[module] anaconda not available; relying on PATH"
+    fi
+fi
+if ! _hormuz_mod "cuda/12.4" load cuda/12.4; then
+    if ! _hormuz_mod "cuda/12.1" load cuda/12.1; then
+        if ! _hormuz_mod "cuda" load cuda; then
+            echo "[module] no cuda module loaded"
+        fi
+    fi
+fi
+if ! _hormuz_mod "cudnn/9.0" load cudnn/9.0; then
+    if ! _hormuz_mod "cudnn" load cudnn; then
+        echo "[module] no cudnn module loaded"
+    fi
+fi
+echo "[progress] modules done."
+
+# ------------------------------------------------------------------
+# CUDA toolkit / nvcc resolution.
+#
+# vLLM (via torch.utils.cpp_extension) JIT-compiles a handful of CUDA
+# kernels at engine startup — notably on Volta (V100) where the
+# precompiled flash-attention path is not available. Those compiles
+# require nvcc on PATH and a valid CUDA_HOME pointing at a toolkit
+# install (with nvcc, headers, and libcudart). If either is missing,
+# vLLM aborts with:
+#
+#     RuntimeError: Could not find nvcc and default cuda_home=
+#     '/usr/local/cuda' doesn't exist
+#
+# Resolution order:
+#   1. Whatever the cuda Lmod module exported (now actually visible
+#      because `_hormuz_mod` was fixed to run in-shell, above).
+#   2. CUDA_HOME / CUDA_PATH already exported by the user.
+#   3. `nvcc` already on PATH — derive CUDA_HOME from its location
+#      (CUDA_HOME = $(dirname $(which nvcc))/..).
+#   4. Common install prefixes on SBU AI Cluster nodes.
+#   5. Conda fallback: `conda install -c nvidia cuda-nvcc cuda-cudart-dev`
+#      into the activated env. This keeps the toolkit pinned to the
+#      env so the job works even on nodes where no cuda module exists
+#      (some H100 / orion nodes ship without /cm/shared CUDA).
+#
+# We point CUDA_HOME *and* the legacy CUDA_PATH at the same prefix so
+# both torch and any downstream cmake builds find it.
+# ------------------------------------------------------------------
+_hormuz_resolve_cuda_home() {
+    # Pre-populated by the module load, the user's shell, or empty.
+    if [[ -z "${CUDA_HOME:-}" && -n "${CUDA_PATH:-}" ]]; then
+        CUDA_HOME="$CUDA_PATH"
+    fi
+
+    # Validate: CUDA_HOME must contain bin/nvcc to be useful.
+    if [[ -n "${CUDA_HOME:-}" && -x "${CUDA_HOME}/bin/nvcc" ]]; then
+        return 0
+    fi
+
+    # Derive from nvcc on PATH (works when the cuda module added
+    # /cm/shared/.../cuda-12.4/bin to PATH but not CUDA_HOME).
+    if command -v nvcc >/dev/null 2>&1; then
+        local _nvcc_bin
+        _nvcc_bin="$(command -v nvcc)"
+        CUDA_HOME="$(dirname "$(dirname "$_nvcc_bin")")"
+        if [[ -x "${CUDA_HOME}/bin/nvcc" ]]; then
+            return 0
+        fi
+    fi
+
+    # SBU AI Cluster + general SLURM-cluster common prefixes. Ordered
+    # newest-first so we prefer 12.4 / 12.1 over 11.x when several are
+    # installed side-by-side.
+    local _candidate
+    for _candidate in \
+        /cm/shared/apps/cuda12.4/toolkit/12.4* \
+        /cm/shared/apps/cuda12.1/toolkit/12.1* \
+        /cm/shared/apps/cuda/12.4 \
+        /cm/shared/apps/cuda/12.1 \
+        /cm/shared/apps/cuda/* \
+        /usr/local/cuda-12.4 \
+        /usr/local/cuda-12.1 \
+        /usr/local/cuda-12.0 \
+        /opt/cuda-12.4 \
+        /opt/cuda-12.1 \
+        /opt/cuda \
+        /usr/local/cuda; do
+        if [[ -x "${_candidate}/bin/nvcc" ]]; then
+            CUDA_HOME="$_candidate"
+            return 0
+        fi
+    done
+
+    return 1
+}
+
+echo "[cuda] resolving CUDA toolkit / nvcc..."
+if _hormuz_resolve_cuda_home; then
+    export CUDA_HOME
+    export CUDA_PATH="$CUDA_HOME"
+    export PATH="${CUDA_HOME}/bin:${PATH}"
+    # libcudart.so + libnvrtc.so live here; needed by torch's runtime
+    # loader as well as anything that JITs (xformers, flash-attn, etc.).
+    export LD_LIBRARY_PATH="${CUDA_HOME}/lib64:${LD_LIBRARY_PATH:-}"
+    _nvcc_ver="$("${CUDA_HOME}/bin/nvcc" --version 2>/dev/null \
+                 | grep -oE 'release [0-9.]+' | head -n1 || echo unknown)"
+    echo "[cuda] CUDA_HOME=${CUDA_HOME} (nvcc ${_nvcc_ver})"
+else
+    echo "[cuda] WARNING: no nvcc found on PATH or in common install prefixes."
+    echo "[cuda]          vLLM will fail at engine startup with:"
+    echo "[cuda]            'Could not find nvcc and default cuda_home=...'"
+    echo "[cuda]          Will attempt to install cuda-nvcc into the conda env"
+    echo "[cuda]          during bootstrap as a fallback."
+    # Sentinel for the bootstrap block below.
+    HORMUZ_NEED_CONDA_NVCC=1
+fi
+
+# ------------------------------------------------------------------
+# Bootstrap: create the conda env + install the pipeline package if
+# this is the first submission on a node where the env doesn't yet
+# exist. Idempotent across resubmissions via a sentinel file so we
+# don't pay the pip-install cost on every run.
+#
+# This block does NOT touch git — it assumes the repo is already
+# checked out at $PROJECT_ROOT (which it is, because SLURM launches
+# this script from your working copy). Nothing here runs `git clone`,
+# `git pull`, or mutates the repository in any way.
+#
+# Behaviour flags (exportable before `sbatch`):
+#   HORMUZ_AUTO_BUILD=1      (default) enable bootstrap
+#   HORMUZ_AUTO_BUILD=0      skip bootstrap entirely (bring your own env)
+#   HORMUZ_FORCE_REBUILD=1   force reinstall even if the marker exists
+#   HORMUZ_PY_VERSION=3.11   python version for `conda create`
+#   HORMUZ_PIP_EXTRAS="dev,adapters,macro,energy,viz,wandb"   extras passed to `pip install -e`
+#   HORMUZ_AUTO_VENDOR=0     skip auto-cloning OSeMOSYS/TEMOA + AEO XLSX
+# ------------------------------------------------------------------
+HORMUZ_AUTO_BUILD="${HORMUZ_AUTO_BUILD:-1}"
+HORMUZ_FORCE_REBUILD="${HORMUZ_FORCE_REBUILD:-0}"
+HORMUZ_PY_VERSION="${HORMUZ_PY_VERSION:-3.11}"
+# Default extras now include macro + energy so the cge-modeling /
+# ogcore / message-ix / ixmp / pyomo / dask packages are installed
+# automatically. The pipeline's macro and energy adapters refuse to
+# import without these and used to surface as FAILED in the synthesis
+# report; with them in the default extras pycge runs end-to-end
+# against the bundled SAM, opencge clears its import gate, and
+# messageix / temoa (via vendored Models/Energy/TEMOA) get past the
+# ImportError check. NOTE: ogusa lives in a separate `[macro-us]`
+# extra because every ogusa wheel on PyPI requires Python >=3.12;
+# the OpenCGE adapter degrades to OG-Core defaults with a warning
+# when ogusa is unavailable. TEMOA is NOT pip-installed; the adapter
+# uses the vendored Models/Energy/TEMOA clone via subprocess.
+#
+# `viz` adds matplotlib + pandas + markdown so Stage 6 can render the
+# full PNG figure set + self-contained index.html dashboard from the
+# Stage 5 CSVs / qualitative narratives. The visualization script
+# degrades to a text-only HTML report when these are unavailable, so
+# disabling the extra (HORMUZ_PIP_EXTRAS=...) is harmless.
+#
+# `wandb` adds the Weights & Biases client so src/common/wandb_logger
+# can attach to a real W&B run instead of no-op'ing. Without it the
+# pipeline still runs but every stage prints
+#   "wandb is not installed; pipeline will run without W&B logging"
+# and no run shows up in the W&B UI / offline dir. The W&B section
+# below configures project / mode / API key resolution; this extra
+# just provides the Python client. Drop the extra to silence W&B
+# entirely (combine with HORMUZ_WANDB_DISABLED=1 to keep the log
+# message away too).
+HORMUZ_PIP_EXTRAS="${HORMUZ_PIP_EXTRAS:-dev,adapters,macro,energy,viz,wandb}"
+HORMUZ_AUTO_VENDOR="${HORMUZ_AUTO_VENDOR:-1}"
+
+if [[ "$HORMUZ_AUTO_BUILD" == "1" ]]; then
+    echo "[progress] bootstrapping conda env '${HORMUZ_CONDA_ENV}' (auto-build)..."
+
+    # Locate conda. Prefer an exported CONDA_EXE, then PATH, then the
+    # standard $HOME/miniconda3 install (common on SBU AI where users
+    # install Miniconda into home since there's no Lmod module).
+    if [[ -z "${CONDA_EXE:-}" ]] && command -v conda >/dev/null 2>&1; then
+        CONDA_EXE="$(command -v conda)"
+        export CONDA_EXE
+    fi
+    if [[ -z "${CONDA_EXE:-}" && -x "${HOME}/miniconda3/bin/conda" ]]; then
+        CONDA_EXE="${HOME}/miniconda3/bin/conda"
+        export CONDA_EXE
+        export PATH="${HOME}/miniconda3/bin:${PATH}"
+    fi
+    if [[ -z "${CONDA_EXE:-}" && -x "${HOME}/anaconda3/bin/conda" ]]; then
+        CONDA_EXE="${HOME}/anaconda3/bin/conda"
+        export CONDA_EXE
+        export PATH="${HOME}/anaconda3/bin:${PATH}"
+    fi
+
+    if [[ -z "${CONDA_EXE:-}" ]]; then
+        echo "[build] ERROR: no conda binary found (not on PATH, no \$HOME/miniconda3 or \$HOME/anaconda3)."
+        echo "[build]        Install Miniconda first, or set HORMUZ_AUTO_BUILD=0 if you plan"
+        echo "[build]        to pre-create the env by some other means. Not aborting here;"
+        echo "[build]        the activation step below will fail with a clearer message."
+    else
+        # Check whether the env already exists.
+        _env_exists=0
+        if "$CONDA_EXE" env list 2>/dev/null \
+                | awk 'NF && $1 !~ /^#/ { print $1 }' \
+                | grep -qx -- "${HORMUZ_CONDA_ENV}"; then
+            _env_exists=1
+        fi
+
+        # Sentinel path inside the env prefix. Written at the end of a
+        # successful install so subsequent submissions short-circuit.
+        _conda_base="$("$CONDA_EXE" info --base 2>/dev/null)"
+        _env_prefix="${_conda_base}/envs/${HORMUZ_CONDA_ENV}"
+        _build_marker="${_env_prefix}/.hormuz_install_sentinel"
+
+        if [[ $_env_exists -eq 0 ]]; then
+            echo "[build] env '${HORMUZ_CONDA_ENV}' not found — creating with python=${HORMUZ_PY_VERSION}"
+            if ! "$CONDA_EXE" create -y -n "${HORMUZ_CONDA_ENV}" "python=${HORMUZ_PY_VERSION}"; then
+                record_bash_failure "${STAGE_PREFIX}_build" 1 \
+                    "conda create -n ${HORMUZ_CONDA_ENV} failed on $(hostname)"
+                echo "[fatal] conda env creation failed; aborting."
+                exit 1
+            fi
+            echo "[build] env created at ${_env_prefix}"
+        else
+            echo "[build] env '${HORMUZ_CONDA_ENV}' already exists at ${_env_prefix}"
+        fi
+
+        # Decide whether we need to (re)install the pipeline package.
+        _need_install=0
+        if [[ $_env_exists -eq 0 ]]; then _need_install=1; fi
+        if [[ ! -f "$_build_marker" ]]; then _need_install=1; fi
+        if [[ "$HORMUZ_FORCE_REBUILD" == "1" ]]; then _need_install=1; fi
+
+        # Sanity-check core importability even when the marker is
+        # present. Older sentinels were written before langchain-openai
+        # was a core dependency, so an env that "looks installed"
+        # might still crash Module 1 with ModuleNotFoundError. Verify
+        # the few imports the pipeline cannot start without and force
+        # a reinstall if any is missing.
+        if [[ $_need_install -eq 0 && -f "$_build_marker" ]]; then
+            _conda_python="${_env_prefix}/bin/python"
+            if [[ -x "$_conda_python" ]]; then
+                if ! "$_conda_python" -c "import langchain_openai, langchain, langgraph, pydantic" \
+                        >/dev/null 2>&1; then
+                    echo "[build] core imports missing in existing env; forcing reinstall."
+                    _need_install=1
+                fi
+
+                # Also verify extras-gated imports for whichever extras are
+                # currently configured in HORMUZ_PIP_EXTRAS. Stale envs
+                # built before macro/energy extras were added will pass
+                # the core check above but still leave OpenCGE / pycge /
+                # MESSAGEix / TEMOA marked SKIPPED at run time. Detect
+                # the gap here and re-trigger `pip install -e .[extras]`.
+                if [[ $_need_install -eq 0 ]]; then
+                    _extras_check_imports=()
+                    case ",${HORMUZ_PIP_EXTRAS}," in
+                        *,macro,*) _extras_check_imports+=("ogcore" "cge_modeling") ;;
+                    esac
+                    case ",${HORMUZ_PIP_EXTRAS}," in
+                        *,energy,*) _extras_check_imports+=("pyomo") ;;
+                    esac
+                    case ",${HORMUZ_PIP_EXTRAS}," in
+                        *,water,*) _extras_check_imports+=("netCDF4") ;;
+                    esac
+                    case ",${HORMUZ_PIP_EXTRAS}," in
+                        *,wandb,*) _extras_check_imports+=("wandb") ;;
+                    esac
+                    case ",${HORMUZ_PIP_EXTRAS}," in
+                        *,viz,*) _extras_check_imports+=("matplotlib") ;;
+                    esac
+                    if (( ${#_extras_check_imports[@]} > 0 )); then
+                        _missing_extras=()
+                        for _mod in "${_extras_check_imports[@]}"; do
+                            if ! "$_conda_python" -c "import ${_mod}" >/dev/null 2>&1; then
+                                _missing_extras+=("${_mod}")
+                            fi
+                        done
+                        if (( ${#_missing_extras[@]} > 0 )); then
+                            echo "[build] extras-gated imports missing in existing env (${_missing_extras[*]});" \
+                                 "forcing reinstall of [${HORMUZ_PIP_EXTRAS}]."
+                            _need_install=1
+                        fi
+                    fi
+                fi
+            fi
+        fi
+
+        if [[ $_need_install -eq 1 ]]; then
+            echo "[build] installing pipeline package (extras=[${HORMUZ_PIP_EXTRAS}])..."
+
+            # Source the conda shell hook so `conda activate` works in this
+            # non-interactive shell, activate the freshly-built env, and
+            # install. This is a one-shot activation for the install; the
+            # main activation block below re-activates cleanly afterwards.
+            if [[ -f "${_conda_base}/etc/profile.d/conda.sh" ]]; then
+                # shellcheck source=/dev/null
+                source "${_conda_base}/etc/profile.d/conda.sh"
+            else
+                echo "[build] ERROR: ${_conda_base}/etc/profile.d/conda.sh not found."
+                record_bash_failure "${STAGE_PREFIX}_build" 1 \
+                    "conda.sh not found at ${_conda_base}/etc/profile.d/"
+                exit 1
+            fi
+
+            if ! conda activate "${HORMUZ_CONDA_ENV}"; then
+                record_bash_failure "${STAGE_PREFIX}_build" 1 \
+                    "conda activate ${HORMUZ_CONDA_ENV} failed during bootstrap on $(hostname)"
+                echo "[fatal] cannot activate env right after creation; aborting."
+                exit 1
+            fi
+
+            # Pin pip / python to the env's interpreter explicitly.
+            #
+            # On shared-miniforge installs (typical on the SBU AI
+            # Cluster: /shared/software/miniforge3) the system `pip`
+            # often stays first on PATH even after `conda activate`,
+            # so a bare `pip install foo` lands in the BASE env's
+            # site-packages while `python` resolves to the activated
+            # env's interpreter. The result is "pip says installed,
+            # import fails" — a confusing failure mode we hit in
+            # practice. Calling pip via `python -m pip` guarantees
+            # both halves see the same site-packages.
+            _env_python="${_env_prefix}/bin/python"
+            if [[ ! -x "$_env_python" ]]; then
+                # Fallback: trust whatever `python` resolves to under
+                # the activated env. Should never happen because we
+                # just created the env above.
+                _env_python="$(command -v python)"
+                echo "[build] WARNING: ${_env_prefix}/bin/python not executable;" \
+                     "falling back to PATH python at ${_env_python}"
+            fi
+            echo "[build] using env interpreter: ${_env_python} ($(${_env_python} -V 2>&1))"
+            _env_pip=( "${_env_python}" -m pip )
+
+            # Core install. This one IS fatal: without the pipeline
+            # package none of the downstream stages can find their
+            # imports. Surface pip errors fully (no --quiet).
+            if ! "${_env_pip[@]}" install --upgrade pip setuptools wheel; then
+                echo "[build] WARNING: pip/setuptools/wheel upgrade failed; continuing."
+            fi
+            if ! "${_env_pip[@]}" install -e ".[${HORMUZ_PIP_EXTRAS}]"; then
+                record_bash_failure "${STAGE_PREFIX}_build" 1 \
+                    "pip install -e .[${HORMUZ_PIP_EXTRAS}] failed on $(hostname)"
+                echo "[fatal] pipeline package install failed; aborting."
+                exit 1
+            fi
+
+            # Optional runtime-gated installs. Each is best-effort: a
+            # missing wheel, a compile failure, or a driver mismatch
+            # just means the corresponding domain adapters will be
+            # marked SKIPPED at run time (run_model.py + executor
+            # already handle NotImplementedError / ImportError).
+            echo "[build] probing for optional adapter runtimes..."
+
+            _opt_install() {
+                # $1: human-readable label
+                # $2...: pip args
+                local label="$1"; shift
+                echo "[build]   - ${label}"
+                if ! "${_env_pip[@]}" install "$@" --quiet; then
+                    echo "[build]     WARNING: ${label} failed; adapter will be SKIPPED."
+                fi
+            }
+
+            if command -v gams   >/dev/null 2>&1; then _opt_install "gamsapi"   "gamsapi[transfer]>=52.0"; fi
+            if command -v julia  >/dev/null 2>&1; then _opt_install "juliacall" "juliacall>=0.9.20";        fi
+            if command -v R      >/dev/null 2>&1; then _opt_install "rpy2"      "rpy2>=3.5";                fi
+            _opt_install "openpyxl+pandas" "openpyxl>=3.1" "pandas>=2.0"
+
+            # Visualization stack (Stage 6). Headless matplotlib +
+            # markdown for the dashboard. Pure Python wheels with
+            # well-cached binaries on PyPI; cheap to install. Skipped
+            # silently if either install fails (Stage 6 falls back to
+            # a text-only HTML report).
+            _opt_install "matplotlib (Stage 6 figures)" "matplotlib>=3.8"
+            _opt_install "markdown (Stage 6 dashboard rendering)" "markdown>=3.5"
+
+            # Open-source LP/MIP solvers used by the energy-systems
+            # adapters: OSeMOSYS shells out to `glpsol` (GLPK) and TEMOA
+            # uses `cbc` via Pyomo. Conda-forge ships portable static
+            # binaries for both, so we don't need root or apt access on
+            # the cluster. Skip if they're already on PATH.
+            _need_glpk=0
+            _need_cbc=0
+            command -v glpsol >/dev/null 2>&1 || _need_glpk=1
+            command -v cbc    >/dev/null 2>&1 || _need_cbc=1
+            if [[ $_need_glpk -eq 1 || $_need_cbc -eq 1 ]]; then
+                _solver_pkgs=()
+                [[ $_need_glpk -eq 1 ]] && _solver_pkgs+=( glpk )
+                [[ $_need_cbc  -eq 1 ]] && _solver_pkgs+=( coin-or-cbc )
+                echo "[build]   - conda-forge solvers: ${_solver_pkgs[*]}"
+                if "$CONDA_EXE" install -y -n "${HORMUZ_CONDA_ENV}" \
+                        -c conda-forge "${_solver_pkgs[@]}" >/dev/null 2>&1; then
+                    echo "[build]     installed solvers into ${HORMUZ_CONDA_ENV}"
+                else
+                    echo "[build]     WARNING: solver install failed;" \
+                         "OSeMOSYS / TEMOA will skip without glpsol / cbc."
+                fi
+            else
+                echo "[build]   - solvers: glpsol + cbc already on PATH"
+            fi
+
+            # GPU / ML stack — only install when a CUDA GPU is visible
+            # to this node. Installing torch on a CPU-only login box
+            # pulls a huge wheel for nothing.
+            if command -v nvidia-smi >/dev/null 2>&1 \
+                    && nvidia-smi -L >/dev/null 2>&1; then
+                _opt_install "torch + transformers + accelerate" \
+                    torch transformers accelerate peft
+                # vLLM is only useful when the job actually plans to
+                # spawn a local LLM sidecar (HORMUZ_USE_VLLM=1, the
+                # default). Skip it otherwise to keep cold-start fast.
+                if [[ "${HORMUZ_USE_VLLM:-1}" == "1" \
+                        && "${PIPELINE_LLM_PROVIDER:-vllm}" == "vllm" ]]; then
+                    _opt_install "vllm" vllm
+
+                    # CUDA toolkit fallback: if the host has no nvcc and
+                    # no cuda Lmod module, install one inside the env so
+                    # vLLM's JIT path (xformers / flash-attn on Volta)
+                    # has something to compile against. The conda-forge
+                    # / nvidia channel ships matching cudart-dev so the
+                    # headers line up with the runtime torch was built
+                    # against. ~250MB; only paid once per env.
+                    if [[ "${HORMUZ_NEED_CONDA_NVCC:-0}" == "1" ]]; then
+                        echo "[build]   - cuda-nvcc (conda fallback, no system CUDA found)"
+                        if "$CONDA_EXE" install -y -n "${HORMUZ_CONDA_ENV}" \
+                                -c nvidia cuda-nvcc cuda-cudart-dev cuda-nvrtc \
+                                >/dev/null 2>&1; then
+                            echo "[build]     installed cuda-nvcc into ${HORMUZ_CONDA_ENV}"
+                        elif "$CONDA_EXE" install -y -n "${HORMUZ_CONDA_ENV}" \
+                                -c conda-forge cuda-nvcc cuda-cudart-dev cuda-nvrtc \
+                                >/dev/null 2>&1; then
+                            echo "[build]     installed cuda-nvcc from conda-forge"
+                        else
+                            echo "[build]     WARNING: cuda-nvcc install failed;" \
+                                 "vLLM will likely fail at engine startup."
+                        fi
+                    fi
+                fi
+            else
+                echo "[build]   - torch/vllm: skipped (no CUDA GPU visible)"
+            fi
+
+            # Data directories the pipeline expects to exist.
+            mkdir -p "${PROJECT_ROOT}/data/inputs" \
+                     "${PROJECT_ROOT}/data/outputs" \
+                     "${PROJECT_ROOT}/data/reports" \
+                     "${PROJECT_ROOT}/data/pipeline_state/manifests"
+
+            # Mark the env as installed so subsequent submissions skip
+            # the whole install dance. Touching the marker AFTER all
+            # fatal steps means a partial install won't fool us into
+            # skipping next time.
+            : > "$_build_marker" && \
+                echo "[build] install complete; marker: ${_build_marker}"
+
+            # Deactivate so the activation in the main block below
+            # starts from a clean CONDA_SHLVL=0. Not strictly required
+            # but avoids a double-activated env stack.
+            conda deactivate 2>/dev/null || true
+        else
+            echo "[build] install marker present at ${_build_marker}"
+            echo "[build] skipping pip install. Set HORMUZ_FORCE_REBUILD=1 to force a reinstall."
+        fi
+    fi
+
+    # ------------------------------------------------------------------
+    # Auto-vendor optional model assets (HORMUZ_AUTO_VENDOR=1, default).
+    # ------------------------------------------------------------------
+    # Each fetch is best-effort and idempotent: if the target tree /
+    # file already exists we skip; if a fetch fails we log and continue
+    # so the corresponding adapter just stays SKIPPED. None of these
+    # are fatal — a fresh clone of this repo will boot without them.
+    #
+    # Disable with:  HORMUZ_AUTO_VENDOR=0 sbatch ...
+    if [[ "$HORMUZ_AUTO_VENDOR" == "1" ]]; then
+        echo "[vendor] auto-vendoring optional model assets..."
+
+        # OSeMOSYS source tree — adapter looks for it at
+        # Models/Energy/OSeMOSYS (configurable via osemosys.yaml).
+        if [[ ! -d "${PROJECT_ROOT}/Models/Energy/OSeMOSYS" ]]; then
+            echo "[vendor]   - cloning OSeMOSYS into Models/Energy/OSeMOSYS"
+            mkdir -p "${PROJECT_ROOT}/Models/Energy"
+            if ! git clone --depth 1 \
+                    https://github.com/OSeMOSYS/OSeMOSYS.git \
+                    "${PROJECT_ROOT}/Models/Energy/OSeMOSYS" >/dev/null 2>&1; then
+                echo "[vendor]     WARNING: OSeMOSYS clone failed; adapter will be SKIPPED."
+            fi
+        else
+            echo "[vendor]   - OSeMOSYS already vendored"
+        fi
+
+        # TEMOA source tree (ships data_files/utopia.sqlite which is
+        # what configs/model_configs/temoa.yaml points at).
+        if [[ ! -d "${PROJECT_ROOT}/Models/Energy/TEMOA" ]]; then
+            echo "[vendor]   - cloning TEMOA into Models/Energy/TEMOA"
+            mkdir -p "${PROJECT_ROOT}/Models/Energy"
+            if ! git clone --depth 1 \
+                    https://github.com/TemoaProject/temoa.git \
+                    "${PROJECT_ROOT}/Models/Energy/TEMOA" >/dev/null 2>&1; then
+                echo "[vendor]     WARNING: TEMOA clone failed; adapter will be SKIPPED."
+            fi
+        else
+            echo "[vendor]   - TEMOA already vendored"
+        fi
+
+        # AEO2025 macro tables for MAM. The XLSX is a free EIA
+        # download. We try the URL pattern advertised on
+        # https://www.eia.gov/outlooks/aeo/tables_ref.php; users may
+        # override via HORMUZ_AEO_XLSX_URL if EIA reorganises the path.
+        _aeo_dest="${PROJECT_ROOT}/data/eia/AEO2025_Tables_19_20.xlsx"
+        _aeo_url="${HORMUZ_AEO_XLSX_URL:-https://www.eia.gov/outlooks/aeo/excel/aeotab_19.xlsx}"
+        if [[ ! -f "$_aeo_dest" ]]; then
+            echo "[vendor]   - downloading AEO2025 macro XLSX -> ${_aeo_dest}"
+            mkdir -p "${PROJECT_ROOT}/data/eia"
+            if command -v curl >/dev/null 2>&1; then
+                if ! curl -fL --max-time 60 -o "$_aeo_dest" "$_aeo_url" >/dev/null 2>&1; then
+                    echo "[vendor]     WARNING: AEO XLSX download failed (${_aeo_url});"
+                    echo "[vendor]              MAM will be SKIPPED. Set HORMUZ_AEO_XLSX_URL"
+                    echo "[vendor]              to override or vendor the file manually."
+                    rm -f "$_aeo_dest"
+                fi
+            else
+                echo "[vendor]     WARNING: curl not on PATH; skipping AEO download."
+            fi
+        else
+            echo "[vendor]   - AEO XLSX already present at ${_aeo_dest}"
+        fi
+
+        # Wire the AEO XLSX path into MAM at run time without mutating
+        # the YAML config (so this driver stays generic across users).
+        # MAMConfig honours HORMUZ_MAM_AEO_XLSX_PATH via the registry.
+        if [[ -f "$_aeo_dest" ]]; then
+            export HORMUZ_MAM_AEO_XLSX_PATH="$_aeo_dest"
+            echo "[vendor]   - exported HORMUZ_MAM_AEO_XLSX_PATH=${_aeo_dest}"
+        fi
+
+        echo "[vendor] auto-vendor done."
+    else
+        echo "[vendor] HORMUZ_AUTO_VENDOR=0; skipping optional asset vendoring."
+    fi
+
+    echo "[progress] bootstrap done."
+else
+    echo "[progress] HORMUZ_AUTO_BUILD=0; skipping env bootstrap."
+fi
+
+echo "[progress] activating conda env '${HORMUZ_CONDA_ENV}'..."
+if ! hormuz_activate_conda "${HORMUZ_CONDA_ENV}"; then
+    record_bash_failure "${STAGE_PREFIX}_setup" 1 \
+        "hormuz_activate_conda failed for env '${HORMUZ_CONDA_ENV}' on $(hostname)"
+    echo "[fatal] cannot activate conda env '${HORMUZ_CONDA_ENV}'; aborting."
+    exit 1
+fi
+echo "[progress] conda env active (python=$(command -v python 2>/dev/null || echo missing))."
+
+# ------------------------------------------------------------------
+# Post-activation CUDA re-resolution.
+#
+# If the bootstrap above installed cuda-nvcc as a fallback, nvcc now
+# lives at $CONDA_PREFIX/bin/nvcc and CUDA_HOME should point at
+# $CONDA_PREFIX so vLLM's torch.utils.cpp_extension finds matching
+# headers + libcudart. We re-run the resolver — it idempotently
+# upgrades CUDA_HOME to the conda env when nvcc shows up there, and
+# is a no-op when the system toolkit was already valid.
+# ------------------------------------------------------------------
+if [[ -n "${CONDA_PREFIX:-}" && -x "${CONDA_PREFIX}/bin/nvcc" ]]; then
+    if [[ "${CUDA_HOME:-}" != "${CONDA_PREFIX}" ]]; then
+        export CUDA_HOME="${CONDA_PREFIX}"
+        export CUDA_PATH="${CONDA_PREFIX}"
+        export PATH="${CONDA_PREFIX}/bin:${PATH}"
+        export LD_LIBRARY_PATH="${CONDA_PREFIX}/lib:${LD_LIBRARY_PATH:-}"
+        echo "[cuda] using env-installed nvcc; CUDA_HOME=${CUDA_HOME}"
+    fi
+fi
+if [[ -z "${CUDA_HOME:-}" ]] || [[ ! -x "${CUDA_HOME}/bin/nvcc" ]]; then
+    # Last-chance probe (in case a host nvcc only became visible after
+    # conda activation rearranged PATH).
+    _hormuz_resolve_cuda_home && {
+        export CUDA_HOME CUDA_PATH="$CUDA_HOME"
+        export PATH="${CUDA_HOME}/bin:${PATH}"
+        export LD_LIBRARY_PATH="${CUDA_HOME}/lib64:${LD_LIBRARY_PATH:-}"
+        echo "[cuda] post-activation CUDA_HOME=${CUDA_HOME}"
+    } || true
+fi
+if [[ -n "${CUDA_HOME:-}" && -x "${CUDA_HOME}/bin/nvcc" ]]; then
+    echo "[cuda] nvcc=$(command -v nvcc) ($("${CUDA_HOME}/bin/nvcc" --version 2>/dev/null | grep -oE 'release [0-9.]+' | head -n1))"
+else
+    echo "[cuda] WARNING: nvcc still not resolvable. vLLM will fail at engine"
+    echo "[cuda]          startup with 'Could not find nvcc and default cuda_home=...'"
+    echo "[cuda]          Workarounds:"
+    echo "[cuda]            * rerun with HORMUZ_FORCE_REBUILD=1 to retry the"
+    echo "[cuda]              cuda-nvcc conda install (\`-c nvidia cuda-nvcc\`)"
+    echo "[cuda]            * \`module load cuda/12.4\` (or cuda/12.1) interactively"
+    echo "[cuda]              before sbatch, then export CUDA_HOME"
+    echo "[cuda]            * use a cloud LLM provider:"
+    echo "[cuda]                export HORMUZ_USE_VLLM=0 PIPELINE_LLM_PROVIDER=anthropic"
+fi
+
+echo "[progress] recording runtime inventory..."
+record_runtime_inventory "${STAGE_PREFIX}_setup"
+echo "[progress] runtime inventory done."
+
+# ------------------------------------------------------------------
+# Optional vLLM sidecar on the local node (default: ON).
+#
+# SBU AI Cluster nodes generally have outbound HTTPS (per the AI
+# Institute Usage Policy: researchers regularly pull model weights
+# from HuggingFace and container images from NGC), so cloud LLM
+# providers are a viable alternative. Local inference is still the
+# default to (a) avoid per-token costs, (b) keep all sensitive
+# scenario context inside the cluster, and (c) eliminate latency.
+#
+# If you want to use Anthropic/OpenAI/Bedrock, set:
+#   export HORMUZ_USE_VLLM=0
+#   export PIPELINE_LLM_PROVIDER=anthropic   # or openai / bedrock
+#   export ANTHROPIC_API_KEY=...             # appropriate key
+# before submitting.
+#
+# Architecture notes for model selection:
+#   * V100 (tesla1/tesla2/orion): supports fp16 only. Stick to
+#     Llama-3.1-8B-Instruct or smaller in fp16. 70B is impractical.
+#   * RTX 8000 (quadro1/quadro2): fp16 only but 48GB per GPU; can
+#     fit larger 8-bit quantised models comfortably.
+#   * H100 (h100): bf16 + fp8 supported, 80GB per GPU. The right
+#     choice for 70B-class models with --tensor-parallel-size=4.
+# ------------------------------------------------------------------
+HORMUZ_USE_VLLM="${HORMUZ_USE_VLLM:-1}"
+PIPELINE_LLM_PROVIDER="${PIPELINE_LLM_PROVIDER:-vllm}"
+export PIPELINE_LLM_PROVIDER
+
+# ------------------------------------------------------------------
+# Per-model recommended context window for the vLLM sidecar.
+#
+# vLLM enforces a hard ceiling on every request via --max-model-len:
+# any prompt + completion that would exceed this value is rejected
+# at the API layer with HTTP 400 ("This model's maximum context
+# length is X tokens..."). Setting it too low silently truncates
+# Module 4 synthesis (the only stage that can produce a multi-thousand
+# token prompt); setting it too high blows GPU KV-cache memory on
+# Volta-class cards (V100 32GB, RTX 8000 48GB).
+#
+# This helper returns a *recommended* max-model-len for each model
+# we know about. HORMUZ_VLLM_MAX_LEN still wins so users can clamp
+# tighter (e.g. on tesla1 OOM) or raise it on H100 nodes with a
+# 70B/128K model.
+#
+# The same value is mirrored into PIPELINE_LLM_CONTEXT_WINDOW so the
+# Python layer (src/common/context_budget.py) can budget prompts
+# *before* they are sent over HTTP. Without that mirror the Python
+# stage scripts have no reliable way to know how big the served
+# context window actually is.
+# ------------------------------------------------------------------
+_resolve_vllm_max_len() {
+    local model="$1"
+    case "$model" in
+        meta-llama/Llama-3.1-8B-Instruct|meta-llama/Llama-3.1-8B|\
+        meta-llama/Meta-Llama-3.1-8B-Instruct)
+            # Native 131072; 32K is the sweet spot on V100 32GB / RTX 8000 48GB.
+            echo 32768 ;;
+        meta-llama/Llama-3.1-70B-Instruct|meta-llama/Llama-3.1-70B|\
+        meta-llama/Meta-Llama-3.1-70B-Instruct)
+            # 70B can fit 32K on H100 80GB tp=4. Defer 128K case to
+            # empire_ai_alpha.job which is provisioned for it.
+            echo 32768 ;;
+        meta-llama/Llama-3.2-*|meta-llama/Llama-3.3-*)
+            echo 32768 ;;
+        mistralai/Mistral-7B-Instruct-v0.3|mistralai/Mistral-7B-Instruct-*)
+            echo 32768 ;;
+        mistralai/Mixtral-8x7B-Instruct-v0.1|mistralai/Mixtral-*)
+            echo 32768 ;;
+        Qwen/Qwen2.5-*|Qwen/Qwen2-*)
+            echo 32768 ;;
+        *)
+            echo 0 ;;
+    esac
+}
+
+VLLM_PID=""
+cleanup_vllm() {
+    if [[ -n "$VLLM_PID" ]] && kill -0 "$VLLM_PID" 2>/dev/null; then
+        echo "[vllm] stopping sidecar (pid=$VLLM_PID)"
+        kill "$VLLM_PID" 2>/dev/null || true
+        sleep 2
+        kill -9 "$VLLM_PID" 2>/dev/null || true
+    fi
+}
+trap cleanup_vllm EXIT TERM INT
+
+if [[ "$HORMUZ_USE_VLLM" == "1" && "$PIPELINE_LLM_PROVIDER" == "vllm" ]]; then
+    if ! python -c "import vllm" 2>/dev/null; then
+        record_bash_failure "${STAGE_PREFIX}_vllm" 1 \
+            "vllm not installed in conda env '${HORMUZ_CONDA_ENV}'"
+        echo "[fatal] vllm not installed. Try: pip install vllm"
+        echo "        Or rerun with HORMUZ_USE_VLLM=0 + a cloud provider."
+        exit 1
+    fi
+
+    VLLM_MODEL="${HORMUZ_VLLM_MODEL:-meta-llama/Llama-3.1-8B-Instruct}"
+    VLLM_PORT="${HORMUZ_VLLM_PORT:-8000}"
+    VLLM_TP_SIZE="${HORMUZ_VLLM_TP_SIZE:-1}"
+    # `auto` picks bf16 on Hopper (h100), fp16 on Volta/Turing (V100/RTX 8000).
+    VLLM_DTYPE="${HORMUZ_VLLM_DTYPE:-auto}"
+
+    # Resolve max-model-len per known model (see _resolve_vllm_max_len
+    # above). HORMUZ_VLLM_MAX_LEN still overrides for ad-hoc tuning.
+    if [[ -n "${HORMUZ_VLLM_MAX_LEN:-}" ]]; then
+        VLLM_MAX_LEN="$HORMUZ_VLLM_MAX_LEN"
+        echo "[vllm] HORMUZ_VLLM_MAX_LEN=${VLLM_MAX_LEN} (user override)"
+    else
+        VLLM_MAX_LEN="$(_resolve_vllm_max_len "$VLLM_MODEL")"
+        if [[ "$VLLM_MAX_LEN" == "0" ]]; then
+            VLLM_MAX_LEN=8192
+            echo "[vllm] WARNING: no per-model max-model-len for ${VLLM_MODEL};" \
+                 "falling back to 8192. Set HORMUZ_VLLM_MAX_LEN to override."
+        else
+            echo "[vllm] resolved max-model-len=${VLLM_MAX_LEN} for ${VLLM_MODEL}"
+        fi
+    fi
+    # Pin vLLM to GPU 0 so the rest of the visible devices are free
+    # for any GPU-using domain models (e.g. SimRLFab on the executor).
+    VLLM_GPUS="${HORMUZ_VLLM_GPUS:-0}"
+
+    NODE_HOST="$(hostname -f 2>/dev/null || hostname)"
+    VLLM_LOG="${RUN_LOG_DIR}/vllm.log"
+
+    echo "[vllm] starting sidecar on ${NODE_HOST}:${VLLM_PORT}"
+    echo "       model=${VLLM_MODEL} tp=${VLLM_TP_SIZE} dtype=${VLLM_DTYPE} gpus=${VLLM_GPUS}"
+    echo "       log:   ${VLLM_LOG}"
+
+    CUDA_VISIBLE_DEVICES="$VLLM_GPUS" \
+        python -m vllm.entrypoints.openai.api_server \
+            --model "${VLLM_MODEL}" \
+            --port "${VLLM_PORT}" \
+            --host 0.0.0.0 \
+            --tensor-parallel-size "${VLLM_TP_SIZE}" \
+            --dtype "${VLLM_DTYPE}" \
+            --max-model-len "${VLLM_MAX_LEN}" \
+            > "$VLLM_LOG" 2>&1 &
+    VLLM_PID=$!
+    echo "[vllm] pid=${VLLM_PID}"
+
+    # Reserve GPU 0 for vLLM; expose the rest to the pipeline driver
+    # (and the GPU domain models it spawns). SBU AI nodes report the
+    # GPU count via SLURM_GPUS_ON_NODE; fall back to SLURM_JOB_GPUS
+    # (a comma-separated list) if needed.
+    GPU_TOTAL="${SLURM_GPUS_ON_NODE:-}"
+    if [[ -z "$GPU_TOTAL" && -n "${SLURM_JOB_GPUS:-}" ]]; then
+        GPU_TOTAL=$(awk -F, '{print NF}' <<< "$SLURM_JOB_GPUS")
+    fi
+    if [[ -n "$GPU_TOTAL" && "$GPU_TOTAL" -gt 1 ]]; then
+        REST=$(seq -s, 1 $((GPU_TOTAL - 1)))
+        export CUDA_VISIBLE_DEVICES="$REST"
+        echo "[gpu] pipeline driver sees CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES}"
+    else
+        # Only one GPU on this node: vLLM owns it. The pipeline driver
+        # gets none — fine because LLM calls are HTTP and CPU adapters
+        # don't need a GPU. GPU-tagged adapters will be marked SKIPPED.
+        export CUDA_VISIBLE_DEVICES=""
+        echo "[gpu] single GPU on node; pipeline driver runs CPU-only."
+    fi
+
+    # PIPELINE_LLM_{BASE_URL,MODEL,PROVIDER} are the source of truth
+    # for the Python stage scripts (see slurm/scripts/stage_utils.py
+    # :: resolve_llm_kwargs). They take precedence over whatever
+    # `model:` is in slurm/config/pipeline_cluster.yaml, which means
+    # changing HORMUZ_VLLM_MODEL above is enough to switch models —
+    # no YAML edit required, and no risk of asking vLLM for a model
+    # it isn't serving (404 / BadRequestError).
+    export PIPELINE_LLM_BASE_URL="http://${NODE_HOST}:${VLLM_PORT}/v1"
+    export PIPELINE_LLM_MODEL="${VLLM_MODEL}"
+
+    # Context budgets consumed by src/common/context_budget.py and the
+    # synthesis-by-section refactor. Splitting the served context into
+    # ~70% prompt / ~25% completion (with ~5% headroom for the chat
+    # template, structured-output schema descriptions, and rounding)
+    # prevents the LLM from generating responses so long that the
+    # input has to be trimmed at request time. Users can override any
+    # of these by exporting them before sbatch.
+    export PIPELINE_LLM_CONTEXT_WINDOW="${PIPELINE_LLM_CONTEXT_WINDOW:-${VLLM_MAX_LEN}}"
+    export PIPELINE_LLM_PROMPT_BUDGET_TOKENS="${PIPELINE_LLM_PROMPT_BUDGET_TOKENS:-$(( VLLM_MAX_LEN * 70 / 100 ))}"
+    export PIPELINE_LLM_MAX_COMPLETION_TOKENS="${PIPELINE_LLM_MAX_COMPLETION_TOKENS:-$(( VLLM_MAX_LEN * 25 / 100 ))}"
+    echo "[vllm] context budgets: window=${PIPELINE_LLM_CONTEXT_WINDOW}" \
+         "prompt=${PIPELINE_LLM_PROMPT_BUDGET_TOKENS}" \
+         "completion=${PIPELINE_LLM_MAX_COMPLETION_TOKENS}"
+
+    # Health-check loop. vLLM weights download + load can take 5-15
+    # minutes for a 70B model, so we wait up to 30 minutes by default.
+    VLLM_WAIT_SECS="${HORMUZ_VLLM_WAIT_SECS:-1800}"
+    echo "[vllm] waiting up to ${VLLM_WAIT_SECS}s for ${PIPELINE_LLM_BASE_URL}/models"
+    deadline=$(( $(date +%s) + VLLM_WAIT_SECS ))
+    until curl -fsS "${PIPELINE_LLM_BASE_URL}/models" >/dev/null 2>&1; do
+        if ! kill -0 "$VLLM_PID" 2>/dev/null; then
+            record_bash_failure "${STAGE_PREFIX}_vllm" 1 \
+                "vLLM exited before becoming healthy; see ${VLLM_LOG}"
+            echo "[fatal] vLLM died during startup. Tail of log (last 300 lines):"
+            echo "[fatal]   full log: ${VLLM_LOG}"
+            tail -n 300 "$VLLM_LOG" || true
+            echo "[fatal] -- end of vLLM log tail --"
+            exit 1
+        fi
+        if [[ $(date +%s) -ge $deadline ]]; then
+            record_bash_failure "${STAGE_PREFIX}_vllm" 1 \
+                "vLLM did not become healthy within ${VLLM_WAIT_SECS}s"
+            echo "[fatal] vLLM health check timed out. Tail of log (last 300 lines):"
+            echo "[fatal]   full log: ${VLLM_LOG}"
+            tail -n 300 "$VLLM_LOG" || true
+            echo "[fatal] -- end of vLLM log tail --"
+            exit 1
+        fi
+        sleep 10
+    done
+    echo "[vllm] healthy at ${PIPELINE_LLM_BASE_URL}"
+else
+    echo "[vllm] sidecar disabled (HORMUZ_USE_VLLM=${HORMUZ_USE_VLLM}, provider=${PIPELINE_LLM_PROVIDER})"
+    case "$PIPELINE_LLM_PROVIDER" in
+        anthropic)
+            : "${ANTHROPIC_API_KEY:?PIPELINE_LLM_PROVIDER=anthropic but ANTHROPIC_API_KEY is unset}"
+            # Anthropic Claude Sonnet / Opus: 200K context window.
+            _CTX_DEFAULT=200000
+            ;;
+        openai)
+            : "${OPENAI_API_KEY:?PIPELINE_LLM_PROVIDER=openai but OPENAI_API_KEY is unset}"
+            # gpt-4o / gpt-4-turbo: 128K context window.
+            _CTX_DEFAULT=128000
+            ;;
+        bedrock)
+            # Bedrock Claude Sonnet: 200K context window.
+            _CTX_DEFAULT=200000
+            ;;
+        *)
+            # Conservative default for unknown providers — match the
+            # vLLM 8K fallback so the Python budgeter never sees an
+            # over-optimistic ceiling.
+            _CTX_DEFAULT=8192
+            ;;
+    esac
+
+    # Mirror the same prompt/completion budget split as the vLLM
+    # branch so the Python layer (synthesis chunking, qualitative
+    # export, overflow retry) behaves identically regardless of which
+    # provider is serving the LLM. Users can still override.
+    export PIPELINE_LLM_CONTEXT_WINDOW="${PIPELINE_LLM_CONTEXT_WINDOW:-${_CTX_DEFAULT}}"
+    export PIPELINE_LLM_PROMPT_BUDGET_TOKENS="${PIPELINE_LLM_PROMPT_BUDGET_TOKENS:-$(( PIPELINE_LLM_CONTEXT_WINDOW * 70 / 100 ))}"
+    export PIPELINE_LLM_MAX_COMPLETION_TOKENS="${PIPELINE_LLM_MAX_COMPLETION_TOKENS:-$(( PIPELINE_LLM_CONTEXT_WINDOW * 25 / 100 ))}"
+    echo "[llm] cloud provider=${PIPELINE_LLM_PROVIDER}: context=${PIPELINE_LLM_CONTEXT_WINDOW}" \
+         "prompt=${PIPELINE_LLM_PROMPT_BUDGET_TOKENS}" \
+         "completion=${PIPELINE_LLM_MAX_COMPLETION_TOKENS}"
+    unset _CTX_DEFAULT
+fi
+
+# ------------------------------------------------------------------
+# Helper: run a manifest-driven stage as a serial loop on this node.
+# We override SLURM_ARRAY_TASK_ID per iteration so the existing
+# run_parameters.py / run_model.py scripts (which read that env var
+# via stage_utils.get_array_task) work unchanged.
+# ------------------------------------------------------------------
+run_manifest_loop() {
+    local stage="$1"      # tag for failure records
+    local script="$2"     # python script path
+    local count_file="$3" # manifest count sidecar written by dispatch_models.py
+
+    if [[ ! -f "$count_file" ]]; then
+        record_bash_failure "$stage" 1 "Manifest count file not found: $count_file"
+        echo "[fatal] expected manifest count file at $count_file"
+        return 1
+    fi
+
+    local n
+    n="$(tr -d '[:space:]' < "$count_file")"
+    if [[ -z "$n" || "$n" -le 0 ]]; then
+        echo "[$stage] manifest is empty (count=$n); nothing to do."
+        return 0
+    fi
+
+    echo "[$stage] dispatching ${n} task(s) serially on this node"
+    local i rc
+    for (( i=0; i<n; i++ )); do
+        export SLURM_ARRAY_TASK_ID="$i"
+        echo "─── [$stage] task ${i}/${n} ────────────────────────────────"
+        # continue_on_failure=1 inside the loop: one bad (scenario,
+        # model) pair must not halt the rest of the stage. Synthesis
+        # records the gaps from the per-task status JSONs.
+        safe_python "$stage" 1 -- python "$script"
+        rc=$?
+        if [[ $rc -ne 0 ]]; then
+            echo "[$stage] task $i exited $rc; continuing."
+        fi
+    done
+    unset SLURM_ARRAY_TASK_ID
+    echo "[$stage] loop complete (${n} task(s))"
+    return 0
+}
+
+# ==================================================================
+#  Stage 1 — Module 1: Scenario Generation
+# ==================================================================
+echo ""
+echo "════════════ Stage 1: Scenario Generation ════════════"
+safe_python "${STAGE_PREFIX}_01_scenarios" 0 -- python slurm/scripts/run_scenarios.py
+rc=$?
+if [[ $rc -ne 0 ]]; then
+    echo "[fatal] Module 1 failed (exit=$rc); aborting pipeline."
+    exit "$rc"
+fi
+
+# ==================================================================
+#  Dispatch — parameter manifest
+# ==================================================================
+echo ""
+echo "════════════ Dispatch: Parameter Manifest ════════════"
+safe_python "${STAGE_PREFIX}_dispatch_params" 0 -- \
+    python slurm/scripts/dispatch_models.py parameters --run-id "${HORMUZ_RUN_ID}"
+rc=$?
+if [[ $rc -ne 0 ]]; then
+    echo "[fatal] parameter dispatch failed (exit=$rc); aborting."
+    exit "$rc"
+fi
+
+PARAM_COUNT_FILE="${PROJECT_ROOT}/data/pipeline_state/manifests/${HORMUZ_RUN_ID}_parameters_count.txt"
+
+# ==================================================================
+#  Stage 2 — Module 2: Parameter Extraction (manifest loop)
+# ==================================================================
+echo ""
+echo "════════════ Stage 2: Parameter Extraction ════════════"
+run_manifest_loop "${STAGE_PREFIX}_02_parameters" \
+    "slurm/scripts/run_parameters.py" "$PARAM_COUNT_FILE"
+
+# ==================================================================
+#  Dispatch — commodity-tier model execution manifest (Stage 3a)
+#
+# Algorithm 1 step 11: commodity-tier (combat + commodity) models
+# run FIRST so the macro tier can be re-dispatched with their
+# computed shocks in place of the LLM-extracted estimates.
+# ==================================================================
+echo ""
+echo "════════════ Dispatch: Commodity Manifest ════════════"
+safe_python "${STAGE_PREFIX}_dispatch_models_commodity" 0 -- \
+    python slurm/scripts/dispatch_models.py models \
+        --tier commodity --run-id "${HORMUZ_RUN_ID}"
+rc=$?
+if [[ $rc -ne 0 ]]; then
+    echo "[fatal] commodity model dispatch failed (exit=$rc); aborting."
+    exit "$rc"
+fi
+
+COMMODITY_COUNT_FILE="${PROJECT_ROOT}/data/pipeline_state/manifests/${HORMUZ_RUN_ID}_models_commodity_count.txt"
+
+# ==================================================================
+#  Stage 3a — Module 3: Commodity tier model execution
+# ==================================================================
+echo ""
+echo "════════════ Stage 3a: Commodity Tier Execution ════════════"
+unset HORMUZ_MANIFEST_NAME
+export HORMUZ_MANIFEST_NAME="models_commodity"
+run_manifest_loop "${STAGE_PREFIX}_03a_models_commodity" \
+    "slurm/scripts/run_model.py" "$COMMODITY_COUNT_FILE"
+
+# ==================================================================
+#  Dispatch — macro-tier model execution manifest (Stage 3b)
+#
+# Reads completed commodity outputs from data/outputs/, applies the
+# upstream-to-macro mapping at configs/upstream_to_macro_mapping.yaml,
+# and emits manifest entries whose `parameters` already reflect the
+# upstream-derived shocks. Override audit lands at
+# data/pipeline_state/<run_id>_macro_overrides.json.
+# ==================================================================
+echo ""
+echo "════════════ Dispatch: Macro Manifest (Upstream Merge) ════════════"
+safe_python "${STAGE_PREFIX}_dispatch_models_macro" 0 -- \
+    python slurm/scripts/dispatch_models.py models \
+        --tier macro --run-id "${HORMUZ_RUN_ID}"
+rc=$?
+if [[ $rc -ne 0 ]]; then
+    echo "[fatal] macro model dispatch failed (exit=$rc); aborting."
+    exit "$rc"
+fi
+
+MACRO_COUNT_FILE="${PROJECT_ROOT}/data/pipeline_state/manifests/${HORMUZ_RUN_ID}_models_macro_count.txt"
+
+# ==================================================================
+#  Stage 3b — Module 3: Macro tier model execution
+# ==================================================================
+echo ""
+echo "════════════ Stage 3b: Macro Tier Execution ════════════"
+export HORMUZ_MANIFEST_NAME="models_macro"
+run_manifest_loop "${STAGE_PREFIX}_03b_models_macro" \
+    "slurm/scripts/run_model.py" "$MACRO_COUNT_FILE"
+unset HORMUZ_MANIFEST_NAME
+
+# ==================================================================
+#  Stage 4 — Module 4: Output Synthesis
+# ==================================================================
+echo ""
+echo "════════════ Stage 4: Output Synthesis ════════════"
+# Surface bash-layer failures from earlier stages in the synthesis report.
+BASH_FAILURE_COUNT=$(ls -1 \
+    "${PROJECT_ROOT}/data/pipeline_state/${HORMUZ_RUN_ID}_"*"_bash_failure_"*.json \
+    2>/dev/null | wc -l | tr -d ' ')
+export HORMUZ_BASH_FAILURE_COUNT="${BASH_FAILURE_COUNT:-0}"
+echo "[synthesis] ${HORMUZ_BASH_FAILURE_COUNT} bash-layer failure record(s) from upstream stages."
+
+safe_python "${STAGE_PREFIX}_04_synthesis" 0 -- python slurm/scripts/run_synthesis.py
+rc=$?
+
+# ==================================================================
+#  Stage 5 — Quantitative CSV + qualitative narrative export
+#
+# Walks every $HORMUZ_RUN_ID model_*.json under data/pipeline_state/,
+# fans out scalar outputs into long-form and per-model wide CSVs
+# under data/reports/<run_id>/csv/, and emits one Markdown narrative
+# per scenario under data/reports/<run_id>/qualitative/. The narrative
+# pass uses the same LLM that the rest of the pipeline used (vLLM
+# sidecar / cloud provider) so qualitative summaries pick up whatever
+# model is currently serving via PIPELINE_LLM_*; if no LLM is
+# reachable it falls back to a deterministic template that just
+# enumerates the headline numbers without interpretation.
+#
+# A separate LLM completion pass then reads the assembled
+# qualitative/cross_scenario.md (narratives grouped by model) and
+# writes qualitative/user_executive_summary.md for the principal
+# user. Disable only this second pass with
+# HORMUZ_EXPORT_EXEC_SUMMARY_LLM=0 or export_results.py
+# --no-exec-summary (per-model qualitative LLMs remain governed by
+# HORMUZ_EXPORT_USE_LLM).
+#
+# This stage is bash-best-effort: a non-zero return does NOT clobber
+# the synthesis stage's exit code (rc) that the job ultimately exits
+# with, so a missing optional dep here can't mask a successful
+# pipeline run. Disable the LLM pass with HORMUZ_EXPORT_USE_LLM=0
+# (e.g. when the vLLM sidecar has already been torn down or the run
+# is rerun on a node without provider credentials).
+# ==================================================================
+echo ""
+echo "════════════ Stage 5: Results Export (CSV + Qualitative) ════════════"
+HORMUZ_EXPORT_USE_LLM="${HORMUZ_EXPORT_USE_LLM:-1}"
+HORMUZ_EXPORT_EXEC_SUMMARY_LLM="${HORMUZ_EXPORT_EXEC_SUMMARY_LLM:-1}"
+EXPORT_ARGS=( --run-id "${HORMUZ_RUN_ID}" )
+if [[ "$HORMUZ_EXPORT_USE_LLM" != "1" ]]; then
+    EXPORT_ARGS+=( --no-llm )
+    echo "[export] HORMUZ_EXPORT_USE_LLM=0 — qualitative narratives use deterministic templates."
+fi
+if [[ "$HORMUZ_EXPORT_EXEC_SUMMARY_LLM" != "1" ]]; then
+    EXPORT_ARGS+=( --no-exec-summary )
+    echo "[export] HORMUZ_EXPORT_EXEC_SUMMARY_LLM=0 — skipping principal-user executive-summary LLM."
+fi
+safe_python "${STAGE_PREFIX}_05_export" 1 -- \
+    python slurm/scripts/export_results.py "${EXPORT_ARGS[@]}"
+export_rc=$?
+if [[ $export_rc -ne 0 ]]; then
+    echo "[export] WARNING: export stage exited ${export_rc}; CSVs / qualitative reports may be incomplete."
+    echo "[export]          (synthesis rc=${rc} is preserved as the job's exit status.)"
+fi
+
+# ==================================================================
+#  Stage 6 — Visualization suite (PNG figures + index.html dashboard)
+#
+# Reads the CSVs and qualitative narratives written by Stage 5 and
+# emits:
+#   data/reports/<run_id>/figures/model_status_by_scenario.png
+#   data/reports/<run_id>/figures/model_status_by_system.png
+#   data/reports/<run_id>/figures/synthesis_outcomes_grid.png
+#   data/reports/<run_id>/figures/quantitative_heatmap.png
+#   data/reports/<run_id>/figures/consistency_flags.png    (when present)
+#   data/reports/<run_id>/figures/timeseries/*.png         (one per long-form CSV)
+#   data/reports/<run_id>/figures/index.html               (self-contained dashboard
+#                                                          embedding figures + narratives)
+#
+# Best-effort: a missing optional dep (matplotlib, pandas, markdown)
+# downgrades the relevant feature instead of failing the stage. Like
+# Stage 5 this stage's exit code is intentionally NOT used as the job
+# exit status — the synthesis rc remains canonical so a missing chart
+# can't mask a successful pipeline run. Disable per-CSV time-series
+# plots with HORMUZ_VIZ_NO_TIMESERIES=1 (faster on runs with hundreds
+# of long-form series).
+# ==================================================================
+echo ""
+echo "════════════ Stage 6: Visualization (figures + dashboard) ════════════"
+HORMUZ_VIZ_NO_TIMESERIES="${HORMUZ_VIZ_NO_TIMESERIES:-0}"
+VIZ_ARGS=( --run-id "${HORMUZ_RUN_ID}" )
+if [[ "$HORMUZ_VIZ_NO_TIMESERIES" == "1" ]]; then
+    VIZ_ARGS+=( --no-timeseries )
+    echo "[viz] HORMUZ_VIZ_NO_TIMESERIES=1 — skipping per-CSV time-series PNGs."
+fi
+safe_python "${STAGE_PREFIX}_06_visualize" 1 -- \
+    python slurm/scripts/visualize_results.py "${VIZ_ARGS[@]}"
+viz_rc=$?
+if [[ $viz_rc -ne 0 ]]; then
+    echo "[viz] WARNING: visualization stage exited ${viz_rc}; figures may be incomplete."
+    echo "[viz]          (synthesis rc=${rc} is preserved as the job's exit status.)"
+fi
+
+# ------------------------------------------------------------------
+# Summary
+# ------------------------------------------------------------------
+echo ""
+echo "================================================================"
+echo "  Hormuz pipeline complete on Stony Brook AI Cluster"
+echo "  Run ID:       ${HORMUZ_RUN_ID}"
+echo "  Synthesis rc: ${rc}"
+echo "  Finished at:  $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+echo "  State files:  ${PROJECT_ROOT}/data/pipeline_state/${HORMUZ_RUN_ID}_*"
+echo "  Reports:      ${PROJECT_ROOT}/data/reports/"
+echo "                  ${HORMUZ_RUN_ID}/synthesis.{json,md}        Module 4 outputs"
+echo "                  ${HORMUZ_RUN_ID}/<scenario>.md               Per-scenario synthesis"
+echo "                  ${HORMUZ_RUN_ID}/csv/model_status.csv        (scenario, model) status table"
+echo "                  ${HORMUZ_RUN_ID}/csv/synthesis_outcomes.csv  Headline outcomes table"
+echo "                  ${HORMUZ_RUN_ID}/csv/quantitative_results.csv  All scalar outputs (long form)"
+echo "                  ${HORMUZ_RUN_ID}/csv/raw/<scenario>/         Per-(scenario, model) CSVs"
+echo "                  ${HORMUZ_RUN_ID}/qualitative/<scenario>.md   Per-scenario narrative export"
+echo "                  ${HORMUZ_RUN_ID}/qualitative/cross_scenario.md  Per-model cross-scenario view"
+echo "                  ${HORMUZ_RUN_ID}/qualitative/user_executive_summary.md  Principal-user overview (2nd LLM pass)"
+echo "                  ${HORMUZ_RUN_ID}/figures/index.html          Visualization dashboard (Stage 6)"
+echo "                  ${HORMUZ_RUN_ID}/figures/*.png               Run-wide figures (status, heatmap, outcomes)"
+echo "                  ${HORMUZ_RUN_ID}/figures/timeseries/*.png    Per-(scenario, model, series) line/bar plots"
+echo "  Run log dir:  ${RUN_LOG_DIR}"
+echo "                  driver-${SLURM_JOB_ID:-N/A}.out / .err  (symlinks)"
+echo "                  vllm.log                                (if sidecar ran)"
+echo "                  runtime-*-${SLURM_JOB_ID:-N/A}-*.json   (per-stage inventories)"
+echo "                  wandb/offline-run-*                     (W&B offline runs)"
+echo "  Driver log:   ${SBATCH_OUT}"
+echo "                ${SBATCH_ERR}"
+echo "  W&B:          project=${WANDB_PROJECT} group=${WANDB_RUN_GROUP} mode=${WANDB_MODE}"
+if [[ "$WANDB_MODE" == "offline" ]]; then
+    echo "                Sync from the submit node with:"
+    echo "                  cd ${PROJECT_ROOT} && wandb sync ${WANDB_DIR}/wandb/offline-run-*"
+fi
+echo "================================================================"
+
+exit "$rc"

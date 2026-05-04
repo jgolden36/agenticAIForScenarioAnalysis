@@ -1,0 +1,101 @@
+  Running command installing build dependencies
+  Using pip 26.0.1 from /home/dagolden/miniconda3/envs/hormuz/lib/python3.11/site-packages/pip (python 3.11)
+  Collecting setuptools>=68.0
+    Obtaining dependency information for setuptools>=68.0 from https://files.pythonhosted.org/packages/9d/76/f789f7a86709c6b087c5a2f52f911838cad707cc613162401badc665acfe/setuptools-82.0.1-py3-none-any.whl.metadata
+    Downloading setuptools-82.0.1-py3-none-any.whl.metadata (6.5 kB)
+  Collecting setuptools-scm>=8.0
+    Obtaining dependency information for setuptools-scm>=8.0 from https://files.pythonhosted.org/packages/5c/e1/342c4434df56aa537f6ce7647eefee521d96fbb828b08acd709865767652/setuptools_scm-10.0.5-py3-none-any.whl.metadata
+    Downloading setuptools_scm-10.0.5-py3-none-any.whl.metadata (6.5 kB)
+  Collecting vcs-versioning>=1.0.0.dev0 (from setuptools-scm>=8.0)
+    Obtaining dependency information for vcs-versioning>=1.0.0.dev0 from https://files.pythonhosted.org/packages/e6/60/73603fbcdbe5e803855bcce4414f94eaeed449083bd8183e67161af78188/vcs_versioning-1.1.1-py3-none-any.whl.metadata
+    Downloading vcs_versioning-1.1.1-py3-none-any.whl.metadata (1.6 kB)
+  Collecting packaging>=20 (from setuptools-scm>=8.0)
+    Obtaining dependency information for packaging>=20 from https://files.pythonhosted.org/packages/7a/c2/920ef838e2f0028c8262f16101ec09ebd5969864e5a64c4c05fad0617c56/packaging-26.1-py3-none-any.whl.metadata
+    Downloading packaging-26.1-py3-none-any.whl.metadata (3.5 kB)
+  Downloading setuptools-82.0.1-py3-none-any.whl (1.0 MB)
+  Downloading setuptools_scm-10.0.5-py3-none-any.whl (21 kB)
+  Downloading packaging-26.1-py3-none-any.whl (95 kB)
+  Downloading vcs_versioning-1.1.1-py3-none-any.whl (79 kB)
+  Installing collected packages: setuptools, packaging, vcs-versioning, setuptools-scm
+    Creating /tmp/pip-build-env-7cnksewl/overlay/bin
+    changing mode of /tmp/pip-build-env-7cnksewl/overlay/bin/vcs-versioning to 755
+    changing mode of /tmp/pip-build-env-7cnksewl/overlay/bin/setuptools-scm to 755
+  Successfully installed packaging-26.1 setuptools-82.0.1 setuptools-scm-10.0.5 vcs-versioning-1.1.1
+  Running command Checking if build backend supports build_editable
+  Running command Getting requirements to build editable
+  toml section missing PosixPath('pyproject.toml') does not contain any of the tool sections: ['setuptools_scm', 'vcs-versioning']
+  running egg_info
+  writing hormuz_pipeline.egg-info/PKG-INFO
+  writing dependency_links to hormuz_pipeline.egg-info/dependency_links.txt
+  writing requirements to hormuz_pipeline.egg-info/requires.txt
+  writing top-level names to hormuz_pipeline.egg-info/top_level.txt
+  writing manifest file 'hormuz_pipeline.egg-info/SOURCES.txt'
+  /tmp/pip-build-env-7cnksewl/overlay/lib/python3.11/site-packages/vcs_versioning/overrides.py:609: UserWarning: No GlobalOverrides context is active. Auto-creating one with SETUPTOOLS_SCM prefix for backwards compatibility. Consider using 'with GlobalOverrides.from_env("YOUR_TOOL"):' explicitly.
+    return get_active_overrides().subprocess_timeout
+  listing git files failed - pretending there aren't any
+  reading manifest file 'hormuz_pipeline.egg-info/SOURCES.txt'
+  writing manifest file 'hormuz_pipeline.egg-info/SOURCES.txt'
+  Running command Preparing editable metadata (pyproject.toml)
+  toml section missing PosixPath('pyproject.toml') does not contain any of the tool sections: ['setuptools_scm', 'vcs-versioning']
+  running dist_info
+  creating /tmp/pip-modern-metadata-8jwd1crg/hormuz_pipeline.egg-info
+  writing /tmp/pip-modern-metadata-8jwd1crg/hormuz_pipeline.egg-info/PKG-INFO
+  writing dependency_links to /tmp/pip-modern-metadata-8jwd1crg/hormuz_pipeline.egg-info/dependency_links.txt
+  writing requirements to /tmp/pip-modern-metadata-8jwd1crg/hormuz_pipeline.egg-info/requires.txt
+  writing top-level names to /tmp/pip-modern-metadata-8jwd1crg/hormuz_pipeline.egg-info/top_level.txt
+  writing manifest file '/tmp/pip-modern-metadata-8jwd1crg/hormuz_pipeline.egg-info/SOURCES.txt'
+  /tmp/pip-build-env-7cnksewl/overlay/lib/python3.11/site-packages/vcs_versioning/overrides.py:609: UserWarning: No GlobalOverrides context is active. Auto-creating one with SETUPTOOLS_SCM prefix for backwards compatibility. Consider using 'with GlobalOverrides.from_env("YOUR_TOOL"):' explicitly.
+    return get_active_overrides().subprocess_timeout
+  listing git files failed - pretending there aren't any
+  reading manifest file '/tmp/pip-modern-metadata-8jwd1crg/hormuz_pipeline.egg-info/SOURCES.txt'
+  writing manifest file '/tmp/pip-modern-metadata-8jwd1crg/hormuz_pipeline.egg-info/SOURCES.txt'
+  creating '/tmp/pip-modern-metadata-8jwd1crg/hormuz_pipeline-0.1.0.dist-info'
+  Running command Building editable for hormuz-pipeline (pyproject.toml)
+  toml section missing PosixPath('pyproject.toml') does not contain any of the tool sections: ['setuptools_scm', 'vcs-versioning']
+  running editable_wheel
+  creating /tmp/pip-ephem-wheel-cache-994fym5x/wheels/f4/75/16/22eca7871bffd68d4a02419880e62c6785750dce5c43d6f70f/tmp4xx6h3s0/.tmp-tppfg2z_/hormuz_pipeline.egg-info
+  writing /tmp/pip-ephem-wheel-cache-994fym5x/wheels/f4/75/16/22eca7871bffd68d4a02419880e62c6785750dce5c43d6f70f/tmp4xx6h3s0/.tmp-tppfg2z_/hormuz_pipeline.egg-info/PKG-INFO
+  writing dependency_links to /tmp/pip-ephem-wheel-cache-994fym5x/wheels/f4/75/16/22eca7871bffd68d4a02419880e62c6785750dce5c43d6f70f/tmp4xx6h3s0/.tmp-tppfg2z_/hormuz_pipeline.egg-info/dependency_links.txt
+  writing requirements to /tmp/pip-ephem-wheel-cache-994fym5x/wheels/f4/75/16/22eca7871bffd68d4a02419880e62c6785750dce5c43d6f70f/tmp4xx6h3s0/.tmp-tppfg2z_/hormuz_pipeline.egg-info/requires.txt
+  writing top-level names to /tmp/pip-ephem-wheel-cache-994fym5x/wheels/f4/75/16/22eca7871bffd68d4a02419880e62c6785750dce5c43d6f70f/tmp4xx6h3s0/.tmp-tppfg2z_/hormuz_pipeline.egg-info/top_level.txt
+  writing manifest file '/tmp/pip-ephem-wheel-cache-994fym5x/wheels/f4/75/16/22eca7871bffd68d4a02419880e62c6785750dce5c43d6f70f/tmp4xx6h3s0/.tmp-tppfg2z_/hormuz_pipeline.egg-info/SOURCES.txt'
+  /tmp/pip-build-env-7cnksewl/overlay/lib/python3.11/site-packages/vcs_versioning/overrides.py:609: UserWarning: No GlobalOverrides context is active. Auto-creating one with SETUPTOOLS_SCM prefix for backwards compatibility. Consider using 'with GlobalOverrides.from_env("YOUR_TOOL"):' explicitly.
+    return get_active_overrides().subprocess_timeout
+  listing git files failed - pretending there aren't any
+  reading manifest file '/tmp/pip-ephem-wheel-cache-994fym5x/wheels/f4/75/16/22eca7871bffd68d4a02419880e62c6785750dce5c43d6f70f/tmp4xx6h3s0/.tmp-tppfg2z_/hormuz_pipeline.egg-info/SOURCES.txt'
+  writing manifest file '/tmp/pip-ephem-wheel-cache-994fym5x/wheels/f4/75/16/22eca7871bffd68d4a02419880e62c6785750dce5c43d6f70f/tmp4xx6h3s0/.tmp-tppfg2z_/hormuz_pipeline.egg-info/SOURCES.txt'
+  creating '/tmp/pip-ephem-wheel-cache-994fym5x/wheels/f4/75/16/22eca7871bffd68d4a02419880e62c6785750dce5c43d6f70f/tmp4xx6h3s0/.tmp-tppfg2z_/hormuz_pipeline-0.1.0.dist-info'
+  creating /tmp/pip-ephem-wheel-cache-994fym5x/wheels/f4/75/16/22eca7871bffd68d4a02419880e62c6785750dce5c43d6f70f/tmp4xx6h3s0/.tmp-tppfg2z_/hormuz_pipeline-0.1.0.dist-info/WHEEL
+  running build_py
+  running egg_info
+  creating /tmp/tmprr10hl0c.build-temp/hormuz_pipeline.egg-info
+  writing /tmp/tmprr10hl0c.build-temp/hormuz_pipeline.egg-info/PKG-INFO
+  writing dependency_links to /tmp/tmprr10hl0c.build-temp/hormuz_pipeline.egg-info/dependency_links.txt
+  writing requirements to /tmp/tmprr10hl0c.build-temp/hormuz_pipeline.egg-info/requires.txt
+  writing top-level names to /tmp/tmprr10hl0c.build-temp/hormuz_pipeline.egg-info/top_level.txt
+  writing manifest file '/tmp/tmprr10hl0c.build-temp/hormuz_pipeline.egg-info/SOURCES.txt'
+  listing git files failed - pretending there aren't any
+  reading manifest file '/tmp/tmprr10hl0c.build-temp/hormuz_pipeline.egg-info/SOURCES.txt'
+  writing manifest file '/tmp/tmprr10hl0c.build-temp/hormuz_pipeline.egg-info/SOURCES.txt'
+  Editable install will be performed using a meta path finder.
+
+  Options like `package-data`, `include/exclude-package-data` or
+  `packages.find.exclude/include` may have no effect.
+
+  adding '__editable___hormuz_pipeline_0_1_0_finder.py'
+  adding '__editable__.hormuz_pipeline-0.1.0.pth'
+  creating '/tmp/pip-ephem-wheel-cache-994fym5x/wheels/f4/75/16/22eca7871bffd68d4a02419880e62c6785750dce5c43d6f70f/tmp4xx6h3s0/.tmp-tppfg2z_/hormuz_pipeline-0.1.0-0.editable-py3-none-any.whl' and adding '/tmp/tmppuy9f9iuhormuz_pipeline-0.1.0-0.editable-py3-none-any.whl' to it
+  adding 'hormuz_pipeline-0.1.0.dist-info/METADATA'
+  adding 'hormuz_pipeline-0.1.0.dist-info/WHEEL'
+  adding 'hormuz_pipeline-0.1.0.dist-info/top_level.txt'
+  adding 'hormuz_pipeline-0.1.0.dist-info/RECORD'
+  /tmp/pip-build-env-7cnksewl/overlay/lib/python3.11/site-packages/setuptools/command/editable_wheel.py:352: InformationOnly: Editable installation.
+  !!
+
+          ********************************************************************************
+          Please be careful with folders in your working directory with the same
+          name as your package as they may take precedence during imports.
+          ********************************************************************************
+
+  !!
+    with strategy, WheelFile(wheel_path, "w") as wheel_obj:

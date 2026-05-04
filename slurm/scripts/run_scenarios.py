@@ -20,6 +20,8 @@ from slurm.scripts.stage_utils import (
     get_run_id,
     log_slurm_context,
     logger,
+    resolve_llm_kwargs,
+    resolved_llm_metadata,
     save_state,
 )
 
@@ -66,24 +68,20 @@ def main() -> None:
     # Open a W&B run for this stage. The context manager finishes the
     # run cleanly even on exception; logging is a no-op when wandb is
     # unavailable / disabled (see src/common/wandb_logger.py).
+    llm_meta = resolved_llm_metadata(config)
     with stage_run(
         "scenarios",
         config={
             "num_scenarios": config.num_scenarios,
-            "llm_provider": config.llm.provider,
-            "llm_model": config.llm.model,
-            "llm_temperature": config.llm.temperature,
+            **llm_meta,
             "framework_focal_issue": framework_data.get("focal_issue"),
         },
         notes="Module 1: scenario generation",
     ) as wb:
-        # Build LLM and generator
-        llm = get_llm(
-            provider=config.llm.provider,
-            model=config.llm.model,
-            temperature=config.llm.temperature,
-            **config.llm.extra_kwargs,
-        )
+        # Build LLM. Env vars (PIPELINE_LLM_PROVIDER / _MODEL / _BASE_URL)
+        # win over the YAML config so the SLURM driver job — which is
+        # what actually started the vLLM sidecar — owns the model name.
+        llm = get_llm(**resolve_llm_kwargs(config))
         generator = build_scenario_generator(llm)
 
         # Generate scenarios

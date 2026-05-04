@@ -30,6 +30,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 import yaml
 
+from slurm.scripts.stage_utils import resolve_llm_kwargs
 from src.common.llm import get_llm
 from src.common.logging import get_logger
 from src.news import (
@@ -140,12 +141,10 @@ def main() -> int:
         cfg_path = env if env.exists() else Path("configs/model_configs/default.yaml")
     config = PipelineConfig.from_yaml(cfg_path)
 
-    llm = get_llm(
-        provider=config.llm.provider,
-        model=config.llm.model,
-        temperature=config.llm.temperature,
-        **config.llm.extra_kwargs,
-    )
+    # Build LLM. Env vars (PIPELINE_LLM_PROVIDER / _MODEL / _BASE_URL)
+    # win over the YAML config so the SLURM driver job — which is what
+    # actually started the vLLM sidecar — owns the model name.
+    llm = get_llm(**resolve_llm_kwargs(config))
 
     with open(args.baseline) as f:
         baseline_data = yaml.safe_load(f) or {}

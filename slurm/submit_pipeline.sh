@@ -6,10 +6,22 @@
 #
 #   01_scenarios  →  dispatch_params  →  02_parameters (array)
 #                                          ↓
-#                                    dispatch_models
-#                                     ↙          ↘
-#                          03_models_cpu     03_models_gpu  (arrays)
-#                                     ↘          ↙
+#                              dispatch_models --tier commodity
+#                                     ↙                     ↘
+#                  03_models_cpu (commodity)   03_models_gpu (commodity)
+#                                     ↘                     ↙
+#                       dispatch_models --tier commodity_downstream
+#                       (helium -> SimRLFab/Argonne ABM via
+#                        configs/upstream_forwarding_mapping.yaml)
+#                                     ↙                     ↘
+#                  03_models_cpu (cdown)         03_models_gpu (cdown)
+#                                     ↘                     ↙
+#                              dispatch_models --tier macro
+#                              (merges commodity AND commodity_
+#                               downstream outputs into macro shocks)
+#                                     ↙                     ↘
+#                  03_models_cpu (macro)         03_models_gpu (macro)
+#                                     ↘                     ↙
 #                                    04_synthesis
 #
 # Each arrow represents a --dependency=afterok constraint, ensuring
@@ -258,55 +270,132 @@ JOB2=$(submit_job "Module 2: Parameter Extraction (array 0-${PARAM_ARRAY_MAX})" 
 
 # ---- Between stages: Generate model execution manifests --------------
 
-echo "──── Dispatch: Model Execution Manifest ────"
-JOB_DISPATCH_M=$(submit_job "Generate model execution manifests" \
+# Stage 3 is split in two phases for upstream-to-macro forwarding
+# (Algorithm 1, step 11):
+#   Stage 3a:  dispatch + run COMMODITY tier (combat + commodity)
+#   Stage 3b:  re-dispatch the MACRO tier with shocks merged from
+#              completed commodity outputs, then run macro models.
+
+echo "──── Dispatch (3a): Commodity-tier Manifest ────"
+JOB_DISPATCH_M_COMMODITY=$(submit_job "Generate commodity-tier model manifests" \
     --partition="$CPU_PARTITION" \
     --dependency="afterok:${JOB2}" \
     --cpus-per-task=1 \
     --mem=4G \
     --time=00:10:00 \
-    --job-name=hormuz-dispatch-models \
-    --output="${PROJECT_ROOT}/slurm/logs/dispatch_models-%j.out" \
+    --job-name=hormuz-dispatch-models-commodity \
+    --output="${PROJECT_ROOT}/slurm/logs/dispatch_models_commodity-%j.out" \
     --export="$EXPORT_VARS" \
     --chdir="$PROJECT_ROOT" \
-    --wrap="module load anaconda3 2>/dev/null || true; source ${PROJECT_ROOT}/slurm/jobs/_common.sh; hormuz_activate_conda ${CONDA_ENV} || { record_bash_failure dispatch_models 1 'conda activate failed'; exit 1; }; python slurm/scripts/dispatch_models.py models --run-id ${RUN_ID}" \
+    --wrap="module load anaconda3 2>/dev/null || true; source ${PROJECT_ROOT}/slurm/jobs/_common.sh; hormuz_activate_conda ${CONDA_ENV} || { record_bash_failure dispatch_models_commodity 1 'conda activate failed'; exit 1; }; python slurm/scripts/dispatch_models.py models --tier commodity --run-id ${RUN_ID}" \
     | tail -1)
 
-# ---- Stage 3: Model Execution (CPU + GPU Arrays) --------------------
+# ---- Stage 3a: Commodity Tier (CPU + GPU Arrays) --------------------
 
-# Upper bounds. CPU array hosts almost all models (~30 stub + real
-# adapters). GPU array currently hosts only adapters whose
-# ResourceRequirements.requires_gpu is True (today: SimRLFab) -> 4
-# entries. Override via env when adding more GPU models.
+# Upper bounds. CPU array hosts almost all commodity models. GPU array
+# currently hosts only adapters whose ResourceRequirements.requires_gpu
+# is True (today: SimRLFab). Override via env when adding more.
 MODEL_CPU_ARRAY_MAX="${HORMUZ_MODEL_CPU_ARRAY_MAX:-149}"
 MODEL_GPU_ARRAY_MAX="${HORMUZ_MODEL_GPU_ARRAY_MAX:-15}"
 
-echo "──── Stage 3a: CPU Model Execution (Array) ────"
-JOB3_CPU=$(submit_job "Module 3: CPU Models (array 0-${MODEL_CPU_ARRAY_MAX})" \
+echo "──── Stage 3a-CPU: Commodity Models (CPU Array) ────"
+JOB3A_CPU=$(submit_job "Module 3a: Commodity CPU Models (array 0-${MODEL_CPU_ARRAY_MAX})" \
     --partition="$CPU_PARTITION" \
-    --dependency="afterok:${JOB_DISPATCH_M}" \
+    --dependency="afterok:${JOB_DISPATCH_M_COMMODITY}" \
     --array="0-${MODEL_CPU_ARRAY_MAX}%${MAX_ARRAY_CONCURRENT}" \
-    --export="$EXPORT_VARS" \
+    --export="${EXPORT_VARS},HORMUZ_MANIFEST_NAME=models_commodity_cpu" \
     --chdir="$PROJECT_ROOT" \
     "${PROJECT_ROOT}/slurm/jobs/03_models_cpu.sbatch" \
     | tail -1)
 
-echo "──── Stage 3b: GPU Model Execution (Array) ────"
-JOB3_GPU=$(submit_job "Module 3: GPU Models (array 0-${MODEL_GPU_ARRAY_MAX})" \
+echo "──── Stage 3a-GPU: Commodity Models (GPU Array) ────"
+JOB3A_GPU=$(submit_job "Module 3a: Commodity GPU Models (array 0-${MODEL_GPU_ARRAY_MAX})" \
     --partition="$GPU_PARTITION" \
-    --dependency="afterok:${JOB_DISPATCH_M}" \
+    --dependency="afterok:${JOB_DISPATCH_M_COMMODITY}" \
     --array="0-${MODEL_GPU_ARRAY_MAX}%${MAX_ARRAY_CONCURRENT}" \
-    --export="$EXPORT_VARS" \
+    --export="${EXPORT_VARS},HORMUZ_MANIFEST_NAME=models_commodity_gpu" \
     --chdir="$PROJECT_ROOT" \
     "${PROJECT_ROOT}/slurm/jobs/03_models_gpu.sbatch" \
     | tail -1)
 
-# ---- Stage 4: Synthesis (after all models complete) ------------------
+# ---- Stage 3a-2: Commodity-Downstream Tier (helium -> SimRLFab/ABM) ----
+
+echo "──── Dispatch (3a-2): Commodity-Downstream Manifest (Upstream Merge) ────"
+JOB_DISPATCH_M_DOWNSTREAM=$(submit_job "Generate commodity-downstream model manifests (upstream merge)" \
+    --partition="$CPU_PARTITION" \
+    --dependency="afterok:${JOB3A_CPU}:${JOB3A_GPU}" \
+    --cpus-per-task=1 \
+    --mem=4G \
+    --time=00:10:00 \
+    --job-name=hormuz-dispatch-models-commodity-downstream \
+    --output="${PROJECT_ROOT}/slurm/logs/dispatch_models_commodity_downstream-%j.out" \
+    --export="$EXPORT_VARS" \
+    --chdir="$PROJECT_ROOT" \
+    --wrap="module load anaconda3 2>/dev/null || true; source ${PROJECT_ROOT}/slurm/jobs/_common.sh; hormuz_activate_conda ${CONDA_ENV} || { record_bash_failure dispatch_models_commodity_downstream 1 'conda activate failed'; exit 1; }; python slurm/scripts/dispatch_models.py models --tier commodity_downstream --run-id ${RUN_ID}" \
+    | tail -1)
+
+echo "──── Stage 3a-2-CPU: Commodity-Downstream Models (CPU Array) ────"
+JOB3A2_CPU=$(submit_job "Module 3a-2: Commodity-Downstream CPU Models (array 0-${MODEL_CPU_ARRAY_MAX})" \
+    --partition="$CPU_PARTITION" \
+    --dependency="afterok:${JOB_DISPATCH_M_DOWNSTREAM}" \
+    --array="0-${MODEL_CPU_ARRAY_MAX}%${MAX_ARRAY_CONCURRENT}" \
+    --export="${EXPORT_VARS},HORMUZ_MANIFEST_NAME=models_commodity_downstream_cpu" \
+    --chdir="$PROJECT_ROOT" \
+    "${PROJECT_ROOT}/slurm/jobs/03_models_cpu.sbatch" \
+    | tail -1)
+
+echo "──── Stage 3a-2-GPU: Commodity-Downstream Models (GPU Array) ────"
+JOB3A2_GPU=$(submit_job "Module 3a-2: Commodity-Downstream GPU Models (array 0-${MODEL_GPU_ARRAY_MAX})" \
+    --partition="$GPU_PARTITION" \
+    --dependency="afterok:${JOB_DISPATCH_M_DOWNSTREAM}" \
+    --array="0-${MODEL_GPU_ARRAY_MAX}%${MAX_ARRAY_CONCURRENT}" \
+    --export="${EXPORT_VARS},HORMUZ_MANIFEST_NAME=models_commodity_downstream_gpu" \
+    --chdir="$PROJECT_ROOT" \
+    "${PROJECT_ROOT}/slurm/jobs/03_models_gpu.sbatch" \
+    | tail -1)
+
+# ---- Stage 3b: Macro Tier (re-dispatch with upstream merge) ---------
+
+echo "──── Dispatch (3b): Macro-tier Manifest (Upstream Merge) ────"
+JOB_DISPATCH_M_MACRO=$(submit_job "Generate macro-tier model manifests (upstream merge)" \
+    --partition="$CPU_PARTITION" \
+    --dependency="afterok:${JOB3A2_CPU}:${JOB3A2_GPU}" \
+    --cpus-per-task=1 \
+    --mem=4G \
+    --time=00:10:00 \
+    --job-name=hormuz-dispatch-models-macro \
+    --output="${PROJECT_ROOT}/slurm/logs/dispatch_models_macro-%j.out" \
+    --export="$EXPORT_VARS" \
+    --chdir="$PROJECT_ROOT" \
+    --wrap="module load anaconda3 2>/dev/null || true; source ${PROJECT_ROOT}/slurm/jobs/_common.sh; hormuz_activate_conda ${CONDA_ENV} || { record_bash_failure dispatch_models_macro 1 'conda activate failed'; exit 1; }; python slurm/scripts/dispatch_models.py models --tier macro --run-id ${RUN_ID}" \
+    | tail -1)
+
+echo "──── Stage 3b-CPU: Macro Models (CPU Array) ────"
+JOB3B_CPU=$(submit_job "Module 3b: Macro CPU Models (array 0-${MODEL_CPU_ARRAY_MAX})" \
+    --partition="$CPU_PARTITION" \
+    --dependency="afterok:${JOB_DISPATCH_M_MACRO}" \
+    --array="0-${MODEL_CPU_ARRAY_MAX}%${MAX_ARRAY_CONCURRENT}" \
+    --export="${EXPORT_VARS},HORMUZ_MANIFEST_NAME=models_macro_cpu" \
+    --chdir="$PROJECT_ROOT" \
+    "${PROJECT_ROOT}/slurm/jobs/03_models_cpu.sbatch" \
+    | tail -1)
+
+echo "──── Stage 3b-GPU: Macro Models (GPU Array) ────"
+JOB3B_GPU=$(submit_job "Module 3b: Macro GPU Models (array 0-${MODEL_GPU_ARRAY_MAX})" \
+    --partition="$GPU_PARTITION" \
+    --dependency="afterok:${JOB_DISPATCH_M_MACRO}" \
+    --array="0-${MODEL_GPU_ARRAY_MAX}%${MAX_ARRAY_CONCURRENT}" \
+    --export="${EXPORT_VARS},HORMUZ_MANIFEST_NAME=models_macro_gpu" \
+    --chdir="$PROJECT_ROOT" \
+    "${PROJECT_ROOT}/slurm/jobs/03_models_gpu.sbatch" \
+    | tail -1)
+
+# ---- Stage 4: Synthesis (after all macro models complete) ------------
 
 echo "──── Stage 4: Output Synthesis ────"
 JOB4=$(submit_job "Module 4: Output Synthesis" \
     --partition="$CPU_PARTITION" \
-    --dependency="afterok:${JOB3_CPU}:${JOB3_GPU}" \
+    --dependency="afterok:${JOB3B_CPU}:${JOB3B_GPU}" \
     --export="$EXPORT_VARS" \
     --chdir="$PROJECT_ROOT" \
     "${PROJECT_ROOT}/slurm/jobs/04_synthesis.sbatch" \
@@ -322,17 +411,23 @@ echo ""
 echo "  Run ID:     $RUN_ID"
 echo ""
 echo "  Job Chain:"
-echo "    Stage 1 (Scenarios):        $JOB1"
-echo "    Dispatch (Params):          $JOB_DISPATCH_P"
-echo "    Stage 2 (Parameters):       $JOB2"
-echo "    Dispatch (Models):          $JOB_DISPATCH_M"
-echo "    Stage 3a (CPU Models):      $JOB3_CPU"
-echo "    Stage 3b (GPU Models):      $JOB3_GPU"
-echo "    Stage 4 (Synthesis):        $JOB4"
+echo "    Stage 1 (Scenarios):                            $JOB1"
+echo "    Dispatch (Params):                              $JOB_DISPATCH_P"
+echo "    Stage 2 (Parameters):                           $JOB2"
+echo "    Dispatch 3a (Commodity Models):                 $JOB_DISPATCH_M_COMMODITY"
+echo "    Stage 3a-CPU (Commodity Models):                $JOB3A_CPU"
+echo "    Stage 3a-GPU (Commodity Models):                $JOB3A_GPU"
+echo "    Dispatch 3a-2 (Commodity-Downstream + Merge):   $JOB_DISPATCH_M_DOWNSTREAM"
+echo "    Stage 3a-2-CPU (Commodity-Downstream Models):   $JOB3A2_CPU"
+echo "    Stage 3a-2-GPU (Commodity-Downstream Models):   $JOB3A2_GPU"
+echo "    Dispatch 3b (Macro + Merge):                    $JOB_DISPATCH_M_MACRO"
+echo "    Stage 3b-CPU (Macro Models):                    $JOB3B_CPU"
+echo "    Stage 3b-GPU (Macro Models):                    $JOB3B_GPU"
+echo "    Stage 4 (Synthesis):                            $JOB4"
 echo ""
 echo "  Monitor with:"
 echo "    squeue -u \$USER"
-echo "    sacct -j ${JOB1},${JOB2},${JOB3_CPU},${JOB3_GPU},${JOB4}"
+echo "    sacct -j ${JOB1},${JOB2},${JOB3A_CPU},${JOB3A_GPU},${JOB3A2_CPU},${JOB3A2_GPU},${JOB3B_CPU},${JOB3B_GPU},${JOB4}"
 echo ""
 echo "  Logs in:    ${PROJECT_ROOT}/slurm/logs/"
 echo "  State in:   ${PROJECT_ROOT}/data/pipeline_state/"

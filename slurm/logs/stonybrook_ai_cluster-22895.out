@@ -1,0 +1,75 @@
+[wandb] project=hormuz-pipeline group=20260422_000844 mode=offline
+[wandb] dir=/home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260422_000844 per_task=1
+[wandb] runs will be written to /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260422_000844; sync later with:
+[wandb]   wandb sync /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260422_000844/wandb/offline-run-*
+[hf] using inline HF_TOKEN_INLINE (consider moving to /home/dagolden/.huggingface_token to keep secrets out of the .job file)
+[hf] HF_TOKEN + HUGGING_FACE_HUB_TOKEN exported: hf_o…AFmq (len=37)
+[hf] HF_HOME=/home/dagolden/.cache/huggingface
+================================================================
+  Hormuz Pipeline — Stony Brook AI Cluster (single-node driver)
+================================================================
+  Job ID:        22895
+  Run ID:        20260422_000844
+  Node:          ai02
+  Partition:     defq
+  Nodelist:      tesla1
+  CPUs:          16
+  GPUs (gres):   2
+  Memory:        131072 MB
+  Walltime cap:  from-script
+  Project root:  /home/dagolden/agenticAIForScenarioAnalysis
+  Conda env:     hormuz
+  Config:        /home/dagolden/agenticAIForScenarioAnalysis/slurm/config/pipeline_cluster.yaml
+  Scratch:       <unset, using project root>
+  Run log dir:   /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260422_000844
+  Driver out:    /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/stonybrook_ai_cluster-22895.out
+  Driver err:    /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/stonybrook_ai_cluster-22895.err
+  W&B project:   hormuz-pipeline (mode=offline, group=20260422_000844)
+  Started at:    2026-04-22T00:08:44Z
+================================================================
+[progress] loading Lmod modules...
+[module] anaconda not available; relying on PATH
+[module] no cudnn module loaded
+[progress] modules done.
+[progress] bootstrapping conda env 'hormuz' (auto-build)...
+[build] env 'hormuz' already exists at /home/dagolden/miniconda3/envs/hormuz
+[build] install marker present at /home/dagolden/miniconda3/envs/hormuz/.hormuz_install_sentinel
+[build] skipping pip install. Set HORMUZ_FORCE_REBUILD=1 to force a reinstall.
+[progress] bootstrap done.
+[progress] activating conda env 'hormuz'...
+[conda] using CONDA_EXE=/home/dagolden/miniconda3/bin/conda
+[conda] conda base: /home/dagolden/miniconda3
+[conda] activating 'hormuz'...
+[conda] activated env 'hormuz' (CONDA_PREFIX=/home/dagolden/miniconda3/envs/hormuz)
+[progress] conda env active (python=/home/dagolden/miniconda3/envs/hormuz/bin/python).
+[progress] recording runtime inventory...
+[runtime] Inventory written to /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260422_000844/runtime-stonybrook_ai_cluster_setup-22895-single.json
+[runtime] gpu=yes python=Python 3.11.15 gams=missing julia=missing R=missing java=missing cuda=missing
+[progress] runtime inventory done.
+[vllm] starting sidecar on ai02:8000
+       model=meta-llama/Llama-3.1-8B-Instruct tp=1 dtype=auto gpus=0
+       log:   /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260422_000844/vllm.log
+[vllm] pid=4162368
+[gpu] pipeline driver sees CUDA_VISIBLE_DEVICES=1
+[vllm] waiting up to 1800s for http://ai02:8000/v1/models
+[vllm] healthy at http://ai02:8000/v1
+
+════════════ Stage 1: Scenario Generation ════════════
+[safe_python] stage=stonybrook_ai_cluster_01_scenarios continue_on_failure=0 cmd: python slurm/scripts/run_scenarios.py
+2026-04-22 00:10:41,055 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "22895",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "N/A",
+  "SLURMD_NODENAME": "tesla1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-22 00:10:41,056 [INFO] hormuz.slurm: === Module 1: Scenario Generation (run_id=20260422_000844) ===
+2026-04-22 00:10:41,085 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+[failure] Recorded bash failure for stage=stonybrook_ai_cluster_01_scenarios task=22895-single exit=1: Python invocation exited with code 1: python slurm/scripts/run_scenarios.py
+[failure] /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260422_000844_stonybrook_ai_cluster_01_scenarios_bash_failure_22895-single.json
+[safe_python] continue_on_failure=0 -> propagating exit code 1.
+[fatal] Module 1 failed (exit=1); aborting pipeline.
+[vllm] stopping sidecar (pid=4162368)

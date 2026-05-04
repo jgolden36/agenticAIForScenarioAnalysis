@@ -610,24 +610,70 @@ run_pipeline_for_week() {
     run_manifest_loop "${STAGE_PREFIX}_${week_tag}_02_parameters" \
         "slurm/scripts/run_parameters.py" "$PARAM_COUNT_FILE"
 
-    # --- Dispatch model execution manifest ---------------------------
+    # --- Dispatch commodity-tier manifest (Stage 3a) -----------------
     echo ""
-    echo "══════ [${week_start}] Dispatch: Model Execution Manifest ══════"
-    safe_python "${STAGE_PREFIX}_${week_tag}_dispatch_models" 0 -- \
-        python slurm/scripts/dispatch_models.py models --run-id "${HORMUZ_RUN_ID}"
+    echo "══════ [${week_start}] Dispatch: Commodity Manifest ══════"
+    safe_python "${STAGE_PREFIX}_${week_tag}_dispatch_models_commodity" 0 -- \
+        python slurm/scripts/dispatch_models.py models \
+            --tier commodity --run-id "${HORMUZ_RUN_ID}"
     rc=$?
     if [[ $rc -ne 0 ]]; then
-        echo "[week ${week_start}] model dispatch failed (rc=$rc); skipping."
+        echo "[week ${week_start}] commodity model dispatch failed (rc=$rc); skipping."
         return $rc
     fi
-    local MODELS_COUNT_FILE="${PROJECT_ROOT}/data/pipeline_state/manifests/${HORMUZ_RUN_ID}_models_count.txt"
+    local COMMODITY_COUNT_FILE="${PROJECT_ROOT}/data/pipeline_state/manifests/${HORMUZ_RUN_ID}_models_commodity_count.txt"
 
-    # --- Stage 3: Module 3 - Model Execution -------------------------
+    # --- Stage 3a: commodity-tier model execution --------------------
     echo ""
-    echo "══════ [${week_start}] Stage 3: Model Execution ══════"
+    echo "══════ [${week_start}] Stage 3a: Commodity Tier Execution ══════"
     unset HORMUZ_MANIFEST_NAME
-    run_manifest_loop "${STAGE_PREFIX}_${week_tag}_03_models" \
-        "slurm/scripts/run_model.py" "$MODELS_COUNT_FILE"
+    export HORMUZ_MANIFEST_NAME="models_commodity"
+    run_manifest_loop "${STAGE_PREFIX}_${week_tag}_03a_models_commodity" \
+        "slurm/scripts/run_model.py" "$COMMODITY_COUNT_FILE"
+
+    # --- Dispatch commodity_downstream manifest (Stage 3a-2) ---------
+    # Forwards world_helium_model outputs into SimRLFab/Argonne ABM
+    # via configs/upstream_forwarding_mapping.yaml.
+    echo ""
+    echo "══════ [${week_start}] Dispatch: Commodity-Downstream Manifest (Upstream Merge) ══════"
+    safe_python "${STAGE_PREFIX}_${week_tag}_dispatch_models_commodity_downstream" 0 -- \
+        python slurm/scripts/dispatch_models.py models \
+            --tier commodity_downstream --run-id "${HORMUZ_RUN_ID}"
+    rc=$?
+    if [[ $rc -ne 0 ]]; then
+        echo "[week ${week_start}] commodity_downstream dispatch failed (rc=$rc); skipping."
+        return $rc
+    fi
+    local COMMODITY_DOWNSTREAM_COUNT_FILE="${PROJECT_ROOT}/data/pipeline_state/manifests/${HORMUZ_RUN_ID}_models_commodity_downstream_count.txt"
+
+    # --- Stage 3a-2: commodity-downstream tier execution -------------
+    echo ""
+    echo "══════ [${week_start}] Stage 3a-2: Commodity-Downstream Tier Execution ══════"
+    unset HORMUZ_MANIFEST_NAME
+    export HORMUZ_MANIFEST_NAME="models_commodity_downstream"
+    run_manifest_loop "${STAGE_PREFIX}_${week_tag}_03a2_models_commodity_downstream" \
+        "slurm/scripts/run_model.py" "$COMMODITY_DOWNSTREAM_COUNT_FILE"
+
+    # --- Dispatch macro-tier manifest (Stage 3b, upstream merge) -----
+    echo ""
+    echo "══════ [${week_start}] Dispatch: Macro Manifest (Upstream Merge) ══════"
+    safe_python "${STAGE_PREFIX}_${week_tag}_dispatch_models_macro" 0 -- \
+        python slurm/scripts/dispatch_models.py models \
+            --tier macro --run-id "${HORMUZ_RUN_ID}"
+    rc=$?
+    if [[ $rc -ne 0 ]]; then
+        echo "[week ${week_start}] macro model dispatch failed (rc=$rc); skipping."
+        return $rc
+    fi
+    local MACRO_COUNT_FILE="${PROJECT_ROOT}/data/pipeline_state/manifests/${HORMUZ_RUN_ID}_models_macro_count.txt"
+
+    # --- Stage 3b: macro-tier model execution ------------------------
+    echo ""
+    echo "══════ [${week_start}] Stage 3b: Macro Tier Execution ══════"
+    export HORMUZ_MANIFEST_NAME="models_macro"
+    run_manifest_loop "${STAGE_PREFIX}_${week_tag}_03b_models_macro" \
+        "slurm/scripts/run_model.py" "$MACRO_COUNT_FILE"
+    unset HORMUZ_MANIFEST_NAME
 
     # --- Stage 4: Module 4 - Output Synthesis ------------------------
     echo ""

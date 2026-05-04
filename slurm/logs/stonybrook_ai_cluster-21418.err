@@ -1,0 +1,6 @@
+/home/dagolden/agenticAIForScenarioAnalysis/slurm/jobs/_common.sh: line 40: $'\r': command not found
+/home/dagolden/agenticAIForScenarioAnalysis/slurm/jobs/_common.sh: line 46: $'\r': command not found
+/home/dagolden/agenticAIForScenarioAnalysis/slurm/jobs/_common.sh: line 48: $'\r': command not found
+/home/dagolden/agenticAIForScenarioAnalysis/slurm/jobs/_common.sh: line 50: syntax error near unexpected token `$'{\r''
+/home/dagolden/agenticAIForScenarioAnalysis/slurm/jobs/_common.sh: line 50: `_hormuz_timestamp() {'
+slurmstepd-tesla1: error: *** JOB 21418 ON tesla1 CANCELLED AT 2026-04-20T19:19:20 ***

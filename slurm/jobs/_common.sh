@@ -65,13 +65,29 @@ _hormuz_have() {
 }
 
 # Capture the version line of a tool, or "missing".
+#
+# Safety notes:
+#   * stdin is redirected from /dev/null so tools that drop into an
+#     interactive REPL when stdin is a tty (e.g. `gams` with no args,
+#     `R` without `--no-save`, some java agents) never block waiting
+#     for input.
+#   * A hard 10-second wall-clock timeout wraps every probe so a
+#     hung vendor binary (e.g. GAMS checking a dead license server,
+#     nvidia-smi on a driver that's mid-reset) cannot stall the whole
+#     job. The timeout is best-effort: if `timeout` itself is missing
+#     we fall back to unwrapped execution.
 _hormuz_version() {
     local tool="$1"
     shift
     if _hormuz_have "$tool"; then
+        local runner=()
+        if command -v timeout >/dev/null 2>&1; then
+            runner=(timeout --preserve-status 10s)
+        fi
         # Run the version command, grab the first non-empty line, trim.
-        ("$tool" "$@" 2>&1 | head -n 1 | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//') \
-            || echo "present (version probe failed)"
+        ( "${runner[@]}" "$tool" "$@" </dev/null 2>&1 \
+              | head -n 1 | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' ) \
+            || echo "present (version probe failed/timeout)"
     else
         echo "missing"
     fi
@@ -261,13 +277,22 @@ hormuz_activate_conda() {
         echo "[conda] no conda binary on PATH; cannot activate env '${env}'"
         return 1
     fi
+    echo "[conda] using CONDA_EXE=${CONDA_EXE}"
 
     # Source the conda shell hook so `conda activate` becomes available.
+    # `conda info --base` can stall on a cold network filesystem; wrap
+    # it in a 60-second timeout so a misbehaving mount shows up as an
+    # error rather than a silent hang.
     local conda_base
-    conda_base="$($CONDA_EXE info --base 2>/dev/null)" || {
-        echo "[conda] failed to query conda base directory"
+    local base_runner=()
+    if command -v timeout >/dev/null 2>&1; then
+        base_runner=(timeout --preserve-status 60s)
+    fi
+    conda_base="$("${base_runner[@]}" "$CONDA_EXE" info --base </dev/null 2>/dev/null)" || {
+        echo "[conda] 'conda info --base' failed or timed out (exit=$?)"
         return 1
     }
+    echo "[conda] conda base: ${conda_base}"
 
     if [[ -f "${conda_base}/etc/profile.d/conda.sh" ]]; then
         # shellcheck source=/dev/null
@@ -277,8 +302,35 @@ hormuz_activate_conda() {
         return 1
     fi
 
-    if ! conda activate "$env"; then
-        echo "[conda] activate ${env} failed"
+    # Validate that the requested env actually exists before calling
+    # `conda activate`. On some conda builds, activating a missing env
+    # prints the error to stderr but exits 0, which the surrounding
+    # `if ! ...` cannot detect. An explicit pre-check avoids that.
+    if ! "$CONDA_EXE" env list 2>/dev/null \
+            | awk 'NF && $1 !~ /^#/ { print $1 }' \
+            | grep -qx -- "$env"; then
+        echo "[conda] env '${env}' does not exist on $(hostname)."
+        echo "[conda]   available envs on this node:"
+        "$CONDA_EXE" env list 2>/dev/null | sed 's/^/[conda]     /' || true
+        echo "[conda]   Create it with:  sbatch slurm/jobs/setup_env.sbatch"
+        echo "[conda]   or manually:     conda create -y -n ${env} python=3.11 && \\"
+        echo "[conda]                    conda activate ${env} && \\"
+        echo "[conda]                    pip install -e \".[dev,adapters]\""
+        return 1
+    fi
+
+    echo "[conda] activating '${env}'..."
+    # Capture conda's exit code explicitly and preserve its stderr so
+    # the user sees the actual error (e.g. EnvironmentNameNotFound,
+    # CondaEnvException) rather than a misleading "rc=0" line.
+    local _conda_rc
+    conda activate "$env"
+    _conda_rc=$?
+    if [[ $_conda_rc -ne 0 ]]; then
+        echo "[conda] activate ${env} failed (conda exit=${_conda_rc})"
+        echo "[conda]   See the conda error above. Common fixes:"
+        echo "[conda]     - env corrupted: conda env remove -n ${env} && resubmit setup_env.sbatch"
+        echo "[conda]     - pip/perm issue: check ${CONDA_PREFIX:-$HOME/miniconda3/envs/${env}} is writable"
         return 1
     fi
 

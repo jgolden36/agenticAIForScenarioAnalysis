@@ -75,8 +75,14 @@ fi
 # synthesis stage can attribute model-availability problems correctly.
 record_runtime_inventory "$STAGE"
 
-# Override manifest name to use CPU-only manifest.
-export HORMUZ_MANIFEST_NAME="models_cpu"
+# Default manifest is the legacy `models_cpu`. Stage 3 split into
+# commodity / macro tiers (Algorithm 1, step 11 upstream-to-macro
+# forwarding) overrides this from submit_pipeline.sh by setting
+# HORMUZ_MANIFEST_NAME=models_commodity_cpu / models_macro_cpu before
+# sbatch'ing this script. Only fall back to the unsplit manifest
+# when no override is set.
+: "${HORMUZ_MANIFEST_NAME:=models_cpu}"
+export HORMUZ_MANIFEST_NAME
 
 # Run the model executor under safe_python. continue_on_failure=1 so
 # that an interpreter-level crash in one array task does not break

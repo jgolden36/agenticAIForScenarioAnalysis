@@ -1,0 +1,222 @@
+[wandb] project=hormuz-pipeline group=20260422_004820 mode=offline
+[wandb] dir=/home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260422_004820 per_task=1
+[wandb] runs will be written to /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260422_004820; sync later with:
+[wandb]   wandb sync /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260422_004820/wandb/offline-run-*
+[hf] using inline HF_TOKEN_INLINE (consider moving to /home/dagolden/.huggingface_token to keep secrets out of the .job file)
+[hf] HF_TOKEN + HUGGING_FACE_HUB_TOKEN exported: hf_o…AFmq (len=37)
+[hf] HF_HOME=/home/dagolden/.cache/huggingface
+================================================================
+  Hormuz Pipeline — Stony Brook AI Cluster (single-node driver)
+================================================================
+  Job ID:        22896
+  Run ID:        20260422_004820
+  Node:          ai02
+  Partition:     defq
+  Nodelist:      tesla1
+  CPUs:          16
+  GPUs (gres):   2
+  Memory:        131072 MB
+  Walltime cap:  from-script
+  Project root:  /home/dagolden/agenticAIForScenarioAnalysis
+  Conda env:     hormuz
+  Config:        /home/dagolden/agenticAIForScenarioAnalysis/slurm/config/pipeline_cluster.yaml
+  Scratch:       <unset, using project root>
+  Run log dir:   /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260422_004820
+  Driver out:    /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/stonybrook_ai_cluster-22896.out
+  Driver err:    /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/stonybrook_ai_cluster-22896.err
+  W&B project:   hormuz-pipeline (mode=offline, group=20260422_004820)
+  Started at:    2026-04-22T00:48:20Z
+================================================================
+[progress] loading Lmod modules...
+[module] anaconda not available; relying on PATH
+[module] no cudnn module loaded
+[progress] modules done.
+[progress] bootstrapping conda env 'hormuz' (auto-build)...
+[build] env 'hormuz' already exists at /home/dagolden/miniconda3/envs/hormuz
+[build] core imports missing in existing env; forcing reinstall.
+[build] installing pipeline package (extras=[dev,adapters])...
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: pip in /home/dagolden/.local/lib/python3.12/site-packages (26.0.1)
+Requirement already satisfied: setuptools in /shared/software/miniforge3/lib/python3.12/site-packages (80.9.0)
+Collecting setuptools
+  Using cached setuptools-82.0.1-py3-none-any.whl.metadata (6.5 kB)
+Requirement already satisfied: wheel in /shared/software/miniforge3/lib/python3.12/site-packages (0.45.1)
+Collecting wheel
+  Using cached wheel-0.46.3-py3-none-any.whl.metadata (2.4 kB)
+Requirement already satisfied: packaging>=24.0 in /shared/software/miniforge3/lib/python3.12/site-packages (from wheel) (25.0)
+Using cached setuptools-82.0.1-py3-none-any.whl (1.0 MB)
+Using cached wheel-0.46.3-py3-none-any.whl (30 kB)
+Installing collected packages: wheel, setuptools
+
+Successfully installed setuptools-82.0.1 wheel-0.46.3
+Defaulting to user installation because normal site-packages is not writeable
+Obtaining file:///home/dagolden/agenticAIForScenarioAnalysis
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Collecting langchain>=0.3.0 (from hormuz-pipeline==0.1.0)
+  Using cached langchain-1.2.15-py3-none-any.whl.metadata (5.8 kB)
+Collecting langchain-core>=0.3.0 (from hormuz-pipeline==0.1.0)
+  Using cached langchain_core-1.3.0-py3-none-any.whl.metadata (4.4 kB)
+Collecting langchain-openai>=0.2.0 (from hormuz-pipeline==0.1.0)
+  Downloading langchain_openai-1.1.16-py3-none-any.whl.metadata (3.1 kB)
+Collecting langgraph>=0.3.0 (from hormuz-pipeline==0.1.0)
+  Downloading langgraph-1.1.9-py3-none-any.whl.metadata (8.0 kB)
+Requirement already satisfied: pydantic>=2.0 in /home/dagolden/.local/lib/python3.12/site-packages (from hormuz-pipeline==0.1.0) (2.12.5)
+Requirement already satisfied: pyyaml>=6.0 in /home/dagolden/.local/lib/python3.12/site-packages (from hormuz-pipeline==0.1.0) (6.0.3)
+Collecting pytest>=8.0 (from hormuz-pipeline==0.1.0)
+  Using cached pytest-9.0.3-py3-none-any.whl.metadata (7.6 kB)
+Collecting pytest-asyncio>=0.23 (from hormuz-pipeline==0.1.0)
+  Using cached pytest_asyncio-1.3.0-py3-none-any.whl.metadata (4.1 kB)
+Requirement already satisfied: openpyxl>=3.1 in /home/dagolden/.local/lib/python3.12/site-packages (from hormuz-pipeline==0.1.0) (3.1.5)
+Requirement already satisfied: pandas>=2.0 in /home/dagolden/.local/lib/python3.12/site-packages (from hormuz-pipeline==0.1.0) (2.3.3)
+Requirement already satisfied: jsonpatch<2.0.0,>=1.33.0 in /shared/software/miniforge3/lib/python3.12/site-packages (from langchain-core>=0.3.0->hormuz-pipeline==0.1.0) (1.33)
+Collecting langsmith<1.0.0,>=0.3.45 (from langchain-core>=0.3.0->hormuz-pipeline==0.1.0)
+  Using cached langsmith-0.7.33-py3-none-any.whl.metadata (15 kB)
+Requirement already satisfied: packaging>=23.2.0 in /shared/software/miniforge3/lib/python3.12/site-packages (from langchain-core>=0.3.0->hormuz-pipeline==0.1.0) (25.0)
+Collecting tenacity!=8.4.0,<10.0.0,>=8.1.0 (from langchain-core>=0.3.0->hormuz-pipeline==0.1.0)
+  Using cached tenacity-9.1.4-py3-none-any.whl.metadata (1.2 kB)
+Requirement already satisfied: typing-extensions<5.0.0,>=4.7.0 in /home/dagolden/.local/lib/python3.12/site-packages (from langchain-core>=0.3.0->hormuz-pipeline==0.1.0) (4.15.0)
+Collecting uuid-utils<1.0,>=0.12.0 (from langchain-core>=0.3.0->hormuz-pipeline==0.1.0)
+  Using cached uuid_utils-0.14.1-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.8 kB)
+Requirement already satisfied: jsonpointer>=1.9 in /shared/software/miniforge3/lib/python3.12/site-packages (from jsonpatch<2.0.0,>=1.33.0->langchain-core>=0.3.0->hormuz-pipeline==0.1.0) (3.0.0)
+Collecting langgraph-checkpoint<5.0.0,>=2.1.0 (from langgraph>=0.3.0->hormuz-pipeline==0.1.0)
+  Using cached langgraph_checkpoint-4.0.2-py3-none-any.whl.metadata (5.2 kB)
+Collecting langgraph-prebuilt<1.1.0,>=1.0.9 (from langgraph>=0.3.0->hormuz-pipeline==0.1.0)
+  Using cached langgraph_prebuilt-1.0.10-py3-none-any.whl.metadata (5.2 kB)
+Collecting langgraph-sdk<0.4.0,>=0.3.0 (from langgraph>=0.3.0->hormuz-pipeline==0.1.0)
+  Using cached langgraph_sdk-0.3.13-py3-none-any.whl.metadata (1.6 kB)
+Collecting xxhash>=3.5.0 (from langgraph>=0.3.0->hormuz-pipeline==0.1.0)
+  Downloading xxhash-3.6.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (13 kB)
+Collecting ormsgpack>=1.12.0 (from langgraph-checkpoint<5.0.0,>=2.1.0->langgraph>=0.3.0->hormuz-pipeline==0.1.0)
+  Downloading ormsgpack-1.12.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (3.2 kB)
+Collecting httpx>=0.25.2 (from langgraph-sdk<0.4.0,>=0.3.0->langgraph>=0.3.0->hormuz-pipeline==0.1.0)
+  Using cached httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+Collecting orjson>=3.11.5 (from langgraph-sdk<0.4.0,>=0.3.0->langgraph>=0.3.0->hormuz-pipeline==0.1.0)
+  Downloading orjson-3.11.8-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (41 kB)
+Collecting requests-toolbelt>=1.0.0 (from langsmith<1.0.0,>=0.3.45->langchain-core>=0.3.0->hormuz-pipeline==0.1.0)
+  Using cached requests_toolbelt-1.0.0-py2.py3-none-any.whl.metadata (14 kB)
+Requirement already satisfied: requests>=2.0.0 in /shared/software/miniforge3/lib/python3.12/site-packages (from langsmith<1.0.0,>=0.3.45->langchain-core>=0.3.0->hormuz-pipeline==0.1.0) (2.32.4)
+Requirement already satisfied: zstandard>=0.23.0 in /shared/software/miniforge3/lib/python3.12/site-packages (from langsmith<1.0.0,>=0.3.45->langchain-core>=0.3.0->hormuz-pipeline==0.1.0) (0.23.0)
+Collecting anyio (from httpx>=0.25.2->langgraph-sdk<0.4.0,>=0.3.0->langgraph>=0.3.0->hormuz-pipeline==0.1.0)
+  Using cached anyio-4.13.0-py3-none-any.whl.metadata (4.5 kB)
+Requirement already satisfied: certifi in /shared/software/miniforge3/lib/python3.12/site-packages (from httpx>=0.25.2->langgraph-sdk<0.4.0,>=0.3.0->langgraph>=0.3.0->hormuz-pipeline==0.1.0) (2025.7.14)
+Collecting httpcore==1.* (from httpx>=0.25.2->langgraph-sdk<0.4.0,>=0.3.0->langgraph>=0.3.0->hormuz-pipeline==0.1.0)
+  Using cached httpcore-1.0.9-py3-none-any.whl.metadata (21 kB)
+Requirement already satisfied: idna in /shared/software/miniforge3/lib/python3.12/site-packages (from httpx>=0.25.2->langgraph-sdk<0.4.0,>=0.3.0->langgraph>=0.3.0->hormuz-pipeline==0.1.0) (3.10)
+Collecting h11>=0.16 (from httpcore==1.*->httpx>=0.25.2->langgraph-sdk<0.4.0,>=0.3.0->langgraph>=0.3.0->hormuz-pipeline==0.1.0)
+  Using cached h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+Requirement already satisfied: annotated-types>=0.6.0 in /home/dagolden/.local/lib/python3.12/site-packages (from pydantic>=2.0->hormuz-pipeline==0.1.0) (0.7.0)
+Requirement already satisfied: pydantic-core==2.41.5 in /home/dagolden/.local/lib/python3.12/site-packages (from pydantic>=2.0->hormuz-pipeline==0.1.0) (2.41.5)
+Requirement already satisfied: typing-inspection>=0.4.2 in /home/dagolden/.local/lib/python3.12/site-packages (from pydantic>=2.0->hormuz-pipeline==0.1.0) (0.4.2)
+Collecting openai<3.0.0,>=2.26.0 (from langchain-openai>=0.2.0->hormuz-pipeline==0.1.0)
+  Using cached openai-2.32.0-py3-none-any.whl.metadata (31 kB)
+Collecting tiktoken<1.0.0,>=0.7.0 (from langchain-openai>=0.2.0->hormuz-pipeline==0.1.0)
+  Downloading tiktoken-0.12.0-cp312-cp312-manylinux_2_28_x86_64.whl.metadata (6.7 kB)
+Requirement already satisfied: distro<2,>=1.7.0 in /shared/software/miniforge3/lib/python3.12/site-packages (from openai<3.0.0,>=2.26.0->langchain-openai>=0.2.0->hormuz-pipeline==0.1.0) (1.9.0)
+Collecting jiter<1,>=0.10.0 (from openai<3.0.0,>=2.26.0->langchain-openai>=0.2.0->hormuz-pipeline==0.1.0)
+  Downloading jiter-0.14.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (5.2 kB)
+Collecting sniffio (from openai<3.0.0,>=2.26.0->langchain-openai>=0.2.0->hormuz-pipeline==0.1.0)
+  Using cached sniffio-1.3.1-py3-none-any.whl.metadata (3.9 kB)
+Requirement already satisfied: tqdm>4 in /shared/software/miniforge3/lib/python3.12/site-packages (from openai<3.0.0,>=2.26.0->langchain-openai>=0.2.0->hormuz-pipeline==0.1.0) (4.67.1)
+Collecting regex>=2022.1.18 (from tiktoken<1.0.0,>=0.7.0->langchain-openai>=0.2.0->hormuz-pipeline==0.1.0)
+  Downloading regex-2026.4.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (40 kB)
+Requirement already satisfied: et-xmlfile in /home/dagolden/.local/lib/python3.12/site-packages (from openpyxl>=3.1->hormuz-pipeline==0.1.0) (2.0.0)
+Requirement already satisfied: numpy>=1.26.0 in /home/dagolden/.local/lib/python3.12/site-packages (from pandas>=2.0->hormuz-pipeline==0.1.0) (2.0.2)
+Requirement already satisfied: python-dateutil>=2.8.2 in /home/dagolden/.local/lib/python3.12/site-packages (from pandas>=2.0->hormuz-pipeline==0.1.0) (2.9.0.post0)
+Requirement already satisfied: pytz>=2020.1 in /home/dagolden/.local/lib/python3.12/site-packages (from pandas>=2.0->hormuz-pipeline==0.1.0) (2025.2)
+Requirement already satisfied: tzdata>=2022.7 in /home/dagolden/.local/lib/python3.12/site-packages (from pandas>=2.0->hormuz-pipeline==0.1.0) (2025.2)
+Collecting iniconfig>=1.0.1 (from pytest>=8.0->hormuz-pipeline==0.1.0)
+  Using cached iniconfig-2.3.0-py3-none-any.whl.metadata (2.5 kB)
+Requirement already satisfied: pluggy<2,>=1.5 in /shared/software/miniforge3/lib/python3.12/site-packages (from pytest>=8.0->hormuz-pipeline==0.1.0) (1.6.0)
+Collecting pygments>=2.7.2 (from pytest>=8.0->hormuz-pipeline==0.1.0)
+  Using cached pygments-2.20.0-py3-none-any.whl.metadata (2.5 kB)
+Requirement already satisfied: six>=1.5 in /home/dagolden/.local/lib/python3.12/site-packages (from python-dateutil>=2.8.2->pandas>=2.0->hormuz-pipeline==0.1.0) (1.17.0)
+Requirement already satisfied: charset_normalizer<4,>=2 in /shared/software/miniforge3/lib/python3.12/site-packages (from requests>=2.0.0->langsmith<1.0.0,>=0.3.45->langchain-core>=0.3.0->hormuz-pipeline==0.1.0) (3.4.2)
+Requirement already satisfied: urllib3<3,>=1.21.1 in /shared/software/miniforge3/lib/python3.12/site-packages (from requests>=2.0.0->langsmith<1.0.0,>=0.3.45->langchain-core>=0.3.0->hormuz-pipeline==0.1.0) (2.5.0)
+Using cached langchain-1.2.15-py3-none-any.whl (112 kB)
+Using cached langchain_core-1.3.0-py3-none-any.whl (515 kB)
+Downloading langgraph-1.1.9-py3-none-any.whl (173 kB)
+Using cached langgraph_checkpoint-4.0.2-py3-none-any.whl (51 kB)
+Using cached langgraph_prebuilt-1.0.10-py3-none-any.whl (36 kB)
+Using cached langgraph_sdk-0.3.13-py3-none-any.whl (96 kB)
+Using cached langsmith-0.7.33-py3-none-any.whl (378 kB)
+Using cached httpx-0.28.1-py3-none-any.whl (73 kB)
+Using cached httpcore-1.0.9-py3-none-any.whl (78 kB)
+Using cached tenacity-9.1.4-py3-none-any.whl (28 kB)
+Using cached uuid_utils-0.14.1-cp39-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (345 kB)
+Using cached h11-0.16.0-py3-none-any.whl (37 kB)
+Downloading langchain_openai-1.1.16-py3-none-any.whl (89 kB)
+Using cached openai-2.32.0-py3-none-any.whl (1.2 MB)
+Using cached anyio-4.13.0-py3-none-any.whl (114 kB)
+Downloading jiter-0.14.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (353 kB)
+Downloading tiktoken-0.12.0-cp312-cp312-manylinux_2_28_x86_64.whl (1.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 8.4 MB/s  0:00:00
+Downloading orjson-3.11.8-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (133 kB)
+Downloading ormsgpack-1.12.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (212 kB)
+Using cached pytest-9.0.3-py3-none-any.whl (375 kB)
+Using cached iniconfig-2.3.0-py3-none-any.whl (7.5 kB)
+Using cached pygments-2.20.0-py3-none-any.whl (1.2 MB)
+Using cached pytest_asyncio-1.3.0-py3-none-any.whl (15 kB)
+Downloading regex-2026.4.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (801 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 801.1/801.1 kB 21.4 MB/s  0:00:00
+Using cached requests_toolbelt-1.0.0-py2.py3-none-any.whl (54 kB)
+Downloading xxhash-3.6.0-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (193 kB)
+Using cached sniffio-1.3.1-py3-none-any.whl (10 kB)
+Building wheels for collected packages: hormuz-pipeline
+  Building editable for hormuz-pipeline (pyproject.toml): started
+  Building editable for hormuz-pipeline (pyproject.toml): finished with status 'done'
+  Created wheel for hormuz-pipeline: filename=hormuz_pipeline-0.1.0-0.editable-py3-none-any.whl size=3279 sha256=6ec9f601c6c0db4456717e7e42c2e7ede733d598ef44b4ccd064fa6fa63f2874
+  Stored in directory: /tmp/pip-ephem-wheel-cache-awqhag_u/wheels/fa/d3/88/068d2e1224e88f090355eca5398a0fd4dcf02a4f21c13d7d49
+Successfully built hormuz-pipeline
+Installing collected packages: xxhash, uuid-utils, tenacity, sniffio, regex, pygments, ormsgpack, orjson, jiter, iniconfig, h11, anyio, tiktoken, requests-toolbelt, pytest, httpcore, pytest-asyncio, httpx, openai, langsmith, langgraph-sdk, langchain-core, langgraph-checkpoint, langchain-openai, langgraph-prebuilt, langgraph, langchain, hormuz-pipeline
+
+Successfully installed anyio-4.13.0 h11-0.16.0 hormuz-pipeline-0.1.0 httpcore-1.0.9 httpx-0.28.1 iniconfig-2.3.0 jiter-0.14.0 langchain-1.2.15 langchain-core-1.3.0 langchain-openai-1.1.16 langgraph-1.1.9 langgraph-checkpoint-4.0.2 langgraph-prebuilt-1.0.10 langgraph-sdk-0.3.13 langsmith-0.7.33 openai-2.32.0 orjson-3.11.8 ormsgpack-1.12.2 pygments-2.20.0 pytest-9.0.3 pytest-asyncio-1.3.0 regex-2026.4.4 requests-toolbelt-1.0.0 sniffio-1.3.1 tenacity-9.1.4 tiktoken-0.12.0 uuid-utils-0.14.1 xxhash-3.6.0
+[build] probing for optional adapter runtimes...
+[build]   - openpyxl+pandas
+[build]   - torch + transformers + accelerate
+[build]   - vllm
+[build] install complete; marker: /home/dagolden/miniconda3/envs/hormuz/.hormuz_install_sentinel
+[progress] bootstrap done.
+[progress] activating conda env 'hormuz'...
+[conda] using CONDA_EXE=/home/dagolden/miniconda3/bin/conda
+[conda] conda base: /home/dagolden/miniconda3
+[conda] activating 'hormuz'...
+[conda] activated env 'hormuz' (CONDA_PREFIX=/home/dagolden/miniconda3/envs/hormuz)
+[progress] conda env active (python=/home/dagolden/miniconda3/envs/hormuz/bin/python).
+[progress] recording runtime inventory...
+[runtime] Inventory written to /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260422_004820/runtime-stonybrook_ai_cluster_setup-22896-single.json
+[runtime] gpu=yes python=Python 3.11.15 gams=missing julia=missing R=missing java=missing cuda=missing
+[progress] runtime inventory done.
+[vllm] starting sidecar on ai02:8000
+       model=meta-llama/Llama-3.1-8B-Instruct tp=1 dtype=auto gpus=0
+       log:   /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260422_004820/vllm.log
+[vllm] pid=4166407
+[gpu] pipeline driver sees CUDA_VISIBLE_DEVICES=1
+[vllm] waiting up to 1800s for http://ai02:8000/v1/models
+[vllm] healthy at http://ai02:8000/v1
+
+════════════ Stage 1: Scenario Generation ════════════
+[safe_python] stage=stonybrook_ai_cluster_01_scenarios continue_on_failure=0 cmd: python slurm/scripts/run_scenarios.py
+2026-04-22 01:03:45,976 [INFO] hormuz.slurm: SLURM context: {
+  "SLURM_JOB_ID": "22896",
+  "SLURM_JOB_NAME": "hormuz-pipeline",
+  "SLURM_ARRAY_JOB_ID": "N/A",
+  "SLURM_ARRAY_TASK_ID": "N/A",
+  "SLURMD_NODENAME": "tesla1",
+  "SLURM_GPUS_ON_NODE": "2",
+  "SLURM_CPUS_PER_TASK": "16",
+  "SLURM_MEM_PER_NODE": "131072"
+}
+2026-04-22 01:03:45,977 [INFO] hormuz.slurm: === Module 1: Scenario Generation (run_id=20260422_004820) ===
+2026-04-22 01:03:45,999 [INFO] src.common.wandb_logger: wandb is not installed; pipeline will run without Weights & Biases logging. Install with `pip install -e .[wandb]` to enable.
+[failure] Recorded bash failure for stage=stonybrook_ai_cluster_01_scenarios task=22896-single exit=1: Python invocation exited with code 1: python slurm/scripts/run_scenarios.py
+[failure] /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260422_004820_stonybrook_ai_cluster_01_scenarios_bash_failure_22896-single.json
+[safe_python] continue_on_failure=0 -> propagating exit code 1.
+[fatal] Module 1 failed (exit=1); aborting pipeline.
+[vllm] stopping sidecar (pid=4166407)

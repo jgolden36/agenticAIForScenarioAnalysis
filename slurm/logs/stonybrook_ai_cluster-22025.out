@@ -1,0 +1,56 @@
+[wandb] project=hormuz-pipeline group=20260421_013831 mode=offline
+[wandb] dir=/home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260421_013831 per_task=1
+[wandb] runs will be written to /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260421_013831; sync later with:
+[wandb]   wandb sync /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260421_013831/wandb/offline-run-*
+================================================================
+  Hormuz Pipeline — Stony Brook AI Cluster (single-node driver)
+================================================================
+  Job ID:        22025
+  Run ID:        20260421_013831
+  Node:          ai05
+  Partition:     defq
+  Nodelist:      quadro2
+  CPUs:          16
+  GPUs (gres):   2
+  Memory:        131072 MB
+  Walltime cap:  from-script
+  Project root:  /home/dagolden/agenticAIForScenarioAnalysis
+  Conda env:     hormuz
+  Config:        /home/dagolden/agenticAIForScenarioAnalysis/slurm/config/pipeline_cluster.yaml
+  Scratch:       <unset, using project root>
+  Run log dir:   /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/20260421_013831
+  Driver out:    /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/stonybrook_ai_cluster-22025.out
+  Driver err:    /home/dagolden/agenticAIForScenarioAnalysis/slurm/logs/stonybrook_ai_cluster-22025.err
+  W&B project:   hormuz-pipeline (mode=offline, group=20260421_013831)
+  Started at:    2026-04-21T01:38:31Z
+================================================================
+[progress] loading Lmod modules...
+[module] anaconda not available; relying on PATH
+[module] no cuda module loaded
+[module] no cudnn module loaded
+[progress] modules done.
+[progress] activating conda env 'hormuz'...
+[conda] using CONDA_EXE=/home/dagolden/miniconda3/bin/conda
+[conda] conda base: /home/dagolden/miniconda3
+[conda] activating 'hormuz'...
+[conda] activate hormuz failed (rc=0)
+[conda]   available envs on this node:
+[conda]     
+[conda]     # conda environments:
+[conda]     #
+[conda]     csi_subsidy_env        /home/dagolden/.conda/envs/csi_subsidy_env
+[conda]     jax_gpu_env            /home/dagolden/.conda/envs/jax_gpu_env
+[conda]     jax_parallel_env       /home/dagolden/.conda/envs/jax_parallel_env
+[conda]     longterm_env           /home/dagolden/.conda/envs/longterm_env
+[conda]     longterm_jax_env       /home/dagolden/.conda/envs/longterm_jax_env
+[conda]                            /home/dagolden/.local/share/mamba/envs/econgym-speedups
+[conda]                            /home/dagolden/Electricity/.micromamba/envs/ivdid
+[conda]                            /home/dagolden/Electricity/Code/.micromamba/envs/ivdid
+[conda]     base                 * /home/dagolden/miniconda3
+[conda]     longterm_env           /home/dagolden/miniconda3/envs/longterm_env
+[conda]     myenv                  /home/dagolden/miniconda3/envs/myenv
+[conda]     transmission_env       /home/dagolden/miniconda3/envs/transmission_env
+[conda]     
+[failure] Recorded bash failure for stage=stonybrook_ai_cluster_setup task=22025-single exit=1: hormuz_activate_conda failed for env 'hormuz' on ai05
+[failure] /home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state/20260421_013831_stonybrook_ai_cluster_setup_bash_failure_22025-single.json
+[fatal] cannot activate conda env 'hormuz'; aborting.
