@@ -20,6 +20,7 @@ from src.common.logging import get_logger
 from src.common.types import Scenario
 from src.pipeline.config import ConsistencyConfig
 from src.pipeline.state import ConsistencyFlag, ModelExecutionResult
+from src.pipeline.upstream_to_macro import load_mapping
 
 logger = get_logger(__name__)
 
@@ -245,6 +246,79 @@ def _extract_numeric_value(outputs: dict[str, Any], variable: str) -> float | No
         return None
 
 
+def check_upstream_overrides(
+    scenario_id: Scenario,
+    results: list[ModelExecutionResult],
+    threshold_pct: float | None = None,
+) -> list[ConsistencyFlag]:
+    """Flag macro models whose LLM-extracted shocks disagreed with the
+    upstream-computed values that replaced them.
+
+    Walks each macro execution result's
+    ``outputs["_upstream_overrides"]`` (populated by
+    :func:`src.pipeline.upstream_to_macro.merge_into_params` via either
+    the local LangGraph orchestrator or the SLURM macro dispatcher)
+    and emits a :class:`ConsistencyFlag` whenever the recorded
+    ``deviation_pct`` exceeds ``threshold_pct``. Records with no
+    LLM value (``llm_value`` was ``None``) are skipped because
+    no comparison is possible.
+
+    Args:
+        scenario_id: The scenario being checked.
+        results: All execution results for this scenario.
+        threshold_pct: Override the default deviation threshold from
+            ``configs/upstream_to_macro_mapping.yaml`` (defaults to 50%
+            when neither argument nor YAML supplies a value).
+    """
+    flags: list[ConsistencyFlag] = []
+    if threshold_pct is None:
+        threshold_pct = load_mapping().warn_threshold_pct
+
+    for r in results:
+        outputs = r.outputs or {}
+        overrides = outputs.get("_upstream_overrides") or []
+        if not isinstance(overrides, list):
+            continue
+        for rec in overrides:
+            if not isinstance(rec, dict):
+                continue
+            deviation = rec.get("deviation_pct")
+            if deviation is None:
+                continue
+            try:
+                deviation_f = float(deviation)
+            except (TypeError, ValueError):
+                continue
+            if deviation_f <= threshold_pct:
+                continue
+            target_key = rec.get("target_key")
+            field_label = (
+                f"{rec.get('name')}[{target_key}]" if target_key else rec.get("name")
+            )
+            source_model_id = str(rec.get("source_model_id") or "unknown")
+            flag = ConsistencyFlag(
+                scenario_id=scenario_id,
+                model_a_id=str(r.model_id),
+                model_b_id=source_model_id,
+                variable=str(field_label),
+                value_a=rec.get("llm_value"),
+                value_b=rec.get("computed_value"),
+                tolerance_pct=threshold_pct,
+                deviation_pct=round(deviation_f, 2),
+                message=(
+                    f"LLM-extracted vs upstream-computed disagreement on "
+                    f"{r.model_id} input {field_label}: "
+                    f"LLM={rec.get('llm_value')}, "
+                    f"{source_model_id}={rec.get('computed_value')} "
+                    f"(deviation: {deviation_f:.1f}%, threshold: {threshold_pct}%)"
+                ),
+            )
+            flags.append(flag)
+            logger.warning(f"Upstream-override consistency flag: {flag.message}")
+
+    return flags
+
+
 def check_consistency(
     scenario_id: Scenario,
     results: list[ModelExecutionResult],
@@ -267,6 +341,12 @@ def check_consistency(
     results_by_model: dict[str, ModelExecutionResult] = {
         r.model_id: r for r in results if r.outputs
     }
+
+    # Surface every "the LLM said X, the upstream model said Y" mismatch
+    # the merge barrier recorded. These are macro-input disagreements,
+    # not model-vs-model output disagreements, so they live alongside
+    # rather than inside the rule loop below.
+    flags.extend(check_upstream_overrides(scenario_id, results))
 
     rules = get_consistency_rules()
 

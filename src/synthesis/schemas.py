@@ -8,7 +8,15 @@ from src.common.types import OutcomeScope, Scenario, TimeHorizon
 
 
 class SynthesizedOutcome(BaseModel):
-    """A single synthesized outcome variable."""
+    """A single synthesized outcome variable.
+
+    Distributional fields (``regional_distribution``,
+    ``sectoral_distribution``, ``distribution_note``,
+    ``native_regional_records``) are optional and are pre-populated by
+    the synthesizer from upstream model outputs *before* the LLM call,
+    so the LLM never invents region- or sector-level numbers — it only
+    writes ``distribution_note`` to summarise winners and losers.
+    """
 
     variable: str
     value: str
@@ -16,6 +24,10 @@ class SynthesizedOutcome(BaseModel):
     source_model_id: str
     narrative: str = ""
     reliability_note: str = ""
+    regional_distribution: dict[str, float] | None = None
+    sectoral_distribution: dict[str, float] | None = None
+    distribution_note: str = ""
+    native_regional_records: list[dict] = Field(default_factory=list)
 
 
 class ScopedSynthesis(BaseModel):

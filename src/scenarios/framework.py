@@ -85,10 +85,57 @@ class ScenarioMatrix(BaseModel):
         ]
 
 
+class PrescribedScenario(BaseModel):
+    """A scenario prescribed outside the 2x2 matrix.
+
+    Schwartz scenario planning treats the 2x2 matrix as the analytic
+    backbone, but real crisis assessments routinely add a small number
+    of *prescribed* scenarios -- tail-risk cases, reference baselines,
+    or "stress tests" that fix specific parameter values to probe
+    sensitivity. ``PrescribedScenario`` lets the framework spec carry
+    those alongside the matrix quadrants.
+
+    The ``scenario_id`` must match a value in ``src.common.types.Scenario``
+    (e.g. ``"infrastructure_collapse"``). ``narrative_seeds`` are short,
+    high-priority facts the LLM must incorporate verbatim into the
+    generated narrative -- they are how we force, for example, the
+    "desalination plants destroyed" assumption into Module 1's output
+    so it survives parameter extraction in Module 2.
+    """
+
+    scenario_id: str = Field(
+        description=(
+            "String identifier matching a value in src.common.types.Scenario. "
+            "Used by downstream pipeline components to thread the scenario "
+            "through parameter extraction, model execution, and synthesis."
+        ),
+    )
+    label: str = Field(description="Short descriptive name for the scenario.")
+    summary: str = Field(
+        default="",
+        description="One-paragraph summary of what makes this scenario distinct.",
+    )
+    narrative_seeds: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Concrete facts / parameter targets the generated narrative MUST "
+            "incorporate (e.g. 'desalination capacity reduced 60-80%'). These "
+            "are passed verbatim to the scenario-generation prompt so the "
+            "downstream parameter extractor sees them in the narrative."
+        ),
+    )
+
+
 class ScenarioFramework(BaseModel):
     """Complete Schwartz scenario framework specification.
 
     This is the structured input to Module 1 (scenario generation).
+
+    The scenario set ultimately produced by Module 1 is the union of
+    the 2x2 matrix quadrants (always 4) and any ``additional_scenarios``
+    declared in the framework YAML. ``additional_scenarios`` is the
+    extension point for tail-risk / reference / stress-test cases that
+    don't sit naturally on the matrix axes.
     """
 
     focal_issue: FocalIssue
@@ -98,3 +145,16 @@ class ScenarioFramework(BaseModel):
         default_factory=list
     )
     scenario_matrix: ScenarioMatrix
+    additional_scenarios: list[PrescribedScenario] = Field(
+        default_factory=list,
+        description=(
+            "Prescribed scenarios outside the 2x2 matrix (tail-risk, "
+            "reference, or stress-test cases). Each must have a "
+            "scenario_id that matches a value in src.common.types.Scenario."
+        ),
+    )
+
+    @property
+    def total_scenarios(self) -> int:
+        """Total scenario count = matrix quadrants + additional scenarios."""
+        return len(self.scenario_matrix.quadrants) + len(self.additional_scenarios)

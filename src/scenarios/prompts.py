@@ -42,10 +42,25 @@ Y-axis: {uncertainty_y_name}
 {key_factors}
 
 ## Required Scenarios
+
+### Matrix quadrants (always required)
 {quadrant_descriptions}
 
+### Additional prescribed scenarios (tail-risk / stress tests)
+These scenarios sit outside the 2x2 matrix and are mandatory in addition \
+to the quadrants. When a prescribed scenario lists "Required facts to \
+incorporate verbatim", you MUST embed those facts into the narrative_timeline \
+and reflect them in the quantitative_assumptions so downstream parameter \
+extraction can pick them up.
+
+{additional_scenarios}
+
 For each scenario, provide:
-- scenario_id: The scenario letter (A, B, C, or D)
+- scenario_id: One of "swift_contained", "prolonged_contained", \
+"swift_escalated", "prolonged_escalated" (for the four matrix quadrants A-D \
+respectively), or the explicit scenario_id given by a prescribed scenario \
+above (e.g. "infrastructure_collapse"). Use these snake_case strings, \
+NOT the letters A/B/C/D.
 - label: A descriptive short name
 - description: A 1-2 sentence summary
 - narrative_timeline: A detailed multi-paragraph narrative with specific timeline

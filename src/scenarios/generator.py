@@ -21,7 +21,9 @@ def _format_framework_inputs(inputs: dict) -> dict:
     """Format framework data structures into prompt template variables."""
     framework: ScenarioFramework = inputs["framework"]
     crisis_description: str = inputs["crisis_description"]
-    num_scenarios: int = inputs.get("num_scenarios", 4)
+    # If the caller didn't pin num_scenarios, derive it from the framework
+    # so adding entries to ``additional_scenarios`` is a one-file change.
+    num_scenarios: int = inputs.get("num_scenarios") or framework.total_scenarios
 
     predetermined = "\n".join(
         f"- {pe.name}: {pe.description}" for pe in framework.predetermined_elements
@@ -34,8 +36,28 @@ def _format_framework_inputs(inputs: dict) -> dict:
         f"- {kf.name}: {kf.description}" for kf in framework.key_factors
     )
     quadrants = framework.scenario_matrix.quadrants
-    quadrant_descriptions = "\n".join(
-        f"- Scenario {q['label']}: {q['x']} + {q['y']}" for q in quadrants
+    quadrant_lines = [
+        f"- Scenario {q['label']} (scenario_id derived from matrix): "
+        f"{q['x']} + {q['y']}"
+        for q in quadrants
+    ]
+    additional_lines: list[str] = []
+    for ps in framework.additional_scenarios:
+        seed_block = ""
+        if ps.narrative_seeds:
+            seed_bullets = "\n    * ".join(ps.narrative_seeds)
+            seed_block = f"\n    Required facts to incorporate verbatim:\n    * {seed_bullets}"
+        summary = ps.summary or "(no summary provided)"
+        additional_lines.append(
+            f"- Prescribed scenario (scenario_id={ps.scenario_id!r}, "
+            f"label={ps.label!r}): {summary}{seed_block}"
+        )
+
+    quadrant_descriptions = "\n".join(quadrant_lines)
+    additional_scenarios_block = (
+        "\n".join(additional_lines)
+        if additional_lines
+        else "None — generate only the 2x2 matrix quadrants."
     )
 
     mx = framework.scenario_matrix
@@ -54,6 +76,7 @@ def _format_framework_inputs(inputs: dict) -> dict:
         "driving_forces": driving_forces or "None specified",
         "key_factors": key_factors or "None specified",
         "quadrant_descriptions": quadrant_descriptions,
+        "additional_scenarios": additional_scenarios_block,
     }
 
 
