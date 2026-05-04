@@ -6,7 +6,9 @@ from pathlib import Path
 from typing import Any, Literal
 
 import yaml
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
+
+from src.models.uncertainty import UncertaintyConfig
 
 
 class LLMConfig(BaseModel):
@@ -77,6 +79,14 @@ class ExecutionConfig(BaseModel):
         default_factory=list,
         description="Extra srun arguments (e.g., ['--exclusive', '--mem=32G'])",
     )
+    uncertainty: UncertaintyConfig = Field(
+        default_factory=UncertaintyConfig,
+        description=(
+            "Uncertainty quantification settings. When enabled, the "
+            "executor wraps each adapter's execute() in a perturbation/"
+            "bootstrap loop unless the adapter already returned native UQ."
+        ),
+    )
 
 
 class OutputConfig(BaseModel):
@@ -103,7 +113,23 @@ class PipelineConfig(BaseModel):
     execution: ExecutionConfig = Field(default_factory=ExecutionConfig)
     output: OutputConfig = Field(default_factory=OutputConfig)
     consistency: ConsistencyConfig = Field(default_factory=ConsistencyConfig)
+    uncertainty: UncertaintyConfig = Field(default_factory=UncertaintyConfig)
     num_scenarios: int = 5  # 4 matrix quadrants (A-D) + 1 prescribed tail-risk (E: infrastructure_collapse)
+
+    @model_validator(mode="after")
+    def _sync_uncertainty_to_execution(self) -> PipelineConfig:
+        """Keep ExecutionConfig.uncertainty in sync with the top-level config.
+
+        Users configure ``uncertainty:`` once at the top level of the
+        YAML; the executor reads it via its own ``ExecutionConfig``.
+        Mirror the top-level setting onto ``execution.uncertainty``
+        whenever the executor's copy is still at its defaults (i.e. the
+        user didn't override it explicitly).
+        """
+        exec_unc = self.execution.uncertainty
+        if exec_unc == UncertaintyConfig():
+            self.execution.uncertainty = self.uncertainty
+        return self
 
     @classmethod
     def from_yaml(cls, path: str | Path) -> PipelineConfig:

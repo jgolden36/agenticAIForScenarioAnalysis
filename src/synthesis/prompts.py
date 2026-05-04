@@ -151,3 +151,74 @@ SECTION_SYNTHESIS_PROMPT = ChatPromptTemplate.from_messages(
         ("human", SECTION_SYNTHESIS_HUMAN),
     ]
 )
+
+
+# ====================================================================
+# Uncertainty-interpretation prompt (one extra LLM call per scenario
+# when uncertainty quantification is enabled).
+# ====================================================================
+#
+# This call is *qualitative only*. The numeric quantiles are computed
+# by src/models/uncertainty.py from the perturbation replicates (or
+# from the adapter's native UQ) and are pre-attached to each
+# SynthesizedOutcome.uncertainty before the LLM is asked anything.
+# The LLM's job is to read the band widths and tell the analyst what
+# they mean for confidence in the scenario's findings — never to
+# generate, modify, or paraphrase the numbers themselves.
+
+UNCERTAINTY_INTERPRETATION_SYSTEM = """You are a quantitative-decision analyst interpreting the uncertainty \
+profile of a multi-model crisis scenario. Your inputs are pre-computed model output bands \
+(p05, p25, p50, p75, p95) — these came from the underlying domain models, not from you.
+
+Critical rules:
+1. You MUST NOT invent, paraphrase, or restate any numeric value that is not already present \
+in the band table below. Refer to outputs by name (e.g. "GDP impact (pycge)") instead.
+2. You write a qualitative reading: which findings are tight enough to act on, which are \
+loose enough that the central estimate should be treated as illustrative, and what that \
+means for the analyst's decision posture.
+3. Distinguish between "models agree on a central value with narrow bands" (high confidence), \
+"models agree on direction but have wide bands" (medium confidence), and "p05-p95 spans a \
+decision-relevant threshold" (low confidence — the central estimate is one draw among many).
+4. Note when uncertainty is concentrated in one tier (e.g. macro CGE GDP wide; commodity \
+prices tight) — that has different implications than uniformly wide bands.
+
+Output your response as valid JSON matching the UncertaintyInterpretation schema."""
+
+UNCERTAINTY_INTERPRETATION_HUMAN = """Interpret the uncertainty profile of this scenario.
+
+## Scenario: {scenario_id} — {scenario_label}
+
+### Scenario Narrative
+{scenario_description}
+
+### Uncertainty quantification method
+Method: {uncertainty_method}
+Replicates per model (when applicable): {n_replicates}
+Note: bands below are pre-computed from those replicates (or from the adapter's native \
+UQ where available). You must NOT modify or restate any numeric value below.
+
+### Per-outcome uncertainty bands
+Each row shows mean, std, and the p05-p95 spread for one (model, output) pair.
+Bands are formatted as `mean ± std  [p05 – p95]`.
+
+{uncertainty_table}
+
+### Outcomes with no uncertainty data
+{models_without_uq}
+
+Produce an `UncertaintyInterpretation` with:
+- a 2-4 sentence `summary` of the overall confidence picture
+- `high_confidence_findings`: outcomes whose bands are tight enough to plan against (cite \
+the variable + source model exactly as listed in the table)
+- `low_confidence_findings`: outcomes whose bands span a decision-relevant threshold
+- `decision_implications`: how the analyst should weight this scenario's findings given \
+the uncertainty profile.
+
+Never introduce numbers that are not in the table above."""
+
+UNCERTAINTY_INTERPRETATION_PROMPT = ChatPromptTemplate.from_messages(
+    [
+        ("system", UNCERTAINTY_INTERPRETATION_SYSTEM),
+        ("human", UNCERTAINTY_INTERPRETATION_HUMAN),
+    ]
+)

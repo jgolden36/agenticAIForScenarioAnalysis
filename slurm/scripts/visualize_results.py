@@ -407,6 +407,217 @@ def plot_quantitative_heatmap(rows: list[dict], out: Path) -> Path | None:
 
 
 # --------------------------------------------------------------------
+# Figure: per-output uncertainty bands (error-bar plots).
+#
+# Driven by ``uncertainty_bands.csv`` (written by export_results.py
+# when any model returned an UncertaintyReport). One panel per
+# (model_id, output_key) showing scenario-by-scenario p05-p95 bars
+# with the median (p50) marked.
+# --------------------------------------------------------------------
+
+
+def plot_uncertainty_error_bars(
+    rows: list[dict], out: Path, max_panels: int = 24
+) -> Path | None:
+    """Forest-style error-bar grid of p05-p95 uncertainty bands.
+
+    Each panel = one (model, output_key). Within a panel, each row is
+    one scenario; the horizontal bar shows the p05-p95 range, and a
+    dot marks the p50 (or mean when p50 is missing). Multi-output
+    runs get a 2-column grid; single-output runs get one tall panel.
+
+    Returns ``None`` when matplotlib is missing or there are no UQ
+    rows (so the dashboard simply omits the figure rather than
+    erroring).
+    """
+    if not HAS_MPL or not rows:
+        return None
+
+    # Group rows by (model_id, output_key) -> {scenario_id: row}.
+    panels: dict[tuple[str, str], dict[str, dict]] = defaultdict(dict)
+    for r in rows:
+        model = r.get("model_id") or "?"
+        key = r.get("output_key") or "?"
+        scen = r.get("scenario_id") or "?"
+        panels[(model, key)][scen] = r
+
+    if not panels:
+        return None
+
+    # Score panels by total band width (p95-p05 across scenarios) so the
+    # plot prioritises outputs where uncertainty actually matters when
+    # we have to truncate.
+    def _band_width(panel: dict[str, dict]) -> float:
+        spread = 0.0
+        for r in panel.values():
+            p05 = _coerce_float(r.get("p05"))
+            p95 = _coerce_float(r.get("p95"))
+            if p05 is not None and p95 is not None:
+                spread = max(spread, p95 - p05)
+        return spread
+
+    panel_keys = sorted(panels.keys(), key=lambda k: -_band_width(panels[k]))
+    truncated = len(panel_keys) > max_panels
+    panel_keys = panel_keys[:max_panels]
+
+    n = len(panel_keys)
+    cols = 2 if n > 1 else 1
+    rows_grid = (n + cols - 1) // cols
+    fig, axes = plt.subplots(
+        rows_grid, cols,
+        figsize=(7.5 * cols, max(2.4, 1.0 * rows_grid + 0.6 * n / cols)),
+        squeeze=False,
+    )
+
+    for idx, (model, key) in enumerate(panel_keys):
+        ax = axes[idx // cols][idx % cols]
+        panel = panels[(model, key)]
+        scenarios = sorted(panel.keys())
+        ys = list(range(len(scenarios)))
+        means = [_coerce_float(panel[s].get("mean")) for s in scenarios]
+        p50s = [_coerce_float(panel[s].get("p50")) for s in scenarios]
+        p05s = [_coerce_float(panel[s].get("p05")) for s in scenarios]
+        p95s = [_coerce_float(panel[s].get("p95")) for s in scenarios]
+        p25s = [_coerce_float(panel[s].get("p25")) for s in scenarios]
+        p75s = [_coerce_float(panel[s].get("p75")) for s in scenarios]
+        centers = [m if m is not None else (p if p is not None else 0.0)
+                   for m, p in zip(p50s, means)]
+
+        # 90% band (p05-p95) as a thin error bar; 50% band (p25-p75) as
+        # a thicker overlay so the analyst can read both at once.
+        for y, lo, hi in zip(ys, p05s, p95s):
+            if lo is None or hi is None:
+                continue
+            ax.plot([lo, hi], [y, y], color="#1f77b4", lw=1.3,
+                    solid_capstyle="butt", alpha=0.7)
+        for y, lo, hi in zip(ys, p25s, p75s):
+            if lo is None or hi is None:
+                continue
+            ax.plot([lo, hi], [y, y], color="#1f77b4", lw=4.5,
+                    solid_capstyle="butt", alpha=0.95)
+        ax.scatter(
+            [c for c in centers], ys,
+            color="#d62728", zorder=3, s=22,
+            label="median" if idx == 0 else None,
+        )
+
+        ax.set_yticks(ys)
+        ax.set_yticklabels(scenarios, fontsize=8)
+        ax.invert_yaxis()
+        ax.set_title(f"{model} · {key}", fontsize=9)
+        ax.grid(axis="x", alpha=0.25, linestyle=":")
+        ax.tick_params(axis="x", labelsize=7)
+
+    # Hide any leftover panels in the grid.
+    for j in range(n, rows_grid * cols):
+        axes[j // cols][j % cols].axis("off")
+
+    title = "Per-output uncertainty: 90% band (thin), 50% band (thick), median (dot)"
+    if truncated:
+        title += f"\n(showing {len(panel_keys)} widest panels of {len(panels)})"
+    fig.suptitle(title, fontsize=11)
+    fig.tight_layout(rect=(0, 0, 1, 0.96))
+    fig.savefig(out, dpi=140)
+    plt.close(fig)
+    return out
+
+
+def plot_synthesis_outcomes_with_bands(
+    rows: list[dict], out: Path
+) -> Path | None:
+    """Bar chart of synthesis outcomes with p05-p95 whiskers when available.
+
+    Reads from ``quantitative_results.csv`` (extended schema with
+    ``mean`` / ``p05`` / ``p95``). Picks the most informative
+    headline-numeric rows per scenario — those whose 90% band is
+    widest in absolute terms — and plots them grouped by scenario so
+    a reviewer immediately sees scale and uncertainty side by side.
+    """
+    if not HAS_MPL or not rows:
+        return None
+    have_band_rows: list[dict] = []
+    for r in rows:
+        if (r.get("is_numeric") or "").lower() != "true":
+            continue
+        if _coerce_float(r.get("p05")) is None:
+            continue
+        if _coerce_float(r.get("p95")) is None:
+            continue
+        have_band_rows.append(r)
+    if not have_band_rows:
+        return None
+
+    # Pick the top 8 (model, output) pairs by mean band width.
+    by_pair: dict[tuple[str, str], list[dict]] = defaultdict(list)
+    for r in have_band_rows:
+        by_pair[(r.get("model_id") or "?", r.get("output_key") or "?")].append(r)
+
+    def _avg_width(rs: list[dict]) -> float:
+        widths: list[float] = []
+        for r in rs:
+            lo = _coerce_float(r.get("p05"))
+            hi = _coerce_float(r.get("p95"))
+            if lo is not None and hi is not None:
+                widths.append(hi - lo)
+        return sum(widths) / len(widths) if widths else 0.0
+
+    pairs = sorted(by_pair.keys(), key=lambda k: -_avg_width(by_pair[k]))[:8]
+    if not pairs:
+        return None
+    scenarios = sorted({
+        r.get("scenario_id") for rs in by_pair.values() for r in rs
+        if r.get("scenario_id")
+    })
+    if not scenarios:
+        return None
+
+    fig, axes = plt.subplots(
+        len(pairs), 1,
+        figsize=(max(7.0, 1.4 * len(scenarios) + 4.0), 1.6 * len(pairs) + 1.0),
+        squeeze=False,
+    )
+    for i, (model, key) in enumerate(pairs):
+        ax = axes[i][0]
+        rs = {r.get("scenario_id"): r for r in by_pair[(model, key)]}
+        xs = list(range(len(scenarios)))
+        means = [_coerce_float(rs.get(s, {}).get("mean") or rs.get(s, {}).get("value_numeric"))
+                 for s in scenarios]
+        p05s = [_coerce_float(rs.get(s, {}).get("p05")) for s in scenarios]
+        p95s = [_coerce_float(rs.get(s, {}).get("p95")) for s in scenarios]
+        # Asymmetric error bars relative to the mean.
+        lower_err: list[float] = []
+        upper_err: list[float] = []
+        valid_means: list[float] = []
+        for m, lo, hi in zip(means, p05s, p95s):
+            if m is None:
+                valid_means.append(0.0)
+                lower_err.append(0.0)
+                upper_err.append(0.0)
+                continue
+            valid_means.append(m)
+            lower_err.append(max(0.0, m - lo) if lo is not None else 0.0)
+            upper_err.append(max(0.0, hi - m) if hi is not None else 0.0)
+        ax.bar(xs, valid_means, color="#4c72b0", alpha=0.75)
+        ax.errorbar(
+            xs, valid_means,
+            yerr=[lower_err, upper_err],
+            fmt="none", ecolor="#222", capsize=4, lw=1.3,
+        )
+        ax.set_xticks(xs)
+        ax.set_xticklabels(scenarios, rotation=15, ha="right", fontsize=8)
+        ax.set_title(f"{model} · {key}", fontsize=9)
+        ax.grid(axis="y", alpha=0.25, linestyle=":")
+        ax.tick_params(axis="y", labelsize=7)
+    fig.suptitle(
+        "Headline outcomes with 90% uncertainty band (p05-p95)", fontsize=11
+    )
+    fig.tight_layout(rect=(0, 0, 1, 0.97))
+    fig.savefig(out, dpi=140)
+    plt.close(fig)
+    return out
+
+
+# --------------------------------------------------------------------
 # Figure: consistency flags (severity bar). Only when present.
 # --------------------------------------------------------------------
 
@@ -1291,6 +1502,7 @@ def main(argv: list[str] | None = None) -> int:
     regional_native_rows = _read_csv(csv_dir / "regional_outcomes_native.csv")
     sectoral_rows = _read_csv(csv_dir / "sectoral_outcomes.csv")
     synthesis_dist_rows = _read_csv(csv_dir / "synthesis_distributions.csv")
+    uncertainty_rows = _read_csv(csv_dir / "uncertainty_bands.csv")
 
     figures: dict[str, Path] = {}
     try:
@@ -1319,6 +1531,16 @@ def main(argv: list[str] | None = None) -> int:
         )
         if p:
             figures["consistency"] = p
+        p = plot_uncertainty_error_bars(
+            uncertainty_rows, fig_dir / "uncertainty_error_bars.png"
+        )
+        if p:
+            figures["uncertainty_error_bars"] = p
+        p = plot_synthesis_outcomes_with_bands(
+            quantitative_rows, fig_dir / "synthesis_outcomes_with_bands.png"
+        )
+        if p:
+            figures["uncertainty_outcomes_bars"] = p
         p = plot_regional_impact_heatmap(
             regional_unified_rows, fig_dir / "regional_impact_heatmap.png"
         )

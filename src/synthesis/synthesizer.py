@@ -32,7 +32,11 @@ from src.pipeline.state import (
     ScenarioNarrativeState,
 )
 from src.synthesis.consistency import check_consistency
-from src.synthesis.prompts import SECTION_SYNTHESIS_PROMPT, SYNTHESIS_PROMPT
+from src.synthesis.prompts import (
+    SECTION_SYNTHESIS_PROMPT,
+    SYNTHESIS_PROMPT,
+    UNCERTAINTY_INTERPRETATION_PROMPT,
+)
 from src.synthesis.regional import (
     RegionalRecord,
     aggregate_sectoral,
@@ -46,6 +50,7 @@ from src.synthesis.schemas import (
     ScenarioSynthesis,
     ScopedSynthesis,
     SynthesizedOutcome,
+    UncertaintyInterpretation,
 )
 from src.synthesis.sectioning import (
     CATCH_ALL_SECTION,
@@ -155,6 +160,30 @@ def _format_distribution_dict(label: str, dist: dict[str, float] | None) -> str 
     return f"  - {label}: {rendered}"
 
 
+def _format_uncertainty_bullet(unc: dict[str, float] | None) -> str | None:
+    """Render the per-outcome uncertainty band as a Markdown sub-bullet."""
+    if not unc:
+        return None
+    mean = unc.get("mean")
+    std = unc.get("std")
+    p05 = unc.get("p05")
+    p95 = unc.get("p95")
+    parts: list[str] = []
+    if mean is not None and std is not None:
+        try:
+            parts.append(f"mean={float(mean):g} ± {float(std):g}")
+        except (TypeError, ValueError):
+            pass
+    if p05 is not None and p95 is not None:
+        try:
+            parts.append(f"90% CI [{float(p05):g}, {float(p95):g}]")
+        except (TypeError, ValueError):
+            pass
+    if not parts:
+        return None
+    return "  - uncertainty: " + "; ".join(parts)
+
+
 def _format_outcome_bullet(outcome: SynthesizedOutcome) -> str:
     """Render a single SynthesizedOutcome as a Markdown bullet."""
     unit = f" {outcome.unit}" if outcome.unit else ""
@@ -174,6 +203,11 @@ def _format_outcome_bullet(outcome: SynthesizedOutcome) -> str:
         line += f"\n{sd}"
     if outcome.distribution_note:
         line += f"\n  - distributional note: {outcome.distribution_note}"
+    ub = _format_uncertainty_bullet(outcome.uncertainty)
+    if ub:
+        line += f"\n{ub}"
+    if outcome.uncertainty_note:
+        line += f"\n  - uncertainty interpretation: {outcome.uncertainty_note}"
     return line
 
 
@@ -210,6 +244,31 @@ def render_scenario_markdown(synthesis: ScenarioSynthesis) -> str:
     else:
         lines.append("_No synthesized sections produced for this scenario._")
         lines.append("")
+
+    if synthesis.uncertainty_interpretation is not None:
+        interp = synthesis.uncertainty_interpretation
+        lines.append("## Uncertainty interpretation")
+        lines.append("")
+        lines.append(
+            f"_Method: {synthesis.uncertainty_method}_"
+        )
+        lines.append("")
+        if interp.summary:
+            lines.append(interp.summary)
+            lines.append("")
+        if interp.high_confidence_findings:
+            lines.append("**High-confidence findings:**")
+            for f in interp.high_confidence_findings:
+                lines.append(f"- {f}")
+            lines.append("")
+        if interp.low_confidence_findings:
+            lines.append("**Low-confidence findings:**")
+            for f in interp.low_confidence_findings:
+                lines.append(f"- {f}")
+            lines.append("")
+        if interp.decision_implications:
+            lines.append(f"**Decision implications:** {interp.decision_implications}")
+            lines.append("")
 
     if synthesis.consistency_warnings:
         lines.append("## Cross-model consistency warnings")
@@ -307,6 +366,230 @@ def _attach_distributional_data(
     return synthesis
 
 
+def _extract_uncertainty_estimate(
+    result: ModelExecutionResult, output_key: str
+) -> dict[str, float] | None:
+    """Pull mean/std/quantiles for a single output from a result's UQ report.
+
+    Returns ``None`` when no uncertainty was recorded for this
+    (result, output_key) pair, so the LLM and downstream consumers can
+    cleanly distinguish "not estimated" from "estimated as zero".
+    """
+    if not result.uncertainty:
+        return None
+    estimates = result.uncertainty.get("estimates") or {}
+    est = estimates.get(output_key)
+    if not isinstance(est, dict):
+        return None
+    out: dict[str, float] = {}
+    for field in ("mean", "std"):
+        if field in est:
+            try:
+                out[field] = float(est[field])
+            except (TypeError, ValueError):
+                pass
+    quantiles = est.get("quantiles") or {}
+    if isinstance(quantiles, dict):
+        for k, v in quantiles.items():
+            try:
+                out[str(k)] = float(v)
+            except (TypeError, ValueError):
+                continue
+    return out or None
+
+
+def _attach_uncertainty_to_outcomes(
+    synthesis: ScenarioSynthesis,
+    results: list[ModelExecutionResult],
+) -> ScenarioSynthesis:
+    """Populate ``SynthesizedOutcome.uncertainty`` from each result's UQ report.
+
+    Matching strategy: walk every outcome, look up the source model's
+    result, then probe its uncertainty estimates for keys that the
+    outcome's variable name plausibly refers to. We try
+    (a) the literal variable name, (b) lowercased variable, and (c) any
+    known alias mapping. When nothing matches, leave the field None —
+    the LLM's uncertainty interpretation will simply not cite that
+    outcome.
+    """
+    if not results:
+        return synthesis
+    by_id = {r.model_id: r for r in results}
+    for section in synthesis.sections:
+        for outcome in section.outcomes:
+            res = by_id.get(outcome.source_model_id)
+            if res is None or not res.uncertainty:
+                continue
+            candidates = [
+                outcome.variable,
+                outcome.variable.lower(),
+                outcome.variable.replace(" ", "_").lower(),
+            ]
+            for candidate in candidates:
+                est = _extract_uncertainty_estimate(res, candidate)
+                if est is not None:
+                    outcome.uncertainty = est
+                    break
+    return synthesis
+
+
+def _format_uncertainty_table(
+    results: list[ModelExecutionResult],
+    max_rows_per_model: int = 12,
+) -> str:
+    """Render every result's UQ report as a Markdown table.
+
+    Each row is one (model, output_key) pair. Numeric values are kept
+    in their native units — the LLM is forbidden from rewriting them.
+    """
+    lines: list[str] = []
+    for r in results:
+        if not r.uncertainty:
+            continue
+        estimates = r.uncertainty.get("estimates") or {}
+        if not estimates:
+            continue
+        method = r.uncertainty.get("method", "?")
+        n = r.uncertainty.get("n_replicates", "?")
+        lines.append(f"### {r.model_id}  (method={method}, n_replicates={n})")
+        for key, est in list(estimates.items())[:max_rows_per_model]:
+            mean = est.get("mean")
+            std = est.get("std")
+            q = est.get("quantiles") or {}
+            p05 = q.get("p05")
+            p95 = q.get("p95")
+            try:
+                line = (
+                    f"  - `{key}`: {float(mean):.4g} ± {float(std):.4g}  "
+                    f"[{float(p05):.4g} – {float(p95):.4g}]"
+                )
+            except (TypeError, ValueError):
+                line = f"  - `{key}`: (numeric values unavailable)"
+            lines.append(line)
+    return "\n".join(lines) if lines else "No uncertainty data available."
+
+
+def _format_models_without_uq(results: list[ModelExecutionResult]) -> str:
+    """List successful models that did not return uncertainty data."""
+    missing = [
+        r.model_id
+        for r in results
+        if r.status == ModelExecutionStatus.COMPLETED and not r.uncertainty
+    ]
+    if not missing:
+        return "All successful models reported uncertainty estimates."
+    return "Models without UQ data: " + ", ".join(sorted(set(missing)))
+
+
+def _aggregate_uncertainty_method(
+    results: list[ModelExecutionResult],
+) -> str:
+    """Return a single method label for the scenario.
+
+    'mixed' when multiple methods appear, the unique method when only
+    one was used, 'none' when no UQ ran.
+    """
+    methods = {
+        (r.uncertainty or {}).get("method")
+        for r in results
+        if r.uncertainty
+    } - {None}
+    if not methods:
+        return "none"
+    if len(methods) == 1:
+        return next(iter(methods))
+    return "mixed"
+
+
+def build_uncertainty_interpreter(llm: BaseChatModel) -> Runnable:
+    """Build the qualitative-uncertainty-interpretation chain.
+
+    Takes a dict with keys ``scenario_id``, ``scenario_label``,
+    ``scenario_description``, ``uncertainty_method``, ``n_replicates``,
+    ``uncertainty_table``, ``models_without_uq`` and returns an
+    ``UncertaintyInterpretation``.
+    """
+    structured_llm = llm.with_structured_output(UncertaintyInterpretation)
+    return UNCERTAINTY_INTERPRETATION_PROMPT | structured_llm
+
+
+def _interpret_uncertainty(
+    llm: BaseChatModel,
+    narrative: ScenarioNarrativeState,
+    results: list[ModelExecutionResult],
+) -> tuple[str, UncertaintyInterpretation | None]:
+    """Run the uncertainty-interpretation LLM call for one scenario.
+
+    Returns ``(method_label, interpretation)``. When no UQ data is
+    present the LLM is not invoked at all and we return
+    ``("none", None)`` — the synthesis stays alive on UQ-disabled runs.
+    """
+    method = _aggregate_uncertainty_method(results)
+    if method == "none":
+        return method, None
+    table = _format_uncertainty_table(results)
+    if table.startswith("No uncertainty data"):
+        return method, None
+    chain = build_uncertainty_interpreter(llm)
+    n_replicates = max(
+        ((r.uncertainty or {}).get("n_replicates") or 0) for r in results
+    )
+    try:
+        interp = chain.invoke({
+            "scenario_id": narrative.scenario_id.value,
+            "scenario_label": narrative.label,
+            "scenario_description": narrative.narrative,
+            "uncertainty_method": method,
+            "n_replicates": n_replicates,
+            "uncertainty_table": table,
+            "models_without_uq": _format_models_without_uq(results),
+        })
+    except Exception as exc:  # noqa: BLE001 — UQ interpretation never crashes synthesis
+        logger.warning(
+            "Uncertainty-interpretation LLM call failed for scenario %s: %s",
+            narrative.scenario_id.value,
+            exc,
+        )
+        return method, None
+    return method, interp
+
+
+async def _interpret_uncertainty_async(
+    llm: BaseChatModel,
+    narrative: ScenarioNarrativeState,
+    results: list[ModelExecutionResult],
+) -> tuple[str, UncertaintyInterpretation | None]:
+    """Async sibling of ``_interpret_uncertainty`` for parallel synthesis."""
+    method = _aggregate_uncertainty_method(results)
+    if method == "none":
+        return method, None
+    table = _format_uncertainty_table(results)
+    if table.startswith("No uncertainty data"):
+        return method, None
+    chain = build_uncertainty_interpreter(llm)
+    n_replicates = max(
+        ((r.uncertainty or {}).get("n_replicates") or 0) for r in results
+    )
+    try:
+        interp = await chain.ainvoke({
+            "scenario_id": narrative.scenario_id.value,
+            "scenario_label": narrative.label,
+            "scenario_description": narrative.narrative,
+            "uncertainty_method": method,
+            "n_replicates": n_replicates,
+            "uncertainty_table": table,
+            "models_without_uq": _format_models_without_uq(results),
+        })
+    except Exception as exc:  # noqa: BLE001
+        logger.warning(
+            "Uncertainty-interpretation LLM call failed for scenario %s: %s",
+            narrative.scenario_id.value,
+            exc,
+        )
+        return method, None
+    return method, interp
+
+
 def _format_synthesis_inputs(inputs: dict) -> dict:
     """Format all inputs for the synthesis prompt."""
     narrative: ScenarioNarrativeState = inputs["narrative"]
@@ -379,6 +662,11 @@ def run_consistency_and_synthesize(
 
     records_by_model = _collect_regional_records(results)
     synthesis = _attach_distributional_data(synthesis, records_by_model)
+    synthesis = _attach_uncertainty_to_outcomes(synthesis, results)
+
+    method, interp = _interpret_uncertainty(llm, narrative, results)
+    synthesis.uncertainty_method = method
+    synthesis.uncertainty_interpretation = interp
 
     return flags, synthesis
 
@@ -427,6 +715,13 @@ async def synthesize_all_scenarios(
 
             records_by_model = _collect_regional_records(results)
             synthesis = _attach_distributional_data(synthesis, records_by_model)
+            synthesis = _attach_uncertainty_to_outcomes(synthesis, results)
+
+            method, interp = await _interpret_uncertainty_async(
+                llm, narrative, results
+            )
+            synthesis.uncertainty_method = method
+            synthesis.uncertainty_interpretation = interp
 
             return flags, synthesis
 
@@ -855,5 +1150,13 @@ def synthesize_by_section(
     # path does. The LLM never authors these dicts; they come from the
     # upstream model outputs.
     aggregated = _attach_distributional_data(aggregated, all_records)
+
+    # Same for per-outcome uncertainty bands and the scenario-level
+    # interpretation: numeric quantiles come from each model's
+    # UncertaintyReport; the LLM only writes the qualitative reading.
+    aggregated = _attach_uncertainty_to_outcomes(aggregated, results)
+    method, interp = _interpret_uncertainty(llm, narrative, results)
+    aggregated.uncertainty_method = method
+    aggregated.uncertainty_interpretation = interp
 
     return flags, aggregated, section_metrics

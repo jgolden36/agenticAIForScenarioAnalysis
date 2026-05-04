@@ -477,10 +477,29 @@ def write_synthesis_distributions_csv(
     return out
 
 
+def _uncertainty_for(result: dict, output_key: str) -> dict | None:
+    """Pull the UncertaintyReport entry for a given (result, output_key)."""
+    unc = result.get("uncertainty") or None
+    if not isinstance(unc, dict):
+        return None
+    estimates = unc.get("estimates") or {}
+    est = estimates.get(output_key)
+    if not isinstance(est, dict):
+        return None
+    return est
+
+
 def write_quantitative_results_csv(
     run_id: str, model_results: list[dict]
 ) -> Path:
-    """Long-form table of every scalar output across every completed model."""
+    """Long-form table of every scalar output across every completed model.
+
+    When uncertainty quantification is enabled, additional columns
+    ``mean``, ``std``, ``p05``, ``p25``, ``p50``, ``p75``, ``p95``,
+    and ``uncertainty_method`` are populated for rows whose source
+    model returned an UncertaintyReport. Rows without UQ leave those
+    columns blank — the CSV stays valid for legacy consumers.
+    """
     out = csv_root(run_id) / "quantitative_results.csv"
     header = [
         "scenario_id",
@@ -489,6 +508,14 @@ def write_quantitative_results_csv(
         "value_numeric",
         "value_raw",
         "is_numeric",
+        "uncertainty_method",
+        "mean",
+        "std",
+        "p05",
+        "p25",
+        "p50",
+        "p75",
+        "p95",
     ]
     rows: list[dict] = []
     for r in model_results:
@@ -496,17 +523,102 @@ def write_quantitative_results_csv(
             continue
         outputs = r.get("outputs") or {}
         scalars = _flatten_outputs_scalars(outputs)
+        unc_method = ""
+        unc_root = r.get("uncertainty") or {}
+        if isinstance(unc_root, dict):
+            unc_method = str(unc_root.get("method") or "")
         for k, v in scalars.items():
             coerced = _coerce_value(v)
             is_num = isinstance(coerced, (int, float)) and not isinstance(coerced, bool)
-            rows.append({
+            row = {
                 "scenario_id": r.get("scenario_id"),
                 "model_id": r.get("model_id"),
                 "output_key": k,
                 "value_numeric": coerced if is_num else "",
                 "value_raw": v,
                 "is_numeric": "true" if is_num else "false",
+                "uncertainty_method": unc_method,
+                "mean": "",
+                "std": "",
+                "p05": "",
+                "p25": "",
+                "p50": "",
+                "p75": "",
+                "p95": "",
+            }
+            est = _uncertainty_for(r, k)
+            if est:
+                if "mean" in est:
+                    row["mean"] = est["mean"]
+                if "std" in est:
+                    row["std"] = est["std"]
+                quantiles = est.get("quantiles") or {}
+                for qkey in ("p05", "p25", "p50", "p75", "p95"):
+                    if qkey in quantiles:
+                        row[qkey] = quantiles[qkey]
+            rows.append(row)
+    write_csv(out, header, rows)
+    logger.info(f"wrote {out}  ({len(rows)} rows)")
+    return out
+
+
+def write_uncertainty_bands_csv(
+    run_id: str, model_results: list[dict]
+) -> Path | None:
+    """Dedicated CSV of per-(scenario, model, output_key) uncertainty bands.
+
+    Only rows whose source model produced an UncertaintyReport are
+    included, so an empty file means no UQ data was available — useful
+    for visualizers that gate error-bar plots on file existence.
+    Returns ``None`` when the run has no UQ rows at all.
+    """
+    rows: list[dict] = []
+    for r in model_results:
+        if r.get("status") != "completed":
+            continue
+        unc = r.get("uncertainty") or {}
+        if not isinstance(unc, dict):
+            continue
+        estimates = unc.get("estimates") or {}
+        if not estimates:
+            continue
+        method = str(unc.get("method") or "")
+        n_replicates = unc.get("n_replicates", "")
+        for key, est in estimates.items():
+            if not isinstance(est, dict):
+                continue
+            quantiles = est.get("quantiles") or {}
+            rows.append({
+                "scenario_id": r.get("scenario_id"),
+                "model_id": r.get("model_id"),
+                "output_key": key,
+                "method": method,
+                "n_replicates": n_replicates,
+                "mean": est.get("mean", ""),
+                "std": est.get("std", ""),
+                "p05": quantiles.get("p05", ""),
+                "p25": quantiles.get("p25", ""),
+                "p50": quantiles.get("p50", ""),
+                "p75": quantiles.get("p75", ""),
+                "p95": quantiles.get("p95", ""),
             })
+    if not rows:
+        return None
+    out = csv_root(run_id) / "uncertainty_bands.csv"
+    header = [
+        "scenario_id",
+        "model_id",
+        "output_key",
+        "method",
+        "n_replicates",
+        "mean",
+        "std",
+        "p05",
+        "p25",
+        "p50",
+        "p75",
+        "p95",
+    ]
     write_csv(out, header, rows)
     logger.info(f"wrote {out}  ({len(rows)} rows)")
     return out
@@ -1088,6 +1200,7 @@ def main(argv: list[str] | None = None) -> int:
         write_synthesis_outcomes_csv(run_id, synthesis)
         write_consistency_flags_csv(run_id, synthesis)
         write_quantitative_results_csv(run_id, model_results)
+        write_uncertainty_bands_csv(run_id, model_results)
         write_per_model_raw_csvs(run_id, model_results)
         # Distributional CSVs: silently skipped when no spec/crosswalk
         # YAML is present or no model produced regional output.
