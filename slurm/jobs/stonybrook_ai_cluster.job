@@ -1639,6 +1639,56 @@ safe_python "${STAGE_PREFIX}_04_synthesis" 0 -- python slurm/scripts/run_synthes
 rc=$?
 
 # ==================================================================
+#  Stage 4b — Output validation (conservative per-output sanity)
+#
+# Runs configs/validation_rules.yaml against every completed model
+# result under data/pipeline_state/<run_id>_model_*.json and writes:
+#
+#   data/pipeline_state/<run_id>_validation.json
+#   data/reports/<run_id>/validation.json
+#   data/reports/<run_id>/validation.md
+#
+# The rules check three things, conservatively (only clear errors,
+# not surprising results):
+#   1. Order of magnitude — wide bounds on prices, GDP/CPI/wage/
+#      welfare percentages, supply-loss magnitudes.
+#   2. Directionality — variables whose semantics make a negative
+#      value a sign-convention bug (oil_supply_loss_mbd, *_loss_pct,
+#      *_reduction_pct, ...).
+#   3. Relations — algebraic invariants between variables in the
+#      same output dict (peak >= mean magnitudes, OPEC + non-OPEC
+#      ~= total loss, supply-loss-with-non-positive-price-shock).
+#
+# Plus an implicit NaN/Inf check on every numeric scalar a rule
+# touches. Cross-MODEL agreement (POLES-JRC vs BKR oil price etc.)
+# stays in Stage 4's consistency engine — this stage is per-output
+# sanity only.
+#
+# This stage is bash-best-effort: a non-zero return does NOT clobber
+# the synthesis stage's exit code (rc) that the job ultimately exits
+# with. To make validation errors hard-fail Stage 4b instead, set
+# HORMUZ_VALIDATION_FAIL_ON_ERROR=1 before submission and the script
+# will exit 2 when any ERROR-severity finding is produced (still
+# best-effort at the bash layer — synthesis rc remains canonical).
+# ==================================================================
+echo ""
+echo "════════════ Stage 4b: Output Validation ════════════"
+HORMUZ_VALIDATION_FAIL_ON_ERROR="${HORMUZ_VALIDATION_FAIL_ON_ERROR:-0}"
+VALIDATION_ARGS=( --run-id "${HORMUZ_RUN_ID}" )
+if [[ "$HORMUZ_VALIDATION_FAIL_ON_ERROR" == "1" ]]; then
+    VALIDATION_ARGS+=( --fail-on-error )
+    echo "[validation] HORMUZ_VALIDATION_FAIL_ON_ERROR=1 — script will exit 2 on any error finding."
+fi
+safe_python "${STAGE_PREFIX}_04b_validation" 1 -- \
+    python slurm/scripts/run_validation.py "${VALIDATION_ARGS[@]}"
+validation_rc=$?
+if [[ $validation_rc -ne 0 ]]; then
+    echo "[validation] WARNING: validation stage exited ${validation_rc}; see"
+    echo "[validation]          data/reports/${HORMUZ_RUN_ID}/validation.md for details."
+    echo "[validation]          (synthesis rc=${rc} is preserved as the job's exit status.)"
+fi
+
+# ==================================================================
 #  Stage 5 — Quantitative CSV + qualitative narrative export
 #
 # Walks every $HORMUZ_RUN_ID model_*.json under data/pipeline_state/,
@@ -1737,6 +1787,7 @@ echo "  Finished at:  $(date -u +%Y-%m-%dT%H:%M:%SZ)"
 echo "  State files:  ${PROJECT_ROOT}/data/pipeline_state/${HORMUZ_RUN_ID}_*"
 echo "  Reports:      ${PROJECT_ROOT}/data/reports/"
 echo "                  ${HORMUZ_RUN_ID}/synthesis.{json,md}        Module 4 outputs"
+echo "                  ${HORMUZ_RUN_ID}/validation.{json,md}      Stage 4b output validation report"
 echo "                  ${HORMUZ_RUN_ID}/<scenario>.md               Per-scenario synthesis"
 echo "                  ${HORMUZ_RUN_ID}/csv/model_status.csv        (scenario, model) status table"
 echo "                  ${HORMUZ_RUN_ID}/csv/synthesis_outcomes.csv  Headline outcomes table"
