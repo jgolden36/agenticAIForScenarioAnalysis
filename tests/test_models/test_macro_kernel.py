@@ -29,7 +29,9 @@ import pytest
 from src.models.base import ModelOutput
 from src.models.macro.macro_kernel import (
     GLOBAL_OIL_SUPPLY_MBD,
+    UNIFIED_REGIONS,
     compute_macro_outcomes,
+    compute_regional_macro_outcomes,
     derive_macro_from_energy_shocks,
 )
 from src.models.macro.pycge import PyCGEAdapter
@@ -369,3 +371,124 @@ class TestDeriveMacroFromEnergyShocks:
             {"oil_supply_loss_mbd": oil_mbd, "duration_years": 0.5}
         )
         assert out["gdp_impact_pct"] < 0.0
+
+
+# ---------------------------------------------------------------------------
+# 4. Regional disaggregation
+# ---------------------------------------------------------------------------
+
+
+_REGIONAL_ROW_KEYS = {
+    "region",
+    "gdp_impact_pct",
+    "cpi_inflation_pct",
+    "consumption_impact_pct",
+    "welfare_pct_change",
+    "wage_impact_pct",
+    "interest_rate_impact_pct",
+}
+
+
+class TestComputeRegionalMacroOutcomes:
+    def test_returns_one_row_per_unified_region(self) -> None:
+        rows = compute_regional_macro_outcomes(
+            {"oil": 30.0}, duration_months=6.0
+        )
+        assert len(rows) == len(UNIFIED_REGIONS)
+        assert {r["region"] for r in rows} == set(UNIFIED_REGIONS)
+        for row in rows:
+            missing = _REGIONAL_ROW_KEYS - row.keys()
+            assert not missing, f"row {row['region']} missing keys: {missing}"
+
+    def test_oil_exporters_gain_on_positive_oil_shock(self) -> None:
+        """A positive oil price shock should help GCC oil exporters
+        (negative GDP multiplier in the regional table) and hurt
+        importers like the EU and India."""
+        rows = {r["region"]: r for r in compute_regional_macro_outcomes(
+            {"oil": 30.0}, duration_months=6.0
+        )}
+        assert rows["MENA_GCC"]["gdp_impact_pct"] > 0.0
+        assert rows["EU"]["gdp_impact_pct"] < 0.0
+        assert rows["IND"]["gdp_impact_pct"] < 0.0
+        assert rows["US"]["gdp_impact_pct"] < 0.0
+
+    def test_emerging_markets_have_higher_cpi_passthrough(self) -> None:
+        """India and SSA should show larger CPI inflation than the US
+        for the same oil shock (Choi et al. 2018 calibration)."""
+        rows = {r["region"]: r for r in compute_regional_macro_outcomes(
+            {"oil": 30.0}, duration_months=6.0
+        )}
+        assert rows["IND"]["cpi_inflation_pct"] > rows["US"]["cpi_inflation_pct"]
+        assert rows["SSA"]["cpi_inflation_pct"] > rows["US"]["cpi_inflation_pct"]
+
+    def test_eu_more_exposed_to_lng_shock_than_us(self) -> None:
+        """EU's gas-import dependence is roughly 3x the US baseline."""
+        rows = {r["region"]: r for r in compute_regional_macro_outcomes(
+            {"lng": 50.0}, duration_months=6.0
+        )}
+        assert abs(rows["EU"]["gdp_impact_pct"]) > abs(rows["US"]["gdp_impact_pct"])
+        assert rows["EU"]["cpi_inflation_pct"] > rows["US"]["cpi_inflation_pct"]
+
+    def test_water_shock_concentrates_in_gulf(self) -> None:
+        """The infrastructure-collapse water shock should hit MENA_GCC
+        far harder than non-MENA regions."""
+        rows = {r["region"]: r for r in compute_regional_macro_outcomes(
+            {"water": 40.0}, duration_months=6.0
+        )}
+        assert abs(rows["MENA_GCC"]["gdp_impact_pct"]) > abs(rows["EU"]["gdp_impact_pct"])
+        assert abs(rows["MENA_GCC"]["gdp_impact_pct"]) > abs(rows["LAC"]["gdp_impact_pct"])
+        assert abs(rows["MENA_OTHER"]["gdp_impact_pct"]) > abs(rows["US"]["gdp_impact_pct"])
+
+    def test_empty_shocks_yields_zeroed_rows(self) -> None:
+        rows = compute_regional_macro_outcomes({}, duration_months=6.0)
+        assert len(rows) == len(UNIFIED_REGIONS)
+        for row in rows:
+            assert row["gdp_impact_pct"] == 0.0
+            assert row["cpi_inflation_pct"] == 0.0
+
+    def test_subset_regions_filter(self) -> None:
+        rows = compute_regional_macro_outcomes(
+            {"oil": 30.0}, duration_months=6.0, regions=("US", "MENA_GCC")
+        )
+        assert {r["region"] for r in rows} == {"US", "MENA_GCC"}
+
+    def test_aggregate_kernel_attaches_regional_vars(self) -> None:
+        """``compute_macro_outcomes`` must surface ``regional_vars`` so
+        every consumer (PyCGE analytical-MVP, energy-tier derived macro)
+        gets per-region detail without extra wiring."""
+        out = compute_macro_outcomes(
+            {"oil": 30.0, "lng": 20.0}, duration_months=6.0
+        )
+        assert "regional_vars" in out
+        assert isinstance(out["regional_vars"], list)
+        assert len(out["regional_vars"]) == len(UNIFIED_REGIONS)
+
+
+class TestPyCGERegionalOutputs:
+    def test_analytical_mvp_emits_regional_vars(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setitem(sys.modules, "cge_modeling", None)
+        _force_pycge_to_use_mvp(monkeypatch)
+
+        adapter = PyCGEAdapter()
+        params = {
+            "scenario_id": "swift_contained",
+            "oil_price_shock_pct": 35.0,
+            "commodity_price_shocks": {"lng": 40.0, "fertilizer": 20.0},
+            "disruption_duration_months": 6.0,
+        }
+        native = adapter.translate_inputs(params)
+        out = adapter.execute(native)
+
+        regional = out.outputs.get("regional_vars")
+        assert isinstance(regional, list)
+        assert len(regional) == len(UNIFIED_REGIONS)
+        regions = {r["region"] for r in regional}
+        assert "US" in regions and "MENA_GCC" in regions and "EU" in regions
+        assert out.outputs.get("_regional_source") == "macro_kernel_derived"
+
+        # Heterogeneity guard: the per-region GDP impacts should not all
+        # be identical — that's the whole point of the disaggregation.
+        gdps = [r["gdp_impact_pct"] for r in regional]
+        assert len(set(gdps)) > 1
