@@ -34,16 +34,26 @@
 #     to ship from a login node afterwards.
 #
 # Pipeline executed per week (Algorithm 1 in the paper, plus the
-# Module 6 weekly brief step):
-#   00.  (optional, once) launch local vLLM on GPU 0
+# Module 6 weekly brief step). Each week produces the same artefact
+# set as a single-run pipeline (synthesis, validation, CSV exports,
+# qualitative narratives, figures dashboard) — isolated by run id.
+#
+#   00.  (optional, once) launch local vLLM
 #   --   for each calendar week in [start, end]:
 #   06.    Module 6 - build weekly brief + per-week crisis YAML
 #   01.    Module 1 - scenario generation (using per-week YAML)
 #   --     dispatch parameter manifest
 #   02.    Module 2 - parameter extraction (loop over manifest)
-#   --     dispatch model manifests
+#   --     dispatch model manifests (commodity, commodity_downstream, macro)
 #   03.    Module 3 - model execution (loop over manifest)
 #   04.    Module 4 - synthesis
+#   04b.   Stage 4b - output validation (best-effort)
+#   05.    Stage 5  - quantitative CSV + qualitative narrative export
+#   06b.   Stage 6  - per-week visualization (figures + dashboard)
+#   --   end for
+#   07.  Stage 7 - cross-week evolution dashboard aggregating every
+#                  week's CSVs into a single "how predictions evolve"
+#                  index.html under data/reports/weekly_evolution/.
 #
 # All HITL checkpoints are auto-approved; for interactive review run
 # `python -m src.pipeline.graph` locally instead.
@@ -688,7 +698,62 @@ run_pipeline_for_week() {
         python slurm/scripts/run_synthesis.py
     rc=$?
     echo "[week ${week_start}] synthesis exit=${rc}"
-    return $rc
+    local synthesis_rc=$rc
+
+    # --- Stage 4b: Output Validation ---------------------------------
+    # Best-effort: a non-zero validation exit does NOT clobber the
+    # synthesis rc. Same contract as the single-run drivers
+    # (empire_ai_alpha.job, stonybrook_ai_cluster.job).
+    echo ""
+    echo "══════ [${week_start}] Stage 4b: Output Validation ══════"
+    HORMUZ_VALIDATION_FAIL_ON_ERROR="${HORMUZ_VALIDATION_FAIL_ON_ERROR:-0}"
+    local VALIDATION_ARGS=( --run-id "${HORMUZ_RUN_ID}" )
+    if [[ "$HORMUZ_VALIDATION_FAIL_ON_ERROR" == "1" ]]; then
+        VALIDATION_ARGS+=( --fail-on-error )
+    fi
+    safe_python "${STAGE_PREFIX}_${week_tag}_04b_validation" 1 -- \
+        python slurm/scripts/run_validation.py "${VALIDATION_ARGS[@]}"
+    local validation_rc=$?
+    if [[ $validation_rc -ne 0 ]]; then
+        echo "[week ${week_start}] validation exit=${validation_rc}; see"
+        echo "                     data/reports/${HORMUZ_RUN_ID}/validation.md"
+    fi
+
+    # --- Stage 5: Quantitative CSV + qualitative narrative export ----
+    echo ""
+    echo "══════ [${week_start}] Stage 5: Results Export (CSV + Qualitative) ══════"
+    HORMUZ_EXPORT_USE_LLM="${HORMUZ_EXPORT_USE_LLM:-1}"
+    HORMUZ_EXPORT_EXEC_SUMMARY_LLM="${HORMUZ_EXPORT_EXEC_SUMMARY_LLM:-1}"
+    local EXPORT_ARGS=( --run-id "${HORMUZ_RUN_ID}" )
+    if [[ "$HORMUZ_EXPORT_USE_LLM" != "1" ]]; then
+        EXPORT_ARGS+=( --no-llm )
+    fi
+    if [[ "$HORMUZ_EXPORT_EXEC_SUMMARY_LLM" != "1" ]]; then
+        EXPORT_ARGS+=( --no-exec-summary )
+    fi
+    safe_python "${STAGE_PREFIX}_${week_tag}_05_export" 1 -- \
+        python slurm/scripts/export_results.py "${EXPORT_ARGS[@]}"
+    local export_rc=$?
+    if [[ $export_rc -ne 0 ]]; then
+        echo "[week ${week_start}] export exit=${export_rc}; CSVs / qualitative reports may be incomplete."
+    fi
+
+    # --- Stage 6: Per-week visualization (figures + dashboard) -------
+    echo ""
+    echo "══════ [${week_start}] Stage 6: Visualization (figures + dashboard) ══════"
+    HORMUZ_VIZ_NO_TIMESERIES="${HORMUZ_VIZ_NO_TIMESERIES:-0}"
+    local VIZ_ARGS=( --run-id "${HORMUZ_RUN_ID}" )
+    if [[ "$HORMUZ_VIZ_NO_TIMESERIES" == "1" ]]; then
+        VIZ_ARGS+=( --no-timeseries )
+    fi
+    safe_python "${STAGE_PREFIX}_${week_tag}_06_visualize" 1 -- \
+        python slurm/scripts/visualize_results.py "${VIZ_ARGS[@]}"
+    local viz_rc=$?
+    if [[ $viz_rc -ne 0 ]]; then
+        echo "[week ${week_start}] viz exit=${viz_rc}; figures may be incomplete."
+    fi
+
+    return $synthesis_rc
 }
 
 # ==================================================================
@@ -778,6 +843,34 @@ while read -r WEEK_START WEEK_END; do
 done < <(enumerate_weeks "$HORMUZ_WEEKLY_START" "$HORMUZ_WEEKLY_END" "$HORMUZ_WEEKLY_STEP_DAYS")
 
 # ==================================================================
+#  Cross-week evolution visualisation (Module 6 -> Stage 7)
+#
+# Aggregates the per-week artefacts produced by Stages 5/6 above and
+# writes a single dashboard showing how scenario predictions, model
+# outputs, run health, and consistency flags evolve across the
+# backfill window. This is the temporal counterpart to per-run Stage 6
+# and the headline "value of rapid update" artefact.
+# ==================================================================
+if [[ "$HORMUZ_WEEKLY_SKIP_PIPELINE" != "1" && "$SUCCESSFUL_PIPELINES" -gt 0 ]]; then
+    echo ""
+    echo "════════════ Stage 7: Cross-Week Evolution Dashboard ════════════"
+    # Use the parent batch id so the cross-week dashboard groups with
+    # the per-week W&B runs under WANDB_RUN_GROUP_BATCH.
+    export HORMUZ_LOG_DIR="$BATCH_LOG_DIR"
+    export WANDB_RUN_GROUP="${WANDB_RUN_GROUP_BATCH}"
+    safe_python "${STAGE_PREFIX}_07_cross_week_viz" 1 -- \
+        python slurm/scripts/visualize_weekly_evolution.py \
+            --batch-id "$HORMUZ_BATCH_ID"
+    cross_week_rc=$?
+    if [[ $cross_week_rc -ne 0 ]]; then
+        echo "[cross-week viz] exit=${cross_week_rc}; aggregate dashboard may be incomplete."
+    else
+        echo "[cross-week viz] dashboard at" \
+             "${PROJECT_ROOT}/data/reports/weekly_evolution/${HORMUZ_BATCH_ID}/figures/index.html"
+    fi
+fi
+
+# ==================================================================
 #  Summary
 # ==================================================================
 echo ""
@@ -797,6 +890,11 @@ echo "  Per-week crisis YAMLs:    ${HORMUZ_WEEKLY_CRISIS_DIR}/"
 echo "  News artefacts:           ${HORMUZ_NEWS_DATA_DIR}/<date>/"
 echo "  Per-week run state:       ${PROJECT_ROOT}/data/pipeline_state/weekly_*"
 echo "  Per-week reports:         ${PROJECT_ROOT}/data/reports/weekly_*"
+echo "                              csv/, qualitative/, figures/ per week (Stages 5-6)"
+echo "                              validation.{json,md} per week (Stage 4b)"
+if [[ "$HORMUZ_WEEKLY_SKIP_PIPELINE" != "1" && "$SUCCESSFUL_PIPELINES" -gt 0 ]]; then
+    echo "  Cross-week dashboard:     ${PROJECT_ROOT}/data/reports/weekly_evolution/${HORMUZ_BATCH_ID}/figures/index.html"
+fi
 echo "  Batch log dir:            ${BATCH_LOG_DIR}/"
 echo "                              driver-${SLURM_JOB_ID:-N/A}.out / .err  (symlinks)"
 echo "                              vllm.log                                (if sidecar ran)"
