@@ -61,6 +61,15 @@ class SourceSpec:
     baseline: float | None = None
     keys: tuple[str, ...] = ()
     value_kind: str = "percent"
+    # Magnitude of the own-price elasticity of demand for the
+    # ``price_to_demand_reduction`` transform (positive number, e.g.
+    # 0.35 for fertilizer). Ignored by all other transforms.
+    elasticity: float | None = None
+    # Upper bound on the absolute value returned by
+    # ``price_to_demand_reduction``. Default 95.0 keeps results inside
+    # APSIM's [0, 100]% input range with a small safety margin against
+    # the 100% boundary, which produces undefined Mitscherlich curves.
+    clip_max: float = 95.0
 
 
 @dataclass(frozen=True)
@@ -254,6 +263,12 @@ def _parse_mapping_dict(raw: dict[str, Any]) -> UpstreamMapping:
                         ),
                         keys=tuple(s.get("keys") or ()),
                         value_kind=str(s.get("value_kind", "percent")),
+                        elasticity=(
+                            float(s["elasticity"])
+                            if s.get("elasticity") is not None
+                            else None
+                        ),
+                        clip_max=float(s.get("clip_max", 95.0)),
                     )
                 )
             scenarios_raw = rule_body.get("scenarios") or ()
@@ -312,6 +327,42 @@ def _apply_transform(spec: SourceSpec, raw_value: Any) -> float | list[float] | 
         if isinstance(coerced, list):
             return [(v / baseline - 1.0) * 100.0 for v in coerced]
         return (coerced / baseline - 1.0) * 100.0
+
+    if transform == "price_to_demand_reduction":
+        # Constant-elasticity bridge from a percent price change to a
+        # percent demand reduction. Used to feed an upstream price
+        # signal (e.g. world_fertilizer.fertilizer_price_index_pct)
+        # into a downstream demand-side input (e.g. APSIM's
+        # fertilizer_application_reduction_pct).
+        #
+        #   demand_reduction_pct = elasticity * max(0, price_pct)
+        #
+        # The own-price elasticity of demand is conventionally
+        # negative; we take its magnitude here and apply only to
+        # price *increases* — falling prices don't increase
+        # application beyond the baseline in this bridge. Output is
+        # clipped to [0, clip_max] so the receiving adapter's
+        # validation (typically [0, 100]) never trips.
+        if spec.elasticity is None:
+            logger.warning(
+                "price_to_demand_reduction transform requires an "
+                "elasticity; got None for %s.%s",
+                spec.source_model,
+                spec.source_field,
+            )
+            return None
+        coerced = _coerce_numeric_or_list(raw_value)
+        if coerced is None:
+            return None
+        elasticity = abs(float(spec.elasticity))
+        cap = float(spec.clip_max)
+
+        def _bridge(v: float) -> float:
+            return max(0.0, min(cap, elasticity * v))
+
+        if isinstance(coerced, list):
+            return [_bridge(v) for v in coerced]
+        return _bridge(coerced)
 
     if transform == "mean_of_keys":
         if not isinstance(raw_value, dict):

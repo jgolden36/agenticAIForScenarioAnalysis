@@ -90,7 +90,13 @@ class APSIMAdapter(ModelAdapter):
 
     @property
     def analytical_level(self) -> AnalyticalLevel:
-        return AnalyticalLevel.COMMODITY
+        # APSIM consumes fertilizer-price and water-availability shocks
+        # forwarded from upstream commodity-tier models (world_fertilizer,
+        # cwatm, weap_mena, sahysmod) via
+        # configs/upstream_forwarding_mapping.yaml. Sitting at
+        # COMMODITY_DOWNSTREAM ensures those upstream adapters finish
+        # before APSIM is dispatched.
+        return AnalyticalLevel.COMMODITY_DOWNSTREAM
 
     @property
     def description(self) -> str:

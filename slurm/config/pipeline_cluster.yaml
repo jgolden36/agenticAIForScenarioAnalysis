@@ -50,6 +50,22 @@ consistency:
   quantity_tolerance_pct: 15.0
   flag_on_missing_model: true
 
+# Uncertainty quantification. The default config (configs/model_configs/
+# default.yaml) ships with enabled:false so single-process developer runs
+# stay fast. Cluster runs have the compute headroom for the perturbation
+# loop, so enable it here. The executor wraps each adapter's execute() in
+# n_replicates perturbed runs (skipped when the adapter populated
+# ModelOutput.uncertainty natively); synthesis then attaches per-outcome
+# quantiles and the LLM emits a per-scenario uncertainty interpretation.
+uncertainty:
+  enabled: true
+  method: "perturbation"
+  n_replicates: 20
+  perturbation_pct: 10.0
+  quantiles: [0.05, 0.25, 0.50, 0.75, 0.95]
+  seed: null
+  max_failure_fraction: 0.5
+
 num_scenarios: 5  # 4 matrix quadrants (A-D) + 1 prescribed tail-risk (E: infrastructure_collapse)
 
 # Optional Weights & Biases integration. The pipeline gracefully

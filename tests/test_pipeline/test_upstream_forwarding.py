@@ -223,6 +223,103 @@ def test_level_to_pct_zero_baseline_returns_no_shock(tmp_path: Path):
     assert out == {}
 
 
+def test_price_to_demand_reduction_applies_elasticity(tmp_path: Path):
+    p = _write_mapping(
+        tmp_path,
+        {
+            "models": {
+                "apsim": {
+                    "fertilizer_application_reduction_pct": {
+                        "sources": [
+                            {
+                                "source_model": "world_fertilizer",
+                                "source_field": "fertilizer_price_index_pct",
+                                "transform": "price_to_demand_reduction",
+                                "elasticity": 0.35,
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+    )
+    mapping = load_mapping(p)
+    results = [
+        _result(
+            Scenario.A,
+            "world_fertilizer",
+            {"fertilizer_price_index_pct": 30.0},
+        )
+    ]
+    out = compute_downstream_inputs(Scenario.A.value, results, mapping)
+    assert out["apsim"][0].value == pytest.approx(10.5)
+
+
+def test_price_to_demand_reduction_zero_for_falling_prices(tmp_path: Path):
+    p = _write_mapping(
+        tmp_path,
+        {
+            "models": {
+                "apsim": {
+                    "fertilizer_application_reduction_pct": {
+                        "sources": [
+                            {
+                                "source_model": "world_fertilizer",
+                                "source_field": "fertilizer_price_index_pct",
+                                "transform": "price_to_demand_reduction",
+                                "elasticity": 0.35,
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+    )
+    mapping = load_mapping(p)
+    results = [
+        _result(
+            Scenario.A,
+            "world_fertilizer",
+            {"fertilizer_price_index_pct": -8.0},
+        )
+    ]
+    out = compute_downstream_inputs(Scenario.A.value, results, mapping)
+    assert out["apsim"][0].value == pytest.approx(0.0)
+
+
+def test_price_to_demand_reduction_clipped_at_cap(tmp_path: Path):
+    p = _write_mapping(
+        tmp_path,
+        {
+            "models": {
+                "apsim": {
+                    "fertilizer_application_reduction_pct": {
+                        "sources": [
+                            {
+                                "source_model": "world_fertilizer",
+                                "source_field": "fertilizer_price_index_pct",
+                                "transform": "price_to_demand_reduction",
+                                "elasticity": 1.0,
+                                "clip_max": 95.0,
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+    )
+    mapping = load_mapping(p)
+    results = [
+        _result(
+            Scenario.A,
+            "world_fertilizer",
+            {"fertilizer_price_index_pct": 500.0},
+        )
+    ]
+    out = compute_downstream_inputs(Scenario.A.value, results, mapping)
+    assert out["apsim"][0].value == pytest.approx(95.0)
+
+
 def test_mean_of_keys_index_kind_converts_to_pct(tmp_path: Path):
     p = _write_mapping(
         tmp_path,

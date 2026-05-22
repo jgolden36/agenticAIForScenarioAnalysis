@@ -56,6 +56,15 @@
 #                      is treated as a multiplier (1.4 -> +40%); with
 #                      value_kind=percent, values are passed through;
 #                      with value_kind=level, requires a `baseline`.
+#   price_to_demand_reduction -- constant-elasticity bridge from a
+#                      percent PRICE change to a percent demand
+#                      REDUCTION. Required kwarg: `elasticity` (positive
+#                      magnitude of the own-price elasticity of demand;
+#                      typical value 0.35 for fertilizer). Optional
+#                      `clip_max` caps the result (default 95.0). Output
+#                      is zero for non-positive price shocks (i.e.
+#                      falling prices do not raise demand above
+#                      baseline in this bridge).
 #
 # Sources are tried in order; the first source whose run is COMPLETED,
 # has a numeric value at source_field, and successfully transforms is
@@ -126,6 +135,59 @@ models:
           transform: identity
     # NOTE: demand_response_elasticity is a model calibration, not a
     # shock from the helium market -- left LLM-extracted.
+
+  # ------------------------------------------------------------
+  # APSIM (biophysical crop simulation). Sits at COMMODITY_DOWNSTREAM
+  # so it consumes upstream FERTILIZER and WATER commodity outputs.
+  #
+  # The Mitscherlich N-response + FAO water-yield curves in apsim.py
+  # collapse to zero yield loss when the LLM-extracted shock inputs
+  # are zero -- which is what happened on 2026-05 runs where the
+  # narrative did not state a fertilizer-application response. The
+  # forwarding rules below bridge upstream price / supply signals
+  # into APSIM's demand-side inputs so yield impacts reflect
+  # commodity-model-computed shortages instead of LLM imputation.
+  #
+  #   fertilizer_application_reduction_pct
+  #       <- world_fertilizer.fertilizer_price_index_pct
+  #          via price_to_demand_reduction (own-price elasticity 0.35,
+  #          Hendricks & Smith 2018 "Fertilizer Demand and Price";
+  #          consistent with Yara 2024 grower-survey pass-through).
+  #       <- futures.peak_price_index_per_commodity (mean of urea / dap
+  #          / potash) as a fallback when world_fertilizer didn't run.
+  #
+  #   irrigation_water_reduction_pct
+  #       <- cwatm.unmet_demand_pct (identity; CWatM reports a percent).
+  #       <- weap_mena.aggregate_unmet_demand_pct (fallback).
+  #       <- sahysmod.irrigation_water_reduction_pct (fallback; already
+  #          a percent reduction).
+  # ------------------------------------------------------------
+  apsim:
+    fertilizer_application_reduction_pct:
+      sources:
+        - source_model: world_fertilizer
+          source_field: fertilizer_price_index_pct
+          transform: price_to_demand_reduction
+          elasticity: 0.35
+        - source_model: futures
+          source_field: peak_price_index_per_commodity
+          transform: mean_of_keys
+          keys: [urea, dap, potash]
+          value_kind: index
+    irrigation_water_reduction_pct:
+      sources:
+        - source_model: cwatm
+          source_field: unmet_demand_pct
+          transform: identity
+        - source_model: weap_mena
+          source_field: aggregate_unmet_demand_pct
+          transform: identity
+        - source_model: sahysmod
+          source_field: irrigation_water_reduction_pct
+          transform: identity
+    # NOTE: growing_season is a categorical / textual hint that selects
+    # the crop calendar and crop list; it's left LLM-extracted from the
+    # narrative since no upstream commodity model emits one.
 
   # =====================================================================
   # COMMODITY tier: shipping outputs -> oil model rerouting parameters
