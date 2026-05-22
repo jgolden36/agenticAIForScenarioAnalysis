@@ -1,0 +1,44 @@
+scenario_id,time_horizon,outcome_scope,outcome_variable,value,source_model_id,narrative_summary
+swift_contained,short_run,micro,Oil Price,Not Available,Not Available,No successful model results were obtained for the short-run micro outcome scope.
+swift_contained,short_run,micro,LNG Price,Not Available,Not Available,No successful model results were obtained for the short-run micro outcome scope.
+swift_contained,short_run,micro,Oil Supply Disruption,21%,Not Available,"The Strait of Hormuz is closed due to a military escalation between Iran and the US/Israel coalition, disrupting 21% of global oil supply."
+swift_contained,short_run,micro,LNG Supply Disruption,25%,Not Available,"The Strait of Hormuz is closed due to a military escalation between Iran and the US/Israel coalition, disrupting 25% of global LNG trade."
+swift_contained,long_run,macro,Global Oil Price,Not Available,Not Available,No successful model results were obtained for the long-run macro outcome scope.
+swift_contained,long_run,macro,Global LNG Price,Not Available,Not Available,No successful model results were obtained for the long-run macro outcome scope.
+swift_contained,long_run,macro,Global Economic Impact,Not Available,Not Available,No successful model results were obtained for the long-run macro outcome scope.
+swift_contained,long_run,strategic,Oil Price Stabilization,10%,Not Available,"Global oil and LNG markets recover, with prices stabilizing within 10% of pre-crisis levels."
+swift_contained,long_run,strategic,LNG Price Stabilization,10%,Not Available,"Global oil and LNG markets recover, with prices stabilizing within 10% of pre-crisis levels."
+prolonged_contained,short_run,micro,oil_price,null,null,No successful model results were obtained for the short-run micro outcome of oil price.
+prolonged_contained,short_run,micro,lng_price,null,null,No successful model results were obtained for the short-run micro outcome of LNG price.
+prolonged_contained,short_run,micro,oil_demand,null,null,No successful model results were obtained for the short-run micro outcome of oil demand.
+prolonged_contained,short_run,micro,lng_demand,null,null,No successful model results were obtained for the short-run micro outcome of LNG demand.
+prolonged_contained,long_run,macro,gdp_growth,null,null,No successful model results were obtained for the long-run macro outcome of GDP growth.
+prolonged_contained,long_run,macro,inflation_rate,null,null,No successful model results were obtained for the long-run macro outcome of inflation rate.
+prolonged_contained,long_run,macro,unemployment_rate,null,null,No successful model results were obtained for the long-run macro outcome of unemployment rate.
+prolonged_contained,long_run,strategic,oil_supply,null,null,No successful model results were obtained for the long-run strategic outcome of oil supply.
+prolonged_contained,long_run,strategic,lng_supply,null,null,No successful model results were obtained for the long-run strategic outcome of LNG supply.
+swift_escalated,short_run,micro,oil_price,null,null,No successful model results were obtained for the short-run micro outcome of oil price.
+swift_escalated,short_run,micro,lng_price,null,null,No successful model results were obtained for the short-run micro outcome of LNG price.
+swift_escalated,short_run,micro,oil_supply_loss,21.0,null,No successful model results were obtained for the short-run micro outcome of oil supply loss.
+swift_escalated,short_run,micro,lng_supply_loss,25.0,null,No successful model results were obtained for the short-run micro outcome of LNG supply loss.
+swift_escalated,long_run,macro,gdp_growth,null,null,No successful model results were obtained for the long-run macro outcome of GDP growth.
+swift_escalated,long_run,macro,inflation_rate,null,null,No successful model results were obtained for the long-run macro outcome of inflation rate.
+swift_escalated,long_run,macro,unemployment_rate,null,null,No successful model results were obtained for the long-run macro outcome of unemployment rate.
+swift_escalated,long_run,strategic,oil_price_volatility,null,null,No successful model results were obtained for the long-run strategic outcome of oil price volatility.
+swift_escalated,long_run,strategic,lng_price_volatility,null,null,No successful model results were obtained for the long-run strategic outcome of LNG price volatility.
+prolonged_escalated,short_run,micro,oil_price,Not available,Not available,No quantitative results available for oil price in the short run.
+prolonged_escalated,short_run,micro,lng_price,Not available,Not available,No quantitative results available for LNG price in the short run.
+prolonged_escalated,short_run,micro,oil_supply_loss,21.0,energy_flux_gas_power,The prolonged escalated conflict results in a 21% loss of global oil supply.
+prolonged_escalated,short_run,micro,lng_supply_loss,25.0,energy_flux_gas_power,The prolonged escalated conflict results in a 25% loss of global LNG supply.
+prolonged_escalated,long_run,micro,oil_price,Not available,Not available,No quantitative results available for oil price in the long run.
+prolonged_escalated,long_run,micro,lng_price,Not available,Not available,No quantitative results available for LNG price in the long run.
+prolonged_escalated,long_run,micro,oil_supply_loss,Not available,Not available,No quantitative results available for oil supply loss in the long run.
+prolonged_escalated,long_run,micro,lng_supply_loss,Not available,Not available,No quantitative results available for LNG supply loss in the long run.
+prolonged_escalated,short_run,macro,gdp_growth,Not available,Not available,No quantitative results available for GDP growth in the short run.
+prolonged_escalated,short_run,macro,inflation_rate,Not available,Not available,No quantitative results available for inflation rate in the short run.
+prolonged_escalated,long_run,macro,gdp_growth,Not available,Not available,No quantitative results available for GDP growth in the long run.
+prolonged_escalated,long_run,macro,inflation_rate,Not available,Not available,No quantitative results available for inflation rate in the long run.
+prolonged_escalated,short_run,strategic,oil_production,Not available,Not available,No quantitative results available for oil production in the short run.
+prolonged_escalated,short_run,strategic,lng_production,Not available,Not available,No quantitative results available for LNG production in the short run.
+prolonged_escalated,long_run,strategic,oil_production,Not available,Not available,No quantitative results available for oil production in the long run.
+prolonged_escalated,long_run,strategic,lng_production,Not available,Not available,No quantitative results available for LNG production in the long run.

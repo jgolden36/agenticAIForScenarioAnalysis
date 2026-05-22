@@ -1,0 +1,10 @@
+scenario_id,model_id,output_key,value_numeric,value_raw,is_numeric
+prolonged_escalated,energy_flux_gas_power,build_scenario,,central,false
+prolonged_escalated,energy_flux_gas_power,build_cap_mw_yr,10135.0,10135.0,true
+prolonged_escalated,energy_flux_gas_power,total_pipeline_mw,252000.0,252000.0,true
+prolonged_escalated,energy_flux_gas_power,total_commissioned_gw,101.35,101.35,true
+prolonged_escalated,energy_flux_gas_power,years_to_clear_backlog,,,false
+prolonged_escalated,energy_flux_gas_power,by_2030_new_gw,50.675,50.675,true
+prolonged_escalated,energy_flux_gas_power,by_2030_bcf_per_day_mid,3.799891996142719,3.799891996142719,true
+prolonged_escalated,energy_flux_gas_power,by_2035_new_gw,101.35,101.35,true
+prolonged_escalated,energy_flux_gas_power,by_2035_bcf_per_day_mid,7.599783992285438,7.599783992285438,true

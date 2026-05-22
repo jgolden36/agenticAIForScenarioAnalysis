@@ -1,0 +1,46 @@
+{
+  "run_id": "20260423_125906",
+  "completed": 1,
+  "skipped": 65,
+  "failed": 70,
+  "consistency_flags": 0,
+  "outcomes_total": 43,
+  "scenarios": [
+    {
+      "scenario_id": "swift_contained",
+      "label": "Swift Contained",
+      "outcomes": 9,
+      "consistency_flags": 0,
+      "failed_models": 17,
+      "completed_models": 0,
+      "skipped_models": 17
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "label": "Prolonged Contained",
+      "outcomes": 9,
+      "consistency_flags": 0,
+      "failed_models": 18,
+      "completed_models": 0,
+      "skipped_models": 16
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "label": "Swift Escalated",
+      "outcomes": 9,
+      "consistency_flags": 0,
+      "failed_models": 18,
+      "completed_models": 0,
+      "skipped_models": 16
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "label": "Prolonged Escalated",
+      "outcomes": 16,
+      "consistency_flags": 0,
+      "failed_models": 17,
+      "completed_models": 1,
+      "skipped_models": 16
+    }
+  ]
+}

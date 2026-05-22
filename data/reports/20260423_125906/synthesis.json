@@ -1,0 +1,401 @@
+{
+  "run_id": "20260423_125906",
+  "model_results_count": 136,
+  "completed": 1,
+  "skipped": 65,
+  "failed": 70,
+  "bash_failures_count": 0,
+  "bash_failures_by_stage": {},
+  "bash_failures": [],
+  "consistency_flags": [],
+  "synthesis_results": [
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "Oil Price",
+      "value": "Not Available",
+      "source_model_id": "Not Available",
+      "narrative_summary": "No successful model results were obtained for the short-run micro outcome scope."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "LNG Price",
+      "value": "Not Available",
+      "source_model_id": "Not Available",
+      "narrative_summary": "No successful model results were obtained for the short-run micro outcome scope."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "Oil Supply Disruption",
+      "value": "21%",
+      "source_model_id": "Not Available",
+      "narrative_summary": "The Strait of Hormuz is closed due to a military escalation between Iran and the US/Israel coalition, disrupting 21% of global oil supply."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "LNG Supply Disruption",
+      "value": "25%",
+      "source_model_id": "Not Available",
+      "narrative_summary": "The Strait of Hormuz is closed due to a military escalation between Iran and the US/Israel coalition, disrupting 25% of global LNG trade."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "Global Oil Price",
+      "value": "Not Available",
+      "source_model_id": "Not Available",
+      "narrative_summary": "No successful model results were obtained for the long-run macro outcome scope."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "Global LNG Price",
+      "value": "Not Available",
+      "source_model_id": "Not Available",
+      "narrative_summary": "No successful model results were obtained for the long-run macro outcome scope."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "Global Economic Impact",
+      "value": "Not Available",
+      "source_model_id": "Not Available",
+      "narrative_summary": "No successful model results were obtained for the long-run macro outcome scope."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "Oil Price Stabilization",
+      "value": "10%",
+      "source_model_id": "Not Available",
+      "narrative_summary": "Global oil and LNG markets recover, with prices stabilizing within 10% of pre-crisis levels."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "LNG Price Stabilization",
+      "value": "10%",
+      "source_model_id": "Not Available",
+      "narrative_summary": "Global oil and LNG markets recover, with prices stabilizing within 10% of pre-crisis levels."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "oil_price",
+      "value": "null",
+      "source_model_id": "null",
+      "narrative_summary": "No successful model results were obtained for the short-run micro outcome of oil price."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "lng_price",
+      "value": "null",
+      "source_model_id": "null",
+      "narrative_summary": "No successful model results were obtained for the short-run micro outcome of LNG price."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "oil_demand",
+      "value": "null",
+      "source_model_id": "null",
+      "narrative_summary": "No successful model results were obtained for the short-run micro outcome of oil demand."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "lng_demand",
+      "value": "null",
+      "source_model_id": "null",
+      "narrative_summary": "No successful model results were obtained for the short-run micro outcome of LNG demand."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "gdp_growth",
+      "value": "null",
+      "source_model_id": "null",
+      "narrative_summary": "No successful model results were obtained for the long-run macro outcome of GDP growth."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "inflation_rate",
+      "value": "null",
+      "source_model_id": "null",
+      "narrative_summary": "No successful model results were obtained for the long-run macro outcome of inflation rate."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "unemployment_rate",
+      "value": "null",
+      "source_model_id": "null",
+      "narrative_summary": "No successful model results were obtained for the long-run macro outcome of unemployment rate."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "oil_supply",
+      "value": "null",
+      "source_model_id": "null",
+      "narrative_summary": "No successful model results were obtained for the long-run strategic outcome of oil supply."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "lng_supply",
+      "value": "null",
+      "source_model_id": "null",
+      "narrative_summary": "No successful model results were obtained for the long-run strategic outcome of LNG supply."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "oil_price",
+      "value": "null",
+      "source_model_id": "null",
+      "narrative_summary": "No successful model results were obtained for the short-run micro outcome of oil price."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "lng_price",
+      "value": "null",
+      "source_model_id": "null",
+      "narrative_summary": "No successful model results were obtained for the short-run micro outcome of LNG price."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "oil_supply_loss",
+      "value": "21.0",
+      "source_model_id": "null",
+      "narrative_summary": "No successful model results were obtained for the short-run micro outcome of oil supply loss."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "lng_supply_loss",
+      "value": "25.0",
+      "source_model_id": "null",
+      "narrative_summary": "No successful model results were obtained for the short-run micro outcome of LNG supply loss."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "gdp_growth",
+      "value": "null",
+      "source_model_id": "null",
+      "narrative_summary": "No successful model results were obtained for the long-run macro outcome of GDP growth."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "inflation_rate",
+      "value": "null",
+      "source_model_id": "null",
+      "narrative_summary": "No successful model results were obtained for the long-run macro outcome of inflation rate."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "unemployment_rate",
+      "value": "null",
+      "source_model_id": "null",
+      "narrative_summary": "No successful model results were obtained for the long-run macro outcome of unemployment rate."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "oil_price_volatility",
+      "value": "null",
+      "source_model_id": "null",
+      "narrative_summary": "No successful model results were obtained for the long-run strategic outcome of oil price volatility."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "lng_price_volatility",
+      "value": "null",
+      "source_model_id": "null",
+      "narrative_summary": "No successful model results were obtained for the long-run strategic outcome of LNG price volatility."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "oil_price",
+      "value": "Not available",
+      "source_model_id": "Not available",
+      "narrative_summary": "No quantitative results available for oil price in the short run."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "lng_price",
+      "value": "Not available",
+      "source_model_id": "Not available",
+      "narrative_summary": "No quantitative results available for LNG price in the short run."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "oil_supply_loss",
+      "value": "21.0",
+      "source_model_id": "energy_flux_gas_power",
+      "narrative_summary": "The prolonged escalated conflict results in a 21% loss of global oil supply."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "lng_supply_loss",
+      "value": "25.0",
+      "source_model_id": "energy_flux_gas_power",
+      "narrative_summary": "The prolonged escalated conflict results in a 25% loss of global LNG supply."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "oil_price",
+      "value": "Not available",
+      "source_model_id": "Not available",
+      "narrative_summary": "No quantitative results available for oil price in the long run."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "lng_price",
+      "value": "Not available",
+      "source_model_id": "Not available",
+      "narrative_summary": "No quantitative results available for LNG price in the long run."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "oil_supply_loss",
+      "value": "Not available",
+      "source_model_id": "Not available",
+      "narrative_summary": "No quantitative results available for oil supply loss in the long run."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "lng_supply_loss",
+      "value": "Not available",
+      "source_model_id": "Not available",
+      "narrative_summary": "No quantitative results available for LNG supply loss in the long run."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "gdp_growth",
+      "value": "Not available",
+      "source_model_id": "Not available",
+      "narrative_summary": "No quantitative results available for GDP growth in the short run."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "inflation_rate",
+      "value": "Not available",
+      "source_model_id": "Not available",
+      "narrative_summary": "No quantitative results available for inflation rate in the short run."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "gdp_growth",
+      "value": "Not available",
+      "source_model_id": "Not available",
+      "narrative_summary": "No quantitative results available for GDP growth in the long run."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "inflation_rate",
+      "value": "Not available",
+      "source_model_id": "Not available",
+      "narrative_summary": "No quantitative results available for inflation rate in the long run."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "oil_production",
+      "value": "Not available",
+      "source_model_id": "Not available",
+      "narrative_summary": "No quantitative results available for oil production in the short run."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "lng_production",
+      "value": "Not available",
+      "source_model_id": "Not available",
+      "narrative_summary": "No quantitative results available for LNG production in the short run."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "oil_production",
+      "value": "Not available",
+      "source_model_id": "Not available",
+      "narrative_summary": "No quantitative results available for oil production in the long run."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "lng_production",
+      "value": "Not available",
+      "source_model_id": "Not available",
+      "narrative_summary": "No quantitative results available for LNG production in the long run."
+    }
+  ],
+  "synthesis_validated": true
+}
