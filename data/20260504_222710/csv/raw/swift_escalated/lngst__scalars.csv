@@ -1,0 +1,2 @@
+qatar_export_reduction_pct,uae_export_reduction_pct,spot_price_multiplier,disruption_duration_months,supply_shortfall_bcm,supply_shortfall_bcm_annualised,global_supply_shortfall_pct,implied_price_impulse_pct,henry_hub_price,ttf_price,jkm_price,lng_price_usd_mmbtu,hub_baseline_prices.henry_hub,hub_baseline_prices.ttf,hub_baseline_prices.jkm,hub_passthrough_coefficients.henry_hub,hub_passthrough_coefficients.ttf,hub_passthrough_coefficients.jkm
+100.0,0.0,1.5,4.0,36.667,110.0,20.37,50.926,5.188,24.903,28.438,24.903,3.0,11.0,13.0,0.3,1.0,0.9

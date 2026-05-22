@@ -1,0 +1,2 @@
+strait_closure_flag,rerouting_via_cape,additional_transit_days,fleet_utilization_multiplier,effective_fleet_capacity_loss_pct,tanker_rate_change_pct,rerouting_cost_multiplier,voyage_days_lost_per_baseline_voyage,disruption_duration_months
+True,False,0.0,1.0,0.0,0.0,1.0,0.0,4.0

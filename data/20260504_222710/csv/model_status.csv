@@ -1,0 +1,285 @@
+scenario_id,model_id,status,resource_class,node,slurm_job_id,task_id,runtime_seconds,started_at,completed_at,error_message
+swift_escalated,messageix,failed,cpu,quadro1,25807,0,1.5863097375258803,2026-05-04T23:41:27.673029+00:00,2026-05-04T23:41:30.097949+00:00,JVMNotFoundException: No JVM shared library file (libjvm.so) found. Try setting up the JAVA_HOME environment variable properly.
+swift_escalated,temoa,skipped,cpu,quadro1,25807,1,,2026-05-04T23:41:30.898203+00:00,2026-05-04T23:41:31.774875+00:00,Not yet implemented: TEMOA baseline DB not found: Models/Energy/TEMOA/data_files/utopia.sqlite. Vendor a baseline SQLite (e.g. utopia.sqlite) under Models/Energy/TEMOA/data_files/ or override TEMOAConfig.baseline_db_path.
+prolonged_escalated,miragrodep,skipped,cpu,quadro1,25807,10,,2026-05-04T23:41:54.167789+00:00,2026-05-04T23:41:54.983920+00:00,"Not yet implemented: MIRAGRODEP requires the 'gams' executable on PATH (GAMS + a CONOPT/PATH licence). Install GAMS and ensure 'gams' is on PATH, or set MIRAGRODEPConfig.gams_executable to its absolute path."
+prolonged_escalated,osemosys,skipped,cpu,quadro1,25807,11,,2026-05-04T23:41:55.791166+00:00,2026-05-04T23:41:56.665428+00:00,Not yet implemented: OSeMOSYS baseline_data_dir not found: data/osemosys/baseline. Provide a baseline dataset (CSV-per-parameter layout).
+prolonged_escalated,messageix,failed,cpu,quadro1,25807,12,1.0116836819797754,2026-05-04T23:41:57.434919+00:00,2026-05-04T23:41:59.278020+00:00,JVMNotFoundException: No JVM shared library file (libjvm.so) found. Try setting up the JAVA_HOME environment variable properly.
+prolonged_escalated,temoa,skipped,cpu,quadro1,25807,13,,2026-05-04T23:42:00.069482+00:00,2026-05-04T23:42:00.962823+00:00,Not yet implemented: TEMOA baseline DB not found: Models/Energy/TEMOA/data_files/utopia.sqlite. Vendor a baseline SQLite (e.g. utopia.sqlite) under Models/Energy/TEMOA/data_files/ or override TEMOAConfig.baseline_db_path.
+infrastructure_collapse,fed_oil,completed,cpu,quadro1,25807,14,0.0001964811235666275,2026-05-04T23:42:01.652848+00:00,2026-05-04T23:42:02.484997+00:00,
+infrastructure_collapse,gtap,skipped,cpu,quadro1,25807,15,,2026-05-04T23:42:03.180861+00:00,2026-05-04T23:42:04.069067+00:00,"Not yet implemented: GTAPAdapter.execute is not yet implemented. Real integration requires: (1) a licensed GTAP database (version 10+, from the GTAP Center at Purdue University), (2) a GTAP model software installation (RunGTAP or FlexGTAP), (3) writing shock and closure files specifying oil price, fertilizer cost, and trade-route disruption shocks, (4) invoking the GTAP executable via subprocess, and (5) parsing the HAR/SOL solution file for welfare (EV by region), bilateral trade flows, and producer/consumer price changes by sector."
+infrastructure_collapse,nems,failed,cpu,quadro1,25807,16,,2026-05-04T23:42:04.743809+00:00,2026-05-04T23:42:05.635417+00:00,"Validation failed: scenario_id 'infrastructure_collapse' not in NEMS output mapping. Available: baseline, prolonged_contained, prolonged_escalated, swift_contained, swift_escalated"
+infrastructure_collapse,mam,completed,cpu,quadro1,25807,17,0.19919193722307682,2026-05-04T23:42:06.371236+00:00,2026-05-04T23:42:07.387675+00:00,
+infrastructure_collapse,nrel,completed,cpu,quadro1,25807,18,0.00026523228734731674,2026-05-04T23:42:08.106066+00:00,2026-05-04T23:42:08.936857+00:00,
+infrastructure_collapse,mpsge_jl,completed,cpu,quadro1,25807,19,0.00033151544630527496,2026-05-04T23:42:09.608280+00:00,2026-05-04T23:42:10.477136+00:00,
+prolonged_escalated,fed_oil,completed,cpu,quadro1,25807,2,0.00017907097935676575,2026-05-04T23:41:32.480809+00:00,2026-05-04T23:41:33.291537+00:00,
+infrastructure_collapse,opencge,failed,cpu,quadro1,25807,20,4.609199174679816,2026-05-04T23:42:11.178491+00:00,2026-05-04T23:42:16.617383+00:00,"ValidationError: {
+    ""errors"": {
+        ""Z"": [
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list.""
+        ],
+        ""delta_tau_annual"": [
+            ""Not a valid list.""
+        ]
+    }
+}"
+infrastructure_collapse,pycge,completed,cpu,quadro1,25807,21,3.022943951189518,2026-05-04T23:42:17.672411+00:00,2026-05-04T23:42:21.539604+00:00,
+infrastructure_collapse,miragrodep,skipped,cpu,quadro1,25807,22,,2026-05-04T23:42:22.692615+00:00,2026-05-04T23:42:23.521529+00:00,"Not yet implemented: MIRAGRODEP requires the 'gams' executable on PATH (GAMS + a CONOPT/PATH licence). Install GAMS and ensure 'gams' is on PATH, or set MIRAGRODEPConfig.gams_executable to its absolute path."
+infrastructure_collapse,osemosys,skipped,cpu,quadro1,25807,23,,2026-05-04T23:42:24.222288+00:00,2026-05-04T23:42:25.048850+00:00,Not yet implemented: OSeMOSYS baseline_data_dir not found: data/osemosys/baseline. Provide a baseline dataset (CSV-per-parameter layout).
+infrastructure_collapse,messageix,failed,cpu,quadro1,25807,24,1.004852520301938,2026-05-04T23:42:25.759366+00:00,2026-05-04T23:42:27.597653+00:00,JVMNotFoundException: No JVM shared library file (libjvm.so) found. Try setting up the JAVA_HOME environment variable properly.
+infrastructure_collapse,temoa,skipped,cpu,quadro1,25807,25,,2026-05-04T23:42:28.435734+00:00,2026-05-04T23:42:29.313727+00:00,Not yet implemented: TEMOA baseline DB not found: Models/Energy/TEMOA/data_files/utopia.sqlite. Vendor a baseline SQLite (e.g. utopia.sqlite) under Models/Energy/TEMOA/data_files/ or override TEMOAConfig.baseline_db_path.
+swift_contained,gtap,skipped,cpu,quadro1,25807,26,,2026-05-04T23:42:29.996468+00:00,2026-05-04T23:42:30.852885+00:00,"Not yet implemented: GTAPAdapter.execute is not yet implemented. Real integration requires: (1) a licensed GTAP database (version 10+, from the GTAP Center at Purdue University), (2) a GTAP model software installation (RunGTAP or FlexGTAP), (3) writing shock and closure files specifying oil price, fertilizer cost, and trade-route disruption shocks, (4) invoking the GTAP executable via subprocess, and (5) parsing the HAR/SOL solution file for welfare (EV by region), bilateral trade flows, and producer/consumer price changes by sector."
+swift_contained,nems,skipped,cpu,quadro1,25807,27,,2026-05-04T23:42:31.531701+00:00,2026-05-04T23:42:32.368882+00:00,"Not yet implemented: NEMS output directory not found: data/nems_outputs/Hormuz_ScenarioA
+Run NEMS externally and place outputs at this path, or update NEMSConfig.scenario_dir_mapping."
+swift_contained,mam,completed,cpu,quadro1,25807,28,0.21335359569638968,2026-05-04T23:42:33.071222+00:00,2026-05-04T23:42:34.108987+00:00,
+swift_contained,nrel,completed,cpu,quadro1,25807,29,0.0002831472083926201,2026-05-04T23:42:34.811060+00:00,2026-05-04T23:42:35.654511+00:00,
+prolonged_escalated,gtap,skipped,cpu,quadro1,25807,3,,2026-05-04T23:41:33.949321+00:00,2026-05-04T23:41:34.779528+00:00,"Not yet implemented: GTAPAdapter.execute is not yet implemented. Real integration requires: (1) a licensed GTAP database (version 10+, from the GTAP Center at Purdue University), (2) a GTAP model software installation (RunGTAP or FlexGTAP), (3) writing shock and closure files specifying oil price, fertilizer cost, and trade-route disruption shocks, (4) invoking the GTAP executable via subprocess, and (5) parsing the HAR/SOL solution file for welfare (EV by region), bilateral trade flows, and producer/consumer price changes by sector."
+swift_contained,mpsge_jl,completed,cpu,quadro1,25807,30,0.0003753816708922386,2026-05-04T23:42:36.338706+00:00,2026-05-04T23:42:37.189094+00:00,
+swift_contained,opencge,failed,cpu,quadro1,25807,31,4.592622626572847,2026-05-04T23:42:37.839798+00:00,2026-05-04T23:42:43.293553+00:00,"ValidationError: {
+    ""errors"": {
+        ""Z"": [
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list.""
+        ],
+        ""delta_tau_annual"": [
+            ""Not a valid list.""
+        ]
+    }
+}"
+swift_contained,pycge,completed,cpu,quadro1,25807,32,3.281647052615881,2026-05-04T23:42:44.310003+00:00,2026-05-04T23:42:48.397713+00:00,
+swift_contained,miragrodep,skipped,cpu,quadro1,25807,33,,2026-05-04T23:42:49.564480+00:00,2026-05-04T23:42:50.400760+00:00,"Not yet implemented: MIRAGRODEP requires the 'gams' executable on PATH (GAMS + a CONOPT/PATH licence). Install GAMS and ensure 'gams' is on PATH, or set MIRAGRODEPConfig.gams_executable to its absolute path."
+swift_contained,osemosys,skipped,cpu,quadro1,25807,34,,2026-05-04T23:42:51.077732+00:00,2026-05-04T23:42:51.894077+00:00,Not yet implemented: OSeMOSYS baseline_data_dir not found: data/osemosys/baseline. Provide a baseline dataset (CSV-per-parameter layout).
+swift_contained,messageix,failed,cpu,quadro1,25807,35,1.0710563212633133,2026-05-04T23:42:52.529931+00:00,2026-05-04T23:42:54.436904+00:00,JVMNotFoundException: No JVM shared library file (libjvm.so) found. Try setting up the JAVA_HOME environment variable properly.
+swift_contained,temoa,skipped,cpu,quadro1,25807,36,,2026-05-04T23:42:55.207706+00:00,2026-05-04T23:42:56.154773+00:00,Not yet implemented: TEMOA baseline DB not found: Models/Energy/TEMOA/data_files/utopia.sqlite. Vendor a baseline SQLite (e.g. utopia.sqlite) under Models/Energy/TEMOA/data_files/ or override TEMOAConfig.baseline_db_path.
+prolonged_contained,fed_oil,completed,cpu,quadro1,25807,37,0.0002588927745819092,2026-05-04T23:42:56.887708+00:00,2026-05-04T23:42:57.768856+00:00,
+prolonged_contained,gtap,skipped,cpu,quadro1,25807,38,,2026-05-04T23:42:58.625376+00:00,2026-05-04T23:42:59.482871+00:00,"Not yet implemented: GTAPAdapter.execute is not yet implemented. Real integration requires: (1) a licensed GTAP database (version 10+, from the GTAP Center at Purdue University), (2) a GTAP model software installation (RunGTAP or FlexGTAP), (3) writing shock and closure files specifying oil price, fertilizer cost, and trade-route disruption shocks, (4) invoking the GTAP executable via subprocess, and (5) parsing the HAR/SOL solution file for welfare (EV by region), bilateral trade flows, and producer/consumer price changes by sector."
+prolonged_contained,nems,skipped,cpu,quadro1,25807,39,,2026-05-04T23:43:00.210791+00:00,2026-05-04T23:43:01.036496+00:00,"Not yet implemented: NEMS output directory not found: data/nems_outputs/Hormuz_ScenarioB
+Run NEMS externally and place outputs at this path, or update NEMSConfig.scenario_dir_mapping."
+prolonged_escalated,nems,skipped,cpu,quadro1,25807,4,,2026-05-04T23:41:35.451679+00:00,2026-05-04T23:41:36.279652+00:00,"Not yet implemented: NEMS output directory not found: data/nems_outputs/Hormuz_ScenarioD
+Run NEMS externally and place outputs at this path, or update NEMSConfig.scenario_dir_mapping."
+prolonged_contained,mam,completed,cpu,quadro1,25807,40,0.27241542749106884,2026-05-04T23:43:01.723045+00:00,2026-05-04T23:43:02.839009+00:00,
+prolonged_contained,nrel,completed,cpu,quadro1,25807,41,0.00017762836068868637,2026-05-04T23:43:03.535012+00:00,2026-05-04T23:43:04.443151+00:00,
+prolonged_contained,mpsge_jl,completed,cpu,quadro1,25807,42,0.00039047934114933014,2026-05-04T23:43:05.123541+00:00,2026-05-04T23:43:06.059450+00:00,
+prolonged_contained,opencge,failed,cpu,quadro1,25807,43,4.645482312887907,2026-05-04T23:43:06.758043+00:00,2026-05-04T23:43:12.293917+00:00,"ValidationError: {
+    ""errors"": {
+        ""Z"": [
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list.""
+        ],
+        ""delta_tau_annual"": [
+            ""Not a valid list.""
+        ]
+    }
+}"
+prolonged_contained,pycge,completed,cpu,quadro1,25807,44,3.132087318226695,2026-05-04T23:43:13.438635+00:00,2026-05-04T23:43:17.423934+00:00,
+prolonged_contained,miragrodep,skipped,cpu,quadro1,25807,45,,2026-05-04T23:43:18.610066+00:00,2026-05-04T23:43:19.440864+00:00,"Not yet implemented: MIRAGRODEP requires the 'gams' executable on PATH (GAMS + a CONOPT/PATH licence). Install GAMS and ensure 'gams' is on PATH, or set MIRAGRODEPConfig.gams_executable to its absolute path."
+prolonged_contained,osemosys,skipped,cpu,quadro1,25807,46,,2026-05-04T23:43:20.134930+00:00,2026-05-04T23:43:20.974350+00:00,Not yet implemented: OSeMOSYS baseline_data_dir not found: data/osemosys/baseline. Provide a baseline dataset (CSV-per-parameter layout).
+prolonged_contained,messageix,failed,cpu,quadro1,25807,47,1.0214138953015208,2026-05-04T23:43:21.649391+00:00,2026-05-04T23:43:23.496286+00:00,JVMNotFoundException: No JVM shared library file (libjvm.so) found. Try setting up the JAVA_HOME environment variable properly.
+prolonged_contained,temoa,skipped,cpu,quadro1,25807,48,,2026-05-04T23:43:24.332584+00:00,2026-05-04T23:43:25.198010+00:00,Not yet implemented: TEMOA baseline DB not found: Models/Energy/TEMOA/data_files/utopia.sqlite. Vendor a baseline SQLite (e.g. utopia.sqlite) under Models/Energy/TEMOA/data_files/ or override TEMOAConfig.baseline_db_path.
+swift_contained,fed_oil,completed,cpu,quadro1,25807,49,0.0002210652455687523,2026-05-04T23:43:25.835316+00:00,2026-05-04T23:43:26.715024+00:00,
+prolonged_escalated,mam,completed,cpu,quadro1,25807,5,0.513776802457869,2026-05-04T23:41:36.971127+00:00,2026-05-04T23:41:38.307389+00:00,
+swift_escalated,fed_oil,completed,cpu,quadro1,25807,50,0.00020621530711650848,2026-05-04T23:43:27.398954+00:00,2026-05-04T23:43:28.228165+00:00,
+swift_escalated,gtap,skipped,cpu,quadro1,25807,51,,2026-05-04T23:43:28.974703+00:00,2026-05-04T23:43:29.805903+00:00,"Not yet implemented: GTAPAdapter.execute is not yet implemented. Real integration requires: (1) a licensed GTAP database (version 10+, from the GTAP Center at Purdue University), (2) a GTAP model software installation (RunGTAP or FlexGTAP), (3) writing shock and closure files specifying oil price, fertilizer cost, and trade-route disruption shocks, (4) invoking the GTAP executable via subprocess, and (5) parsing the HAR/SOL solution file for welfare (EV by region), bilateral trade flows, and producer/consumer price changes by sector."
+swift_escalated,nems,skipped,cpu,quadro1,25807,52,,2026-05-04T23:43:30.491145+00:00,2026-05-04T23:43:31.329543+00:00,"Not yet implemented: NEMS output directory not found: data/nems_outputs/Hormuz_ScenarioC
+Run NEMS externally and place outputs at this path, or update NEMSConfig.scenario_dir_mapping."
+swift_escalated,mam,completed,cpu,quadro1,25807,53,0.21382042951881886,2026-05-04T23:43:32.048010+00:00,2026-05-04T23:43:33.084569+00:00,
+swift_escalated,nrel,completed,cpu,quadro1,25807,54,0.00020770449191331863,2026-05-04T23:43:33.734406+00:00,2026-05-04T23:43:34.578981+00:00,
+swift_escalated,mpsge_jl,completed,cpu,quadro1,25807,55,0.00033837370574474335,2026-05-04T23:43:35.312153+00:00,2026-05-04T23:43:36.125540+00:00,
+swift_escalated,opencge,failed,cpu,quadro1,25807,56,4.541917950846255,2026-05-04T23:43:36.790965+00:00,2026-05-04T23:43:42.155514+00:00,"ValidationError: {
+    ""errors"": {
+        ""Z"": [
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list.""
+        ],
+        ""delta_tau_annual"": [
+            ""Not a valid list.""
+        ]
+    }
+}"
+swift_escalated,pycge,completed,cpu,quadro1,25807,57,3.055411177687347,2026-05-04T23:43:43.241050+00:00,2026-05-04T23:43:47.130727+00:00,
+swift_escalated,miragrodep,skipped,cpu,quadro1,25807,58,,2026-05-04T23:43:48.251884+00:00,2026-05-04T23:43:49.077425+00:00,"Not yet implemented: MIRAGRODEP requires the 'gams' executable on PATH (GAMS + a CONOPT/PATH licence). Install GAMS and ensure 'gams' is on PATH, or set MIRAGRODEPConfig.gams_executable to its absolute path."
+swift_escalated,osemosys,skipped,cpu,quadro1,25807,59,,2026-05-04T23:43:49.831197+00:00,2026-05-04T23:43:50.688720+00:00,Not yet implemented: OSeMOSYS baseline_data_dir not found: data/osemosys/baseline. Provide a baseline dataset (CSV-per-parameter layout).
+prolonged_escalated,nrel,completed,cpu,quadro1,25807,6,0.0001670047640800476,2026-05-04T23:41:38.998203+00:00,2026-05-04T23:41:39.822746+00:00,
+swift_contained,bornstein_krusell_rebelo,failed,cpu,quadro1,25807,60,0.00012611690908670425,2026-05-04T23:40:26.302003+00:00,2026-05-04T23:40:27.118863+00:00,FileNotFoundError: Dynare .mod file not found: Models/Oil/WorldEquilibriumOilModel/Replication Files/Section 5/supply_shocks_to_non_opec/dynare_codes/World_Economy_Cartel_nonopec_shocks.mod. Verify the section/mod_file configuration.
+prolonged_contained,marketsim,completed,cpu,quadro1,25807,61,6.191618740558624e-05,2026-05-04T23:40:27.809558+00:00,2026-05-04T23:40:28.630527+00:00,
+prolonged_contained,energy_flux_gas_power,completed,cpu,quadro1,25807,62,0.00026225950568914413,2026-05-04T23:40:29.327740+00:00,2026-05-04T23:40:30.165123+00:00,
+prolonged_contained,energy_flux_lng_profits,failed,cpu,quadro1,25807,63,,2026-05-04T23:40:30.886733+00:00,2026-05-04T23:40:31.708572+00:00,"Validation failed: Provide either 'price_schedule' (12 rows) or all of 'ttf_peak_price', 'jkm_peak_price', 'hh_crisis_price'."
+prolonged_contained,ggm,skipped,cpu,quadro1,25807,64,,2026-05-04T23:40:32.399940+00:00,2026-05-04T23:40:33.221722+00:00,"Not yet implemented: GGMAdapter.execute() requires a GGMConfig. Prerequisites:
+  1. GAMS installation with CPLEX solver license
+  2. gamsapi Python package (pip install gamsapi[transfer])
+  3. GGM model directory with data/SET-Nav/*.xlsx files
+  4. GGMConfig(gams_system_dir=..., model_dir=...)
+"
+prolonged_contained,lngst,completed,cpu,quadro1,25807,65,5.5437907576560974e-05,2026-05-04T23:40:33.920752+00:00,2026-05-04T23:40:34.753618+00:00,
+prolonged_contained,world_helium_model,completed,cpu,quadro1,25807,66,0.0001435205340385437,2026-05-04T23:40:35.448785+00:00,2026-05-04T23:40:36.310386+00:00,
+prolonged_contained,capri,skipped,cpu,quadro1,25807,67,,2026-05-04T23:40:36.992694+00:00,2026-05-04T23:40:37.805408+00:00,"Not yet implemented: CAPRIAdapter.execute is not yet implemented. Real integration requires: (1) a GAMS installation with the CAPRI model repository, (2) writing scenario shock files to the CAPRI scenario directory, (3) invoking the CAPRI GAMS entry point via subprocess, and (4) parsing the CAPRI results database (GDX or CSV output)."
+swift_contained,poles_jrc,completed,cpu,quadro1,25807,68,7.88513571023941e-05,2026-05-04T23:40:38.488963+00:00,2026-05-04T23:40:39.319317+00:00,
+prolonged_contained,magpie,skipped,cpu,quadro1,25807,69,,2026-05-04T23:40:40.014986+00:00,2026-05-04T23:40:40.855083+00:00,"Not yet implemented: MAgPIE source tree not found. Pass magpie_root to the adapter constructor or set the MAGPIE_ROOT environment variable. Tried: none of Models/Fertilizer/magpie-master/magpie-master, Models/Fertilizer/magpie-master, Models/Fertilizer/magpie"
+prolonged_escalated,mpsge_jl,completed,cpu,quadro1,25807,7,0.0003138938918709755,2026-05-04T23:41:40.513275+00:00,2026-05-04T23:41:41.345999+00:00,
+prolonged_contained,simple_g,failed,cpu,quadro1,25807,70,,2026-05-04T23:40:41.544567+00:00,2026-05-04T23:40:42.366922+00:00,"Validation failed: 'trade_disruption_index' = 30.0 is out of range; expected a value in [0.0, 1.0] where 0 = no disruption and 1 = full closure"
+prolonged_contained,world_fertilizer,completed,cpu,quadro1,25807,71,9.124260395765305e-05,2026-05-04T23:40:43.103229+00:00,2026-05-04T23:40:43.923849+00:00,
+prolonged_contained,apsim,completed,cpu,quadro1,25807,72,6.214343011379242e-05,2026-05-04T23:40:44.607045+00:00,2026-05-04T23:40:45.434627+00:00,
+prolonged_contained,futures,completed,cpu,quadro1,25807,73,7.861200720071793e-05,2026-05-04T23:40:46.182102+00:00,2026-05-04T23:40:47.018655+00:00,
+prolonged_contained,aisdb,completed,cpu,quadro1,25807,74,0.0001568775624036789,2026-05-04T23:40:47.709941+00:00,2026-05-04T23:40:48.536405+00:00,
+prolonged_contained,ais_project,completed,cpu,quadro1,25807,75,0.00012117717415094376,2026-05-04T23:40:49.239122+00:00,2026-05-04T23:40:50.102674+00:00,
+swift_contained,marketsim,completed,cpu,quadro1,25807,76,6.421562284231186e-05,2026-05-04T23:40:50.792972+00:00,2026-05-04T23:40:51.613818+00:00,
+swift_escalated,weap_mena,completed,cpu,quadro1,25807,77,0.0001675635576248169,2026-05-04T23:40:52.302108+00:00,2026-05-04T23:40:53.178109+00:00,
+swift_escalated,sahysmod,failed,cpu,quadro1,25807,78,0.0031884461641311646,2026-05-04T23:40:53.887365+00:00,2026-05-04T23:40:54.711312+00:00,FileNotFoundError: [Errno 2] No such file or directory: 'Models/Water/SahysMod/SahysMod.exe'
+swift_escalated,watergap2,skipped,cpu,quadro1,25807,79,,2026-05-04T23:40:55.428677+00:00,2026-05-04T23:40:56.346751+00:00,"Not yet implemented: WaterGAP2Adapter.execute() requires a WaterGAP2Config. To integrate WaterGAP2:
+  1. Build the binary from the C++ sources at Models/Water/WaterGAP2-v2.2d/HydrologyFrankfurt-WaterGAP2-65f306b/source/ via CMake, OR obtain access to the Frankfurt WaterGAP2 web service.
+  2. Stage global climate forcing NetCDFs (precipitation, temperature) under forcing_data_path.
+  3. Configure the adapter via configs/model_configs/watergap2.yaml.
+  4. Implement either subprocess invocation of the compiled binary or a REST client against the web service inside this method.
+  5. Build a NetCDF damage mask from 'affected_grid_cells' and 'infrastructure_damage_index' and pass it to WaterGAP2.
+  6. Parse gridded NetCDF outputs in parse_outputs."
+prolonged_escalated,opencge,failed,cpu,quadro1,25807,8,4.96972272079438,2026-05-04T23:41:42.034014+00:00,2026-05-04T23:41:47.848350+00:00,"ValidationError: {
+    ""errors"": {
+        ""Z"": [
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list.""
+        ],
+        ""delta_tau_annual"": [
+            ""Not a valid list.""
+        ]
+    }
+}"
+swift_escalated,cwatm,completed,cpu,quadro1,25807,80,5.841907113790512e-05,2026-05-04T23:40:57.131171+00:00,2026-05-04T23:40:57.954712+00:00,
+swift_escalated,bornstein_krusell_rebelo,failed,cpu,quadro1,25807,81,0.0001325877383351326,2026-05-04T23:40:58.623319+00:00,2026-05-04T23:40:59.447818+00:00,FileNotFoundError: Dynare .mod file not found: Models/Oil/WorldEquilibriumOilModel/Replication Files/Section 5/supply_shocks_to_non_opec/dynare_codes/World_Economy_Cartel_nonopec_shocks.mod. Verify the section/mod_file configuration.
+swift_escalated,poles_jrc,completed,cpu,quadro1,25807,82,0.00014275126159191132,2026-05-04T23:41:00.144132+00:00,2026-05-04T23:41:01.028657+00:00,
+swift_escalated,marketsim,completed,cpu,quadro1,25807,83,7.800105959177017e-05,2026-05-04T23:41:01.690459+00:00,2026-05-04T23:41:02.541955+00:00,
+swift_escalated,energy_flux_gas_power,completed,cpu,quadro1,25807,84,0.0003672689199447632,2026-05-04T23:41:03.227227+00:00,2026-05-04T23:41:04.153846+00:00,
+swift_escalated,energy_flux_lng_profits,failed,cpu,quadro1,25807,85,,2026-05-04T23:41:04.841216+00:00,2026-05-04T23:41:05.654598+00:00,"Validation failed: Provide either 'price_schedule' (12 rows) or all of 'ttf_peak_price', 'jkm_peak_price', 'hh_crisis_price'."
+swift_escalated,ggm,skipped,cpu,quadro1,25807,86,,2026-05-04T23:41:06.297241+00:00,2026-05-04T23:41:07.149536+00:00,"Not yet implemented: GGMAdapter.execute() requires a GGMConfig. Prerequisites:
+  1. GAMS installation with CPLEX solver license
+  2. gamsapi Python package (pip install gamsapi[transfer])
+  3. GGM model directory with data/SET-Nav/*.xlsx files
+  4. GGMConfig(gams_system_dir=..., model_dir=...)
+"
+swift_escalated,lngst,completed,cpu,quadro1,25807,87,9.58070158958435e-05,2026-05-04T23:41:07.860925+00:00,2026-05-04T23:41:08.748169+00:00,
+swift_contained,energy_flux_gas_power,completed,cpu,quadro1,25807,88,0.0002968953922390938,2026-05-04T23:41:09.403070+00:00,2026-05-04T23:41:10.274445+00:00,
+swift_escalated,world_helium_model,completed,cpu,quadro1,25807,89,0.00010816380381584167,2026-05-04T23:41:10.972915+00:00,2026-05-04T23:41:11.867171+00:00,
+prolonged_escalated,pycge,completed,cpu,quadro1,25807,9,3.22498563118279,2026-05-04T23:41:48.952791+00:00,2026-05-04T23:41:53.006873+00:00,
+swift_escalated,capri,skipped,cpu,quadro1,25807,90,,2026-05-04T23:41:12.544757+00:00,2026-05-04T23:41:13.383068+00:00,"Not yet implemented: CAPRIAdapter.execute is not yet implemented. Real integration requires: (1) a GAMS installation with the CAPRI model repository, (2) writing scenario shock files to the CAPRI scenario directory, (3) invoking the CAPRI GAMS entry point via subprocess, and (4) parsing the CAPRI results database (GDX or CSV output)."
+swift_escalated,magpie,skipped,cpu,quadro1,25807,91,,2026-05-04T23:41:14.082354+00:00,2026-05-04T23:41:14.924515+00:00,"Not yet implemented: MAgPIE source tree not found. Pass magpie_root to the adapter constructor or set the MAGPIE_ROOT environment variable. Tried: none of Models/Fertilizer/magpie-master/magpie-master, Models/Fertilizer/magpie-master, Models/Fertilizer/magpie"
+swift_escalated,simple_g,skipped,cpu,quadro1,25807,92,,2026-05-04T23:41:15.599590+00:00,2026-05-04T23:41:16.446236+00:00,"Not yet implemented: SIMPLEGAdapter.execute is not yet implemented. Real integration requires: (1) a GAMS installation with the SIMPLE-G model, (2) writing scenario shock parameters to a GAMS-compatible input file, (3) invoking the SIMPLE-G GAMS entry point via subprocess, and (4) parsing output GDX or CSV files for agricultural price, trade, and welfare results by region."
+swift_escalated,world_fertilizer,completed,cpu,quadro1,25807,93,9.544286876916885e-05,2026-05-04T23:41:17.132781+00:00,2026-05-04T23:41:17.954144+00:00,
+swift_escalated,apsim,completed,cpu,quadro1,25807,94,0.00022272858768701553,2026-05-04T23:41:18.645945+00:00,2026-05-04T23:41:19.532573+00:00,
+swift_escalated,futures,completed,cpu,quadro1,25807,95,7.74310901761055e-05,2026-05-04T23:41:20.312174+00:00,2026-05-04T23:41:21.143205+00:00,
+swift_contained,energy_flux_lng_profits,failed,cpu,quadro1,25807,96,,2026-05-04T23:41:21.792238+00:00,2026-05-04T23:41:22.665215+00:00,"Validation failed: Provide either 'price_schedule' (12 rows) or all of 'ttf_peak_price', 'jkm_peak_price', 'hh_crisis_price'."
+swift_escalated,aisdb,completed,cpu,quadro1,25807,97,0.0001231050118803978,2026-05-04T23:41:23.350495+00:00,2026-05-04T23:41:24.198845+00:00,
+swift_escalated,ais_project,completed,cpu,quadro1,25807,98,5.3510069847106934e-05,2026-05-04T23:41:24.938808+00:00,2026-05-04T23:41:25.758794+00:00,

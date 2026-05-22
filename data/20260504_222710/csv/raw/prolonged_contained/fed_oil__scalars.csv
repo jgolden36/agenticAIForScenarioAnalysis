@@ -1,0 +1,2 @@
+shock_type,oil_price_change_pct,disruption_duration_quarters,fed_funds_rate_baseline,peak_gdp_impact_pct,peak_cpi_impact_pp,peak_ffr_impact_pp,peak_unemployment_impact_pp,fevd_oil_share,zlb_binding,horizon_quarters
+supply,60.5,1.0,2.5,-0.6806,1.21,0.605,0.3403,0.35,False,8

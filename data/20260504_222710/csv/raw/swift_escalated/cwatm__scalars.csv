@@ -1,0 +1,2 @@
+scenario_id,unmet_demand_pct,mean_discharge_deviation_pct,cumulative_water_deficit_pct_months,desalination_capacity_factor,demand_factor,supply_infrastructure_status,disruption_duration_months
+swift_escalated,9.091,-0.0,36.364,1.0,1.1,damaged,4.0

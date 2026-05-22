@@ -1,0 +1,2 @@
+strait_closure_flag,additional_transit_days_by_route.cape_of_good_hope,max_additional_transit_days,fleet_utilization_drop_pct_by_vessel.lng_carrier,fleet_utilization_drop_pct_by_vessel.tanker,effective_fleet_capacity_loss_pct,rerouting_cost_multiplier,war_risk_insurance_premium_pct,hormuz_traffic_share_weights.lng_carrier,hormuz_traffic_share_weights.tanker
+True,9.5,9.5,35.185,29.688,31.154,1.1869,200.0,0.26666666666666666,0.7333333333333334
