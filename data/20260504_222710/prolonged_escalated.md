@@ -1,0 +1,315 @@
+# Scenario prolonged_escalated: Prolonged Escalated Conflict
+
+## Short Run — Micro
+
+_No outcomes synthesized for this section._
+
+## Short Run — Macro
+
+- **oil_price_change_pct**: 51.82 % _(source: `fed_oil`)_
+  - The prolonged escalated conflict in the Strait of Hormuz led to a significant increase in oil prices, with a 51.82% change.
+  - reliability: The upstream override from `poles_jrc.peak_price_change_pct` resulted in a deviation of 3.6% from the LLM-extracted value.
+  - distributional note: The Strait of Hormuz closure disproportionately affected oil-exporting countries in the Middle East, with Saudi Arabia and the UAE experiencing the most significant economic impacts. In contrast, oil-importing countries in Europe and Asia were less affected.
+  - uncertainty interpretation: The model outputs are generally consistent with the expected economic impacts of a prolonged conflict. However, there are some discrepancies between the LLM-extracted values and the upstream-computed values, particularly for the natural gas price change.
+
+## Short Run — Strategic
+
+- **disruption_duration_months**: [7.0] months _(source: `nrel`)_
+  - The Strait of Hormuz remained closed for 7 months, causing significant economic disruption.
+  - reliability: All models completed successfully.
+  - distributional note: The disruption had a significant impact on global oil supply and LNG trade, with the Strait of Hormuz being a critical chokepoint.
+  - uncertainty interpretation: There is a significant disagreement between the LLM-extracted value and the upstream value for natural_gas_price_change_pct, with a deviation of 200.0%.
+- **gdp_impact_pct**: -0.6599 % _(source: `nrel`)_
+  - The prolonged conflict resulted in a 0.66% decrease in GDP.
+  - reliability: All models completed successfully.
+  - distributional note: The impact on GDP was felt globally, with no specific regions or sectors being more or less affected.
+- **cpi_inflation_pct**: 1.6498 % _(source: `nrel`)_
+  - The prolonged conflict resulted in a 1.65% increase in CPI inflation.
+  - reliability: All models completed successfully.
+  - distributional note: The impact on CPI inflation was felt globally, with no specific regions or sectors being more or less affected.
+- **consumption_impact_pct**: -1.3199 % _(source: `nrel`)_
+  - The prolonged conflict resulted in a 1.32% decrease in consumption.
+  - reliability: All models completed successfully.
+  - distributional note: The impact on consumption was felt globally, with no specific regions or sectors being more or less affected.
+- **welfare_pct_change**: -1.3199 % _(source: `nrel`)_
+  - The prolonged conflict resulted in a 1.32% decrease in welfare.
+  - reliability: All models completed successfully.
+  - distributional note: The impact on welfare was felt globally, with no specific regions or sectors being more or less affected.
+- **natural_gas_price_change_pct**: 126.39090909090909 % _(source: `nrel`)_
+  - The prolonged conflict resulted in a 126.39% increase in natural gas prices.
+  - reliability: All models completed successfully.
+  - distributional note: The impact on natural gas prices was felt globally, with no specific regions or sectors being more or less affected.
+  - uncertainty interpretation: There is a significant disagreement between the LLM-extracted value and the upstream value for natural_gas_price_change_pct, with a deviation of 200.0%.
+- **retail_electricity_price_change_pct**: 56.876 % _(source: `nrel`)_
+  - The prolonged conflict resulted in a 56.88% increase in retail electricity prices.
+  - reliability: All models completed successfully.
+  - distributional note: The impact on retail electricity prices was felt globally, with no specific regions or sectors being more or less affected.
+- **retail_passthrough_coefficient**: 0.5 _(source: `nrel`)_
+  - The prolonged conflict resulted in a 50% passthrough of price increases to retail electricity prices.
+  - reliability: All models completed successfully.
+  - distributional note: The impact on retail electricity prices was felt globally, with no specific regions or sectors being more or less affected.
+- **generation_share_baseline**: {'natural_gas': 0.43, 'coal': 0.16, 'nuclear': 0.18, 'renewables': 0.21, 'other': 0.02} _(source: `nrel`)_
+  - The baseline generation mix was 43% natural gas, 16% coal, 18% nuclear, 21% renewables, and 2% other.
+  - reliability: All models completed successfully.
+  - distributional note: The baseline generation mix was felt globally, with no specific regions or sectors being more or less affected.
+- **generation_share_new**: {'natural_gas': 0.2036, 'coal': 0.26, 'nuclear': 0.18, 'renewables': 0.3364, 'other': 0.02} _(source: `nrel`)_
+  - The new generation mix was 20.36% natural gas, 26% coal, 18% nuclear, 33.64% renewables, and 2% other.
+  - reliability: All models completed successfully.
+  - distributional note: The new generation mix was felt globally, with no specific regions or sectors being more or less affected.
+- **generation_dispatch_pct_change**: {'natural_gas': -22.639, 'coal': 10.0, 'renewables': 12.639, 'nuclear': 0.0, 'other': 0.0} % _(source: `nrel`)_
+  - The prolonged conflict resulted in a 22.64% decrease in natural gas generation, a 10% increase in coal generation, a 12.64% increase in renewables generation, and no change in nuclear or other generation.
+  - reliability: All models completed successfully.
+  - distributional note: The impact on generation was felt globally, with no specific regions or sectors being more or less affected.
+- **capacity_utilization_pct_change**: {'natural_gas': -8.847, 'coal': 15.167, 'renewables': 60.186, 'nuclear': 0.0, 'other': 0.0} % _(source: `nrel`)_
+  - The prolonged conflict resulted in an 8.85% decrease in natural gas capacity utilization, a 15.17% increase in coal capacity utilization, a 60.19% increase in renewables capacity utilization, and no change in nuclear or other capacity utilization.
+  - reliability: All models completed successfully.
+  - distributional note: The impact on capacity utilization was felt globally, with no specific regions or sectors being more or less affected.
+- **co2_emissions_pct_change**: 1.321 % _(source: `nrel`)_
+  - The prolonged conflict resulted in a 1.32% increase in CO2 emissions.
+  - reliability: All models completed successfully.
+  - distributional note: The impact on CO2 emissions was felt globally, with no specific regions or sectors being more or less affected.
+- **renewables_dispatch_gain_pp**: 12.639 pp _(source: `nrel`)_
+  - The prolonged conflict resulted in a 12.64 pp increase in renewables dispatch.
+  - reliability: All models completed successfully.
+  - distributional note: The impact on renewables dispatch was felt globally, with no specific regions or sectors being more or less affected.
+- **coal_dispatch_gain_pp**: 10.0 pp _(source: `nrel`)_
+  - The prolonged conflict resulted in a 10 pp increase in coal dispatch.
+  - reliability: All models completed successfully.
+  - distributional note: The impact on coal dispatch was felt globally, with no specific regions or sectors being more or less affected.
+
+## Long Run — Micro
+
+_No outcomes synthesized for this section._
+
+## Long Run — Macro
+
+- **oil_price_shock_pct**: 51.82 % _(source: `poles_jrc`)_
+  - The prolonged escalated conflict led to a significant oil price shock, with prices increasing by 51.82%.
+  - reliability: The high deviation between the LLM-extracted value and the upstream-computed value (200.0%) raises concerns about the reliability of this outcome.
+  - distributional note: The oil price shock disproportionately affected regions with high oil import dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviation between the LLM-extracted value and the upstream-computed value (200.0%).
+- **trade_cost_multiplier**: 1.1869 _(source: `aisdb`)_
+  - The prolonged escalated conflict led to a significant increase in trade costs, with the trade cost multiplier increasing by 18.69%.
+  - reliability: The high deviation between the LLM-extracted value and the upstream-computed value (200.0%) raises concerns about the reliability of this outcome.
+  - distributional note: The increase in trade costs disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviation between the LLM-extracted value and the upstream-computed value (200.0%).
+- **commodity_price_shocks**: {'oil': 51.82, 'lng': 126.39090909090909, 'fertilizer': 23.756, 'helium': 30.0, 'water': 0.0, 'capex': 5.607000000000001} _(source: `mpse_jl`)_
+  - The prolonged escalated conflict led to significant price shocks in various commodities, including oil, LNG, fertilizer, and helium.
+  - reliability: The high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer) raise concerns about the reliability of this outcome.
+  - distributional note: The price shocks disproportionately affected regions with high commodity dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **disruption_duration_months**: 7.0 months _(source: `mpse_jl`)_
+  - The prolonged escalated conflict lasted for 7 months, causing significant economic disruption.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - distributional note: The economic disruption disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **gdp_impact_pct**: -1.4314 % _(source: `mpse_jl`)_
+  - The prolonged escalated conflict led to a significant decline in global GDP, with a 1.4314% impact.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - distributional note: The decline in global GDP disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **cpi_inflation_pct**: 3.0628 % _(source: `mpse_jl`)_
+  - The prolonged escalated conflict led to a moderate increase in global CPI inflation, with a 3.0628% impact.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - distributional note: The increase in CPI inflation disproportionately affected regions with high commodity dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **consumption_impact_pct**: -2.6565 % _(source: `mpse_jl`)_
+  - The prolonged escalated conflict led to a significant decline in global consumption, with a 2.6565% impact.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - distributional note: The decline in global consumption disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **welfare_pct_change**: -2.6565 % _(source: `mpse_jl`)_
+  - The prolonged escalated conflict led to a significant decline in global welfare, with a 2.6565% impact.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - distributional note: The decline in global welfare disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **wage_impact_pct**: 1.122 % _(source: `mpse_jl`)_
+  - The prolonged escalated conflict led to a moderate increase in global wages, with a 1.122% impact.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - distributional note: The increase in global wages disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **interest_rate_impact_pct**: 1.1736 % _(source: `mpse_jl`)_
+  - The prolonged escalated conflict led to a moderate increase in global interest rates, with a 1.1736% impact.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - distributional note: The increase in global interest rates disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **sectoral_output_pct_change**: {'agriculture': -0.2101, 'industry': -0.3876, 'energy': 0.9852, 'services': -1.1556} % _(source: `mpse_jl`)_
+  - The prolonged escalated conflict led to significant changes in sectoral output, with agriculture and industry declining and energy increasing.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - distributional note: The changes in sectoral output disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **gdp_growth_pct**: -1.0575 % _(source: `pycge`)_
+  - The prolonged escalated conflict led to a significant decline in global GDP growth, with a -1.0575% impact.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - regional distribution: IND=-2.1479, SSA=-1.8198, EU=-1.7588, CHN=-1.5056, ROW=-1.0555, US=-0.9962, LAC=-0.5811, MENA_OTHER=0.7945, MENA_GCC=3.3161
+  - sectoral distribution: services=-0.8404, industry=-0.253, agriculture=-0.1133, energy=0.4612
+  - distributional note: The decline in global GDP growth disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **cpi_inflation_pct**: 2.0668 % _(source: `pycge`)_
+  - The prolonged escalated conflict led to a moderate increase in global CPI inflation, with a 2.0668% impact.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - regional distribution: IND=-2.1479, SSA=-1.8198, EU=-1.7588, CHN=-1.5056, ROW=-1.0555, US=-0.9962, LAC=-0.5811, MENA_OTHER=0.7945, MENA_GCC=3.3161
+  - sectoral distribution: services=-0.8404, industry=-0.253, agriculture=-0.1133, energy=0.4612
+  - distributional note: The increase in CPI inflation disproportionately affected regions with high commodity dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **consumption_impact_pct**: -1.8842 % _(source: `pycge`)_
+  - The prolonged escalated conflict led to a significant decline in global consumption, with a -1.8842% impact.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - regional distribution: IND=-2.1479, SSA=-1.8198, EU=-1.7588, CHN=-1.5056, ROW=-1.0555, US=-0.9962, LAC=-0.5811, MENA_OTHER=0.7945, MENA_GCC=3.3161
+  - sectoral distribution: services=-0.8404, industry=-0.253, agriculture=-0.1133, energy=0.4612
+  - distributional note: The decline in global consumption disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **welfare_pct_change**: -1.8842 % _(source: `pycge`)_
+  - The prolonged escalated conflict led to a significant decline in global welfare, with a -1.8842% impact.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - regional distribution: IND=-2.1479, SSA=-1.8198, EU=-1.7588, CHN=-1.5056, ROW=-1.0555, US=-0.9962, LAC=-0.5811, MENA_OTHER=0.7945, MENA_GCC=3.3161
+  - sectoral distribution: services=-0.8404, industry=-0.253, agriculture=-0.1133, energy=0.4612
+  - distributional note: The decline in global welfare disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **wage_impact_pct**: 0.7113 % _(source: `pycge`)_
+  - The prolonged escalated conflict led to a moderate increase in global wages, with a 0.7113% impact.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - regional distribution: IND=-2.1479, SSA=-1.8198, EU=-1.7588, CHN=-1.5056, ROW=-1.0555, US=-0.9962, LAC=-0.5811, MENA_OTHER=0.7945, MENA_GCC=3.3161
+  - sectoral distribution: services=-0.8404, industry=-0.253, agriculture=-0.1133, energy=0.4612
+  - distributional note: The increase in global wages disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **interest_rate_impact_pct**: 0.769 % _(source: `pycge`)_
+  - The prolonged escalated conflict led to a moderate increase in global interest rates, with a 0.769% impact.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - regional distribution: IND=-2.1479, SSA=-1.8198, EU=-1.7588, CHN=-1.5056, ROW=-1.0555, US=-0.9962, LAC=-0.5811, MENA_OTHER=0.7945, MENA_GCC=3.3161
+  - sectoral distribution: services=-0.8404, industry=-0.253, agriculture=-0.1133, energy=0.4612
+  - distributional note: The increase in global interest rates disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **sectoral_output_pct_change**: {'agriculture': -0.1133, 'industry': -0.253, 'energy': 0.4612, 'services': -0.8404} % _(source: `pycge`)_
+  - The prolonged escalated conflict led to significant changes in sectoral output, with agriculture and industry declining and energy increasing.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - regional distribution: IND=-2.1479, SSA=-1.8198, EU=-1.7588, CHN=-1.5056, ROW=-1.0555, US=-0.9962, LAC=-0.5811, MENA_OTHER=0.7945, MENA_GCC=3.3161
+  - sectoral distribution: services=-0.8404, industry=-0.253, agriculture=-0.1133, energy=0.4612
+  - distributional note: The changes in sectoral output disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+
+## Long Run — Strategic
+
+- **oil_price_shock_pct**: 51.82 % _(source: `poles_jrc`)_
+  - The prolonged escalated conflict led to a significant oil price shock, with prices increasing by 51.82%.
+  - reliability: The high deviation between the LLM-extracted value and the upstream-computed value (200.0%) raises concerns about the reliability of this outcome.
+  - distributional note: The oil price shock disproportionately affected regions with high oil import dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviation between the LLM-extracted value and the upstream-computed value (200.0%).
+- **trade_cost_multiplier**: 1.1869 _(source: `aisdb`)_
+  - The prolonged escalated conflict led to a significant increase in trade costs, with the trade cost multiplier increasing by 18.69%.
+  - reliability: The high deviation between the LLM-extracted value and the upstream-computed value (200.0%) raises concerns about the reliability of this outcome.
+  - distributional note: The increase in trade costs disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviation between the LLM-extracted value and the upstream-computed value (200.0%).
+- **commodity_price_shocks**: {'oil': 51.82, 'lng': 126.39090909090909, 'fertilizer': 23.756, 'helium': 30.0, 'water': 0.0, 'capex': 5.607000000000001} _(source: `mpse_jl`)_
+  - The prolonged escalated conflict led to significant price shocks in various commodities, including oil, LNG, fertilizer, and helium.
+  - reliability: The high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer) raise concerns about the reliability of this outcome.
+  - distributional note: The price shocks disproportionately affected regions with high commodity dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **disruption_duration_months**: 7.0 months _(source: `mpse_jl`)_
+  - The prolonged escalated conflict lasted for 7 months, causing significant economic disruption.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - distributional note: The economic disruption disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **gdp_impact_pct**: -1.4314 % _(source: `mpse_jl`)_
+  - The prolonged escalated conflict led to a significant decline in global GDP, with a 1.4314% impact.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - distributional note: The decline in global GDP disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **cpi_inflation_pct**: 3.0628 % _(source: `mpse_jl`)_
+  - The prolonged escalated conflict led to a moderate increase in global CPI inflation, with a 3.0628% impact.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - distributional note: The increase in CPI inflation disproportionately affected regions with high commodity dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **consumption_impact_pct**: -2.6565 % _(source: `mpse_jl`)_
+  - The prolonged escalated conflict led to a significant decline in global consumption, with a 2.6565% impact.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - distributional note: The decline in global consumption disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **welfare_pct_change**: -2.6565 % _(source: `mpse_jl`)_
+  - The prolonged escalated conflict led to a significant decline in global welfare, with a 2.6565% impact.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - distributional note: The decline in global welfare disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **wage_impact_pct**: 1.122 % _(source: `mpse_jl`)_
+  - The prolonged escalated conflict led to a moderate increase in global wages, with a 1.122% impact.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - distributional note: The increase in global wages disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **interest_rate_impact_pct**: 1.1736 % _(source: `mpse_jl`)_
+  - The prolonged escalated conflict led to a moderate increase in global interest rates, with a 1.1736% impact.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - distributional note: The increase in global interest rates disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **sectoral_output_pct_change**: {'agriculture': -0.2101, 'industry': -0.3876, 'energy': 0.9852, 'services': -1.1556} % _(source: `mpse_jl`)_
+  - The prolonged escalated conflict led to significant changes in sectoral output, with agriculture and industry declining and energy increasing.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - distributional note: The changes in sectoral output disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **gdp_growth_pct**: -1.0575 % _(source: `pycge`)_
+  - The prolonged escalated conflict led to a significant decline in global GDP growth, with a -1.0575% impact.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - regional distribution: IND=-2.1479, SSA=-1.8198, EU=-1.7588, CHN=-1.5056, ROW=-1.0555, US=-0.9962, LAC=-0.5811, MENA_OTHER=0.7945, MENA_GCC=3.3161
+  - sectoral distribution: services=-0.8404, industry=-0.253, agriculture=-0.1133, energy=0.4612
+  - distributional note: The decline in global GDP growth disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **cpi_inflation_pct**: 2.0668 % _(source: `pycge`)_
+  - The prolonged escalated conflict led to a moderate increase in global CPI inflation, with a 2.0668% impact.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - regional distribution: IND=-2.1479, SSA=-1.8198, EU=-1.7588, CHN=-1.5056, ROW=-1.0555, US=-0.9962, LAC=-0.5811, MENA_OTHER=0.7945, MENA_GCC=3.3161
+  - sectoral distribution: services=-0.8404, industry=-0.253, agriculture=-0.1133, energy=0.4612
+  - distributional note: The increase in CPI inflation disproportionately affected regions with high commodity dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **consumption_impact_pct**: -1.8842 % _(source: `pycge`)_
+  - The prolonged escalated conflict led to a significant decline in global consumption, with a -1.8842% impact.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - regional distribution: IND=-2.1479, SSA=-1.8198, EU=-1.7588, CHN=-1.5056, ROW=-1.0555, US=-0.9962, LAC=-0.5811, MENA_OTHER=0.7945, MENA_GCC=3.3161
+  - sectoral distribution: services=-0.8404, industry=-0.253, agriculture=-0.1133, energy=0.4612
+  - distributional note: The decline in global consumption disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **welfare_pct_change**: -1.8842 % _(source: `pycge`)_
+  - The prolonged escalated conflict led to a significant decline in global welfare, with a -1.8842% impact.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - regional distribution: IND=-2.1479, SSA=-1.8198, EU=-1.7588, CHN=-1.5056, ROW=-1.0555, US=-0.9962, LAC=-0.5811, MENA_OTHER=0.7945, MENA_GCC=3.3161
+  - sectoral distribution: services=-0.8404, industry=-0.253, agriculture=-0.1133, energy=0.4612
+  - distributional note: The decline in global welfare disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **wage_impact_pct**: 0.7113 % _(source: `pycge`)_
+  - The prolonged escalated conflict led to a moderate increase in global wages, with a 0.7113% impact.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - regional distribution: IND=-2.1479, SSA=-1.8198, EU=-1.7588, CHN=-1.5056, ROW=-1.0555, US=-0.9962, LAC=-0.5811, MENA_OTHER=0.7945, MENA_GCC=3.3161
+  - sectoral distribution: services=-0.8404, industry=-0.253, agriculture=-0.1133, energy=0.4612
+  - distributional note: The increase in global wages disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **interest_rate_impact_pct**: 0.769 % _(source: `pycge`)_
+  - The prolonged escalated conflict led to a moderate increase in global interest rates, with a 0.769% impact.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - regional distribution: IND=-2.1479, SSA=-1.8198, EU=-1.7588, CHN=-1.5056, ROW=-1.0555, US=-0.9962, LAC=-0.5811, MENA_OTHER=0.7945, MENA_GCC=3.3161
+  - sectoral distribution: services=-0.8404, industry=-0.253, agriculture=-0.1133, energy=0.4612
+  - distributional note: The increase in global interest rates disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+- **sectoral_output_pct_change**: {'agriculture': -0.1133, 'industry': -0.253, 'energy': 0.4612, 'services': -0.8404} % _(source: `pycge`)_
+  - The prolonged escalated conflict led to significant changes in sectoral output, with agriculture and industry declining and energy increasing.
+  - reliability: This outcome is reliable, as it is based on a direct model output.
+  - regional distribution: IND=-2.1479, SSA=-1.8198, EU=-1.7588, CHN=-1.5056, ROW=-1.0555, US=-0.9962, LAC=-0.5811, MENA_OTHER=0.7945, MENA_GCC=3.3161
+  - sectoral distribution: services=-0.8404, industry=-0.253, agriculture=-0.1133, energy=0.4612
+  - distributional note: The changes in sectoral output disproportionately affected regions with high trade dependence, such as the ROW and LAC regions.
+  - uncertainty interpretation: The high uncertainty associated with this outcome is due to the high deviations between the LLM-extracted values and the upstream-computed values (200.0% for oil, 133.9% for LNG, and 200.0% for fertilizer).
+
+## Cross-model consistency warnings
+
+- LLM-extracted vs upstream-computed disagreement on mpsge_jl input commodity_price_shocks[fertilizer]: LLM=0, world_fertilizer=23.756 (deviation: 200.0%, threshold: 50.0%)
+- LLM-extracted vs upstream-computed disagreement on mpsge_jl input commodity_price_shocks[lng]: LLM=25, lngst=126.39090909090909 (deviation: 133.9%, threshold: 50.0%)
+- LLM-extracted vs upstream-computed disagreement on mpsge_jl input oil_price_shock_pct: LLM=0.0, poles_jrc=51.82 (deviation: 200.0%, threshold: 50.0%)
+- LLM-extracted vs upstream-computed disagreement on nrel input natural_gas_price_change_pct: LLM=0.0, lngst=126.39090909090909 (deviation: 200.0%, threshold: 50.0%)
+- LLM-extracted vs upstream-computed disagreement on pycge input commodity_price_shocks[fertilizer]: LLM=0.0, world_fertilizer=23.756 (deviation: 200.0%, threshold: 50.0%)
+- LLM-extracted vs upstream-computed disagreement on pycge input oil_price_shock_pct: LLM=0.0, poles_jrc=51.82 (deviation: 200.0%, threshold: 50.0%)
+
+## Failed / skipped models
+
+- `gtap`
+- `messageix`
+- `miragrodep`
+- `nems`
+- `opencge`
+- `osemosys`
+- `temoa`

@@ -1,0 +1,344 @@
+# Scenario swift_contained: Swift Contained Conflict
+
+## Short Run — Micro
+
+- **brent_price_path_usd_per_bbl**: 80.0 USD per bbl _(source: `poles_jrc`)_
+  - The short-run brent oil price is expected to remain stable at $80.0 per barrel.
+- **peak_price_usd_per_bbl**: 123.83 USD per bbl _(source: `poles_jrc`)_
+  - The peak brent oil price reached $123.83 per barrel, a 54.79% increase from the baseline.
+  - reliability: Note: This value is consistent with the poles_jrc model's output, but may be subject to some uncertainty due to the complexity of the underlying system dynamics.
+- **peak_price_change_pct**: 54.79 % _(source: `poles_jrc`)_
+  - The peak brent oil price increased by 54.79% from the baseline.
+  - reliability: Note: This value is consistent with the poles_jrc model's output, but may be subject to some uncertainty due to the complexity of the underlying system dynamics.
+- **baseline_price_usd_per_bbl**: 80.0 USD per bbl _(source: `poles_jrc`)_
+  - The baseline brent oil price is $80.0 per barrel.
+- **rerouting_volume_mbd**: 4.38 mbd _(source: `poles_jrc`)_
+  - The rerouting volume of oil is expected to be 4.38 million barrels per day.
+- **substitution_volume_mbd**: 0.0 mbd _(source: `poles_jrc`)_
+  - The substitution volume of oil is expected to be 0 million barrels per day.
+- **disruption_duration_months**: 0.42 months _(source: `poles_jrc`)_
+  - The disruption duration is expected to be 0.42 months.
+- **supply_loss_mbd**: 4.38 mbd _(source: `poles_jrc`)_
+  - The supply loss is expected to be 4.38 million barrels per day.
+- **supply_loss_pct_of_global**: 4.294 % _(source: `poles_jrc`)_
+  - The supply loss is expected to be 4.294% of the global supply.
+- **oil_price_shock_pct**: 10.0 % _(source: `marketsim`)_
+  - The oil price shock is expected to be 10.0%.
+- **natural_gas_price_change_pct**: 5.0 % _(source: `marketsim`)_
+  - The natural gas price change is expected to be 5.0%.
+- **disruption_duration_months**: 0.17 months _(source: `marketsim`)_
+  - The disruption duration is expected to be 0.17 months.
+- **consumer_surplus_loss_oil_bn_usd**: 0.394 bn USD _(source: `marketsim`)_
+  - The consumer surplus loss for oil is expected to be $0.394 billion.
+- **consumer_surplus_loss_gas_bn_usd**: 0.041 bn USD _(source: `marketsim`)_
+  - The consumer surplus loss for gas is expected to be $0.041 billion.
+- **consumer_surplus_loss_bn_usd**: 0.436 bn USD _(source: `marketsim`)_
+  - The total consumer surplus loss is expected to be $0.436 billion.
+- **producer_surplus_change_oil_bn_usd**: 0.236 bn USD _(source: `marketsim`)_
+  - The producer surplus change for oil is expected to be $0.236 billion.
+- **producer_surplus_change_gas_bn_usd**: 0.025 bn USD _(source: `marketsim`)_
+  - The producer surplus change for gas is expected to be $0.025 billion.
+- **net_welfare_impact_bn_usd**: -0.174 bn USD _(source: `marketsim`)_
+  - The net welfare impact is expected to be -$0.174 billion.
+- **oil_demand_destruction_mbd**: -0.114 mbd _(source: `marketsim`)_
+  - The oil demand destruction is expected to be -0.114 million barrels per day.
+- **gas_demand_destruction_bcfd**: -0.44 bcfd _(source: `marketsim`)_
+  - The gas demand destruction is expected to be -0.44 billion cubic feet per day.
+- **fuel_switching_oil_to_gas_mmbtu**: 2359347.8 mmbtu _(source: `marketsim`)_
+  - The fuel switching from oil to gas is expected to be 2359347.8 million British thermal units.
+- **fuel_switching_gas_to_oil_bbl**: 245614.6 bbl _(source: `marketsim`)_
+  - The fuel switching from gas to oil is expected to be 245614.6 barrels.
+- **cs_loss_by_sector_oil_bn_usd**: {'transport': 0.272, 'industrial': 0.091, 'residential': 0.016, 'commercial': 0.016} bn USD _(source: `marketsim`)_
+  - The consumer surplus loss by sector for oil is expected to be $0.272 billion for transport, $0.091 billion for industrial, $0.016 billion for residential, and $0.016 billion for commercial.
+- **cs_loss_by_sector_gas_bn_usd**: {'industrial': 0.013, 'residential': 0.007, 'commercial': 0.005, 'electric_power': 0.016} bn USD _(source: `marketsim`)_
+  - The consumer surplus loss by sector for gas is expected to be $0.013 billion for industrial, $0.007 billion for residential, $0.005 billion for commercial, and $0.016 billion for electric power.
+- **us_baseline_oil_consumption_mbd**: 19.0 mbd _(source: `marketsim`)_
+  - The US baseline oil consumption is expected to be 19.0 million barrels per day.
+- **us_baseline_gas_consumption_bcfd**: 88.0 bcfd _(source: `marketsim`)_
+  - The US baseline gas consumption is expected to be 88.0 billion cubic feet per day.
+- **build_scenario**: central _(source: `energy_flux_gas_power`)_
+  - The build scenario is expected to be central.
+- **build_cap_mw_yr**: 10135.0 MW/yr _(source: `energy_flux_gas_power`)_
+  - The build capacity is expected to be 10135.0 MW per year.
+- **total_pipeline_mw**: 252000.0 MW _(source: `energy_flux_gas_power`)_
+  - The total pipeline capacity is expected to be 252000.0 MW.
+- **total_commissioned_gw**: 101.35 GW _(source: `energy_flux_gas_power`)_
+  - The total commissioned capacity is expected to be 101.35 GW.
+- **years_to_clear_backlog**: None _(source: `energy_flux_gas_power`)_
+  - The years to clear backlog is not available.
+- **by_2030_new_gw**: 50.675 GW _(source: `energy_flux_gas_power`)_
+  - The new capacity by 2030 is expected to be 50.675 GW.
+- **by_2030_bcf_per_day_mid**: 3.799891996142719 bcfd _(source: `energy_flux_gas_power`)_
+  - The mid-case capacity by 2030 is expected to be 3.799891996142719 bcfd.
+- **by_2035_new_gw**: 101.35 GW _(source: `energy_flux_gas_power`)_
+  - The new capacity by 2035 is expected to be 101.35 GW.
+- **by_2035_bcf_per_day_mid**: 7.599783992285438 bcfd _(source: `energy_flux_gas_power`)_
+  - The mid-case capacity by 2035 is expected to be 7.599783992285438 bcfd.
+- **yearly_results**: [{'year': 2026, 'added_construction_mw': 10135.0, 'added_pre_construction_mw': 0.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 10.135, 'remaining_construction_mw': 19865.0, 'remaining_pre_construction_mw': 159000.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 241865.0, 'incremental_bcf_per_day_low': 0.558255737704918, 'incremental_bcf_per_day_mid': 0.7599783992285438, 'incremental_bcf_per_day_high': 1.0695992285438765}, {'year': 2027, 'added_construction_mw': 10135.0, 'added_pre_construction_mw': 0.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 20.27, 'remaining_construction_mw': 9730.0, 'remaining_pre_construction_mw': 159000.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 231730.0, 'incremental_bcf_per_day_low': 1.116511475409836, 'incremental_bcf_per_day_mid': 1.5199567984570876, 'incremental_bcf_per_day_high': 2.139198457087753}, {'year': 2028, 'added_construction_mw': 9730.0, 'added_pre_construction_mw': 405.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 30.405, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 158595.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 221595.0, 'incremental_bcf_per_day_low': 1.674767213114754, 'incremental_bcf_per_day_mid': 2.279935197685632, 'incremental_bcf_per_day_high': 3.2087976856316294}, {'year': 2029, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 40.54, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 148460.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 211460.0, 'incremental_bcf_per_day_low': 2.233022950819672, 'incremental_bcf_per_day_mid': 3.0399135969141753, 'incremental_bcf_per_day_high': 4.278396914175506}, {'year': 2030, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 50.675, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 138325.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 201325.0, 'incremental_bcf_per_day_low': 2.79127868852459, 'incremental_bcf_per_day_mid': 3.799891996142719, 'incremental_bcf_per_day_high': 5.347996142719382}, {'year': 2031, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 60.81, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 128190.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 191190.0, 'incremental_bcf_per_day_low': 3.349534426229508, 'incremental_bcf_per_day_mid': 4.559870395371264, 'incremental_bcf_per_day_high': 6.417595371263259}, {'year': 2032, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 70.945, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 118055.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 181055.0, 'incremental_bcf_per_day_low': 3.907790163934425, 'incremental_bcf_per_day_mid': 5.319848794599807, 'incremental_bcf_per_day_high': 7.487194599807135}, {'year': 2033, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 81.08, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 107920.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 170920.0, 'incremental_bcf_per_day_low': 4.466045901639344, 'incremental_bcf_per_day_mid': 6.079827193828351, 'incremental_bcf_per_day_high': 8.556793828351012}, {'year': 2034, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 91.215, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 97785.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 160785.0, 'incremental_bcf_per_day_low': 5.024301639344261, 'incremental_bcf_per_day_mid': 6.839805593056895, 'incremental_bcf_per_day_high': 9.62639305689489}, {'year': 2035, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 101.35, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 87650.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 150650.0, 'incremental_bcf_per_day_low': 5.58255737704918, 'incremental_bcf_per_day_mid': 7.599783992285438, 'incremental_bcf_per_day_high': 10.695992285438765}] _(source: `energy_flux_gas_power`)_
+  - The yearly results for the energy flux gas power model are provided in the table below.
+- **segmented_results**: [{'year': 2026, 'cumulative_gw': 10.135, 'dc_capacity_gw': 3.7499499999999997, 'non_dc_capacity_gw': 6.38505, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 0.913071825650916}, {'year': 2027, 'cumulative_gw': 20.27, 'dc_capacity_gw': 7.499899999999999, 'non_dc_capacity_gw': 12.7701, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 1.826143651301832}, {'year': 2028, 'cumulative_gw': 30.405, 'dc_capacity_gw': 11.24985, 'non_dc_capacity_gw': 19.155150000000003, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 2.739215476952748}, {'year': 2029, 'cumulative_gw': 40.54, 'dc_capacity_gw': 14.999799999999999, 'non_dc_capacity_gw': 25.5402, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 3.652287302603664}, {'year': 2030, 'cumulative_gw': 50.675, 'dc_capacity_gw': 18.74975, 'non_dc_capacity_gw': 31.92525, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 4.56535912825458}, {'year': 2031, 'cumulative_gw': 60.81, 'dc_capacity_gw': 22.4997, 'non_dc_capacity_gw': 38.310300000000005, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 5.478430953905496}, {'year': 2032, 'cumulative_gw': 70.945, 'dc_capacity_gw': 26.249649999999995, 'non_dc_capacity_gw': 44.69535, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 6.391502779556411}, {'year': 2033, 'cumulative_gw': 81.08, 'dc_capacity_gw': 29.999599999999997, 'non_dc_capacity_gw': 51.0804, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 7.304574605207328}, {'year': 2034, 'cumulative_gw': 91.215, 'dc_capacity_gw': 33.74955, 'non_dc_capacity_gw': 57.465450000000004, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 8.217646430858245}, {'year': 2035, 'cumulative_gw': 101.35, 'dc_capacity_gw': 37.4995, 'non_dc_capacity_gw': 63.8505, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 9.13071825650916}] _(source: `energy_flux_gas_power`)_
+  - The segmented results for the energy flux gas power model are provided in the table below.
+
+## Short Run — Macro
+
+_No outcomes synthesized for this section._
+
+## Short Run — Strategic
+
+- **natural_gas_price_change_pct**: 50.92727272727273 % _(source: `nrel`)_
+  - The natural gas price is expected to increase by 50.93% due to the disruption in the Strait of Hormuz.
+  - reliability: This result is consistent with the upstream-computed value from lngst.ttf_price.
+  - distributional note: The natural gas price increase is expected to disproportionately affect regions with high natural gas consumption, such as the northeastern United States, while regions with low natural gas consumption, such as the western United States, may experience a smaller impact.
+  - uncertainty interpretation: The upstream-computed value from lngst.ttf_price has a deviation of 200.0% from the LLM-extracted value of 0.0.
+- **retail_electricity_price_change_pct**: 22.917 % _(source: `nrel`)_
+  - The retail electricity price is expected to increase by 22.92% due to the disruption in the Strait of Hormuz.
+  - reliability: This result is consistent with the upstream-computed value from nrel_derived.
+  - distributional note: The retail electricity price increase is expected to disproportionately affect regions with high electricity consumption, such as the northeastern United States, while regions with low electricity consumption, such as the western United States, may experience a smaller impact.
+  - uncertainty interpretation: This result is consistent with the upstream-computed value from nrel_derived.
+- **gdp_impact_pct**: -0.0407 % _(source: `nrel`)_
+  - The GDP is expected to decrease by 0.0407% due to the disruption in the Strait of Hormuz.
+  - reliability: This result is consistent with the upstream-computed value from nrel_derived.
+  - distributional note: The GDP decrease is expected to disproportionately affect regions with high economic activity, such as the northeastern United States, while regions with low economic activity, such as the western United States, may experience a smaller impact.
+  - uncertainty interpretation: This result is consistent with the upstream-computed value from nrel_derived.
+- **cpi_inflation_pct**: 0.5093 % _(source: `nrel`)_
+  - The CPI inflation rate is expected to increase by 0.5093% due to the disruption in the Strait of Hormuz.
+  - reliability: This result is consistent with the upstream-computed value from nrel_derived.
+  - distributional note: The CPI inflation rate increase is expected to disproportionately affect regions with high inflation rates, such as the northeastern United States, while regions with low inflation rates, such as the western United States, may experience a smaller impact.
+  - uncertainty interpretation: This result is consistent with the upstream-computed value from nrel_derived.
+- **consumption_impact_pct**: -0.2445 % _(source: `nrel`)_
+  - The consumption is expected to decrease by 0.2445% due to the disruption in the Strait of Hormuz.
+  - reliability: This result is consistent with the upstream-computed value from nrel_derived.
+  - distributional note: The consumption decrease is expected to disproportionately affect regions with high consumption rates, such as the northeastern United States, while regions with low consumption rates, such as the western United States, may experience a smaller impact.
+  - uncertainty interpretation: This result is consistent with the upstream-computed value from nrel_derived.
+- **welfare_pct_change**: -0.2445 % _(source: `nrel`)_
+  - The welfare is expected to decrease by 0.2445% due to the disruption in the Strait of Hormuz.
+  - reliability: This result is consistent with the upstream-computed value from nrel_derived.
+  - distributional note: The welfare decrease is expected to disproportionately affect regions with high welfare rates, such as the northeastern United States, while regions with low welfare rates, such as the western United States, may experience a smaller impact.
+  - uncertainty interpretation: This result is consistent with the upstream-computed value from nrel_derived.
+- **co2_emissions_pct_change**: 3.942 % _(source: `nrel`)_
+  - The CO2 emissions are expected to increase by 3.94% due to the disruption in the Strait of Hormuz.
+  - reliability: This result is consistent with the upstream-computed value from nrel_derived.
+  - distributional note: The CO2 emissions increase is expected to disproportionately affect regions with high CO2 emissions rates, such as the northeastern United States, while regions with low CO2 emissions rates, such as the western United States, may experience a smaller impact.
+  - uncertainty interpretation: This result is consistent with the upstream-computed value from nrel_derived.
+- **coal_dispatch_gain_pp**: 6.111 % _(source: `nrel`)_
+  - The coal dispatch gain is expected to increase by 6.11% due to the disruption in the Strait of Hormuz.
+  - reliability: This result is consistent with the upstream-computed value from nrel_derived.
+  - distributional note: The coal dispatch gain increase is expected to disproportionately affect regions with high coal consumption rates, such as the northeastern United States, while regions with low coal consumption rates, such as the western United States, may experience a smaller impact.
+  - uncertainty interpretation: This result is consistent with the upstream-computed value from nrel_derived.
+- **renewables_dispatch_gain_pp**: 5.093 % _(source: `nrel`)_
+  - The renewables dispatch gain is expected to increase by 5.09% due to the disruption in the Strait of Hormuz.
+  - reliability: This result is consistent with the upstream-computed value from nrel_derived.
+  - distributional note: The renewables dispatch gain increase is expected to disproportionately affect regions with high renewable energy consumption rates, such as the western United States, while regions with low renewable energy consumption rates, such as the northeastern United States, may experience a smaller impact.
+  - uncertainty interpretation: This result is consistent with the upstream-computed value from nrel_derived.
+- **capacity_utilization_pct_change**: -3.565 % _(source: `nrel`)_
+  - The capacity utilization is expected to decrease by 3.57% due to the disruption in the Strait of Hormuz.
+  - reliability: This result is consistent with the upstream-computed value from nrel_derived.
+  - distributional note: The capacity utilization decrease is expected to disproportionately affect regions with high capacity utilization rates, such as the northeastern United States, while regions with low capacity utilization rates, such as the western United States, may experience a smaller impact.
+  - uncertainty interpretation: This result is consistent with the upstream-computed value from nrel_derived.
+- **generation_share_baseline**: {'natural_gas': 0.43, 'coal': 0.16, 'nuclear': 0.18, 'renewables': 0.21, 'other': 0.02} _(source: `nrel`)_
+  - The generation share baseline is expected to be 43% natural gas, 16% coal, 18% nuclear, 21% renewables, and 2% other due to the disruption in the Strait of Hormuz.
+  - reliability: This result is consistent with the upstream-computed value from nrel_derived.
+  - distributional note: The generation share baseline is expected to disproportionately affect regions with high natural gas consumption rates, such as the northeastern United States, while regions with low natural gas consumption rates, such as the western United States, may experience a smaller impact.
+  - uncertainty interpretation: This result is consistent with the upstream-computed value from nrel_derived.
+- **generation_share_new**: {'natural_gas': 0.318, 'coal': 0.2211, 'nuclear': 0.18, 'renewables': 0.2609, 'other': 0.02} _(source: `nrel`)_
+  - The generation share new is expected to be 31.8% natural gas, 22.11% coal, 18% nuclear, 26.09% renewables, and 2% other due to the disruption in the Strait of Hormuz.
+  - reliability: This result is consistent with the upstream-computed value from nrel_derived.
+  - distributional note: The generation share new is expected to disproportionately affect regions with high natural gas consumption rates, such as the northeastern United States, while regions with low natural gas consumption rates, such as the western United States, may experience a smaller impact.
+  - uncertainty interpretation: This result is consistent with the upstream-computed value from nrel_derived.
+- **generation_dispatch_pct_change**: {'natural_gas': -11.204, 'coal': 6.111, 'renewables': 5.093, 'nuclear': 0.0, 'other': 0.0} % _(source: `nrel`)_
+  - The generation dispatch is expected to decrease by 11.2% for natural gas, increase by 6.11% for coal, increase by 5.09% for renewables, and remain the same for nuclear and other due to the disruption in the Strait of Hormuz.
+  - reliability: This result is consistent with the upstream-computed value from nrel_derived.
+  - distributional note: The generation dispatch is expected to disproportionately affect regions with high natural gas consumption rates, such as the northeastern United States, while regions with low natural gas consumption rates, such as the western United States, may experience a smaller impact.
+  - uncertainty interpretation: This result is consistent with the upstream-computed value from nrel_derived.
+- **mam**: {'oil_price_path': [123.83, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0]} _(source: `mam`)_
+  - The oil price path is expected to be $123.83 in 2026, $80.00 in 2027-2031, and $80.00 in 2032-2040 due to the disruption in the Strait of Hormuz.
+  - reliability: This result is consistent with the upstream-computed value from poles_jrc.brent_price_path_usd_per_bbl.
+  - distributional note: The oil price path is expected to disproportionately affect regions with high oil consumption rates, such as the northeastern United States, while regions with low oil consumption rates, such as the western United States, may experience a smaller impact.
+  - uncertainty interpretation: This result is consistent with the upstream-computed value from poles_jrc.brent_price_path_usd_per_bbl.
+
+## Long Run — Micro
+
+- **brent_price_path_usd_per_bbl**: 80.0 USD per bbl _(source: `poles_jrc`)_
+  - The long-run brent price is expected to remain stable at 80.0 USD per bbl.
+- **peak_price_usd_per_bbl**: 123.83 USD per bbl _(source: `poles_jrc`)_
+  - The peak brent price reached 123.83 USD per bbl, a 54.79% increase from the baseline.
+  - reliability: Note: The high peak price is likely due to the short duration of the disruption.
+- **peak_price_change_pct**: 54.79 % _(source: `poles_jrc`)_
+  - The peak brent price increased by 54.79% from the baseline.
+  - reliability: Note: The high peak price is likely due to the short duration of the disruption.
+- **baseline_price_usd_per_bbl**: 80.0 USD per bbl _(source: `poles_jrc`)_
+  - The baseline brent price is 80.0 USD per bbl.
+- **oil_price_shock_pct**: 10.0 % _(source: `marketsim`)_
+  - The oil price shock is expected to be 10.0%.
+  - reliability: Note: This value is inconsistent with poles_jrc's result of 54.79%.
+- **natural_gas_price_change_pct**: 5.0 % _(source: `marketsim`)_
+  - The natural gas price change is expected to be 5.0%.
+- **disruption_duration_months**: 0.17 months _(source: `marketsim`)_
+  - The disruption duration is expected to be 0.17 months.
+- **consumer_surplus_loss_oil_bn_usd**: 0.394 bn USD _(source: `marketsim`)_
+  - The consumer surplus loss for oil is expected to be 0.394 bn USD.
+- **consumer_surplus_loss_gas_bn_usd**: 0.041 bn USD _(source: `marketsim`)_
+  - The consumer surplus loss for gas is expected to be 0.041 bn USD.
+- **consumer_surplus_loss_bn_usd**: 0.436 bn USD _(source: `marketsim`)_
+  - The total consumer surplus loss is expected to be 0.436 bn USD.
+- **producer_surplus_change_oil_bn_usd**: 0.236 bn USD _(source: `marketsim`)_
+  - The producer surplus change for oil is expected to be 0.236 bn USD.
+- **producer_surplus_change_gas_bn_usd**: 0.025 bn USD _(source: `marketsim`)_
+  - The producer surplus change for gas is expected to be 0.025 bn USD.
+- **net_welfare_impact_bn_usd**: -0.174 bn USD _(source: `marketsim`)_
+  - The net welfare impact is expected to be -0.174 bn USD.
+- **oil_demand_destruction_mbd**: -0.114 mbd _(source: `marketsim`)_
+  - The oil demand destruction is expected to be -0.114 mbd.
+- **gas_demand_destruction_bcfd**: -0.44 bcfd _(source: `marketsim`)_
+  - The gas demand destruction is expected to be -0.44 bcfd.
+- **fuel_switching_oil_to_gas_mmbtu**: 2359347.8 mmbtu _(source: `marketsim`)_
+  - The fuel switching from oil to gas is expected to be 2359347.8 mmbtu.
+- **fuel_switching_gas_to_oil_bbl**: 245614.6 bbl _(source: `marketsim`)_
+  - The fuel switching from gas to oil is expected to be 245614.6 bbl.
+- **cs_loss_by_sector_oil_bn_usd**: {'transport': 0.272, 'industrial': 0.091, 'residential': 0.016, 'commercial': 0.016} bn USD _(source: `marketsim`)_
+  - The consumer surplus loss by sector for oil is expected to be 0.272 bn USD for transport, 0.091 bn USD for industrial, 0.016 bn USD for residential, and 0.016 bn USD for commercial.
+- **cs_loss_by_sector_gas_bn_usd**: {'industrial': 0.013, 'residential': 0.007, 'commercial': 0.005, 'electric_power': 0.016} bn USD _(source: `marketsim`)_
+  - The consumer surplus loss by sector for gas is expected to be 0.013 bn USD for industrial, 0.007 bn USD for residential, 0.005 bn USD for commercial, and 0.016 bn USD for electric power.
+- **us_baseline_oil_consumption_mbd**: 19.0 mbd _(source: `marketsim`)_
+  - The US baseline oil consumption is 19.0 mbd.
+- **us_baseline_gas_consumption_bcfd**: 88.0 bcfd _(source: `marketsim`)_
+  - The US baseline gas consumption is 88.0 bcfd.
+- **build_cap_mw_yr**: 10135.0 MW/yr _(source: `energy_flux_gas_power`)_
+  - The build capacity is 10135.0 MW/yr.
+- **total_pipeline_mw**: 252000.0 MW _(source: `energy_flux_gas_power`)_
+  - The total pipeline capacity is 252000.0 MW.
+- **total_commissioned_gw**: 101.35 GW _(source: `energy_flux_gas_power`)_
+  - The total commissioned capacity is 101.35 GW.
+- **years_to_clear_backlog**: None _(source: `energy_flux_gas_power`)_
+  - The years to clear backlog is not available.
+- **by_2030_new_gw**: 50.675 GW _(source: `energy_flux_gas_power`)_
+  - The new capacity by 2030 is 50.675 GW.
+- **by_2030_bcf_per_day_mid**: 3.799891996142719 bcfd _(source: `energy_flux_gas_power`)_
+  - The mid-case capacity by 2030 is 3.799891996142719 bcfd.
+- **by_2035_new_gw**: 101.35 GW _(source: `energy_flux_gas_power`)_
+  - The new capacity by 2035 is 101.35 GW.
+- **by_2035_bcf_per_day_mid**: 7.599783992285438 bcfd _(source: `energy_flux_gas_power`)_
+  - The mid-case capacity by 2035 is 7.599783992285438 bcfd.
+- **yearly_results**: [{'year': 2026, 'added_construction_mw': 10135.0, 'added_pre_construction_mw': 0.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 10.135, 'remaining_construction_mw': 19865.0, 'remaining_pre_construction_mw': 159000.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 241865.0, 'incremental_bcf_per_day_low': 0.558255737704918, 'incremental_bcf_per_day_mid': 0.7599783992285438, 'incremental_bcf_per_day_high': 1.0695992285438765}, {'year': 2027, 'added_construction_mw': 10135.0, 'added_pre_construction_mw': 0.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 20.27, 'remaining_construction_mw': 9730.0, 'remaining_pre_construction_mw': 159000.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 231730.0, 'incremental_bcf_per_day_low': 1.116511475409836, 'incremental_bcf_per_day_mid': 1.5199567984570876, 'incremental_bcf_per_day_high': 2.139198457087753}, {'year': 2028, 'added_construction_mw': 9730.0, 'added_pre_construction_mw': 405.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 30.405, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 158595.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 221595.0, 'incremental_bcf_per_day_low': 1.674767213114754, 'incremental_bcf_per_day_mid': 2.279935197685632, 'incremental_bcf_per_day_high': 3.2087976856316294}, {'year': 2029, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 40.54, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 148460.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 211460.0, 'incremental_bcf_per_day_low': 2.233022950819672, 'incremental_bcf_per_day_mid': 3.0399135969141753, 'incremental_bcf_per_day_high': 4.278396914175506}, {'year': 2030, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 50.675, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 138325.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 201325.0, 'incremental_bcf_per_day_low': 2.79127868852459, 'incremental_bcf_per_day_mid': 3.799891996142719, 'incremental_bcf_per_day_high': 5.347996142719382}, {'year': 2031, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 60.81, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 128190.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 191190.0, 'incremental_bcf_per_day_low': 3.349534426229508, 'incremental_bcf_per_day_mid': 4.559870395371264, 'incremental_bcf_per_day_high': 6.417595371263259}, {'year': 2032, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 70.945, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 118055.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 181055.0, 'incremental_bcf_per_day_low': 3.907790163934425, 'incremental_bcf_per_day_mid': 5.319848794599807, 'incremental_bcf_per_day_high': 7.487194599807135}, {'year': 2033, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 81.08, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 107920.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 170920.0, 'incremental_bcf_per_day_low': 4.466045901639344, 'incremental_bcf_per_day_mid': 6.079827193828351, 'incremental_bcf_per_day_high': 8.556793828351012}, {'year': 2034, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 91.215, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 97785.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 160785.0, 'incremental_bcf_per_day_low': 5.024301639344261, 'incremental_bcf_per_day_mid': 6.839805593056895, 'incremental_bcf_per_day_high': 9.62639305689489}, {'year': 2035, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 101.35, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 87650.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 150650.0, 'incremental_bcf_per_day_low': 5.58255737704918, 'incremental_bcf_per_day_mid': 7.599783992285438, 'incremental_bcf_per_day_high': 10.695992285438765}] _(source: `energy_flux_gas_power`)_
+  - The yearly results for the energy flux gas power model are provided in the table.
+- **segmented_results**: [{'year': 2026, 'cumulative_gw': 10.135, 'dc_capacity_gw': 3.7499499999999997, 'non_dc_capacity_gw': 6.38505, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 0.913071825650916}, {'year': 2027, 'cumulative_gw': 20.27, 'dc_capacity_gw': 7.499899999999999, 'non_dc_capacity_gw': 12.7701, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 1.826143651301832}, {'year': 2028, 'cumulative_gw': 30.405, 'dc_capacity_gw': 11.24985, 'non_dc_capacity_gw': 19.155150000000003, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 2.739215476952748}, {'year': 2029, 'cumulative_gw': 40.54, 'dc_capacity_gw': 14.999799999999999, 'non_dc_capacity_gw': 25.5402, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 3.652287302603664}, {'year': 2030, 'cumulative_gw': 50.675, 'dc_capacity_gw': 18.74975, 'non_dc_capacity_gw': 31.92525, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 4.56535912825458}, {'year': 2031, 'cumulative_gw': 60.81, 'dc_capacity_gw': 22.4997, 'non_dc_capacity_gw': 38.310300000000005, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 5.478430953905496}, {'year': 2032, 'cumulative_gw': 70.945, 'dc_capacity_gw': 26.249649999999995, 'non_dc_capacity_gw': 44.69535, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 6.391502779556411}, {'year': 2033, 'cumulative_gw': 81.08, 'dc_capacity_gw': 29.999599999999997, 'non_dc_capacity_gw': 51.0804, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 7.304574605207328}, {'year': 2034, 'cumulative_gw': 91.215, 'dc_capacity_gw': 33.74955, 'non_dc_capacity_gw': 57.465450000000004, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 8.217646430858245}, {'year': 2035, 'cumulative_gw': 101.35, 'dc_capacity_gw': 37.4995, 'non_dc_capacity_gw': 63.8505, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 9.13071825650916}] _(source: `energy_flux_gas_power`)_
+  - The segmented results for the energy flux gas power model are provided in the table.
+
+## Long Run — Macro
+
+- **oil_price_shock_pct**: 54.79 (mpsgel) % _(source: `poles_jrc`)_
+  - The oil price shock is expected to be 54.79% due to the disruption in the Strait of Hormuz.
+  - reliability: The upstream model 'poles_jrc' produced a significant deviation from the LLM-extracted value, indicating a high degree of uncertainty in this outcome.
+  - distributional note: The oil price shock is expected to have a significant impact on global oil markets, with the most-affected regions likely to be those with high oil import dependence, such as the US and EU.
+  - uncertainty interpretation: The regional impact of the oil price shock is uncertain, with some regions expected to experience a significant increase in oil prices, while others may see a smaller impact.
+- **trade_cost_multiplier**: 1.1869 (mpsgel) _(source: `aisdb`)_
+  - The trade cost multiplier is expected to increase by 18.69% due to the disruption in the Strait of Hormuz.
+  - reliability: The upstream model 'aisdb' produced a significant value, indicating a high degree of uncertainty in this outcome.
+  - distributional note: The trade cost multiplier is expected to have a significant impact on global trade, with the most-affected regions likely to be those with high trade dependence, such as the US and EU.
+  - uncertainty interpretation: The regional impact of the trade cost multiplier is uncertain, with some regions expected to experience a significant increase in trade costs, while others may see a smaller impact.
+- **gdp_impact_pct**: -0.157 (pycge) % _(source: `pycge`)_
+  - The GDP impact is expected to be -0.157% due to the disruption in the Strait of Hormuz.
+  - reliability: The upstream model 'pycge' produced a significant value, indicating a high degree of uncertainty in this outcome.
+  - regional distribution: IND=-0.314, EU=-0.2655, SSA=-0.2566, CHN=-0.2218, ROW=-0.157, US=-0.147, LAC=-0.0785, MENA_OTHER=0.147, MENA_GCC=0.5394
+  - sectoral distribution: services=-0.125, industry=-0.0382, agriculture=-0.0157, energy=0.0738
+  - distributional note: The GDP impact is expected to be most significant in regions with high oil import dependence, such as the US and EU, and least significant in regions with low oil import dependence, such as MENA_GCC.
+  - uncertainty interpretation: The regional impact of the GDP impact is uncertain, with some regions expected to experience a significant decrease in GDP, while others may see a smaller impact.
+- **cpi_inflation_pct**: 1.3458 (pycge) % _(source: `pycge`)_
+  - The CPI inflation rate is expected to increase by 1.3458% due to the disruption in the Strait of Hormuz.
+  - reliability: The upstream model 'pycge' produced a significant value, indicating a high degree of uncertainty in this outcome.
+  - regional distribution: IND=-0.314, EU=-0.2655, SSA=-0.2566, CHN=-0.2218, ROW=-0.157, US=-0.147, LAC=-0.0785, MENA_OTHER=0.147, MENA_GCC=0.5394
+  - sectoral distribution: services=-0.125, industry=-0.0382, agriculture=-0.0157, energy=0.0738
+  - distributional note: The CPI inflation rate is expected to be most significant in regions with high oil import dependence, such as the US and EU, and least significant in regions with low oil import dependence, such as MENA_GCC.
+  - uncertainty interpretation: The regional impact of the CPI inflation rate is uncertain, with some regions expected to experience a significant increase in inflation, while others may see a smaller impact.
+- **consumption_impact_pct**: -0.6953 (pycge) % _(source: `pycge`)_
+  - The consumption impact is expected to be -0.6953% due to the disruption in the Strait of Hormuz.
+  - reliability: The upstream model 'pycge' produced a significant value, indicating a high degree of uncertainty in this outcome.
+  - regional distribution: IND=-0.314, EU=-0.2655, SSA=-0.2566, CHN=-0.2218, ROW=-0.157, US=-0.147, LAC=-0.0785, MENA_OTHER=0.147, MENA_GCC=0.5394
+  - sectoral distribution: services=-0.125, industry=-0.0382, agriculture=-0.0157, energy=0.0738
+  - distributional note: The consumption impact is expected to be most significant in regions with high oil import dependence, such as the US and EU, and least significant in regions with low oil import dependence, such as MENA_GCC.
+  - uncertainty interpretation: The regional impact of the consumption impact is uncertain, with some regions expected to experience a significant decrease in consumption, while others may see a smaller impact.
+- **welfare_pct_change**: -0.6953 (pycge) % _(source: `pycge`)_
+  - The welfare impact is expected to be -0.6953% due to the disruption in the Strait of Hormuz.
+  - reliability: The upstream model 'pycge' produced a significant value, indicating a high degree of uncertainty in this outcome.
+  - regional distribution: IND=-0.314, EU=-0.2655, SSA=-0.2566, CHN=-0.2218, ROW=-0.157, US=-0.147, LAC=-0.0785, MENA_OTHER=0.147, MENA_GCC=0.5394
+  - sectoral distribution: services=-0.125, industry=-0.0382, agriculture=-0.0157, energy=0.0738
+  - distributional note: The welfare impact is expected to be most significant in regions with high oil import dependence, such as the US and EU, and least significant in regions with low oil import dependence, such as MENA_GCC.
+  - uncertainty interpretation: The regional impact of the welfare impact is uncertain, with some regions expected to experience a significant decrease in welfare, while others may see a smaller impact.
+- **sectoral_output_pct_change**: 0.0738 (pycge) % _(source: `pycge`)_
+  - The sectoral output impact is expected to be 0.0738% due to the disruption in the Strait of Hormuz.
+  - reliability: The upstream model 'pycge' produced a significant value, indicating a high degree of uncertainty in this outcome.
+  - regional distribution: IND=-0.314, EU=-0.2655, SSA=-0.2566, CHN=-0.2218, ROW=-0.157, US=-0.147, LAC=-0.0785, MENA_OTHER=0.147, MENA_GCC=0.5394
+  - sectoral distribution: services=-0.125, industry=-0.0382, agriculture=-0.0157, energy=0.0738
+  - distributional note: The sectoral output impact is expected to be most significant in the energy sector, and least significant in the agriculture sector.
+  - uncertainty interpretation: The sectoral impact of the sectoral output impact is uncertain, with some sectors expected to experience a significant increase in output, while others may see a smaller impact.
+
+## Long Run — Strategic
+
+- **oil_price_shock_pct**: 54.79 (mpsgel) percent _(source: `poles_jrc`)_
+  - The oil price shock is expected to be 54.79% due to the Strait of Hormuz closure.
+  - reliability: The upstream model 'poles_jrc' produced a significant deviation from the LLM-extracted value, indicating a high degree of uncertainty in this outcome.
+  - distributional note: The oil price shock is expected to have a significant impact on global oil markets, with no clear regional or sectoral distribution noted.
+  - uncertainty interpretation: The upstream model 'poles_jrc' produced a significant deviation from the LLM-extracted value, indicating a high degree of uncertainty in this outcome.
+- **trade_cost_multiplier**: 1.1869 (mpsgel) percent _(source: `aisdb`)_
+  - The trade cost multiplier is expected to be 1.1869% due to the Strait of Hormuz closure.
+  - reliability: The upstream model 'aisdb' produced a significant deviation from the LLM-extracted value, indicating a high degree of uncertainty in this outcome.
+  - distributional note: The trade cost multiplier is expected to have a significant impact on global trade, with no clear regional or sectoral distribution noted.
+  - uncertainty interpretation: The upstream model 'aisdb' produced a significant deviation from the LLM-extracted value, indicating a high degree of uncertainty in this outcome.
+- **gdp_impact_pct**: -0.157 (pycge) percent _(source: `pycge`)_
+  - The GDP impact is expected to be -0.157% due to the Strait of Hormuz closure.
+  - reliability: The upstream model 'pycge' produced a significant deviation from the LLM-extracted value, indicating a high degree of uncertainty in this outcome.
+  - regional distribution: IND=-0.314, EU=-0.2655, SSA=-0.2566, CHN=-0.2218, ROW=-0.157, US=-0.147, LAC=-0.0785, MENA_OTHER=0.147, MENA_GCC=0.5394
+  - sectoral distribution: services=-0.125, industry=-0.0382, agriculture=-0.0157, energy=0.0738
+  - distributional note: The GDP impact is expected to have a significant impact on global economies, with the MENA_GCC region expected to be the most affected (+0.5394%) and the IND region expected to be the least affected (-0.314%).
+  - uncertainty interpretation: The upstream model 'pycge' produced a significant deviation from the LLM-extracted value, indicating a high degree of uncertainty in this outcome.
+- **cpi_inflation_pct**: 1.3458 (pycge) percent _(source: `pycge`)_
+  - The CPI inflation rate is expected to be 1.3458% due to the Strait of Hormuz closure.
+  - reliability: The upstream model 'pycge' produced a significant deviation from the LLM-extracted value, indicating a high degree of uncertainty in this outcome.
+  - regional distribution: IND=-0.314, EU=-0.2655, SSA=-0.2566, CHN=-0.2218, ROW=-0.157, US=-0.147, LAC=-0.0785, MENA_OTHER=0.147, MENA_GCC=0.5394
+  - sectoral distribution: services=-0.125, industry=-0.0382, agriculture=-0.0157, energy=0.0738
+  - distributional note: The CPI inflation rate is expected to have a significant impact on global economies, with the MENA_GCC region expected to be the most affected (0.4037%) and the IND region expected to be the least affected (2.6416%).
+  - uncertainty interpretation: The upstream model 'pycge' produced a significant deviation from the LLM-extracted value, indicating a high degree of uncertainty in this outcome.
+- **consumption_impact_pct**: -0.6953 (pycge) percent _(source: `pycge`)_
+  - The consumption impact is expected to be -0.6953% due to the Strait of Hormuz closure.
+  - reliability: The upstream model 'pycge' produced a significant deviation from the LLM-extracted value, indicating a high degree of uncertainty in this outcome.
+  - regional distribution: IND=-0.314, EU=-0.2655, SSA=-0.2566, CHN=-0.2218, ROW=-0.157, US=-0.147, LAC=-0.0785, MENA_OTHER=0.147, MENA_GCC=0.5394
+  - sectoral distribution: services=-0.125, industry=-0.0382, agriculture=-0.0157, energy=0.0738
+  - distributional note: The consumption impact is expected to have a significant impact on global economies, with the SSA region expected to be the most affected (-1.4324%) and the MENA_GCC region expected to be the least affected (0.3779%).
+  - uncertainty interpretation: The upstream model 'pycge' produced a significant deviation from the LLM-extracted value, indicating a high degree of uncertainty in this outcome.
+- **welfare_pct_change**: -0.6953 (pycge) percent _(source: `pycge`)_
+  - The welfare impact is expected to be -0.6953% due to the Strait of Hormuz closure.
+  - reliability: The upstream model 'pycge' produced a significant deviation from the LLM-extracted value, indicating a high degree of uncertainty in this outcome.
+  - regional distribution: IND=-0.314, EU=-0.2655, SSA=-0.2566, CHN=-0.2218, ROW=-0.157, US=-0.147, LAC=-0.0785, MENA_OTHER=0.147, MENA_GCC=0.5394
+  - sectoral distribution: services=-0.125, industry=-0.0382, agriculture=-0.0157, energy=0.0738
+  - distributional note: The welfare impact is expected to have a significant impact on global economies, with the SSA region expected to be the most affected (-1.4324%) and the MENA_GCC region expected to be the least affected (0.3779%).
+  - uncertainty interpretation: The upstream model 'pycge' produced a significant deviation from the LLM-extracted value, indicating a high degree of uncertainty in this outcome.
+- **sectoral_output_pct_change**: 0.0738 (pycge) percent _(source: `pycge`)_
+  - The sectoral output impact is expected to be 0.0738% due to the Strait of Hormuz closure.
+  - reliability: The upstream model 'pycge' produced a significant deviation from the LLM-extracted value, indicating a high degree of uncertainty in this outcome.
+  - regional distribution: IND=-0.314, EU=-0.2655, SSA=-0.2566, CHN=-0.2218, ROW=-0.157, US=-0.147, LAC=-0.0785, MENA_OTHER=0.147, MENA_GCC=0.5394
+  - sectoral distribution: services=-0.125, industry=-0.0382, agriculture=-0.0157, energy=0.0738
+  - distributional note: The sectoral output impact is expected to have a significant impact on global economies, with the energy sector expected to be the most affected (0.0738%) and the services sector expected to be the least affected (-0.125%).
+  - uncertainty interpretation: The upstream model 'pycge' produced a significant deviation from the LLM-extracted value, indicating a high degree of uncertainty in this outcome.
+
+## Cross-model consistency warnings
+
+- LLM-extracted vs upstream-computed disagreement on fed_oil input oil_price_change_pct: LLM=0.0, poles_jrc=54.79 (deviation: 200.0%, threshold: 50.0%)
+- LLM-extracted vs upstream-computed disagreement on mpsge_jl input commodity_price_shocks[helium]: LLM=30, world_helium_model=0.0 (deviation: 200.0%, threshold: 50.0%)
+- LLM-extracted vs upstream-computed disagreement on mpsge_jl input commodity_price_shocks[lng]: LLM=25, lngst=50.92727272727273 (deviation: 68.3%, threshold: 50.0%)
+- LLM-extracted vs upstream-computed disagreement on mpsge_jl input oil_price_shock_pct: LLM=0.0, poles_jrc=54.79 (deviation: 200.0%, threshold: 50.0%)
+- LLM-extracted vs upstream-computed disagreement on nrel input natural_gas_price_change_pct: LLM=0.0, lngst=50.92727272727273 (deviation: 200.0%, threshold: 50.0%)
+- LLM-extracted vs upstream-computed disagreement on pycge input commodity_price_shocks[helium]: LLM=30.0, world_helium_model=0.0 (deviation: 200.0%, threshold: 50.0%)
+- LLM-extracted vs upstream-computed disagreement on pycge input oil_price_shock_pct: LLM=0.0, poles_jrc=54.79 (deviation: 200.0%, threshold: 50.0%)
+- Section short_run/macro synthesis failed: LengthFinishReasonError
+
+## Failed / skipped models
+
+- `bornstein_krusell_rebelo`
+- `energy_flux_lng_profits`
+- `gtap`
+- `messageix`
+- `miragrodep`
+- `nems`
+- `opencge`
+- `osemosys`
+- `temoa`

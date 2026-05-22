@@ -1,0 +1,3200 @@
+{
+  "run_id": "20260504_222710",
+  "model_results_count": 99,
+  "completed": 49,
+  "skipped": 32,
+  "failed": 18,
+  "bash_failures_count": 1,
+  "bash_failures_by_stage": {
+    "stonybrook_ai_cluster_02_parameters": 1
+  },
+  "bash_failures": [
+    {
+      "stage": "stonybrook_ai_cluster_02_parameters",
+      "run_id": "20260504_222710",
+      "slurm_job_id": "25807",
+      "slurm_array_task_id": "144",
+      "hostname": "ai04",
+      "timestamp": "2026-05-04T23:29:05Z",
+      "status": "bash_failure",
+      "exit_code": 1,
+      "error_message": "Python invocation exited with code 1: python slurm/scripts/run_parameters.py"
+    }
+  ],
+  "consistency_flags": [
+    {
+      "scenario_id": "swift_contained",
+      "model_a_id": "nrel",
+      "model_b_id": "lngst",
+      "variable": "natural_gas_price_change_pct",
+      "value_a": 0.0,
+      "value_b": 50.92727272727273,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on nrel input natural_gas_price_change_pct: LLM=0.0, lngst=50.92727272727273 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_a_id": "mpsge_jl",
+      "model_b_id": "poles_jrc",
+      "variable": "oil_price_shock_pct",
+      "value_a": 0.0,
+      "value_b": 54.79,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on mpsge_jl input oil_price_shock_pct: LLM=0.0, poles_jrc=54.79 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_a_id": "mpsge_jl",
+      "model_b_id": "lngst",
+      "variable": "commodity_price_shocks[lng]",
+      "value_a": 25,
+      "value_b": 50.92727272727273,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 68.3,
+      "message": "LLM-extracted vs upstream-computed disagreement on mpsge_jl input commodity_price_shocks[lng]: LLM=25, lngst=50.92727272727273 (deviation: 68.3%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_a_id": "mpsge_jl",
+      "model_b_id": "world_helium_model",
+      "variable": "commodity_price_shocks[helium]",
+      "value_a": 30,
+      "value_b": 0.0,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on mpsge_jl input commodity_price_shocks[helium]: LLM=30, world_helium_model=0.0 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_a_id": "pycge",
+      "model_b_id": "poles_jrc",
+      "variable": "oil_price_shock_pct",
+      "value_a": 0.0,
+      "value_b": 54.79,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on pycge input oil_price_shock_pct: LLM=0.0, poles_jrc=54.79 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_a_id": "pycge",
+      "model_b_id": "world_helium_model",
+      "variable": "commodity_price_shocks[helium]",
+      "value_a": 30.0,
+      "value_b": 0.0,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on pycge input commodity_price_shocks[helium]: LLM=30.0, world_helium_model=0.0 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_a_id": "fed_oil",
+      "model_b_id": "poles_jrc",
+      "variable": "oil_price_change_pct",
+      "value_a": 0.0,
+      "value_b": 54.79,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on fed_oil input oil_price_change_pct: LLM=0.0, poles_jrc=54.79 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_a_id": "fed_oil",
+      "model_b_id": "poles_jrc",
+      "variable": "oil_price_change_pct",
+      "value_a": 25.0,
+      "value_b": 60.5,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 83.04,
+      "message": "LLM-extracted vs upstream-computed disagreement on fed_oil input oil_price_change_pct: LLM=25.0, poles_jrc=60.5 (deviation: 83.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_a_id": "nrel",
+      "model_b_id": "lngst",
+      "variable": "natural_gas_price_change_pct",
+      "value_a": 0.0,
+      "value_b": 126.39090909090909,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on nrel input natural_gas_price_change_pct: LLM=0.0, lngst=126.39090909090909 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_a_id": "mpsge_jl",
+      "model_b_id": "poles_jrc",
+      "variable": "oil_price_shock_pct",
+      "value_a": 0.0,
+      "value_b": 60.5,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on mpsge_jl input oil_price_shock_pct: LLM=0.0, poles_jrc=60.5 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_a_id": "mpsge_jl",
+      "model_b_id": "lngst",
+      "variable": "commodity_price_shocks[lng]",
+      "value_a": 25,
+      "value_b": 126.39090909090909,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 133.95,
+      "message": "LLM-extracted vs upstream-computed disagreement on mpsge_jl input commodity_price_shocks[lng]: LLM=25, lngst=126.39090909090909 (deviation: 133.9%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_a_id": "mpsge_jl",
+      "model_b_id": "world_helium_model",
+      "variable": "commodity_price_shocks[helium]",
+      "value_a": 30,
+      "value_b": 0.0,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on mpsge_jl input commodity_price_shocks[helium]: LLM=30, world_helium_model=0.0 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_a_id": "mpsge_jl",
+      "model_b_id": "world_fertilizer",
+      "variable": "commodity_price_shocks[fertilizer]",
+      "value_a": 0,
+      "value_b": 23.756,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on mpsge_jl input commodity_price_shocks[fertilizer]: LLM=0, world_fertilizer=23.756 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_a_id": "pycge",
+      "model_b_id": "poles_jrc",
+      "variable": "oil_price_shock_pct",
+      "value_a": 0.0,
+      "value_b": 60.5,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on pycge input oil_price_shock_pct: LLM=0.0, poles_jrc=60.5 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_a_id": "pycge",
+      "model_b_id": "world_helium_model",
+      "variable": "commodity_price_shocks[helium]",
+      "value_a": 30,
+      "value_b": 0.0,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on pycge input commodity_price_shocks[helium]: LLM=30, world_helium_model=0.0 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_a_id": "pycge",
+      "model_b_id": "world_fertilizer",
+      "variable": "commodity_price_shocks[fertilizer]",
+      "value_a": 0,
+      "value_b": 23.756,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on pycge input commodity_price_shocks[fertilizer]: LLM=0, world_fertilizer=23.756 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_a_id": "fed_oil",
+      "model_b_id": "poles_jrc",
+      "variable": "oil_price_change_pct",
+      "value_a": 25.0,
+      "value_b": 58.25,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 79.88,
+      "message": "LLM-extracted vs upstream-computed disagreement on fed_oil input oil_price_change_pct: LLM=25.0, poles_jrc=58.25 (deviation: 79.9%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_a_id": "nrel",
+      "model_b_id": "lngst",
+      "variable": "natural_gas_price_change_pct",
+      "value_a": 0.0,
+      "value_b": 126.39090909090909,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on nrel input natural_gas_price_change_pct: LLM=0.0, lngst=126.39090909090909 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_a_id": "mpsge_jl",
+      "model_b_id": "poles_jrc",
+      "variable": "oil_price_shock_pct",
+      "value_a": 0.0,
+      "value_b": 58.25,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on mpsge_jl input oil_price_shock_pct: LLM=0.0, poles_jrc=58.25 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_a_id": "mpsge_jl",
+      "model_b_id": "lngst",
+      "variable": "commodity_price_shocks[lng]",
+      "value_a": 25,
+      "value_b": 126.39090909090909,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 133.95,
+      "message": "LLM-extracted vs upstream-computed disagreement on mpsge_jl input commodity_price_shocks[lng]: LLM=25, lngst=126.39090909090909 (deviation: 133.9%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_a_id": "mpsge_jl",
+      "model_b_id": "world_helium_model",
+      "variable": "commodity_price_shocks[helium]",
+      "value_a": 30,
+      "value_b": 0.0,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on mpsge_jl input commodity_price_shocks[helium]: LLM=30, world_helium_model=0.0 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_a_id": "mpsge_jl",
+      "model_b_id": "world_fertilizer",
+      "variable": "commodity_price_shocks[fertilizer]",
+      "value_a": 0,
+      "value_b": 23.756,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on mpsge_jl input commodity_price_shocks[fertilizer]: LLM=0, world_fertilizer=23.756 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_a_id": "pycge",
+      "model_b_id": "poles_jrc",
+      "variable": "oil_price_shock_pct",
+      "value_a": 0.0,
+      "value_b": 58.25,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on pycge input oil_price_shock_pct: LLM=0.0, poles_jrc=58.25 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_a_id": "pycge",
+      "model_b_id": "world_helium_model",
+      "variable": "commodity_price_shocks[helium]",
+      "value_a": 30,
+      "value_b": 0.0,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on pycge input commodity_price_shocks[helium]: LLM=30, world_helium_model=0.0 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_a_id": "pycge",
+      "model_b_id": "world_fertilizer",
+      "variable": "commodity_price_shocks[fertilizer]",
+      "value_a": 0,
+      "value_b": 23.756,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on pycge input commodity_price_shocks[fertilizer]: LLM=0, world_fertilizer=23.756 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_a_id": "nrel",
+      "model_b_id": "lngst",
+      "variable": "natural_gas_price_change_pct",
+      "value_a": 0.0,
+      "value_b": 126.39090909090909,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on nrel input natural_gas_price_change_pct: LLM=0.0, lngst=126.39090909090909 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_a_id": "mpsge_jl",
+      "model_b_id": "poles_jrc",
+      "variable": "oil_price_shock_pct",
+      "value_a": 0.0,
+      "value_b": 51.82,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on mpsge_jl input oil_price_shock_pct: LLM=0.0, poles_jrc=51.82 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_a_id": "mpsge_jl",
+      "model_b_id": "lngst",
+      "variable": "commodity_price_shocks[lng]",
+      "value_a": 25,
+      "value_b": 126.39090909090909,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 133.95,
+      "message": "LLM-extracted vs upstream-computed disagreement on mpsge_jl input commodity_price_shocks[lng]: LLM=25, lngst=126.39090909090909 (deviation: 133.9%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_a_id": "mpsge_jl",
+      "model_b_id": "world_fertilizer",
+      "variable": "commodity_price_shocks[fertilizer]",
+      "value_a": 0,
+      "value_b": 23.756,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on mpsge_jl input commodity_price_shocks[fertilizer]: LLM=0, world_fertilizer=23.756 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_a_id": "pycge",
+      "model_b_id": "poles_jrc",
+      "variable": "oil_price_shock_pct",
+      "value_a": 0.0,
+      "value_b": 51.82,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on pycge input oil_price_shock_pct: LLM=0.0, poles_jrc=51.82 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_a_id": "pycge",
+      "model_b_id": "world_fertilizer",
+      "variable": "commodity_price_shocks[fertilizer]",
+      "value_a": 0.0,
+      "value_b": 23.756,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on pycge input commodity_price_shocks[fertilizer]: LLM=0.0, world_fertilizer=23.756 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_a_id": "nrel",
+      "model_b_id": "lngst",
+      "variable": "natural_gas_price_change_pct",
+      "value_a": 50.0,
+      "value_b": 126.39090909090909,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 86.62,
+      "message": "LLM-extracted vs upstream-computed disagreement on nrel input natural_gas_price_change_pct: LLM=50.0, lngst=126.39090909090909 (deviation: 86.6%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_a_id": "mpsge_jl",
+      "model_b_id": "poles_jrc",
+      "variable": "oil_price_shock_pct",
+      "value_a": 100.0,
+      "value_b": 48.36,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 69.61,
+      "message": "LLM-extracted vs upstream-computed disagreement on mpsge_jl input oil_price_shock_pct: LLM=100.0, poles_jrc=48.36 (deviation: 69.6%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_a_id": "mpsge_jl",
+      "model_b_id": "lngst",
+      "variable": "commodity_price_shocks[lng]",
+      "value_a": 25.0,
+      "value_b": 126.39090909090909,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 133.95,
+      "message": "LLM-extracted vs upstream-computed disagreement on mpsge_jl input commodity_price_shocks[lng]: LLM=25.0, lngst=126.39090909090909 (deviation: 133.9%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_a_id": "mpsge_jl",
+      "model_b_id": "world_helium_model",
+      "variable": "commodity_price_shocks[helium]",
+      "value_a": 30.0,
+      "value_b": 0.3,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 196.04,
+      "message": "LLM-extracted vs upstream-computed disagreement on mpsge_jl input commodity_price_shocks[helium]: LLM=30.0, world_helium_model=0.3 (deviation: 196.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_a_id": "mpsge_jl",
+      "model_b_id": "world_fertilizer",
+      "variable": "commodity_price_shocks[fertilizer]",
+      "value_a": 0.0,
+      "value_b": 30.321,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on mpsge_jl input commodity_price_shocks[fertilizer]: LLM=0.0, world_fertilizer=30.321 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_a_id": "mpsge_jl",
+      "model_b_id": "cwatm",
+      "variable": "commodity_price_shocks[water]",
+      "value_a": 0.0,
+      "value_b": 9.091,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on mpsge_jl input commodity_price_shocks[water]: LLM=0.0, cwatm=9.091 (deviation: 200.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_a_id": "pycge",
+      "model_b_id": "poles_jrc",
+      "variable": "oil_price_shock_pct",
+      "value_a": 500.0,
+      "value_b": 48.36,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 164.72,
+      "message": "LLM-extracted vs upstream-computed disagreement on pycge input oil_price_shock_pct: LLM=500.0, poles_jrc=48.36 (deviation: 164.7%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_a_id": "pycge",
+      "model_b_id": "world_helium_model",
+      "variable": "commodity_price_shocks[helium]",
+      "value_a": 30.0,
+      "value_b": 0.3,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 196.04,
+      "message": "LLM-extracted vs upstream-computed disagreement on pycge input commodity_price_shocks[helium]: LLM=30.0, world_helium_model=0.3 (deviation: 196.0%, threshold: 50.0%)"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_a_id": "pycge",
+      "model_b_id": "cwatm",
+      "variable": "commodity_price_shocks[water]",
+      "value_a": 0.0,
+      "value_b": 9.091,
+      "tolerance_pct": 50.0,
+      "deviation_pct": 200.0,
+      "message": "LLM-extracted vs upstream-computed disagreement on pycge input commodity_price_shocks[water]: LLM=0.0, cwatm=9.091 (deviation: 200.0%, threshold: 50.0%)"
+    }
+  ],
+  "synthesis_results": [
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "brent_price_path_usd_per_bbl",
+      "value": "80.0",
+      "source_model_id": "poles_jrc",
+      "narrative_summary": "The short-run brent oil price is expected to remain stable at $80.0 per barrel."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "peak_price_usd_per_bbl",
+      "value": "123.83",
+      "source_model_id": "poles_jrc",
+      "narrative_summary": "The peak brent oil price reached $123.83 per barrel, a 54.79% increase from the baseline."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "peak_price_change_pct",
+      "value": "54.79",
+      "source_model_id": "poles_jrc",
+      "narrative_summary": "The peak brent oil price increased by 54.79% from the baseline."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "baseline_price_usd_per_bbl",
+      "value": "80.0",
+      "source_model_id": "poles_jrc",
+      "narrative_summary": "The baseline brent oil price is $80.0 per barrel."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "rerouting_volume_mbd",
+      "value": "4.38",
+      "source_model_id": "poles_jrc",
+      "narrative_summary": "The rerouting volume of oil is expected to be 4.38 million barrels per day."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "substitution_volume_mbd",
+      "value": "0.0",
+      "source_model_id": "poles_jrc",
+      "narrative_summary": "The substitution volume of oil is expected to be 0 million barrels per day."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "disruption_duration_months",
+      "value": "0.42",
+      "source_model_id": "poles_jrc",
+      "narrative_summary": "The disruption duration is expected to be 0.42 months."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "supply_loss_mbd",
+      "value": "4.38",
+      "source_model_id": "poles_jrc",
+      "narrative_summary": "The supply loss is expected to be 4.38 million barrels per day."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "supply_loss_pct_of_global",
+      "value": "4.294",
+      "source_model_id": "poles_jrc",
+      "narrative_summary": "The supply loss is expected to be 4.294% of the global supply."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "oil_price_shock_pct",
+      "value": "10.0",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The oil price shock is expected to be 10.0%."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "natural_gas_price_change_pct",
+      "value": "5.0",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The natural gas price change is expected to be 5.0%."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "disruption_duration_months",
+      "value": "0.17",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The disruption duration is expected to be 0.17 months."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "consumer_surplus_loss_oil_bn_usd",
+      "value": "0.394",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The consumer surplus loss for oil is expected to be $0.394 billion."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "consumer_surplus_loss_gas_bn_usd",
+      "value": "0.041",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The consumer surplus loss for gas is expected to be $0.041 billion."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "consumer_surplus_loss_bn_usd",
+      "value": "0.436",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The total consumer surplus loss is expected to be $0.436 billion."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "producer_surplus_change_oil_bn_usd",
+      "value": "0.236",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The producer surplus change for oil is expected to be $0.236 billion."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "producer_surplus_change_gas_bn_usd",
+      "value": "0.025",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The producer surplus change for gas is expected to be $0.025 billion."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "net_welfare_impact_bn_usd",
+      "value": "-0.174",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The net welfare impact is expected to be -$0.174 billion."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "oil_demand_destruction_mbd",
+      "value": "-0.114",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The oil demand destruction is expected to be -0.114 million barrels per day."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "gas_demand_destruction_bcfd",
+      "value": "-0.44",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The gas demand destruction is expected to be -0.44 billion cubic feet per day."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "fuel_switching_oil_to_gas_mmbtu",
+      "value": "2359347.8",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The fuel switching from oil to gas is expected to be 2359347.8 million British thermal units."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "fuel_switching_gas_to_oil_bbl",
+      "value": "245614.6",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The fuel switching from gas to oil is expected to be 245614.6 barrels."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "cs_loss_by_sector_oil_bn_usd",
+      "value": "{'transport': 0.272, 'industrial': 0.091, 'residential': 0.016, 'commercial': 0.016}",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The consumer surplus loss by sector for oil is expected to be $0.272 billion for transport, $0.091 billion for industrial, $0.016 billion for residential, and $0.016 billion for commercial."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "cs_loss_by_sector_gas_bn_usd",
+      "value": "{'industrial': 0.013, 'residential': 0.007, 'commercial': 0.005, 'electric_power': 0.016}",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The consumer surplus loss by sector for gas is expected to be $0.013 billion for industrial, $0.007 billion for residential, $0.005 billion for commercial, and $0.016 billion for electric power."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "us_baseline_oil_consumption_mbd",
+      "value": "19.0",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The US baseline oil consumption is expected to be 19.0 million barrels per day."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "us_baseline_gas_consumption_bcfd",
+      "value": "88.0",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The US baseline gas consumption is expected to be 88.0 billion cubic feet per day."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "build_scenario",
+      "value": "central",
+      "source_model_id": "energy_flux_gas_power",
+      "narrative_summary": "The build scenario is expected to be central."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "build_cap_mw_yr",
+      "value": "10135.0",
+      "source_model_id": "energy_flux_gas_power",
+      "narrative_summary": "The build capacity is expected to be 10135.0 MW per year."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "total_pipeline_mw",
+      "value": "252000.0",
+      "source_model_id": "energy_flux_gas_power",
+      "narrative_summary": "The total pipeline capacity is expected to be 252000.0 MW."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "total_commissioned_gw",
+      "value": "101.35",
+      "source_model_id": "energy_flux_gas_power",
+      "narrative_summary": "The total commissioned capacity is expected to be 101.35 GW."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "years_to_clear_backlog",
+      "value": "None",
+      "source_model_id": "energy_flux_gas_power",
+      "narrative_summary": "The years to clear backlog is not available."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "by_2030_new_gw",
+      "value": "50.675",
+      "source_model_id": "energy_flux_gas_power",
+      "narrative_summary": "The new capacity by 2030 is expected to be 50.675 GW."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "by_2030_bcf_per_day_mid",
+      "value": "3.799891996142719",
+      "source_model_id": "energy_flux_gas_power",
+      "narrative_summary": "The mid-case capacity by 2030 is expected to be 3.799891996142719 bcfd."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "by_2035_new_gw",
+      "value": "101.35",
+      "source_model_id": "energy_flux_gas_power",
+      "narrative_summary": "The new capacity by 2035 is expected to be 101.35 GW."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "by_2035_bcf_per_day_mid",
+      "value": "7.599783992285438",
+      "source_model_id": "energy_flux_gas_power",
+      "narrative_summary": "The mid-case capacity by 2035 is expected to be 7.599783992285438 bcfd."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "yearly_results",
+      "value": "[{'year': 2026, 'added_construction_mw': 10135.0, 'added_pre_construction_mw': 0.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 10.135, 'remaining_construction_mw': 19865.0, 'remaining_pre_construction_mw': 159000.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 241865.0, 'incremental_bcf_per_day_low': 0.558255737704918, 'incremental_bcf_per_day_mid': 0.7599783992285438, 'incremental_bcf_per_day_high': 1.0695992285438765}, {'year': 2027, 'added_construction_mw': 10135.0, 'added_pre_construction_mw': 0.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 20.27, 'remaining_construction_mw': 9730.0, 'remaining_pre_construction_mw': 159000.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 231730.0, 'incremental_bcf_per_day_low': 1.116511475409836, 'incremental_bcf_per_day_mid': 1.5199567984570876, 'incremental_bcf_per_day_high': 2.139198457087753}, {'year': 2028, 'added_construction_mw': 9730.0, 'added_pre_construction_mw': 405.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 30.405, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 158595.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 221595.0, 'incremental_bcf_per_day_low': 1.674767213114754, 'incremental_bcf_per_day_mid': 2.279935197685632, 'incremental_bcf_per_day_high': 3.2087976856316294}, {'year': 2029, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 40.54, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 148460.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 211460.0, 'incremental_bcf_per_day_low': 2.233022950819672, 'incremental_bcf_per_day_mid': 3.0399135969141753, 'incremental_bcf_per_day_high': 4.278396914175506}, {'year': 2030, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 50.675, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 138325.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 201325.0, 'incremental_bcf_per_day_low': 2.79127868852459, 'incremental_bcf_per_day_mid': 3.799891996142719, 'incremental_bcf_per_day_high': 5.347996142719382}, {'year': 2031, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 60.81, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 128190.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 191190.0, 'incremental_bcf_per_day_low': 3.349534426229508, 'incremental_bcf_per_day_mid': 4.559870395371264, 'incremental_bcf_per_day_high': 6.417595371263259}, {'year': 2032, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 70.945, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 118055.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 181055.0, 'incremental_bcf_per_day_low': 3.907790163934425, 'incremental_bcf_per_day_mid': 5.319848794599807, 'incremental_bcf_per_day_high': 7.487194599807135}, {'year': 2033, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 81.08, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 107920.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 170920.0, 'incremental_bcf_per_day_low': 4.466045901639344, 'incremental_bcf_per_day_mid': 6.079827193828351, 'incremental_bcf_per_day_high': 8.556793828351012}, {'year': 2034, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 91.215, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 97785.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 160785.0, 'incremental_bcf_per_day_low': 5.024301639344261, 'incremental_bcf_per_day_mid': 6.839805593056895, 'incremental_bcf_per_day_high': 9.62639305689489}, {'year': 2035, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 101.35, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 87650.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 150650.0, 'incremental_bcf_per_day_low': 5.58255737704918, 'incremental_bcf_per_day_mid': 7.599783992285438, 'incremental_bcf_per_day_high': 10.695992285438765}]",
+      "source_model_id": "energy_flux_gas_power",
+      "narrative_summary": "The yearly results for the energy flux gas power model are provided in the table below."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "segmented_results",
+      "value": "[{'year': 2026, 'cumulative_gw': 10.135, 'dc_capacity_gw': 3.7499499999999997, 'non_dc_capacity_gw': 6.38505, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 0.913071825650916}, {'year': 2027, 'cumulative_gw': 20.27, 'dc_capacity_gw': 7.499899999999999, 'non_dc_capacity_gw': 12.7701, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 1.826143651301832}, {'year': 2028, 'cumulative_gw': 30.405, 'dc_capacity_gw': 11.24985, 'non_dc_capacity_gw': 19.155150000000003, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 2.739215476952748}, {'year': 2029, 'cumulative_gw': 40.54, 'dc_capacity_gw': 14.999799999999999, 'non_dc_capacity_gw': 25.5402, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 3.652287302603664}, {'year': 2030, 'cumulative_gw': 50.675, 'dc_capacity_gw': 18.74975, 'non_dc_capacity_gw': 31.92525, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 4.56535912825458}, {'year': 2031, 'cumulative_gw': 60.81, 'dc_capacity_gw': 22.4997, 'non_dc_capacity_gw': 38.310300000000005, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 5.478430953905496}, {'year': 2032, 'cumulative_gw': 70.945, 'dc_capacity_gw': 26.249649999999995, 'non_dc_capacity_gw': 44.69535, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 6.391502779556411}, {'year': 2033, 'cumulative_gw': 81.08, 'dc_capacity_gw': 29.999599999999997, 'non_dc_capacity_gw': 51.0804, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 7.304574605207328}, {'year': 2034, 'cumulative_gw': 91.215, 'dc_capacity_gw': 33.74955, 'non_dc_capacity_gw': 57.465450000000004, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 8.217646430858245}, {'year': 2035, 'cumulative_gw': 101.35, 'dc_capacity_gw': 37.4995, 'non_dc_capacity_gw': 63.8505, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 9.13071825650916}]",
+      "source_model_id": "energy_flux_gas_power",
+      "narrative_summary": "The segmented results for the energy flux gas power model are provided in the table below."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "natural_gas_price_change_pct",
+      "value": "50.92727272727273",
+      "source_model_id": "nrel",
+      "narrative_summary": "The natural gas price is expected to increase by 50.93% due to the disruption in the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "retail_electricity_price_change_pct",
+      "value": "22.917",
+      "source_model_id": "nrel",
+      "narrative_summary": "The retail electricity price is expected to increase by 22.92% due to the disruption in the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "gdp_impact_pct",
+      "value": "-0.0407",
+      "source_model_id": "nrel",
+      "narrative_summary": "The GDP is expected to decrease by 0.0407% due to the disruption in the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "cpi_inflation_pct",
+      "value": "0.5093",
+      "source_model_id": "nrel",
+      "narrative_summary": "The CPI inflation rate is expected to increase by 0.5093% due to the disruption in the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "consumption_impact_pct",
+      "value": "-0.2445",
+      "source_model_id": "nrel",
+      "narrative_summary": "The consumption is expected to decrease by 0.2445% due to the disruption in the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "welfare_pct_change",
+      "value": "-0.2445",
+      "source_model_id": "nrel",
+      "narrative_summary": "The welfare is expected to decrease by 0.2445% due to the disruption in the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "co2_emissions_pct_change",
+      "value": "3.942",
+      "source_model_id": "nrel",
+      "narrative_summary": "The CO2 emissions are expected to increase by 3.94% due to the disruption in the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "coal_dispatch_gain_pp",
+      "value": "6.111",
+      "source_model_id": "nrel",
+      "narrative_summary": "The coal dispatch gain is expected to increase by 6.11% due to the disruption in the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "renewables_dispatch_gain_pp",
+      "value": "5.093",
+      "source_model_id": "nrel",
+      "narrative_summary": "The renewables dispatch gain is expected to increase by 5.09% due to the disruption in the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "capacity_utilization_pct_change",
+      "value": "-3.565",
+      "source_model_id": "nrel",
+      "narrative_summary": "The capacity utilization is expected to decrease by 3.57% due to the disruption in the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "generation_share_baseline",
+      "value": "{'natural_gas': 0.43, 'coal': 0.16, 'nuclear': 0.18, 'renewables': 0.21, 'other': 0.02}",
+      "source_model_id": "nrel",
+      "narrative_summary": "The generation share baseline is expected to be 43% natural gas, 16% coal, 18% nuclear, 21% renewables, and 2% other due to the disruption in the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "generation_share_new",
+      "value": "{'natural_gas': 0.318, 'coal': 0.2211, 'nuclear': 0.18, 'renewables': 0.2609, 'other': 0.02}",
+      "source_model_id": "nrel",
+      "narrative_summary": "The generation share new is expected to be 31.8% natural gas, 22.11% coal, 18% nuclear, 26.09% renewables, and 2% other due to the disruption in the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "generation_dispatch_pct_change",
+      "value": "{'natural_gas': -11.204, 'coal': 6.111, 'renewables': 5.093, 'nuclear': 0.0, 'other': 0.0}",
+      "source_model_id": "nrel",
+      "narrative_summary": "The generation dispatch is expected to decrease by 11.2% for natural gas, increase by 6.11% for coal, increase by 5.09% for renewables, and remain the same for nuclear and other due to the disruption in the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "mam",
+      "value": "{'oil_price_path': [123.83, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0, 80.0]}",
+      "source_model_id": "mam",
+      "narrative_summary": "The oil price path is expected to be $123.83 in 2026, $80.00 in 2027-2031, and $80.00 in 2032-2040 due to the disruption in the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "brent_price_path_usd_per_bbl",
+      "value": "80.0",
+      "source_model_id": "poles_jrc",
+      "narrative_summary": "The long-run brent price is expected to remain stable at 80.0 USD per bbl."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "peak_price_usd_per_bbl",
+      "value": "123.83",
+      "source_model_id": "poles_jrc",
+      "narrative_summary": "The peak brent price reached 123.83 USD per bbl, a 54.79% increase from the baseline."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "peak_price_change_pct",
+      "value": "54.79",
+      "source_model_id": "poles_jrc",
+      "narrative_summary": "The peak brent price increased by 54.79% from the baseline."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "baseline_price_usd_per_bbl",
+      "value": "80.0",
+      "source_model_id": "poles_jrc",
+      "narrative_summary": "The baseline brent price is 80.0 USD per bbl."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "oil_price_shock_pct",
+      "value": "10.0",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The oil price shock is expected to be 10.0%."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "natural_gas_price_change_pct",
+      "value": "5.0",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The natural gas price change is expected to be 5.0%."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "disruption_duration_months",
+      "value": "0.17",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The disruption duration is expected to be 0.17 months."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "consumer_surplus_loss_oil_bn_usd",
+      "value": "0.394",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The consumer surplus loss for oil is expected to be 0.394 bn USD."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "consumer_surplus_loss_gas_bn_usd",
+      "value": "0.041",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The consumer surplus loss for gas is expected to be 0.041 bn USD."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "consumer_surplus_loss_bn_usd",
+      "value": "0.436",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The total consumer surplus loss is expected to be 0.436 bn USD."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "producer_surplus_change_oil_bn_usd",
+      "value": "0.236",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The producer surplus change for oil is expected to be 0.236 bn USD."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "producer_surplus_change_gas_bn_usd",
+      "value": "0.025",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The producer surplus change for gas is expected to be 0.025 bn USD."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "net_welfare_impact_bn_usd",
+      "value": "-0.174",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The net welfare impact is expected to be -0.174 bn USD."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "oil_demand_destruction_mbd",
+      "value": "-0.114",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The oil demand destruction is expected to be -0.114 mbd."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "gas_demand_destruction_bcfd",
+      "value": "-0.44",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The gas demand destruction is expected to be -0.44 bcfd."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "fuel_switching_oil_to_gas_mmbtu",
+      "value": "2359347.8",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The fuel switching from oil to gas is expected to be 2359347.8 mmbtu."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "fuel_switching_gas_to_oil_bbl",
+      "value": "245614.6",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The fuel switching from gas to oil is expected to be 245614.6 bbl."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "cs_loss_by_sector_oil_bn_usd",
+      "value": "{'transport': 0.272, 'industrial': 0.091, 'residential': 0.016, 'commercial': 0.016}",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The consumer surplus loss by sector for oil is expected to be 0.272 bn USD for transport, 0.091 bn USD for industrial, 0.016 bn USD for residential, and 0.016 bn USD for commercial."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "cs_loss_by_sector_gas_bn_usd",
+      "value": "{'industrial': 0.013, 'residential': 0.007, 'commercial': 0.005, 'electric_power': 0.016}",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The consumer surplus loss by sector for gas is expected to be 0.013 bn USD for industrial, 0.007 bn USD for residential, 0.005 bn USD for commercial, and 0.016 bn USD for electric power."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "us_baseline_oil_consumption_mbd",
+      "value": "19.0",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The US baseline oil consumption is 19.0 mbd."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "us_baseline_gas_consumption_bcfd",
+      "value": "88.0",
+      "source_model_id": "marketsim",
+      "narrative_summary": "The US baseline gas consumption is 88.0 bcfd."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "build_cap_mw_yr",
+      "value": "10135.0",
+      "source_model_id": "energy_flux_gas_power",
+      "narrative_summary": "The build capacity is 10135.0 MW/yr."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "total_pipeline_mw",
+      "value": "252000.0",
+      "source_model_id": "energy_flux_gas_power",
+      "narrative_summary": "The total pipeline capacity is 252000.0 MW."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "total_commissioned_gw",
+      "value": "101.35",
+      "source_model_id": "energy_flux_gas_power",
+      "narrative_summary": "The total commissioned capacity is 101.35 GW."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "years_to_clear_backlog",
+      "value": "None",
+      "source_model_id": "energy_flux_gas_power",
+      "narrative_summary": "The years to clear backlog is not available."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "by_2030_new_gw",
+      "value": "50.675",
+      "source_model_id": "energy_flux_gas_power",
+      "narrative_summary": "The new capacity by 2030 is 50.675 GW."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "by_2030_bcf_per_day_mid",
+      "value": "3.799891996142719",
+      "source_model_id": "energy_flux_gas_power",
+      "narrative_summary": "The mid-case capacity by 2030 is 3.799891996142719 bcfd."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "by_2035_new_gw",
+      "value": "101.35",
+      "source_model_id": "energy_flux_gas_power",
+      "narrative_summary": "The new capacity by 2035 is 101.35 GW."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "by_2035_bcf_per_day_mid",
+      "value": "7.599783992285438",
+      "source_model_id": "energy_flux_gas_power",
+      "narrative_summary": "The mid-case capacity by 2035 is 7.599783992285438 bcfd."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "yearly_results",
+      "value": "[{'year': 2026, 'added_construction_mw': 10135.0, 'added_pre_construction_mw': 0.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 10.135, 'remaining_construction_mw': 19865.0, 'remaining_pre_construction_mw': 159000.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 241865.0, 'incremental_bcf_per_day_low': 0.558255737704918, 'incremental_bcf_per_day_mid': 0.7599783992285438, 'incremental_bcf_per_day_high': 1.0695992285438765}, {'year': 2027, 'added_construction_mw': 10135.0, 'added_pre_construction_mw': 0.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 20.27, 'remaining_construction_mw': 9730.0, 'remaining_pre_construction_mw': 159000.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 231730.0, 'incremental_bcf_per_day_low': 1.116511475409836, 'incremental_bcf_per_day_mid': 1.5199567984570876, 'incremental_bcf_per_day_high': 2.139198457087753}, {'year': 2028, 'added_construction_mw': 9730.0, 'added_pre_construction_mw': 405.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 30.405, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 158595.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 221595.0, 'incremental_bcf_per_day_low': 1.674767213114754, 'incremental_bcf_per_day_mid': 2.279935197685632, 'incremental_bcf_per_day_high': 3.2087976856316294}, {'year': 2029, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 40.54, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 148460.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 211460.0, 'incremental_bcf_per_day_low': 2.233022950819672, 'incremental_bcf_per_day_mid': 3.0399135969141753, 'incremental_bcf_per_day_high': 4.278396914175506}, {'year': 2030, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 50.675, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 138325.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 201325.0, 'incremental_bcf_per_day_low': 2.79127868852459, 'incremental_bcf_per_day_mid': 3.799891996142719, 'incremental_bcf_per_day_high': 5.347996142719382}, {'year': 2031, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 60.81, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 128190.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 191190.0, 'incremental_bcf_per_day_low': 3.349534426229508, 'incremental_bcf_per_day_mid': 4.559870395371264, 'incremental_bcf_per_day_high': 6.417595371263259}, {'year': 2032, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 70.945, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 118055.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 181055.0, 'incremental_bcf_per_day_low': 3.907790163934425, 'incremental_bcf_per_day_mid': 5.319848794599807, 'incremental_bcf_per_day_high': 7.487194599807135}, {'year': 2033, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 81.08, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 107920.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 170920.0, 'incremental_bcf_per_day_low': 4.466045901639344, 'incremental_bcf_per_day_mid': 6.079827193828351, 'incremental_bcf_per_day_high': 8.556793828351012}, {'year': 2034, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 91.215, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 97785.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 160785.0, 'incremental_bcf_per_day_low': 5.024301639344261, 'incremental_bcf_per_day_mid': 6.839805593056895, 'incremental_bcf_per_day_high': 9.62639305689489}, {'year': 2035, 'added_construction_mw': 0.0, 'added_pre_construction_mw': 10135.0, 'added_announced_mw': 0.0, 'total_added_mw': 10135.0, 'cumulative_added_gw': 101.35, 'remaining_construction_mw': 0.0, 'remaining_pre_construction_mw': 87650.0, 'remaining_announced_mw': 63000.0, 'remaining_total_mw': 150650.0, 'incremental_bcf_per_day_low': 5.58255737704918, 'incremental_bcf_per_day_mid': 7.599783992285438, 'incremental_bcf_per_day_high': 10.695992285438765}]",
+      "source_model_id": "energy_flux_gas_power",
+      "narrative_summary": "The yearly results for the energy flux gas power model are provided in the table."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "outcome_variable": "segmented_results",
+      "value": "[{'year': 2026, 'cumulative_gw': 10.135, 'dc_capacity_gw': 3.7499499999999997, 'non_dc_capacity_gw': 6.38505, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 0.913071825650916}, {'year': 2027, 'cumulative_gw': 20.27, 'dc_capacity_gw': 7.499899999999999, 'non_dc_capacity_gw': 12.7701, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 1.826143651301832}, {'year': 2028, 'cumulative_gw': 30.405, 'dc_capacity_gw': 11.24985, 'non_dc_capacity_gw': 19.155150000000003, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 2.739215476952748}, {'year': 2029, 'cumulative_gw': 40.54, 'dc_capacity_gw': 14.999799999999999, 'non_dc_capacity_gw': 25.5402, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 3.652287302603664}, {'year': 2030, 'cumulative_gw': 50.675, 'dc_capacity_gw': 18.74975, 'non_dc_capacity_gw': 31.92525, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 4.56535912825458}, {'year': 2031, 'cumulative_gw': 60.81, 'dc_capacity_gw': 22.4997, 'non_dc_capacity_gw': 38.310300000000005, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 5.478430953905496}, {'year': 2032, 'cumulative_gw': 70.945, 'dc_capacity_gw': 26.249649999999995, 'non_dc_capacity_gw': 44.69535, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 6.391502779556411}, {'year': 2033, 'cumulative_gw': 81.08, 'dc_capacity_gw': 29.999599999999997, 'non_dc_capacity_gw': 51.0804, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 7.304574605207328}, {'year': 2034, 'cumulative_gw': 91.215, 'dc_capacity_gw': 33.74955, 'non_dc_capacity_gw': 57.465450000000004, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 8.217646430858245}, {'year': 2035, 'cumulative_gw': 101.35, 'dc_capacity_gw': 37.4995, 'non_dc_capacity_gw': 63.8505, 'dc_effective_cf': 0.695, 'non_dc_effective_cf': 0.45, 'blended_bcf_per_day': 9.13071825650916}]",
+      "source_model_id": "energy_flux_gas_power",
+      "narrative_summary": "The segmented results for the energy flux gas power model are provided in the table."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "oil_price_shock_pct",
+      "value": "54.79 (mpsgel)",
+      "source_model_id": "poles_jrc",
+      "narrative_summary": "The oil price shock is expected to be 54.79% due to the disruption in the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "trade_cost_multiplier",
+      "value": "1.1869 (mpsgel)",
+      "source_model_id": "aisdb",
+      "narrative_summary": "The trade cost multiplier is expected to increase by 18.69% due to the disruption in the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "gdp_impact_pct",
+      "value": "-0.157 (pycge)",
+      "source_model_id": "pycge",
+      "narrative_summary": "The GDP impact is expected to be -0.157% due to the disruption in the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "cpi_inflation_pct",
+      "value": "1.3458 (pycge)",
+      "source_model_id": "pycge",
+      "narrative_summary": "The CPI inflation rate is expected to increase by 1.3458% due to the disruption in the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "consumption_impact_pct",
+      "value": "-0.6953 (pycge)",
+      "source_model_id": "pycge",
+      "narrative_summary": "The consumption impact is expected to be -0.6953% due to the disruption in the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "welfare_pct_change",
+      "value": "-0.6953 (pycge)",
+      "source_model_id": "pycge",
+      "narrative_summary": "The welfare impact is expected to be -0.6953% due to the disruption in the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "sectoral_output_pct_change",
+      "value": "0.0738 (pycge)",
+      "source_model_id": "pycge",
+      "narrative_summary": "The sectoral output impact is expected to be 0.0738% due to the disruption in the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "oil_price_shock_pct",
+      "value": "54.79 (mpsgel)",
+      "source_model_id": "poles_jrc",
+      "narrative_summary": "The oil price shock is expected to be 54.79% due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "trade_cost_multiplier",
+      "value": "1.1869 (mpsgel)",
+      "source_model_id": "aisdb",
+      "narrative_summary": "The trade cost multiplier is expected to be 1.1869% due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "gdp_impact_pct",
+      "value": "-0.157 (pycge)",
+      "source_model_id": "pycge",
+      "narrative_summary": "The GDP impact is expected to be -0.157% due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "cpi_inflation_pct",
+      "value": "1.3458 (pycge)",
+      "source_model_id": "pycge",
+      "narrative_summary": "The CPI inflation rate is expected to be 1.3458% due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "consumption_impact_pct",
+      "value": "-0.6953 (pycge)",
+      "source_model_id": "pycge",
+      "narrative_summary": "The consumption impact is expected to be -0.6953% due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "welfare_pct_change",
+      "value": "-0.6953 (pycge)",
+      "source_model_id": "pycge",
+      "narrative_summary": "The welfare impact is expected to be -0.6953% due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "sectoral_output_pct_change",
+      "value": "0.0738 (pycge)",
+      "source_model_id": "pycge",
+      "narrative_summary": "The sectoral output impact is expected to be 0.0738% due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "oil_price_change_pct",
+      "value": "60.5",
+      "source_model_id": "fed_oil",
+      "narrative_summary": "The prolonged contained conflict in the Strait of Hormuz led to a significant increase in oil prices, with a 60.5% change from the baseline."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "peak_gdp_impact_pct",
+      "value": "-0.6806",
+      "source_model_id": "fed_oil",
+      "narrative_summary": "The prolonged contained conflict in the Strait of Hormuz led to a significant decline in global GDP, with a peak impact of -0.6806% from the baseline."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "peak_cpi_impact_pp",
+      "value": "1.21",
+      "source_model_id": "fed_oil",
+      "narrative_summary": "The prolonged contained conflict in the Strait of Hormuz led to a significant increase in global inflation, with a peak impact of 1.21 from the baseline."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "peak_ffr_impact_pp",
+      "value": "0.605",
+      "source_model_id": "fed_oil",
+      "narrative_summary": "The prolonged contained conflict in the Strait of Hormuz led to a significant increase in the federal funds rate, with a peak impact of 0.605 from the baseline."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "peak_unemployment_impact_pp",
+      "value": "0.3403",
+      "source_model_id": "fed_oil",
+      "narrative_summary": "The prolonged contained conflict in the Strait of Hormuz led to a significant increase in unemployment, with a peak impact of 0.3403 from the baseline."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "gdp_irf_pct_quarterly",
+      "value": "[-0.6806, -0.5785, -0.4918, -0.418, -0.3553, -0.302, -0.2567, -0.2182]",
+      "source_model_id": "fed_oil",
+      "narrative_summary": "The prolonged contained conflict in the Strait of Hormuz led to a significant decline in global GDP, with a peak impact of -0.6806% from the baseline."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "cpi_irf_pp_quarterly",
+      "value": "[1.21, 0.9075, 0.6806, 0.5105, 0.3829, 0.2871, 0.2154, 0.1615]",
+      "source_model_id": "fed_oil",
+      "narrative_summary": "The prolonged contained conflict in the Strait of Hormuz led to a significant increase in global inflation, with a peak impact of 1.21 from the baseline."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "fed_funds_rate_irf_pp_quarterly",
+      "value": "[0.605, 0.3932, 0.2404, 0.1313, 0.0543, 0.001, -0.035, -0.0584]",
+      "source_model_id": "fed_oil",
+      "narrative_summary": "The prolonged contained conflict in the Strait of Hormuz led to a significant increase in the federal funds rate, with a peak impact of 0.605 from the baseline."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "unemployment_irf_pp_quarterly",
+      "value": "[0.3403, 0.2893, 0.2459, 0.209, 0.1776, 0.151, 0.1284, 0.1091]",
+      "source_model_id": "fed_oil",
+      "narrative_summary": "The prolonged contained conflict in the Strait of Hormuz led to a significant increase in unemployment, with a peak impact of 0.3403 from the baseline."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "natural_gas_price_change_pct",
+      "value": "126.39090909090909",
+      "source_model_id": "nrel",
+      "narrative_summary": "The prolonged contained conflict in the Strait of Hormuz led to a significant increase in natural gas prices, with a 126.39090909090909% change from the baseline."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "retail_electricity_price_change_pct",
+      "value": "56.876",
+      "source_model_id": "nrel",
+      "narrative_summary": "The prolonged contained conflict in the Strait of Hormuz led to a significant increase in retail electricity prices, with a 56.876% change from the baseline."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "gdp_impact_pct",
+      "value": "-0.4494",
+      "source_model_id": "nrel",
+      "narrative_summary": "The prolonged contained conflict in the Strait of Hormuz led to a significant decline in global GDP, with a peak impact of -0.4494% from the baseline."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "cpi_inflation_pct",
+      "value": "1.2639",
+      "source_model_id": "nrel",
+      "narrative_summary": "The prolonged contained conflict in the Strait of Hormuz led to a significant increase in global inflation, with a peak impact of 1.2639% from the baseline."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "consumption_impact_pct",
+      "value": "-0.9549",
+      "source_model_id": "nrel",
+      "narrative_summary": "The prolonged contained conflict in the Strait of Hormuz led to a significant decline in global consumption, with a peak impact of -0.9549% from the baseline."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "welfare_pct_change",
+      "value": "-0.9549",
+      "source_model_id": "nrel",
+      "narrative_summary": "The prolonged contained conflict in the Strait of Hormuz led to a significant decline in global welfare, with a peak impact of -0.9549% from the baseline."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "oil_price_shock_pct",
+      "value": "[60.5 (mpsgel), 60.5 (pycge)]",
+      "source_model_id": "mpsgel, pycge",
+      "narrative_summary": "The prolonged contained conflict led to a significant oil price shock, with prices increasing by 60.5% according to both the mpsge_jl and pycge models."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "trade_cost_multiplier",
+      "value": "[1.1869 (mpsgel)]",
+      "source_model_id": "mpsgel",
+      "narrative_summary": "The prolonged contained conflict led to a significant increase in trade costs, with the trade cost multiplier increasing by 18.69% according to the mpsge_jl model."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "gdp_impact_pct",
+      "value": "[-0.8139 (pycge), -0.8883 (mpsgel)]",
+      "source_model_id": "pycge, mpsge_jl",
+      "narrative_summary": "The prolonged contained conflict led to a significant decline in GDP, with the GDP impact percentage decreasing by 8.139% and 8.883% according to the pycge and mpsge_jl models, respectively."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "cpi_inflation_pct",
+      "value": "[1.757 (pycge), 2.7989 (mpsgel)]",
+      "source_model_id": "pycge, mpsge_jl",
+      "narrative_summary": "The prolonged contained conflict led to a significant increase in CPI inflation, with the CPI inflation percentage increasing by 1.757% and 2.7989% according to the pycge and mpsge_jl models, respectively."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "consumption_impact_pct",
+      "value": "[-1.5166 (pycge), -2.0078 (mpsgel)]",
+      "source_model_id": "pycge, mpsge_jl",
+      "narrative_summary": "The prolonged contained conflict led to a significant decline in consumption, with the consumption impact percentage decreasing by 1.5166% and 2.0078% according to the pycge and mpsge_jl models, respectively."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "welfare_pct_change",
+      "value": "[-2.0078 (pycge), -2.0078 (mpsgel)]",
+      "source_model_id": "pycge, mpsge_jl",
+      "narrative_summary": "The prolonged contained conflict led to a significant decline in welfare, with the welfare percentage change decreasing by 2.0078% according to both the pycge and mpsge_jl models."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "sectoral_output_pct_change",
+      "value": "{'agriculture': -0.085, 'industry': -0.194, 'energy': 0.349, 'services': -0.6465}",
+      "source_model_id": "pycge",
+      "narrative_summary": "The prolonged contained conflict led to a significant decline in sectoral output, with the agriculture, industry, and services sectors experiencing declines of 8.5%, 19.4%, and 64.65%, respectively, while the energy sector experienced an increase of 34.9% according to the pycge model."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "oil_price_shock_pct",
+      "value": "[60.5, 60.5]",
+      "source_model_id": "mpsg_jl, pycge",
+      "narrative_summary": "The prolonged contained conflict led to a significant oil price shock, with prices increasing by 60.5% according to both the mpsge_jl and pycge models."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "trade_cost_multiplier",
+      "value": "[1.1869, 1.0]",
+      "source_model_id": "mpsg_jl, ais_project",
+      "narrative_summary": "The prolonged contained conflict led to a significant increase in trade costs, with trade costs increasing by 18.69% according to the mpsge_jl model and by 0% according to the ais_project model."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "gdp_impact_pct",
+      "value": "[-0.8139, -0.8139, -0.8883, -0.8139]",
+      "source_model_id": "pycge, mpsge_jl, aisdb, ais_project",
+      "narrative_summary": "The prolonged contained conflict led to a significant decline in GDP, with GDP decreasing by 8.139% according to the pycge model, by 8.139% according to the mpsge_jl model, by 8.883% according to the aisdb model, and by 8.139% according to the ais_project model."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "cpi_inflation_pct",
+      "value": "[1.757, 1.757, 2.7989, 1.757]",
+      "source_model_id": "pycge, mpsge_jl, aisdb, ais_project",
+      "narrative_summary": "The prolonged contained conflict led to a moderate increase in CPI inflation, with CPI inflation increasing by 1.757% according to the pycge model, by 2.789% according to the mpsge_jl model, by 2.7989% according to the aisdb model, and by 1.757% according to the ais_project model."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "consumption_impact_pct",
+      "value": "[-1.5166, -1.5166, -2.0078, -1.5166]",
+      "source_model_id": "pycge, mpsge_jl, aisdb, ais_project",
+      "narrative_summary": "The prolonged contained conflict led to a significant decline in consumption, with consumption decreasing by 1.5166% according to the pycge model, by 2.078% according to the mpsge_jl model, by 2.078% according to the aisdb model, and by 1.5166% according to the ais_project model."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "welfare_pct_change",
+      "value": "[-1.5166, -1.5166, -2.0078, -1.5166]",
+      "source_model_id": "pycge, mpsge_jl, aisdb, ais_project",
+      "narrative_summary": "The prolonged contained conflict led to a significant decline in welfare, with welfare decreasing by 1.5166% according to the pycge model, by 2.078% according to the mpsge_jl model, by 2.078% according to the aisdb model, and by 1.5166% according to the ais_project model."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "sectoral_output_pct_change",
+      "value": "{'agriculture': -0.085, 'industry': -0.194, 'energy': 0.349, 'services': -0.6465}",
+      "source_model_id": "pycge",
+      "narrative_summary": "The prolonged contained conflict led to a decline in sectoral output, with agriculture decreasing by 8.5%, industry decreasing by 19.4%, energy increasing by 34.9%, and services decreasing by 64.65% according to the pycge model."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "oil_price_change_pct",
+      "value": "58.25",
+      "source_model_id": "fed_oil",
+      "narrative_summary": "The oil price is expected to increase by 58.25% due to the disruption in the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "peak_gdp_impact_pct",
+      "value": "-0.6553",
+      "source_model_id": "fed_oil",
+      "narrative_summary": "The global GDP is expected to decline by 0.6553% due to the disruption in the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "natural_gas_price_change_pct",
+      "value": "126.39090909090909",
+      "source_model_id": "nrel",
+      "narrative_summary": "The natural gas price is expected to increase by 126.39% due to the disruption in the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "gdp_impact_pct",
+      "value": "-0.4494",
+      "source_model_id": "nrel",
+      "narrative_summary": "The global GDP is expected to decline by 0.4494% due to the disruption in the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "disruption_duration_months",
+      "value": "{nrel: 4.0}",
+      "source_model_id": "nrel",
+      "narrative_summary": "The Strait of Hormuz remains closed for 4 months, causing significant economic disruption."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "natural_gas_price_change_pct",
+      "value": "{nrel: 126.39090909090909}",
+      "source_model_id": "nrel",
+      "narrative_summary": "Natural gas prices increase by 126.39% due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "gdp_impact_pct",
+      "value": "{nrel: -0.4494}",
+      "source_model_id": "nrel",
+      "narrative_summary": "The Strait of Hormuz closure causes a 0.45% decrease in global GDP."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "cpi_inflation_pct",
+      "value": "{nrel: 1.2639}",
+      "source_model_id": "nrel",
+      "narrative_summary": "The Strait of Hormuz closure causes a 1.26% increase in global CPI inflation."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "consumption_impact_pct",
+      "value": "{nrel: -0.9549}",
+      "source_model_id": "nrel",
+      "narrative_summary": "The Strait of Hormuz closure causes a 0.95% decrease in global consumption."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "welfare_pct_change",
+      "value": "{nrel: -0.9549}",
+      "source_model_id": "nrel",
+      "narrative_summary": "The Strait of Hormuz closure causes a 0.95% decrease in global welfare."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "co2_emissions_pct_change",
+      "value": "{nrel: 1.321}",
+      "source_model_id": "nrel",
+      "narrative_summary": "The Strait of Hormuz closure causes a 1.32% increase in global CO2 emissions."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "coal_dispatch_gain_pp",
+      "value": "{nrel: 10.0}",
+      "source_model_id": "nrel",
+      "narrative_summary": "Coal dispatch increases by 10 pp due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "renewables_dispatch_gain_pp",
+      "value": "{nrel: 12.639}",
+      "source_model_id": "nrel",
+      "narrative_summary": "Renewables dispatch increases by 12.64 pp due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "fleet_utilization_drop_pct_by_vessel",
+      "value": "{aisdb: {'lng_carrier': 35.185, 'tanker': 29.688}}",
+      "source_model_id": "aisdb",
+      "narrative_summary": "The Strait of Hormuz closure causes a 35.19% drop in lng carrier fleet utilization and a 29.69% drop in tanker fleet utilization."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "effective_fleet_capacity_loss_pct",
+      "value": "{aisdb: 31.154, ais_project: 0.0}",
+      "source_model_id": "aisdb",
+      "narrative_summary": "The Strait of Hormuz closure causes a 31.15% loss in effective fleet capacity, according to AISDB, and no loss, according to AIS Project."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "rerouting_cost_multiplier",
+      "value": "{aisdb: 1.1869, ais_project: 1.0}",
+      "source_model_id": "aisdb",
+      "narrative_summary": "The Strait of Hormuz closure causes a 18.69% increase in rerouting costs, according to AISDB, and no increase, according to AIS Project."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "war_risk_insurance_premium_pct",
+      "value": "{aisdb: 200.0}",
+      "source_model_id": "aisdb",
+      "narrative_summary": "The Strait of Hormuz closure causes a 200% increase in war risk insurance premiums."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "strait_closure_flag",
+      "value": "{aisdb: True, ais_project: True}",
+      "source_model_id": "aisdb",
+      "narrative_summary": "The Strait of Hormuz is closed due to the conflict."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "alternative_routes",
+      "value": "{aisdb: ['cape_of_good_hope']}",
+      "source_model_id": "aisdb",
+      "narrative_summary": "The Strait of Hormuz closure causes ships to reroute via the Cape of Good Hope."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "vessel_types",
+      "value": "{aisdb: ['lng_carrier', 'tanker']}",
+      "source_model_id": "aisdb",
+      "narrative_summary": "The Strait of Hormuz closure affects lng carriers and tankers."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "additional_transit_days_by_route",
+      "value": "{aisdb: {'cape_of_good_hope': 9.5}}",
+      "source_model_id": "aisdb",
+      "narrative_summary": "The Strait of Hormuz closure causes a 9.5-day increase in transit time via the Cape of Good Hope."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "max_additional_transit_days",
+      "value": "{aisdb: 9.5}",
+      "source_model_id": "aisdb",
+      "narrative_summary": "The Strait of Hormuz closure causes a maximum 9.5-day increase in transit time."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "fleet_utilization_multiplier",
+      "value": "{ais_project: 1.0}",
+      "source_model_id": "ais_project",
+      "narrative_summary": "The Strait of Hormuz closure causes no change in fleet utilization, according to AIS Project."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "effective_fleet_capacity_loss_pct",
+      "value": "{ais_project: 0.0}",
+      "source_model_id": "ais_project",
+      "narrative_summary": "The Strait of Hormuz closure causes no loss in effective fleet capacity, according to AIS Project."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "tanker_rate_change_pct",
+      "value": "{ais_project: 0.0}",
+      "source_model_id": "ais_project",
+      "narrative_summary": "The Strait of Hormuz closure causes no change in tanker rates, according to AIS Project."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "rerouting_cost_multiplier",
+      "value": "{ais_project: 1.0}",
+      "source_model_id": "ais_project",
+      "narrative_summary": "The Strait of Hormuz closure causes no increase in rerouting costs, according to AIS Project."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "voyage_days_lost_per_baseline_voyage",
+      "value": "{ais_project: 0.0}",
+      "source_model_id": "ais_project",
+      "narrative_summary": "The Strait of Hormuz closure causes no loss in voyage days, according to AIS Project."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "disruption_duration_months",
+      "value": "{ais_project: 4.0}",
+      "source_model_id": "ais_project",
+      "narrative_summary": "The Strait of Hormuz remains closed for 4 months, according to AIS Project."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "oil_price_shock_pct",
+      "value": "{mpsge_jl: 58.25, pycge: 58.25}",
+      "source_model_id": "mpsge_jl, pycge",
+      "narrative_summary": "The oil price shock is expected to be 58.25% due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "trade_cost_multiplier",
+      "value": "{mpsge_jl: 1.1869}",
+      "source_model_id": "mpsge_jl",
+      "narrative_summary": "The trade cost multiplier is expected to increase by 18.69% due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "commodity_price_shocks",
+      "value": "{mpsge_jl: {'oil': 58.25, 'lng': 126.39090909090909, 'fertilizer': 23.756, 'helium': 0.0}, pycge: {'oil': 58.25, 'lng': 25.0, 'fertilizer': 23.756, 'helium': 0.0}}",
+      "source_model_id": "mpsge_jl, pycge",
+      "narrative_summary": "The commodity price shocks are expected to be 58.25% for oil, 126.39% for LNG, 23.76% for fertilizer, and 0% for helium due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "disruption_duration_months",
+      "value": "{mpsge_jl: 4.0}",
+      "source_model_id": "mpsge_jl",
+      "narrative_summary": "The disruption duration is expected to be 4 months due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "gdp_impact_pct",
+      "value": "{mpsge_jl: -0.8695, pycge: -0.7889}",
+      "source_model_id": "mpsge_jl, pycge",
+      "narrative_summary": "The GDP impact is expected to be -0.8695% due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "cpi_inflation_pct",
+      "value": "{mpsge_jl: 2.7539, pycge: 1.712}",
+      "source_model_id": "mpsge_jl, pycge",
+      "narrative_summary": "The CPI inflation is expected to be 2.7539% due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "consumption_impact_pct",
+      "value": "{mpsge_jl: -1.9711, pycge: -1.4736}",
+      "source_model_id": "mpsge_jl, pycge",
+      "narrative_summary": "The consumption impact is expected to be -1.9711% due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "welfare_pct_change",
+      "value": "{mpsge_jl: -1.9711, pycge: -1.4736}",
+      "source_model_id": "mpsge_jl, pycge",
+      "narrative_summary": "The welfare impact is expected to be -1.9711% due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "wage_impact_pct",
+      "value": "{mpsge_jl: 1.2176, pycge: 0.6327}",
+      "source_model_id": "mpsge_jl, pycge",
+      "narrative_summary": "The wage impact is expected to be 1.2176% due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "interest_rate_impact_pct",
+      "value": "{mpsge_jl: 1.1596, pycge: 0.6588}",
+      "source_model_id": "mpsge_jl, pycge",
+      "narrative_summary": "The interest rate impact is expected to be 1.1596% due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "sectoral_output_pct_change",
+      "value": "{mpsge_jl: {'agriculture': -0.1244, 'industry': -0.2334, 'energy': 0.5824, 'services': -0.7012}, pycge: {'agriculture': -0.0829, 'industry': -0.1882, 'energy': 0.34, 'services': -0.6267}}",
+      "source_model_id": "mpsge_jl, pycge",
+      "narrative_summary": "The sectoral output impact is expected to be -0.1244% for agriculture, -0.2334% for industry, 0.5824% for energy, and -0.7012% for services due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "regional_vars",
+      "value": "{pycge: [{'region': 'US', 'gdp_impact_pct': -0.7444, 'cpi_inflation_pct': 1.712, 'consumption_impact_pct': -1.4292, 'welfare_pct_change': -1.4292, 'wage_impact_pct': 0.655, 'interest_rate_impact_pct': 0.6699}, {'region': 'CHN', 'gdp_impact_pct': -1.1186, 'cpi_inflation_pct': 2.1434, 'consumption_impact_pct': -1.9759, 'welfare_pct_change': -1.9759, 'wage_impact_pct': 0.7268, 'interest_rate_impact_pct': 0.7921}, {'region': 'IND', 'gdp_impact_pct': -1.6041, 'cpi_inflation_pct': 3.5224, 'consumption_impact_pct': -3.013, 'welfare_pct_change': -3.013, 'wage_impact_pct': 1.3114, 'interest_rate_impact_pct': 1.3602}, {'region': 'EU', 'gdp_impact_pct': -1.3008, 'cpi_inflation_pct': 2.7288, 'consumption_impact_pct': -2.3923, 'welfare_pct_change': -2.3923, 'wage_impact_pct': 0.9869, 'interest_rate_impact_pct': 1.0392}, {'region': 'MENA_GCC', 'gdp_impact_pct': 2.5054, 'cpi_inflation_pct': 0.6621, 'consumption_impact_pct': 2.2406, 'welfare_pct_change': 2.2406, 'wage_impact_pct': 1.6499, 'interest_rate_impact_pct': 0.9574}, {'region': 'MENA_OTHER', 'gdp_impact_pct': 0.6124, 'cpi_inflation_pct': 2.5914, 'consumption_impact_pct': -0.4241, 'welfare_pct_change': -0.4241, 'wage_impact_pct': 1.8611, 'interest_rate_impact_pct': 1.4488}, {'region': 'SSA', 'gdp_impact_pct': -1.3677, 'cpi_inflation_pct': 4.1518, 'consumption_impact_pct': -3.0285, 'welfare_pct_change': -3.0285, 'wage_impact_pct': 1.8072, 'interest_rate_impact_pct': 1.734}, {'region': 'LAC', 'gdp_impact_pct': -0.4314, 'cpi_inflation_pct': 2.0434, 'consumption_impact_pct': -1.2487, 'welfare_pct_change': -1.2487, 'wage_impact_pct': 1.0104, 'interest_rate_impact_pct': 0.9139}, {'region': 'ROW', 'gdp_impact_pct': -0.7889, 'cpi_inflation_pct': 1.712, 'consumption_impact_pct': -1.4736, 'welfare_pct_change': -1.4736, 'wage_impact_pct': 0.6327, 'interest_rate_impact_pct': 0.6588}]}",
+      "source_model_id": "pycge",
+      "narrative_summary": "The regional output impact is expected to be -0.7444% for the US, -1.1186% for China, -1.6041% for India, -1.3008% for the EU, 2.5054% for MENA_GCC, 0.6124% for MENA_OTHER, -1.3677% for SSA, -0.4314% for LAC, and -0.7889% for ROW due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "gdp_impact_pct_by_region",
+      "value": "{pycge: {'US': -0.7444, 'CHN': -1.1186, 'IND': -1.6041, 'EU': -1.3008, 'MENA_GCC': 2.5054, 'MENA_OTHER': 0.6124, 'SSA': -1.3677, 'LAC': -0.4314, 'ROW': -0.7889}}",
+      "source_model_id": "pycge",
+      "narrative_summary": "The regional GDP impact is expected to be -0.7444% for the US, -1.1186% for China, -1.6041% for India, -1.3008% for the EU, 2.5054% for MENA_GCC, 0.6124% for MENA_OTHER, -1.3677% for SSA, -0.4314% for LAC, and -0.7889% for ROW due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "cpi_inflation_pct_by_region",
+      "value": "{pycge: {'US': 1.712, 'CHN': 2.1434, 'IND': 3.5224, 'EU': 2.7288, 'MENA_GCC': 0.6621, 'MENA_OTHER': 2.5914, 'SSA': 4.1518, 'LAC': 2.0434, 'ROW': 1.712}}",
+      "source_model_id": "pycge",
+      "narrative_summary": "The regional CPI inflation is expected to be 1.712% for the US, 2.1434% for China, 3.5224% for India, 2.7288% for the EU, 0.6621% for MENA_GCC, 2.5914% for MENA_OTHER, 4.1518% for SSA, 2.0434% for LAC, and 1.712% for ROW due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "consumption_impact_pct_by_region",
+      "value": "{pycge: {'US': -1.8026, 'CHN': -2.6073, 'IND': -3.9016, 'EU': -3.9109, 'MENA_GCC': 2.2851, 'MENA_OTHER': -0.8663, 'SSA': -3.1649, 'LAC': -1.6193, 'ROW': -1.9711}}",
+      "source_model_id": "pycge",
+      "narrative_summary": "The regional consumption impact is expected to be -1.8026% for the US, -2.6073% for China, -3.9016% for India, -3.9109% for the EU, 2.2851% for MENA_GCC, -0.8663% for MENA_OTHER, -3.1649% for SSA, -1.6193% for LAC, and -1.9711% for ROW due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "welfare_pct_change_by_region",
+      "value": "{pycge: {'US': -1.8026, 'CHN': -2.6073, 'IND': -3.9016, 'EU': -3.9109, 'MENA_GCC': 2.2851, 'MENA_OTHER': -0.8663, 'SSA': -3.1649, 'LAC': -1.6193, 'ROW': -1.9711}}",
+      "source_model_id": "pycge",
+      "narrative_summary": "The regional welfare impact is expected to be -1.8026% for the US, -2.6073% for China, -3.9016% for India, -3.9109% for the EU, 2.2851% for MENA_GCC, -0.8663% for MENA_OTHER, -3.1649% for SSA, -1.6193% for LAC, and -1.9711% for ROW due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "equivalent_variation_pct_by_region",
+      "value": "{pycge: {'US': -1.8026, 'CHN': -2.6073, 'IND': -3.9016, 'EU': -3.9109, 'MENA_GCC': 2.2851, 'MENA_OTHER': -0.8663, 'SSA': -3.1649, 'LAC': -1.6193, 'ROW': -1.9711}}",
+      "source_model_id": "pycge",
+      "narrative_summary": "The regional equivalent variation impact is expected to be -1.8026% for the US, -2.6073% for China, -3.9016% for India, -3.9109% for the EU, 2.2851% for MENA_GCC, -0.8663% for MENA_OTHER, -3.1649% for SSA, -1.6193% for LAC, and -1.9711% for ROW due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "terms_of_trade_pct_change_by_region",
+      "value": "{pycge: {'US': -0.0291, 'CHN': -0.1748, 'IND': -0.2913, 'EU': -0.233, 'MENA_GCC': 0.5242, 'MENA_OTHER': 0.1748, 'SSA': -0.2039, 'LAC': -0.0583, 'ROW': -0.0583}}",
+      "source_model_id": "pycge",
+      "narrative_summary": "The regional terms of trade impact is expected to be -0.0291% for the US, -0.1748% for China, -0.2913% for India, -0.233% for the EU, 0.5242% for MENA_GCC, 0.1748% for MENA_OTHER, -0.2039% for SSA, -0.0583% for LAC, and -0.0583% for ROW due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "bilateral_trade_flow_change_pct",
+      "value": "{pycge: {'MENA_GCC': {'CHN': -6.355, 'IND': -5.607, 'EU': -4.112, 'US': -1.495, 'ROW': -3.738}}}",
+      "source_model_id": "pycge",
+      "narrative_summary": "The bilateral trade flow impact is expected to be -6.355% for China, -5.607% for India, -4.112% for the EU, -1.495% for the US, and -3.738% for ROW due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "sectoral_output_pct_change",
+      "value": "{pycge: {'services': -0.6267, 'industry': -0.1882, 'agriculture': -0.0829, 'energy': 0.34}}",
+      "source_model_id": "pycge",
+      "narrative_summary": "The sectoral output impact is expected to be -0.6267% for services, -0.1882% for industry, -0.0829% for agriculture, and 0.34% for energy due to the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "oil_price_change_pct",
+      "value": "51.82",
+      "source_model_id": "fed_oil",
+      "narrative_summary": "The prolonged escalated conflict in the Strait of Hormuz led to a significant increase in oil prices, with a 51.82% change."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "disruption_duration_months",
+      "value": "[7.0]",
+      "source_model_id": "nrel",
+      "narrative_summary": "The Strait of Hormuz remained closed for 7 months, causing significant economic disruption."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "gdp_impact_pct",
+      "value": "-0.6599",
+      "source_model_id": "nrel",
+      "narrative_summary": "The prolonged conflict resulted in a 0.66% decrease in GDP."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "cpi_inflation_pct",
+      "value": "1.6498",
+      "source_model_id": "nrel",
+      "narrative_summary": "The prolonged conflict resulted in a 1.65% increase in CPI inflation."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "consumption_impact_pct",
+      "value": "-1.3199",
+      "source_model_id": "nrel",
+      "narrative_summary": "The prolonged conflict resulted in a 1.32% decrease in consumption."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "welfare_pct_change",
+      "value": "-1.3199",
+      "source_model_id": "nrel",
+      "narrative_summary": "The prolonged conflict resulted in a 1.32% decrease in welfare."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "natural_gas_price_change_pct",
+      "value": "126.39090909090909",
+      "source_model_id": "nrel",
+      "narrative_summary": "The prolonged conflict resulted in a 126.39% increase in natural gas prices."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "retail_electricity_price_change_pct",
+      "value": "56.876",
+      "source_model_id": "nrel",
+      "narrative_summary": "The prolonged conflict resulted in a 56.88% increase in retail electricity prices."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "retail_passthrough_coefficient",
+      "value": "0.5",
+      "source_model_id": "nrel",
+      "narrative_summary": "The prolonged conflict resulted in a 50% passthrough of price increases to retail electricity prices."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "generation_share_baseline",
+      "value": "{'natural_gas': 0.43, 'coal': 0.16, 'nuclear': 0.18, 'renewables': 0.21, 'other': 0.02}",
+      "source_model_id": "nrel",
+      "narrative_summary": "The baseline generation mix was 43% natural gas, 16% coal, 18% nuclear, 21% renewables, and 2% other."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "generation_share_new",
+      "value": "{'natural_gas': 0.2036, 'coal': 0.26, 'nuclear': 0.18, 'renewables': 0.3364, 'other': 0.02}",
+      "source_model_id": "nrel",
+      "narrative_summary": "The new generation mix was 20.36% natural gas, 26% coal, 18% nuclear, 33.64% renewables, and 2% other."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "generation_dispatch_pct_change",
+      "value": "{'natural_gas': -22.639, 'coal': 10.0, 'renewables': 12.639, 'nuclear': 0.0, 'other': 0.0}",
+      "source_model_id": "nrel",
+      "narrative_summary": "The prolonged conflict resulted in a 22.64% decrease in natural gas generation, a 10% increase in coal generation, a 12.64% increase in renewables generation, and no change in nuclear or other generation."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "capacity_utilization_pct_change",
+      "value": "{'natural_gas': -8.847, 'coal': 15.167, 'renewables': 60.186, 'nuclear': 0.0, 'other': 0.0}",
+      "source_model_id": "nrel",
+      "narrative_summary": "The prolonged conflict resulted in an 8.85% decrease in natural gas capacity utilization, a 15.17% increase in coal capacity utilization, a 60.19% increase in renewables capacity utilization, and no change in nuclear or other capacity utilization."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "co2_emissions_pct_change",
+      "value": "1.321",
+      "source_model_id": "nrel",
+      "narrative_summary": "The prolonged conflict resulted in a 1.32% increase in CO2 emissions."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "renewables_dispatch_gain_pp",
+      "value": "12.639",
+      "source_model_id": "nrel",
+      "narrative_summary": "The prolonged conflict resulted in a 12.64 pp increase in renewables dispatch."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "coal_dispatch_gain_pp",
+      "value": "10.0",
+      "source_model_id": "nrel",
+      "narrative_summary": "The prolonged conflict resulted in a 10 pp increase in coal dispatch."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "oil_price_shock_pct",
+      "value": "51.82",
+      "source_model_id": "poles_jrc",
+      "narrative_summary": "The prolonged escalated conflict led to a significant oil price shock, with prices increasing by 51.82%."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "trade_cost_multiplier",
+      "value": "1.1869",
+      "source_model_id": "aisdb",
+      "narrative_summary": "The prolonged escalated conflict led to a significant increase in trade costs, with the trade cost multiplier increasing by 18.69%."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "commodity_price_shocks",
+      "value": "{'oil': 51.82, 'lng': 126.39090909090909, 'fertilizer': 23.756, 'helium': 30.0, 'water': 0.0, 'capex': 5.607000000000001}",
+      "source_model_id": "mpse_jl",
+      "narrative_summary": "The prolonged escalated conflict led to significant price shocks in various commodities, including oil, LNG, fertilizer, and helium."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "disruption_duration_months",
+      "value": "7.0",
+      "source_model_id": "mpse_jl",
+      "narrative_summary": "The prolonged escalated conflict lasted for 7 months, causing significant economic disruption."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "gdp_impact_pct",
+      "value": "-1.4314",
+      "source_model_id": "mpse_jl",
+      "narrative_summary": "The prolonged escalated conflict led to a significant decline in global GDP, with a 1.4314% impact."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "cpi_inflation_pct",
+      "value": "3.0628",
+      "source_model_id": "mpse_jl",
+      "narrative_summary": "The prolonged escalated conflict led to a moderate increase in global CPI inflation, with a 3.0628% impact."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "consumption_impact_pct",
+      "value": "-2.6565",
+      "source_model_id": "mpse_jl",
+      "narrative_summary": "The prolonged escalated conflict led to a significant decline in global consumption, with a 2.6565% impact."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "welfare_pct_change",
+      "value": "-2.6565",
+      "source_model_id": "mpse_jl",
+      "narrative_summary": "The prolonged escalated conflict led to a significant decline in global welfare, with a 2.6565% impact."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "wage_impact_pct",
+      "value": "1.122",
+      "source_model_id": "mpse_jl",
+      "narrative_summary": "The prolonged escalated conflict led to a moderate increase in global wages, with a 1.122% impact."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "interest_rate_impact_pct",
+      "value": "1.1736",
+      "source_model_id": "mpse_jl",
+      "narrative_summary": "The prolonged escalated conflict led to a moderate increase in global interest rates, with a 1.1736% impact."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "sectoral_output_pct_change",
+      "value": "{'agriculture': -0.2101, 'industry': -0.3876, 'energy': 0.9852, 'services': -1.1556}",
+      "source_model_id": "mpse_jl",
+      "narrative_summary": "The prolonged escalated conflict led to significant changes in sectoral output, with agriculture and industry declining and energy increasing."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "gdp_growth_pct",
+      "value": "-1.0575",
+      "source_model_id": "pycge",
+      "narrative_summary": "The prolonged escalated conflict led to a significant decline in global GDP growth, with a -1.0575% impact."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "cpi_inflation_pct",
+      "value": "2.0668",
+      "source_model_id": "pycge",
+      "narrative_summary": "The prolonged escalated conflict led to a moderate increase in global CPI inflation, with a 2.0668% impact."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "consumption_impact_pct",
+      "value": "-1.8842",
+      "source_model_id": "pycge",
+      "narrative_summary": "The prolonged escalated conflict led to a significant decline in global consumption, with a -1.8842% impact."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "welfare_pct_change",
+      "value": "-1.8842",
+      "source_model_id": "pycge",
+      "narrative_summary": "The prolonged escalated conflict led to a significant decline in global welfare, with a -1.8842% impact."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "wage_impact_pct",
+      "value": "0.7113",
+      "source_model_id": "pycge",
+      "narrative_summary": "The prolonged escalated conflict led to a moderate increase in global wages, with a 0.7113% impact."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "interest_rate_impact_pct",
+      "value": "0.769",
+      "source_model_id": "pycge",
+      "narrative_summary": "The prolonged escalated conflict led to a moderate increase in global interest rates, with a 0.769% impact."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "sectoral_output_pct_change",
+      "value": "{'agriculture': -0.1133, 'industry': -0.253, 'energy': 0.4612, 'services': -0.8404}",
+      "source_model_id": "pycge",
+      "narrative_summary": "The prolonged escalated conflict led to significant changes in sectoral output, with agriculture and industry declining and energy increasing."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "oil_price_shock_pct",
+      "value": "51.82",
+      "source_model_id": "poles_jrc",
+      "narrative_summary": "The prolonged escalated conflict led to a significant oil price shock, with prices increasing by 51.82%."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "trade_cost_multiplier",
+      "value": "1.1869",
+      "source_model_id": "aisdb",
+      "narrative_summary": "The prolonged escalated conflict led to a significant increase in trade costs, with the trade cost multiplier increasing by 18.69%."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "commodity_price_shocks",
+      "value": "{'oil': 51.82, 'lng': 126.39090909090909, 'fertilizer': 23.756, 'helium': 30.0, 'water': 0.0, 'capex': 5.607000000000001}",
+      "source_model_id": "mpse_jl",
+      "narrative_summary": "The prolonged escalated conflict led to significant price shocks in various commodities, including oil, LNG, fertilizer, and helium."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "disruption_duration_months",
+      "value": "7.0",
+      "source_model_id": "mpse_jl",
+      "narrative_summary": "The prolonged escalated conflict lasted for 7 months, causing significant economic disruption."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "gdp_impact_pct",
+      "value": "-1.4314",
+      "source_model_id": "mpse_jl",
+      "narrative_summary": "The prolonged escalated conflict led to a significant decline in global GDP, with a 1.4314% impact."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "cpi_inflation_pct",
+      "value": "3.0628",
+      "source_model_id": "mpse_jl",
+      "narrative_summary": "The prolonged escalated conflict led to a moderate increase in global CPI inflation, with a 3.0628% impact."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "consumption_impact_pct",
+      "value": "-2.6565",
+      "source_model_id": "mpse_jl",
+      "narrative_summary": "The prolonged escalated conflict led to a significant decline in global consumption, with a 2.6565% impact."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "welfare_pct_change",
+      "value": "-2.6565",
+      "source_model_id": "mpse_jl",
+      "narrative_summary": "The prolonged escalated conflict led to a significant decline in global welfare, with a 2.6565% impact."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "wage_impact_pct",
+      "value": "1.122",
+      "source_model_id": "mpse_jl",
+      "narrative_summary": "The prolonged escalated conflict led to a moderate increase in global wages, with a 1.122% impact."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "interest_rate_impact_pct",
+      "value": "1.1736",
+      "source_model_id": "mpse_jl",
+      "narrative_summary": "The prolonged escalated conflict led to a moderate increase in global interest rates, with a 1.1736% impact."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "sectoral_output_pct_change",
+      "value": "{'agriculture': -0.2101, 'industry': -0.3876, 'energy': 0.9852, 'services': -1.1556}",
+      "source_model_id": "mpse_jl",
+      "narrative_summary": "The prolonged escalated conflict led to significant changes in sectoral output, with agriculture and industry declining and energy increasing."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "gdp_growth_pct",
+      "value": "-1.0575",
+      "source_model_id": "pycge",
+      "narrative_summary": "The prolonged escalated conflict led to a significant decline in global GDP growth, with a -1.0575% impact."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "cpi_inflation_pct",
+      "value": "2.0668",
+      "source_model_id": "pycge",
+      "narrative_summary": "The prolonged escalated conflict led to a moderate increase in global CPI inflation, with a 2.0668% impact."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "consumption_impact_pct",
+      "value": "-1.8842",
+      "source_model_id": "pycge",
+      "narrative_summary": "The prolonged escalated conflict led to a significant decline in global consumption, with a -1.8842% impact."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "welfare_pct_change",
+      "value": "-1.8842",
+      "source_model_id": "pycge",
+      "narrative_summary": "The prolonged escalated conflict led to a significant decline in global welfare, with a -1.8842% impact."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "wage_impact_pct",
+      "value": "0.7113",
+      "source_model_id": "pycge",
+      "narrative_summary": "The prolonged escalated conflict led to a moderate increase in global wages, with a 0.7113% impact."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "interest_rate_impact_pct",
+      "value": "0.769",
+      "source_model_id": "pycge",
+      "narrative_summary": "The prolonged escalated conflict led to a moderate increase in global interest rates, with a 0.769% impact."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "sectoral_output_pct_change",
+      "value": "{'agriculture': -0.1133, 'industry': -0.253, 'energy': 0.4612, 'services': -0.8404}",
+      "source_model_id": "pycge",
+      "narrative_summary": "The prolonged escalated conflict led to significant changes in sectoral output, with agriculture and industry declining and energy increasing."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "oil_price_change_pct",
+      "value": "48.36",
+      "source_model_id": "fed_oil",
+      "narrative_summary": "The oil price is expected to increase by 48.36% due to the disruption in global oil supply."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "peak_gdp_impact_pct",
+      "value": "-1.5415",
+      "source_model_id": "fed_oil",
+      "narrative_summary": "The global GDP is expected to decline by 1.54% in the short run due to the disruption in global oil supply."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "peak_cpi_impact_pp",
+      "value": "2.0553",
+      "source_model_id": "fed_oil",
+      "narrative_summary": "The global CPI is expected to increase by 2.06 pp in the short run due to the disruption in global oil supply."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "peak_ffr_impact_pp",
+      "value": "1.0276",
+      "source_model_id": "fed_oil",
+      "narrative_summary": "The federal funds rate is expected to increase by 1.03 pp in the short run due to the disruption in global oil supply."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "peak_unemployment_impact_pp",
+      "value": "0.7708",
+      "source_model_id": "fed_oil",
+      "narrative_summary": "The global unemployment rate is expected to increase by 0.77 pp in the short run due to the disruption in global oil supply."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "gdp_irf_pct_quarterly",
+      "value": "[-1.5415, -1.3103, -1.1137, -0.9467, -0.8047, -0.684, -0.5814, -0.4942, -0.42]",
+      "source_model_id": "fed_oil",
+      "narrative_summary": "The global GDP is expected to decline by 1.54% in the short run due to the disruption in global oil supply, with a gradual recovery over the next 9 quarters."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "cpi_irf_pp_quarterly",
+      "value": "[2.0553, 1.5415, 1.1561, 0.8671, 0.6503, 0.4877, 0.3658, 0.2743, 0.2058]",
+      "source_model_id": "fed_oil",
+      "narrative_summary": "The global CPI is expected to increase by 2.06 pp in the short run due to the disruption in global oil supply, with a gradual decline over the next 9 quarters."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "fed_funds_rate_irf_pp_quarterly",
+      "value": "[1.0276, 0.6679, 0.4084, 0.223, 0.0923, 0.0018, -0.0593, -0.0991, -0.1235]",
+      "source_model_id": "fed_oil",
+      "narrative_summary": "The federal funds rate is expected to increase by 1.03 pp in the short run due to the disruption in global oil supply, with a gradual decline over the next 9 quarters."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "fed_funds_rate_path_pct_quarterly",
+      "value": "[3.5276, 3.1679, 2.9084, 2.723, 2.5923, 2.5018, 2.4407, 2.4009, 2.3765]",
+      "source_model_id": "fed_oil",
+      "narrative_summary": "The federal funds rate is expected to increase by 3.53% in the short run due to the disruption in global oil supply, with a gradual decline over the next 9 quarters."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "unemployment_irf_pp_quarterly",
+      "value": "[0.7708, 0.6551, 0.5569, 0.4733, 0.4023, 0.342, 0.2907, 0.2471, 0.21]",
+      "source_model_id": "fed_oil",
+      "narrative_summary": "The global unemployment rate is expected to increase by 0.77 pp in the short run due to the disruption in global oil supply, with a gradual decline over the next 9 quarters."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "natural_gas_price_change_pct",
+      "value": "126.39090909090909",
+      "source_model_id": "nrel",
+      "narrative_summary": "The natural gas price is expected to increase by 126.39% due to the disruption in global natural gas supply."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "retail_electricity_price_change_pct",
+      "value": "56.876",
+      "source_model_id": "nrel",
+      "narrative_summary": "The retail electricity price is expected to increase by 56.88% due to the disruption in global natural gas supply."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "gdp_impact_pct",
+      "value": "-0.5196",
+      "source_model_id": "nrel",
+      "narrative_summary": "The global GDP is expected to decline by 0.52% in the short run due to the disruption in global natural gas supply."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "cpi_inflation_pct",
+      "value": "1.2989",
+      "source_model_id": "nrel",
+      "narrative_summary": "The global CPI is expected to increase by 1.30% in the short run due to the disruption in global natural gas supply."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "consumption_impact_pct",
+      "value": "-1.0391",
+      "source_model_id": "nrel",
+      "narrative_summary": "The global consumption is expected to decline by 1.04% in the short run due to the disruption in global natural gas supply."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "welfare_pct_change",
+      "value": "-1.0391",
+      "source_model_id": "nrel",
+      "narrative_summary": "The global welfare is expected to decline by 1.04% in the short run due to the disruption in global natural gas supply."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "gdp_impact_pct",
+      "value": "-0.5196",
+      "source_model_id": "nrel",
+      "narrative_summary": "The global GDP is expected to experience a 0.52% decline due to the infrastructure collapse scenario."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "cpi_inflation_pct",
+      "value": "1.2989",
+      "source_model_id": "nrel",
+      "narrative_summary": "The global CPI inflation rate is expected to increase by 1.30% due to the infrastructure collapse scenario."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "consumption_impact_pct",
+      "value": "-1.0391",
+      "source_model_id": "nrel",
+      "narrative_summary": "The global consumption is expected to experience a 1.04% decline due to the infrastructure collapse scenario."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "welfare_pct_change",
+      "value": "-1.0391",
+      "source_model_id": "nrel",
+      "narrative_summary": "The global welfare is expected to experience a 1.04% decline due to the infrastructure collapse scenario."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "natural_gas_price_change_pct",
+      "value": "126.39090909090909",
+      "source_model_id": "nrel",
+      "narrative_summary": "The natural gas price is expected to increase by 126.39% due to the infrastructure collapse scenario."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "retail_electricity_price_change_pct",
+      "value": "56.876",
+      "source_model_id": "nrel",
+      "narrative_summary": "The retail electricity price is expected to increase by 56.88% due to the infrastructure collapse scenario."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "coal_dispatch_gain_pp",
+      "value": "10.0",
+      "source_model_id": "nrel",
+      "narrative_summary": "The coal dispatch gain is expected to increase by 10.0 pp due to the infrastructure collapse scenario."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "renewables_dispatch_gain_pp",
+      "value": "12.639",
+      "source_model_id": "nrel",
+      "narrative_summary": "The renewables dispatch gain is expected to increase by 12.64 pp due to the infrastructure collapse scenario."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "co2_emissions_pct_change",
+      "value": "1.321",
+      "source_model_id": "nrel",
+      "narrative_summary": "The global CO2 emissions are expected to increase by 1.32% due to the infrastructure collapse scenario."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "capacity_utilization_pct_change",
+      "value": "-8.847",
+      "source_model_id": "nrel",
+      "narrative_summary": "The capacity utilization is expected to decrease by 8.85% due to the infrastructure collapse scenario."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "generation_dispatch_pct_change",
+      "value": "-22.639",
+      "source_model_id": "nrel",
+      "narrative_summary": "The generation dispatch is expected to decrease by 22.64% due to the infrastructure collapse scenario."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "oil_price_path",
+      "value": "[118.69, 113.16, 107.63, 102.11, 96.58, 91.05, 85.53, 80.0, 80.0, 80.0, 80.0, 80.0]",
+      "source_model_id": "mam",
+      "narrative_summary": "The oil price path is expected to decrease over time due to the infrastructure collapse scenario."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "gdp_impact_pct",
+      "value": "-1.0355",
+      "source_model_id": "mpsge_jl",
+      "narrative_summary": "The global economy is expected to experience a 1.04% contraction in GDP due to the infrastructure collapse scenario."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "cpi_inflation_pct",
+      "value": "2.6609",
+      "source_model_id": "mpsge_jl",
+      "narrative_summary": "The global economy is expected to experience a 2.66% increase in CPI inflation due to the infrastructure collapse scenario."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "consumption_impact_pct",
+      "value": "-2.0998",
+      "source_model_id": "mpsge_jl",
+      "narrative_summary": "The global economy is expected to experience a 2.10% contraction in consumption due to the infrastructure collapse scenario."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "welfare_pct_change",
+      "value": "-2.0998",
+      "source_model_id": "mpsge_jl",
+      "narrative_summary": "The global economy is expected to experience a 2.10% decrease in welfare due to the infrastructure collapse scenario."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "sectoral_output_pct_change",
+      "value": "-0.2774",
+      "source_model_id": "mpsge_jl",
+      "narrative_summary": "The global economy is expected to experience a 0.28% contraction in industry output due to the infrastructure collapse scenario."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "oil_price_shock_pct",
+      "value": "48.36",
+      "source_model_id": "mpsge_jl",
+      "narrative_summary": "The global economy is expected to experience a 48.36% increase in oil prices due to the infrastructure collapse scenario."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "trade_cost_multiplier",
+      "value": "1.1869",
+      "source_model_id": "mpsge_jl",
+      "narrative_summary": "The global economy is expected to experience a 18.69% increase in trade costs due to the infrastructure collapse scenario."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "gdp_growth_pct",
+      "value": "-0.8636",
+      "source_model_id": "pycge",
+      "narrative_summary": "The global economy is expected to experience a 0.86% contraction in GDP growth due to the infrastructure collapse scenario."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "cpi_inflation_pct",
+      "value": "1.7945",
+      "source_model_id": "pycge",
+      "narrative_summary": "The global economy is expected to experience a 1.79% increase in CPI inflation due to the infrastructure collapse scenario."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "consumption_impact_pct",
+      "value": "-1.5814",
+      "source_model_id": "pycge",
+      "narrative_summary": "The global economy is expected to experience a 1.58% contraction in consumption due to the infrastructure collapse scenario."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "welfare_pct_change",
+      "value": "-1.5814",
+      "source_model_id": "pycge",
+      "narrative_summary": "The global economy is expected to experience a 1.58% decrease in welfare due to the infrastructure collapse scenario."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "outcome_variable": "sectoral_output_pct_change",
+      "value": "-0.2122",
+      "source_model_id": "pycge",
+      "narrative_summary": "The global economy is expected to experience a 0.21% contraction in industry output due to the infrastructure collapse scenario."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "oil_price_shock_pct",
+      "value": "{mpsge_jl: 48.36, pycge: 48.36}",
+      "source_model_id": "mpsge_jl, pycge",
+      "narrative_summary": "The oil price shock is expected to be around 48.36% due to the infrastructure collapse."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "gdp_impact_pct",
+      "value": "{mpsge_jl: -1.0355, pycge: -0.8636}",
+      "source_model_id": "mpsge_jl, pycge",
+      "narrative_summary": "The GDP impact is expected to be around -1.0355% due to the infrastructure collapse."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "cpi_inflation_pct",
+      "value": "{mpsge_jl: 2.6609, pycge: 1.7945}",
+      "source_model_id": "mpsge_jl, pycge",
+      "narrative_summary": "The CPI inflation is expected to be around 2.6609% due to the infrastructure collapse."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "consumption_impact_pct",
+      "value": "{mpsge_jl: -2.0998, pycge: -1.5814}",
+      "source_model_id": "mpsge_jl, pycge",
+      "narrative_summary": "The consumption impact is expected to be around -2.0998% due to the infrastructure collapse."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "welfare_pct_change",
+      "value": "{mpsge_jl: -2.0998, pycge: -1.5814}",
+      "source_model_id": "mpsge_jl, pycge",
+      "narrative_summary": "The welfare impact is expected to be around -2.0998% due to the infrastructure collapse."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "outcome_variable": "sectoral_output_pct_change",
+      "value": "{mpsge_jl: {'agriculture': -0.1502, 'industry': -0.2774, 'energy': 0.6888, 'services': -0.8348}, pycge: {'agriculture': -0.103, 'industry': -0.2122, 'energy': 0.4212, 'services': -0.6885}}",
+      "source_model_id": "mpsge_jl, pycge",
+      "narrative_summary": "The sectoral output impact is expected to be around -0.1502% for agriculture, -0.2774% for industry, 0.6888% for energy, and -0.8348% for services due to the infrastructure collapse."
+    }
+  ],
+  "synthesis_validated": true,
+  "context_budget": {
+    "model": "meta-llama/Llama-3.1-8B-Instruct",
+    "context_window": 32768,
+    "prompt_budget_tokens": 22937,
+    "completion_budget_tokens": 8192,
+    "tiktoken_available": true
+  },
+  "context_budget_events": [
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "model_count": 3,
+      "prompt_tokens": 3667,
+      "status": "ok",
+      "truncation_attempts": 0
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "model_count": 3,
+      "prompt_tokens": 2323,
+      "status": "failed",
+      "truncation_attempts": 0,
+      "error": "LengthFinishReasonError"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "model_count": 2,
+      "prompt_tokens": 1706,
+      "status": "ok",
+      "truncation_attempts": 0
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "model_count": 3,
+      "prompt_tokens": 3667,
+      "status": "ok",
+      "truncation_attempts": 0
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "model_count": 2,
+      "prompt_tokens": 5184,
+      "status": "ok",
+      "truncation_attempts": 0
+    },
+    {
+      "scenario_id": "swift_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "model_count": 2,
+      "prompt_tokens": 5185,
+      "status": "ok",
+      "truncation_attempts": 0
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "model_count": 7,
+      "prompt_tokens": 5014,
+      "status": "failed",
+      "truncation_attempts": 0,
+      "error": "LengthFinishReasonError"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "model_count": 3,
+      "prompt_tokens": 2346,
+      "status": "ok",
+      "truncation_attempts": 0
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "model_count": 4,
+      "prompt_tokens": 2049,
+      "status": "failed",
+      "truncation_attempts": 0,
+      "error": "LengthFinishReasonError"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "model_count": 7,
+      "prompt_tokens": 5014,
+      "status": "failed",
+      "truncation_attempts": 0,
+      "error": "LengthFinishReasonError"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "model_count": 2,
+      "prompt_tokens": 5309,
+      "status": "ok",
+      "truncation_attempts": 0
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "model_count": 4,
+      "prompt_tokens": 5625,
+      "status": "ok",
+      "truncation_attempts": 0
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "model_count": 10,
+      "prompt_tokens": 5799,
+      "status": "failed",
+      "truncation_attempts": 0,
+      "error": "LengthFinishReasonError"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "model_count": 3,
+      "prompt_tokens": 2385,
+      "status": "ok",
+      "truncation_attempts": 0
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "model_count": 4,
+      "prompt_tokens": 2082,
+      "status": "ok",
+      "truncation_attempts": 0
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "model_count": 10,
+      "prompt_tokens": 5799,
+      "status": "failed",
+      "truncation_attempts": 0,
+      "error": "LengthFinishReasonError"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "model_count": 2,
+      "prompt_tokens": 5360,
+      "status": "ok",
+      "truncation_attempts": 0
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "model_count": 4,
+      "prompt_tokens": 5676,
+      "status": "failed",
+      "truncation_attempts": 0,
+      "error": "LengthFinishReasonError"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "model_count": 0,
+      "prompt_tokens": 0,
+      "status": "empty",
+      "truncation_attempts": 0
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "model_count": 3,
+      "prompt_tokens": 2368,
+      "status": "ok",
+      "truncation_attempts": 0
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "model_count": 2,
+      "prompt_tokens": 1801,
+      "status": "ok",
+      "truncation_attempts": 0
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "model_count": 0,
+      "prompt_tokens": 0,
+      "status": "empty",
+      "truncation_attempts": 0
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "model_count": 2,
+      "prompt_tokens": 5292,
+      "status": "ok",
+      "truncation_attempts": 0
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "model_count": 2,
+      "prompt_tokens": 5293,
+      "status": "ok",
+      "truncation_attempts": 0
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "micro",
+      "model_count": 0,
+      "prompt_tokens": 0,
+      "status": "empty",
+      "truncation_attempts": 0
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "model_count": 3,
+      "prompt_tokens": 2478,
+      "status": "ok",
+      "truncation_attempts": 0
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "short_run",
+      "outcome_scope": "strategic",
+      "model_count": 2,
+      "prompt_tokens": 1880,
+      "status": "ok",
+      "truncation_attempts": 0
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "long_run",
+      "outcome_scope": "micro",
+      "model_count": 0,
+      "prompt_tokens": 0,
+      "status": "empty",
+      "truncation_attempts": 0
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "model_count": 2,
+      "prompt_tokens": 5808,
+      "status": "ok",
+      "truncation_attempts": 0
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "time_horizon": "long_run",
+      "outcome_scope": "strategic",
+      "model_count": 2,
+      "prompt_tokens": 5809,
+      "status": "ok",
+      "truncation_attempts": 0
+    }
+  ],
+  "context_budget_summary": {
+    "section_calls": 30,
+    "sections_failed": 7,
+    "sections_truncated": 0,
+    "truncation_attempts_total": 0
+  }
+}
