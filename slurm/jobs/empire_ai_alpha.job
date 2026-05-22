@@ -23,16 +23,45 @@
 #     the cross-node networking dance.
 #
 # Pipeline executed (Algorithm 1 in the paper):
-#   00.  (optional) launch local vLLM on GPU 0
+#   00.  (optional) launch local vLLM on the 4 H100s of this node
 #   01.  Module 1 — scenario generation
 #   --   dispatch parameter manifest
 #   02.  Module 2 — parameter extraction (loop over manifest)
-#   --   dispatch model manifests
+#   --   dispatch model manifests (commodity, commodity_downstream, macro)
 #   03.  Module 3 — model execution    (loop over manifest)
 #   04.  Module 4 — synthesis
+#   04b. Output validation (configs/validation_rules.yaml)
+#   05.  Quantitative CSV + qualitative narrative export + 2nd LLM
+#        pass for user_executive_summary.md
+#   06.  Visualization suite — PNG figures + index.html dashboard
 #
 # All HITL checkpoints are auto-approved; for interactive review run
 # `python -m src.pipeline.graph` locally instead.
+#
+# ------------------------------------------------------------------
+# Environment bootstrap (Empire AI Alpha)
+# ------------------------------------------------------------------
+# The first time this job runs on a node where the conda env
+# $HORMUZ_CONDA_ENV (default: 'hormuz') does NOT exist yet, the job
+# will:
+#   1. Locate an existing Miniconda/Anaconda at /mnt/home/$USER/miniconda3,
+#      $HOME/miniconda3, or $HOME/anaconda3 (no cluster-wide module is
+#      required).
+#   2. `conda create -y -n hormuz python=3.11`.
+#   3. `pip install -e ".[dev,adapters,macro,energy,viz,wandb]"`.
+#   4. Probe for optional runtimes (gams, julia, R, nvidia-smi) and
+#      install matching adapter extras best-effort.
+#   5. (HORMUZ_AUTO_VENDOR=1, default) shallow-clone OSeMOSYS + TEMOA
+#      under Models/Energy/ and curl AEO2025 macro tables for MAM.
+#   6. Write a sentinel so subsequent submissions short-circuit the
+#      install step.
+#
+# Flags (exportable before `sbatch`):
+#   HORMUZ_AUTO_BUILD=0      skip bootstrap entirely (bring your own env)
+#   HORMUZ_FORCE_REBUILD=1   force pip-reinstall even if marker exists
+#   HORMUZ_PY_VERSION=3.11   python version for `conda create`
+#   HORMUZ_PIP_EXTRAS="..."  extras passed to `pip install -e`
+#   HORMUZ_AUTO_VENDOR=0     skip auto-cloning OSeMOSYS/TEMOA + AEO XLSX
 #
 # ------------------------------------------------------------------
 # Submission examples
@@ -486,6 +515,373 @@ if ! _hormuz_mod "cudnn/9.0" load cudnn/9.0; then
 fi
 echo "[progress] modules done."
 
+# ------------------------------------------------------------------
+# CUDA toolkit / nvcc resolution (first pass, pre-bootstrap).
+#
+# vLLM (via torch.utils.cpp_extension) JIT-compiles CUDA kernels at
+# engine startup on architectures without a precompiled flash-attn
+# path. Those compiles require nvcc on PATH and a valid CUDA_HOME.
+#
+# Resolution order:
+#   1. Whatever the cuda Lmod module exported (Empire AI Alpha ships a
+#      cuda/12.4 module on most nodes).
+#   2. CUDA_HOME / CUDA_PATH already exported by the user.
+#   3. `nvcc` already on PATH — derive CUDA_HOME from its location.
+#   4. Common install prefixes on Empire AI Alpha nodes (/cm/shared,
+#      /usr/local/cuda*, /opt/cuda*).
+#   5. Conda fallback: `conda install -c nvidia cuda-nvcc` into the
+#      activated env during bootstrap below (gated by
+#      HORMUZ_NEED_CONDA_NVCC=1).
+# ------------------------------------------------------------------
+_hormuz_resolve_cuda_home() {
+    if [[ -z "${CUDA_HOME:-}" && -n "${CUDA_PATH:-}" ]]; then
+        CUDA_HOME="$CUDA_PATH"
+    fi
+    if [[ -n "${CUDA_HOME:-}" && -x "${CUDA_HOME}/bin/nvcc" ]]; then
+        return 0
+    fi
+    if command -v nvcc >/dev/null 2>&1; then
+        local _nvcc_bin
+        _nvcc_bin="$(command -v nvcc)"
+        CUDA_HOME="$(dirname "$(dirname "$_nvcc_bin")")"
+        if [[ -x "${CUDA_HOME}/bin/nvcc" ]]; then
+            return 0
+        fi
+    fi
+    local _candidate
+    for _candidate in \
+        /cm/shared/apps/cuda12.4/toolkit/12.4* \
+        /cm/shared/apps/cuda12.1/toolkit/12.1* \
+        /cm/shared/apps/cuda/12.4 \
+        /cm/shared/apps/cuda/12.1 \
+        /cm/shared/apps/cuda/* \
+        /usr/local/cuda-12.4 \
+        /usr/local/cuda-12.1 \
+        /usr/local/cuda-12.0 \
+        /opt/cuda-12.4 \
+        /opt/cuda-12.1 \
+        /opt/cuda \
+        /usr/local/cuda; do
+        if [[ -x "${_candidate}/bin/nvcc" ]]; then
+            CUDA_HOME="$_candidate"
+            return 0
+        fi
+    done
+    return 1
+}
+
+echo "[cuda] resolving CUDA toolkit / nvcc..."
+if _hormuz_resolve_cuda_home; then
+    export CUDA_HOME
+    export CUDA_PATH="$CUDA_HOME"
+    export PATH="${CUDA_HOME}/bin:${PATH}"
+    export LD_LIBRARY_PATH="${CUDA_HOME}/lib64:${LD_LIBRARY_PATH:-}"
+    _nvcc_ver="$("${CUDA_HOME}/bin/nvcc" --version 2>/dev/null \
+                 | grep -oE 'release [0-9.]+' | head -n1 || echo unknown)"
+    echo "[cuda] CUDA_HOME=${CUDA_HOME} (nvcc ${_nvcc_ver})"
+else
+    echo "[cuda] WARNING: no nvcc found on PATH or in common install prefixes."
+    echo "[cuda]          Will attempt to install cuda-nvcc into the conda env"
+    echo "[cuda]          during bootstrap as a fallback."
+    HORMUZ_NEED_CONDA_NVCC=1
+fi
+
+# ------------------------------------------------------------------
+# Bootstrap: create the conda env + install the pipeline package if
+# this is the first submission on a node where the env doesn't yet
+# exist. Idempotent across resubmissions via a sentinel file so we
+# don't pay the pip-install cost on every run.
+#
+# Behaviour flags (exportable before `sbatch`):
+#   HORMUZ_AUTO_BUILD=1      (default) enable bootstrap
+#   HORMUZ_AUTO_BUILD=0      skip bootstrap entirely (bring your own env)
+#   HORMUZ_FORCE_REBUILD=1   force reinstall even if marker exists
+#   HORMUZ_PY_VERSION=3.11   python version for `conda create`
+#   HORMUZ_PIP_EXTRAS=...    extras passed to `pip install -e`
+#   HORMUZ_AUTO_VENDOR=0     skip auto-cloning OSeMOSYS/TEMOA + AEO XLSX
+# ------------------------------------------------------------------
+HORMUZ_AUTO_BUILD="${HORMUZ_AUTO_BUILD:-1}"
+HORMUZ_FORCE_REBUILD="${HORMUZ_FORCE_REBUILD:-0}"
+HORMUZ_PY_VERSION="${HORMUZ_PY_VERSION:-3.11}"
+HORMUZ_PIP_EXTRAS="${HORMUZ_PIP_EXTRAS:-dev,adapters,macro,energy,viz,wandb}"
+HORMUZ_AUTO_VENDOR="${HORMUZ_AUTO_VENDOR:-1}"
+
+if [[ "$HORMUZ_AUTO_BUILD" == "1" ]]; then
+    echo "[progress] bootstrapping conda env '${HORMUZ_CONDA_ENV}' (auto-build)..."
+
+    # Locate conda. Empire AI Alpha: home is at /mnt/home/$USER and
+    # has tight quota; users typically install Miniconda either under
+    # home or under scratch (/mnt/lustre/suny/$USER). We probe both.
+    if [[ -z "${CONDA_EXE:-}" ]] && command -v conda >/dev/null 2>&1; then
+        CONDA_EXE="$(command -v conda)"
+        export CONDA_EXE
+    fi
+    for _cprefix in \
+        "${HOME}/miniconda3" \
+        "${HOME}/anaconda3" \
+        "/mnt/home/${USER}/miniconda3" \
+        "/mnt/home/${USER}/anaconda3" \
+        "/mnt/lustre/suny/${USER}/miniconda3"; do
+        if [[ -z "${CONDA_EXE:-}" && -x "${_cprefix}/bin/conda" ]]; then
+            CONDA_EXE="${_cprefix}/bin/conda"
+            export CONDA_EXE
+            export PATH="${_cprefix}/bin:${PATH}"
+            break
+        fi
+    done
+
+    if [[ -z "${CONDA_EXE:-}" ]]; then
+        echo "[build] ERROR: no conda binary found. Install Miniconda under \$HOME"
+        echo "[build]        or set HORMUZ_AUTO_BUILD=0 if you pre-create the env."
+    else
+        _env_exists=0
+        if "$CONDA_EXE" env list 2>/dev/null \
+                | awk 'NF && $1 !~ /^#/ { print $1 }' \
+                | grep -qx -- "${HORMUZ_CONDA_ENV}"; then
+            _env_exists=1
+        fi
+
+        _conda_base="$("$CONDA_EXE" info --base 2>/dev/null)"
+        _env_prefix="${_conda_base}/envs/${HORMUZ_CONDA_ENV}"
+        _build_marker="${_env_prefix}/.hormuz_install_sentinel"
+
+        if [[ $_env_exists -eq 0 ]]; then
+            echo "[build] env '${HORMUZ_CONDA_ENV}' not found — creating with python=${HORMUZ_PY_VERSION}"
+            if ! "$CONDA_EXE" create -y -n "${HORMUZ_CONDA_ENV}" "python=${HORMUZ_PY_VERSION}"; then
+                record_bash_failure "${STAGE_PREFIX}_build" 1 \
+                    "conda create -n ${HORMUZ_CONDA_ENV} failed on $(hostname)"
+                echo "[fatal] conda env creation failed; aborting."
+                exit 1
+            fi
+            echo "[build] env created at ${_env_prefix}"
+        else
+            echo "[build] env '${HORMUZ_CONDA_ENV}' already exists at ${_env_prefix}"
+        fi
+
+        _need_install=0
+        if [[ $_env_exists -eq 0 ]]; then _need_install=1; fi
+        if [[ ! -f "$_build_marker" ]]; then _need_install=1; fi
+        if [[ "$HORMUZ_FORCE_REBUILD" == "1" ]]; then _need_install=1; fi
+
+        # Sanity-check core importability even when the marker is present.
+        if [[ $_need_install -eq 0 && -f "$_build_marker" ]]; then
+            _conda_python="${_env_prefix}/bin/python"
+            if [[ -x "$_conda_python" ]]; then
+                if ! "$_conda_python" -c "import langchain_openai, langchain, langgraph, pydantic" \
+                        >/dev/null 2>&1; then
+                    echo "[build] core imports missing in existing env; forcing reinstall."
+                    _need_install=1
+                fi
+                if [[ $_need_install -eq 0 ]]; then
+                    _extras_check_imports=()
+                    case ",${HORMUZ_PIP_EXTRAS}," in
+                        *,macro,*) _extras_check_imports+=("ogcore" "cge_modeling") ;;
+                    esac
+                    case ",${HORMUZ_PIP_EXTRAS}," in
+                        *,energy,*) _extras_check_imports+=("pyomo") ;;
+                    esac
+                    case ",${HORMUZ_PIP_EXTRAS}," in
+                        *,wandb,*) _extras_check_imports+=("wandb") ;;
+                    esac
+                    case ",${HORMUZ_PIP_EXTRAS}," in
+                        *,viz,*) _extras_check_imports+=("matplotlib") ;;
+                    esac
+                    if (( ${#_extras_check_imports[@]} > 0 )); then
+                        _missing_extras=()
+                        for _mod in "${_extras_check_imports[@]}"; do
+                            if ! "$_conda_python" -c "import ${_mod}" >/dev/null 2>&1; then
+                                _missing_extras+=("${_mod}")
+                            fi
+                        done
+                        if (( ${#_missing_extras[@]} > 0 )); then
+                            echo "[build] extras-gated imports missing (${_missing_extras[*]});" \
+                                 "forcing reinstall of [${HORMUZ_PIP_EXTRAS}]."
+                            _need_install=1
+                        fi
+                    fi
+                fi
+            fi
+        fi
+
+        if [[ $_need_install -eq 1 ]]; then
+            echo "[build] installing pipeline package (extras=[${HORMUZ_PIP_EXTRAS}])..."
+
+            if [[ -f "${_conda_base}/etc/profile.d/conda.sh" ]]; then
+                # shellcheck source=/dev/null
+                source "${_conda_base}/etc/profile.d/conda.sh"
+            else
+                echo "[build] ERROR: ${_conda_base}/etc/profile.d/conda.sh not found."
+                record_bash_failure "${STAGE_PREFIX}_build" 1 \
+                    "conda.sh not found at ${_conda_base}/etc/profile.d/"
+                exit 1
+            fi
+
+            if ! conda activate "${HORMUZ_CONDA_ENV}"; then
+                record_bash_failure "${STAGE_PREFIX}_build" 1 \
+                    "conda activate ${HORMUZ_CONDA_ENV} failed during bootstrap on $(hostname)"
+                echo "[fatal] cannot activate env right after creation; aborting."
+                exit 1
+            fi
+
+            _env_python="${_env_prefix}/bin/python"
+            if [[ ! -x "$_env_python" ]]; then
+                _env_python="$(command -v python)"
+                echo "[build] WARNING: ${_env_prefix}/bin/python not executable;" \
+                     "falling back to PATH python at ${_env_python}"
+            fi
+            echo "[build] using env interpreter: ${_env_python} ($(${_env_python} -V 2>&1))"
+            _env_pip=( "${_env_python}" -m pip )
+
+            if ! "${_env_pip[@]}" install --upgrade pip setuptools wheel; then
+                echo "[build] WARNING: pip/setuptools/wheel upgrade failed; continuing."
+            fi
+            if ! "${_env_pip[@]}" install -e ".[${HORMUZ_PIP_EXTRAS}]"; then
+                record_bash_failure "${STAGE_PREFIX}_build" 1 \
+                    "pip install -e .[${HORMUZ_PIP_EXTRAS}] failed on $(hostname)"
+                echo "[fatal] pipeline package install failed; aborting."
+                exit 1
+            fi
+
+            _opt_install() {
+                local label="$1"; shift
+                echo "[build]   - ${label}"
+                if ! "${_env_pip[@]}" install "$@" --quiet; then
+                    echo "[build]     WARNING: ${label} failed; adapter will be SKIPPED."
+                fi
+            }
+
+            if command -v gams   >/dev/null 2>&1; then _opt_install "gamsapi"   "gamsapi[transfer]>=52.0"; fi
+            if command -v julia  >/dev/null 2>&1; then _opt_install "juliacall" "juliacall>=0.9.20";        fi
+            if command -v R      >/dev/null 2>&1; then _opt_install "rpy2"      "rpy2>=3.5";                fi
+            _opt_install "openpyxl+pandas" "openpyxl>=3.1" "pandas>=2.0"
+            _opt_install "matplotlib (Stage 6 figures)" "matplotlib>=3.8"
+            _opt_install "markdown (Stage 6 dashboard rendering)" "markdown>=3.5"
+
+            _need_glpk=0
+            _need_cbc=0
+            command -v glpsol >/dev/null 2>&1 || _need_glpk=1
+            command -v cbc    >/dev/null 2>&1 || _need_cbc=1
+            if [[ $_need_glpk -eq 1 || $_need_cbc -eq 1 ]]; then
+                _solver_pkgs=()
+                [[ $_need_glpk -eq 1 ]] && _solver_pkgs+=( glpk )
+                [[ $_need_cbc  -eq 1 ]] && _solver_pkgs+=( coin-or-cbc )
+                echo "[build]   - conda-forge solvers: ${_solver_pkgs[*]}"
+                if "$CONDA_EXE" install -y -n "${HORMUZ_CONDA_ENV}" \
+                        -c conda-forge "${_solver_pkgs[@]}" >/dev/null 2>&1; then
+                    echo "[build]     installed solvers into ${HORMUZ_CONDA_ENV}"
+                else
+                    echo "[build]     WARNING: solver install failed;" \
+                         "OSeMOSYS / TEMOA will skip without glpsol / cbc."
+                fi
+            else
+                echo "[build]   - solvers: glpsol + cbc already on PATH"
+            fi
+
+            if command -v nvidia-smi >/dev/null 2>&1 \
+                    && nvidia-smi -L >/dev/null 2>&1; then
+                _opt_install "torch + transformers + accelerate" \
+                    torch transformers accelerate peft
+                if [[ "${HORMUZ_USE_VLLM:-1}" == "1" \
+                        && "${PIPELINE_LLM_PROVIDER:-vllm}" == "vllm" ]]; then
+                    _opt_install "vllm" vllm
+
+                    if [[ "${HORMUZ_NEED_CONDA_NVCC:-0}" == "1" ]]; then
+                        echo "[build]   - cuda-nvcc (conda fallback, no system CUDA found)"
+                        if "$CONDA_EXE" install -y -n "${HORMUZ_CONDA_ENV}" \
+                                -c nvidia cuda-nvcc cuda-cudart-dev cuda-nvrtc \
+                                >/dev/null 2>&1; then
+                            echo "[build]     installed cuda-nvcc into ${HORMUZ_CONDA_ENV}"
+                        elif "$CONDA_EXE" install -y -n "${HORMUZ_CONDA_ENV}" \
+                                -c conda-forge cuda-nvcc cuda-cudart-dev cuda-nvrtc \
+                                >/dev/null 2>&1; then
+                            echo "[build]     installed cuda-nvcc from conda-forge"
+                        else
+                            echo "[build]     WARNING: cuda-nvcc install failed;" \
+                                 "vLLM will likely fail at engine startup."
+                        fi
+                    fi
+                fi
+            else
+                echo "[build]   - torch/vllm: skipped (no CUDA GPU visible)"
+            fi
+
+            mkdir -p "${PROJECT_ROOT}/data/inputs" \
+                     "${PROJECT_ROOT}/data/outputs" \
+                     "${PROJECT_ROOT}/data/reports" \
+                     "${PROJECT_ROOT}/data/pipeline_state/manifests"
+
+            : > "$_build_marker" && \
+                echo "[build] install complete; marker: ${_build_marker}"
+
+            conda deactivate 2>/dev/null || true
+        else
+            echo "[build] install marker present at ${_build_marker}"
+            echo "[build] skipping pip install. Set HORMUZ_FORCE_REBUILD=1 to force a reinstall."
+        fi
+    fi
+
+    # ------------------------------------------------------------------
+    # Auto-vendor optional model assets (HORMUZ_AUTO_VENDOR=1, default).
+    # Each fetch is best-effort and idempotent.
+    # ------------------------------------------------------------------
+    if [[ "$HORMUZ_AUTO_VENDOR" == "1" ]]; then
+        echo "[vendor] auto-vendoring optional model assets..."
+
+        if [[ ! -d "${PROJECT_ROOT}/Models/Energy/OSeMOSYS" ]]; then
+            echo "[vendor]   - cloning OSeMOSYS into Models/Energy/OSeMOSYS"
+            mkdir -p "${PROJECT_ROOT}/Models/Energy"
+            if ! git clone --depth 1 \
+                    https://github.com/OSeMOSYS/OSeMOSYS.git \
+                    "${PROJECT_ROOT}/Models/Energy/OSeMOSYS" >/dev/null 2>&1; then
+                echo "[vendor]     WARNING: OSeMOSYS clone failed; adapter will be SKIPPED."
+            fi
+        else
+            echo "[vendor]   - OSeMOSYS already vendored"
+        fi
+
+        if [[ ! -d "${PROJECT_ROOT}/Models/Energy/TEMOA" ]]; then
+            echo "[vendor]   - cloning TEMOA into Models/Energy/TEMOA"
+            mkdir -p "${PROJECT_ROOT}/Models/Energy"
+            if ! git clone --depth 1 \
+                    https://github.com/TemoaProject/temoa.git \
+                    "${PROJECT_ROOT}/Models/Energy/TEMOA" >/dev/null 2>&1; then
+                echo "[vendor]     WARNING: TEMOA clone failed; adapter will be SKIPPED."
+            fi
+        else
+            echo "[vendor]   - TEMOA already vendored"
+        fi
+
+        _aeo_dest="${PROJECT_ROOT}/data/eia/AEO2025_Tables_19_20.xlsx"
+        _aeo_url="${HORMUZ_AEO_XLSX_URL:-https://www.eia.gov/outlooks/aeo/excel/aeotab_19.xlsx}"
+        if [[ ! -f "$_aeo_dest" ]]; then
+            echo "[vendor]   - downloading AEO2025 macro XLSX -> ${_aeo_dest}"
+            mkdir -p "${PROJECT_ROOT}/data/eia"
+            if command -v curl >/dev/null 2>&1; then
+                if ! curl -fL --max-time 60 -o "$_aeo_dest" "$_aeo_url" >/dev/null 2>&1; then
+                    echo "[vendor]     WARNING: AEO XLSX download failed (${_aeo_url}); MAM will be SKIPPED."
+                    rm -f "$_aeo_dest"
+                fi
+            else
+                echo "[vendor]     WARNING: curl not on PATH; skipping AEO download."
+            fi
+        else
+            echo "[vendor]   - AEO XLSX already present at ${_aeo_dest}"
+        fi
+        if [[ -f "$_aeo_dest" ]]; then
+            export HORMUZ_MAM_AEO_XLSX_PATH="$_aeo_dest"
+            echo "[vendor]   - exported HORMUZ_MAM_AEO_XLSX_PATH=${_aeo_dest}"
+        fi
+
+        echo "[vendor] auto-vendor done."
+    else
+        echo "[vendor] HORMUZ_AUTO_VENDOR=0; skipping optional asset vendoring."
+    fi
+
+    echo "[progress] bootstrap done."
+else
+    echo "[progress] HORMUZ_AUTO_BUILD=0; skipping env bootstrap."
+fi
+
 echo "[progress] activating conda env '${HORMUZ_CONDA_ENV}'..."
 if ! hormuz_activate_conda "${HORMUZ_CONDA_ENV}"; then
     record_bash_failure "${STAGE_PREFIX}_setup" 1 \
@@ -494,6 +890,41 @@ if ! hormuz_activate_conda "${HORMUZ_CONDA_ENV}"; then
     exit 1
 fi
 echo "[progress] conda env active (python=$(command -v python 2>/dev/null || echo missing))."
+
+# ------------------------------------------------------------------
+# Post-activation CUDA re-resolution.
+#
+# If the bootstrap above installed cuda-nvcc as a fallback, nvcc now
+# lives at $CONDA_PREFIX/bin/nvcc and CUDA_HOME should point at
+# $CONDA_PREFIX so vLLM's torch.utils.cpp_extension finds matching
+# headers + libcudart. We re-run the resolver — idempotent.
+# ------------------------------------------------------------------
+if [[ -n "${CONDA_PREFIX:-}" && -x "${CONDA_PREFIX}/bin/nvcc" ]]; then
+    if [[ "${CUDA_HOME:-}" != "${CONDA_PREFIX}" ]]; then
+        export CUDA_HOME="${CONDA_PREFIX}"
+        export CUDA_PATH="${CONDA_PREFIX}"
+        export PATH="${CONDA_PREFIX}/bin:${PATH}"
+        export LD_LIBRARY_PATH="${CONDA_PREFIX}/lib:${LD_LIBRARY_PATH:-}"
+        echo "[cuda] using env-installed nvcc; CUDA_HOME=${CUDA_HOME}"
+    fi
+fi
+if [[ -z "${CUDA_HOME:-}" ]] || [[ ! -x "${CUDA_HOME}/bin/nvcc" ]]; then
+    _hormuz_resolve_cuda_home && {
+        export CUDA_HOME CUDA_PATH="$CUDA_HOME"
+        export PATH="${CUDA_HOME}/bin:${PATH}"
+        export LD_LIBRARY_PATH="${CUDA_HOME}/lib64:${LD_LIBRARY_PATH:-}"
+        echo "[cuda] post-activation CUDA_HOME=${CUDA_HOME}"
+    } || true
+fi
+if [[ -n "${CUDA_HOME:-}" && -x "${CUDA_HOME}/bin/nvcc" ]]; then
+    echo "[cuda] nvcc=$(command -v nvcc) ($("${CUDA_HOME}/bin/nvcc" --version 2>/dev/null | grep -oE 'release [0-9.]+' | head -n1))"
+else
+    echo "[cuda] WARNING: nvcc still not resolvable. vLLM will fail at engine startup."
+    echo "[cuda]          Workarounds:"
+    echo "[cuda]            * rerun with HORMUZ_FORCE_REBUILD=1 to retry the cuda-nvcc conda install"
+    echo "[cuda]            * \`module load cuda/12.4\` interactively before sbatch"
+    echo "[cuda]            * use a cloud LLM provider: HORMUZ_USE_VLLM=0 PIPELINE_LLM_PROVIDER=anthropic"
+fi
 
 # ------------------------------------------------------------------
 # Sanity-check core importability. The Python stage scripts cannot
@@ -550,6 +981,52 @@ HORMUZ_USE_VLLM="${HORMUZ_USE_VLLM:-1}"
 PIPELINE_LLM_PROVIDER="${PIPELINE_LLM_PROVIDER:-vllm}"
 export PIPELINE_LLM_PROVIDER
 
+# ------------------------------------------------------------------
+# Per-model recommended context window for the vLLM sidecar.
+#
+# vLLM enforces a hard ceiling on every request via --max-model-len:
+# any prompt + completion exceeding this value is rejected with HTTP
+# 400 ("This model's maximum context length is X tokens..."). Setting
+# it too low silently truncates the Stage 4 / Stage 5 prompts (the
+# only stages that produce multi-thousand-token requests on this
+# pipeline); setting it too high blows GPU KV-cache memory.
+#
+# Empire AI Alpha defaults to Llama-3.1-70B-Instruct sharded across 4x
+# H100 80GB (tp=4), so the table below leans bigger than the
+# stonybrook_ai_cluster.job equivalent: 65536 for 70B is comfortable
+# on 4xH100 80GB; 32768 is the safe floor for V100/RTX 8000 setups.
+# HORMUZ_VLLM_MAX_LEN always wins so users can clamp tighter on smaller
+# allocations.
+# ------------------------------------------------------------------
+_resolve_vllm_max_len() {
+    local model="$1"
+    case "$model" in
+        meta-llama/Llama-3.1-8B-Instruct|meta-llama/Llama-3.1-8B|\
+        meta-llama/Meta-Llama-3.1-8B-Instruct)
+            # Native 131072; 32K is comfortable everywhere.
+            echo 32768 ;;
+        meta-llama/Llama-3.1-70B-Instruct|meta-llama/Llama-3.1-70B|\
+        meta-llama/Meta-Llama-3.1-70B-Instruct)
+            # 70B on 4xH100 80GB tp=4 — KV cache fits 64K comfortably.
+            echo 65536 ;;
+        meta-llama/Llama-3.1-405B-Instruct|meta-llama/Llama-3.1-405B)
+            # 405B sharded across 8 GPUs needs more headroom for KV;
+            # 32K is the safe default for tp=8 on Empire AI H100 nodes.
+            echo 32768 ;;
+        meta-llama/Llama-3.2-*|meta-llama/Llama-3.3-*)
+            echo 65536 ;;
+        mistralai/Mistral-7B-Instruct-v0.3|mistralai/Mistral-7B-Instruct-*)
+            echo 32768 ;;
+        mistralai/Mixtral-8x7B-Instruct-v0.1|mistralai/Mixtral-*|\
+        mistralai/Mixtral-8x22B-Instruct-v0.1)
+            echo 32768 ;;
+        Qwen/Qwen2.5-72B-Instruct|Qwen/Qwen2.5-*|Qwen/Qwen2-*)
+            echo 32768 ;;
+        *)
+            echo 0 ;;
+    esac
+}
+
 VLLM_PID=""
 cleanup_vllm() {
     if [[ -n "$VLLM_PID" ]] && kill -0 "$VLLM_PID" 2>/dev/null; then
@@ -580,7 +1057,22 @@ if [[ "$HORMUZ_USE_VLLM" == "1" && "$PIPELINE_LLM_PROVIDER" == "vllm" ]]; then
     VLLM_PORT="${HORMUZ_VLLM_PORT:-8000}"
     VLLM_TP_SIZE="${HORMUZ_VLLM_TP_SIZE:-4}"
     VLLM_DTYPE="${HORMUZ_VLLM_DTYPE:-auto}"
-    VLLM_MAX_LEN="${HORMUZ_VLLM_MAX_LEN:-8192}"
+
+    # Resolve max-model-len per known model (see _resolve_vllm_max_len
+    # above). HORMUZ_VLLM_MAX_LEN still overrides for ad-hoc tuning.
+    if [[ -n "${HORMUZ_VLLM_MAX_LEN:-}" ]]; then
+        VLLM_MAX_LEN="$HORMUZ_VLLM_MAX_LEN"
+        echo "[vllm] HORMUZ_VLLM_MAX_LEN=${VLLM_MAX_LEN} (user override)"
+    else
+        VLLM_MAX_LEN="$(_resolve_vllm_max_len "$VLLM_MODEL")"
+        if [[ "$VLLM_MAX_LEN" == "0" ]]; then
+            VLLM_MAX_LEN=8192
+            echo "[vllm] WARNING: no per-model max-model-len for ${VLLM_MODEL};" \
+                 "falling back to 8192. Set HORMUZ_VLLM_MAX_LEN to override."
+        else
+            echo "[vllm] resolved max-model-len=${VLLM_MAX_LEN} for ${VLLM_MODEL}"
+        fi
+    fi
     # GPU device list passed to the vLLM child process via
     # CUDA_VISIBLE_DEVICES. Default keeps all 4 GPUs (0,1,2,3) for
     # vLLM to match the default tensor-parallel=4. When running a
@@ -655,6 +1147,20 @@ if [[ "$HORMUZ_USE_VLLM" == "1" && "$PIPELINE_LLM_PROVIDER" == "vllm" ]]; then
     export PIPELINE_LLM_BASE_URL="http://${NODE_HOST}:${VLLM_PORT}/v1"
     export PIPELINE_LLM_MODEL="${VLLM_MODEL}"
 
+    # Context budgets consumed by src/common/context_budget.py and the
+    # synthesis-by-section refactor. Splitting the served context into
+    # ~70% prompt / ~25% completion (with ~5% headroom for the chat
+    # template, structured-output schema descriptions, and rounding)
+    # prevents the LLM from generating responses so long that the
+    # input has to be trimmed at request time. Users can override any
+    # of these by exporting them before sbatch.
+    export PIPELINE_LLM_CONTEXT_WINDOW="${PIPELINE_LLM_CONTEXT_WINDOW:-${VLLM_MAX_LEN}}"
+    export PIPELINE_LLM_PROMPT_BUDGET_TOKENS="${PIPELINE_LLM_PROMPT_BUDGET_TOKENS:-$(( VLLM_MAX_LEN * 70 / 100 ))}"
+    export PIPELINE_LLM_MAX_COMPLETION_TOKENS="${PIPELINE_LLM_MAX_COMPLETION_TOKENS:-$(( VLLM_MAX_LEN * 25 / 100 ))}"
+    echo "[vllm] context budgets: window=${PIPELINE_LLM_CONTEXT_WINDOW}" \
+         "prompt=${PIPELINE_LLM_PROMPT_BUDGET_TOKENS}" \
+         "completion=${PIPELINE_LLM_MAX_COMPLETION_TOKENS}"
+
     # Health-check loop. vLLM weights download + load can take 5-15
     # minutes for a 70B model, so we wait up to 30 minutes by default.
     VLLM_WAIT_SECS="${HORMUZ_VLLM_WAIT_SECS:-1800}"
@@ -683,11 +1189,31 @@ else
     case "$PIPELINE_LLM_PROVIDER" in
         anthropic)
             : "${ANTHROPIC_API_KEY:?PIPELINE_LLM_PROVIDER=anthropic but ANTHROPIC_API_KEY is unset}"
+            _CTX_DEFAULT=200000
             ;;
         openai)
             : "${OPENAI_API_KEY:?PIPELINE_LLM_PROVIDER=openai but OPENAI_API_KEY is unset}"
+            _CTX_DEFAULT=128000
+            ;;
+        bedrock)
+            _CTX_DEFAULT=200000
+            ;;
+        *)
+            _CTX_DEFAULT=8192
             ;;
     esac
+
+    # Mirror the same prompt/completion budget split as the vLLM
+    # branch so the Python layer (synthesis chunking, qualitative
+    # export, overflow retry) behaves identically regardless of which
+    # provider is serving the LLM. Users can still override.
+    export PIPELINE_LLM_CONTEXT_WINDOW="${PIPELINE_LLM_CONTEXT_WINDOW:-${_CTX_DEFAULT}}"
+    export PIPELINE_LLM_PROMPT_BUDGET_TOKENS="${PIPELINE_LLM_PROMPT_BUDGET_TOKENS:-$(( PIPELINE_LLM_CONTEXT_WINDOW * 70 / 100 ))}"
+    export PIPELINE_LLM_MAX_COMPLETION_TOKENS="${PIPELINE_LLM_MAX_COMPLETION_TOKENS:-$(( PIPELINE_LLM_CONTEXT_WINDOW * 25 / 100 ))}"
+    echo "[llm] cloud provider=${PIPELINE_LLM_PROVIDER}: context=${PIPELINE_LLM_CONTEXT_WINDOW}" \
+         "prompt=${PIPELINE_LLM_PROMPT_BUDGET_TOKENS}" \
+         "completion=${PIPELINE_LLM_MAX_COMPLETION_TOKENS}"
+    unset _CTX_DEFAULT
 fi
 
 # ------------------------------------------------------------------
@@ -870,6 +1396,101 @@ echo "[synthesis] ${HORMUZ_BASH_FAILURE_COUNT} bash-layer failure record(s) from
 safe_python "${STAGE_PREFIX}_04_synthesis" 0 -- python slurm/scripts/run_synthesis.py
 rc=$?
 
+# ==================================================================
+#  Stage 4b — Output validation (conservative per-output sanity)
+#
+# Runs configs/validation_rules.yaml against every completed model
+# result under data/pipeline_state/<run_id>_model_*.json and writes:
+#
+#   data/pipeline_state/<run_id>_validation.json
+#   data/reports/<run_id>/validation.json
+#   data/reports/<run_id>/validation.md
+#
+# Best-effort: a non-zero return does NOT clobber the synthesis stage's
+# exit code (rc) that the job ultimately exits with. To make validation
+# errors hard-fail Stage 4b instead, set HORMUZ_VALIDATION_FAIL_ON_ERROR=1
+# before submission.
+# ==================================================================
+echo ""
+echo "════════════ Stage 4b: Output Validation ════════════"
+HORMUZ_VALIDATION_FAIL_ON_ERROR="${HORMUZ_VALIDATION_FAIL_ON_ERROR:-0}"
+VALIDATION_ARGS=( --run-id "${HORMUZ_RUN_ID}" )
+if [[ "$HORMUZ_VALIDATION_FAIL_ON_ERROR" == "1" ]]; then
+    VALIDATION_ARGS+=( --fail-on-error )
+    echo "[validation] HORMUZ_VALIDATION_FAIL_ON_ERROR=1 — script will exit 2 on any error finding."
+fi
+safe_python "${STAGE_PREFIX}_04b_validation" 1 -- \
+    python slurm/scripts/run_validation.py "${VALIDATION_ARGS[@]}"
+validation_rc=$?
+if [[ $validation_rc -ne 0 ]]; then
+    echo "[validation] WARNING: validation stage exited ${validation_rc}; see"
+    echo "[validation]          data/reports/${HORMUZ_RUN_ID}/validation.md for details."
+    echo "[validation]          (synthesis rc=${rc} is preserved as the job's exit status.)"
+fi
+
+# ==================================================================
+#  Stage 5 — Quantitative CSV + qualitative narrative export
+#
+# Walks every $HORMUZ_RUN_ID model_*.json under data/pipeline_state/,
+# fans out scalar outputs into long-form and per-model wide CSVs
+# under data/reports/<run_id>/csv/, and emits one Markdown narrative
+# per scenario under data/reports/<run_id>/qualitative/. The narrative
+# pass uses the same LLM that the rest of the pipeline used (vLLM
+# sidecar / cloud provider). A second LLM completion pass then writes
+# qualitative/user_executive_summary.md.
+#
+# Best-effort: a non-zero return does NOT clobber the synthesis stage's
+# exit code (rc).
+# ==================================================================
+echo ""
+echo "════════════ Stage 5: Results Export (CSV + Qualitative) ════════════"
+HORMUZ_EXPORT_USE_LLM="${HORMUZ_EXPORT_USE_LLM:-1}"
+HORMUZ_EXPORT_EXEC_SUMMARY_LLM="${HORMUZ_EXPORT_EXEC_SUMMARY_LLM:-1}"
+EXPORT_ARGS=( --run-id "${HORMUZ_RUN_ID}" )
+if [[ "$HORMUZ_EXPORT_USE_LLM" != "1" ]]; then
+    EXPORT_ARGS+=( --no-llm )
+    echo "[export] HORMUZ_EXPORT_USE_LLM=0 — qualitative narratives use deterministic templates."
+fi
+if [[ "$HORMUZ_EXPORT_EXEC_SUMMARY_LLM" != "1" ]]; then
+    EXPORT_ARGS+=( --no-exec-summary )
+    echo "[export] HORMUZ_EXPORT_EXEC_SUMMARY_LLM=0 — skipping principal-user executive-summary LLM."
+fi
+safe_python "${STAGE_PREFIX}_05_export" 1 -- \
+    python slurm/scripts/export_results.py "${EXPORT_ARGS[@]}"
+export_rc=$?
+if [[ $export_rc -ne 0 ]]; then
+    echo "[export] WARNING: export stage exited ${export_rc}; CSVs / qualitative reports may be incomplete."
+    echo "[export]          (synthesis rc=${rc} is preserved as the job's exit status.)"
+fi
+
+# ==================================================================
+#  Stage 6 — Visualization suite (PNG figures + index.html dashboard)
+#
+# Reads the CSVs and qualitative narratives written by Stage 5 and
+# emits run-wide figures, per-CSV time-series PNGs, and a
+# self-contained dashboard at
+# data/reports/<run_id>/figures/index.html.
+#
+# Best-effort: a missing optional dep (matplotlib, pandas, markdown)
+# downgrades the relevant feature instead of failing the stage. Disable
+# per-CSV time-series plots with HORMUZ_VIZ_NO_TIMESERIES=1.
+# ==================================================================
+echo ""
+echo "════════════ Stage 6: Visualization (figures + dashboard) ════════════"
+HORMUZ_VIZ_NO_TIMESERIES="${HORMUZ_VIZ_NO_TIMESERIES:-0}"
+VIZ_ARGS=( --run-id "${HORMUZ_RUN_ID}" )
+if [[ "$HORMUZ_VIZ_NO_TIMESERIES" == "1" ]]; then
+    VIZ_ARGS+=( --no-timeseries )
+    echo "[viz] HORMUZ_VIZ_NO_TIMESERIES=1 — skipping per-CSV time-series PNGs."
+fi
+safe_python "${STAGE_PREFIX}_06_visualize" 1 -- \
+    python slurm/scripts/visualize_results.py "${VIZ_ARGS[@]}"
+viz_rc=$?
+if [[ $viz_rc -ne 0 ]]; then
+    echo "[viz] WARNING: visualization stage exited ${viz_rc}; figures may be incomplete."
+    echo "[viz]          (synthesis rc=${rc} is preserved as the job's exit status.)"
+fi
+
 # ------------------------------------------------------------------
 # Summary
 # ------------------------------------------------------------------
@@ -881,6 +1502,19 @@ echo "  Synthesis rc: ${rc}"
 echo "  Finished at:  $(date -u +%Y-%m-%dT%H:%M:%SZ)"
 echo "  State files:  ${PROJECT_ROOT}/data/pipeline_state/${HORMUZ_RUN_ID}_*"
 echo "  Reports:      ${PROJECT_ROOT}/data/reports/"
+echo "                  ${HORMUZ_RUN_ID}/synthesis.{json,md}             Module 4 outputs"
+echo "                  ${HORMUZ_RUN_ID}/validation.{json,md}            Stage 4b output validation report"
+echo "                  ${HORMUZ_RUN_ID}/<scenario>.md                   Per-scenario synthesis"
+echo "                  ${HORMUZ_RUN_ID}/csv/model_status.csv            (scenario, model) status table"
+echo "                  ${HORMUZ_RUN_ID}/csv/synthesis_outcomes.csv      Headline outcomes table"
+echo "                  ${HORMUZ_RUN_ID}/csv/quantitative_results.csv    All scalar outputs (long form)"
+echo "                  ${HORMUZ_RUN_ID}/csv/raw/<scenario>/             Per-(scenario, model) CSVs"
+echo "                  ${HORMUZ_RUN_ID}/qualitative/<scenario>.md       Per-scenario narrative export"
+echo "                  ${HORMUZ_RUN_ID}/qualitative/cross_scenario.md   Per-model cross-scenario view"
+echo "                  ${HORMUZ_RUN_ID}/qualitative/user_executive_summary.md  Principal-user overview (2nd LLM pass)"
+echo "                  ${HORMUZ_RUN_ID}/figures/index.html              Visualization dashboard (Stage 6)"
+echo "                  ${HORMUZ_RUN_ID}/figures/*.png                   Run-wide figures (status, heatmap, outcomes)"
+echo "                  ${HORMUZ_RUN_ID}/figures/timeseries/*.png        Per-(scenario, model, series) plots"
 echo "  Run log dir:  ${RUN_LOG_DIR}"
 echo "                  driver-${SLURM_JOB_ID:-N/A}.out / .err  (symlinks)"
 echo "                  vllm.log                                (if sidecar ran)"

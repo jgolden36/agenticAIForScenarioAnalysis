@@ -781,8 +781,8 @@ when taken together.
 
 Below is Markdown that reorganises qualitative narratives **by model**, with each model's \
 paragraphs repeated under every scenario in which that model produced output. Treat this \
-as the only evidence base — do not invent quantitative claims or causal mechanisms that \
-are not supported by the text.
+as the only evidence base — do not invent quantitative claims, scenario assumptions, or \
+causal mechanisms that are not supported by the text.
 
 Run ID: `{run_id}`
 
@@ -801,9 +801,30 @@ top-level sections (use `##` headings, no `#` title):
 ## Risks, caveats, and limits of what was simulated
 ## What to read or verify next
 
-Keep the tone concise and operational (roughly 600–900 words total unless the source \
-material is very sparse). If the source is empty or nearly empty, say so honestly and \
-avoid filler.
+Strict rules:
+
+1. **Refer to scenarios by their exact section headings in the source material** \
+(e.g. "Swift Contained Conflict (`swift_contained`)"). Do NOT invent closure-duration \
+numbers, escalation labels, or geographic details that are not explicitly stated in \
+the source text. If the source says "disruption duration of 4 months", say 4 months; \
+if it does not state a duration for a scenario, say so rather than guessing.
+2. **Every numeric claim must be traceable to a number that appears in the source.** \
+When you cite a number, attribute it to the model that produced it \
+(e.g. "POLES-JRC peak price +55%", "AISDB rerouting cost multiplier 1.19"). Do not \
+round-up or paraphrase numbers into different ones.
+3. **Distinguish robust from scenario-sensitive findings.** A signal is "robust" if it \
+appears with comparable magnitude in most or all scenarios in the source; otherwise \
+flag the scenario it depends on.
+4. **Name specific models when they disagree** rather than handwaving about \
+"some models". If POLES-JRC and Bornstein-Krusell-Rebelo disagree on the oil price, \
+say so by name.
+5. **Do not pad.** If the source material is sparse for a scenario or model, state that \
+explicitly. Avoid filler sentences like "the results should be interpreted with \
+caution due to the following risks and caveats" unless you immediately list specific, \
+source-grounded caveats.
+
+Target length: roughly 600–900 words, but cut shorter if the source genuinely does not \
+support that much. If the source is empty or nearly empty, say so honestly and stop.
 """
 
 
