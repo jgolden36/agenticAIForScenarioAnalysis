@@ -779,14 +779,29 @@ if [[ "$HORMUZ_AUTO_BUILD" == "1" ]]; then
 
             if command -v nvidia-smi >/dev/null 2>&1 \
                     && nvidia-smi -L >/dev/null 2>&1; then
-                _opt_install "torch + transformers + accelerate" \
-                    torch transformers accelerate peft
+                # torch / vLLM are pinnable via HORMUZ_TORCH_SPEC /
+                # HORMUZ_VLLM_SPEC when the latest wheels are newer than
+                # the node's NVIDIA driver supports (the usual cause of
+                # "Can't initialize NVML" / "Failed to infer device
+                # type"). Leave unset to take the latest compatible
+                # wheel. Examples:
+                #   export HORMUZ_TORCH_SPEC='torch==2.4.*'
+                #   export HORMUZ_VLLM_SPEC='vllm==0.6.*'
+                _torch_spec="${HORMUZ_TORCH_SPEC:-torch}"
+                _vllm_spec="${HORMUZ_VLLM_SPEC:-vllm}"
+                _opt_install "torch (${_torch_spec}) + transformers + accelerate" \
+                    "${_torch_spec}" transformers accelerate peft
                 if [[ "${HORMUZ_USE_VLLM:-1}" == "1" \
                         && "${PIPELINE_LLM_PROVIDER:-vllm}" == "vllm" ]]; then
-                    _opt_install "vllm" vllm
+                    _opt_install "vllm (${_vllm_spec})" "${_vllm_spec}"
 
                     if [[ "${HORMUZ_NEED_CONDA_NVCC:-0}" == "1" ]]; then
                         echo "[build]   - cuda-nvcc (conda fallback, no system CUDA found)"
+                        # NOTE: these conda cuda-* packages ship a stub
+                        # libnvidia-ml.so. We deliberately do NOT add
+                        # ${CONDA_PREFIX}/lib to the front of
+                        # LD_LIBRARY_PATH (see the post-activation CUDA
+                        # block) so the stub can't shadow the driver NVML.
                         if "$CONDA_EXE" install -y -n "${HORMUZ_CONDA_ENV}" \
                                 -c nvidia cuda-nvcc cuda-cudart-dev cuda-nvrtc \
                                 >/dev/null 2>&1; then
@@ -896,24 +911,42 @@ echo "[progress] conda env active (python=$(command -v python 2>/dev/null || ech
 #
 # If the bootstrap above installed cuda-nvcc as a fallback, nvcc now
 # lives at $CONDA_PREFIX/bin/nvcc and CUDA_HOME should point at
-# $CONDA_PREFIX so vLLM's torch.utils.cpp_extension finds matching
-# headers + libcudart. We re-run the resolver — idempotent.
+# $CONDA_PREFIX so any JIT compile finds matching headers. We re-run
+# the resolver — idempotent.
+#
+# IMPORTANT — do NOT prepend a CUDA *toolkit* lib dir to the FRONT of
+# LD_LIBRARY_PATH. pip-installed torch / vLLM bundle their own CUDA
+# runtime libraries (libcudart, libnvrtc, ...), so they don't need a
+# system toolkit on the loader path. What they DO need is the NVIDIA
+# *driver's* libnvidia-ml.so.1 (NVML) and libcuda.so.1, which live in
+# the system driver dir already registered with ldconfig. The conda
+# cuda-* packages (and some toolkit lib64 dirs) ship a *stub*
+# libnvidia-ml.so that, if placed ahead of the driver on
+# LD_LIBRARY_PATH, makes nvmlInit fail with:
+#     UserWarning: Can't initialize NVML
+# which in turn makes torch report no CUDA and vLLM abort at
+# arg-parse with "Failed to infer device type". So we only put nvcc on
+# PATH here; toolkit lib dirs are appended at the END (never the
+# front) so a stub can never shadow the driver NVML.
 # ------------------------------------------------------------------
 if [[ -n "${CONDA_PREFIX:-}" && -x "${CONDA_PREFIX}/bin/nvcc" ]]; then
     if [[ "${CUDA_HOME:-}" != "${CONDA_PREFIX}" ]]; then
         export CUDA_HOME="${CONDA_PREFIX}"
         export CUDA_PATH="${CONDA_PREFIX}"
         export PATH="${CONDA_PREFIX}/bin:${PATH}"
-        export LD_LIBRARY_PATH="${CONDA_PREFIX}/lib:${LD_LIBRARY_PATH:-}"
         echo "[cuda] using env-installed nvcc; CUDA_HOME=${CUDA_HOME}"
+        echo "[cuda]   (LD_LIBRARY_PATH left unchanged so the conda cuda-* stub"
+        echo "[cuda]    libnvidia-ml.so cannot shadow the system driver's NVML.)"
     fi
 fi
 if [[ -z "${CUDA_HOME:-}" ]] || [[ ! -x "${CUDA_HOME}/bin/nvcc" ]]; then
     _hormuz_resolve_cuda_home && {
         export CUDA_HOME CUDA_PATH="$CUDA_HOME"
         export PATH="${CUDA_HOME}/bin:${PATH}"
-        export LD_LIBRARY_PATH="${CUDA_HOME}/lib64:${LD_LIBRARY_PATH:-}"
-        echo "[cuda] post-activation CUDA_HOME=${CUDA_HOME}"
+        # Append (not prepend) so a stub NVML in lib64 can't win over
+        # the driver. torch's bundled runtime is found regardless.
+        export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-}:${CUDA_HOME}/lib64"
+        echo "[cuda] post-activation CUDA_HOME=${CUDA_HOME} (lib64 appended to LD_LIBRARY_PATH)"
     } || true
 fi
 if [[ -n "${CUDA_HOME:-}" && -x "${CUDA_HOME}/bin/nvcc" ]]; then
@@ -1046,6 +1079,88 @@ if [[ "$HORMUZ_USE_VLLM" == "1" && "$PIPELINE_LLM_PROVIDER" == "vllm" ]]; then
         echo "        Or rerun with HORMUZ_USE_VLLM=0 + a cloud provider."
         exit 1
     fi
+
+    # ------------------------------------------------------------------
+    # torch / CUDA preflight.
+    #
+    # vLLM >= 0.7 builds its CLI arg parser by instantiating a default
+    # VllmConfig, whose DeviceConfig.__post_init__ infers the device
+    # type from the active platform. If torch can't see a CUDA device,
+    # that inference raises the cryptic "Failed to infer device type"
+    # at arg-parse time — *before* any of our --model / --port flags are
+    # read. The usual upstream cause is "Can't initialize NVML": a stub
+    # libnvidia-ml.so (shipped by conda cuda-* packages or a toolkit
+    # lib64) shadowing the real driver NVML on LD_LIBRARY_PATH.
+    #
+    # We check torch.cuda here so the failure is diagnosed in OUR log
+    # with an actionable message. If the first check fails we attempt a
+    # one-shot self-heal: drop conda/toolkit lib dirs from
+    # LD_LIBRARY_PATH (torch's bundled runtime doesn't need them) so the
+    # driver's NVML wins, then re-check.
+    # ------------------------------------------------------------------
+    _torch_cuda_count() {
+        python - <<'PY' 2>/dev/null
+import sys
+try:
+    import torch
+    print(torch.cuda.device_count())
+except Exception:
+    print(0)
+PY
+    }
+
+    _gpu_count="$(_torch_cuda_count)"
+    if [[ "${_gpu_count:-0}" -lt 1 ]]; then
+        echo "[vllm] preflight: torch.cuda.device_count()=${_gpu_count:-0}; attempting LD_LIBRARY_PATH self-heal."
+        echo "[vllm]   current LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-<empty>}"
+        # Strip any conda-env lib and CUDA-toolkit lib64 entries that
+        # may carry a stub NVML; keep everything else (driver dirs).
+        if [[ -n "${LD_LIBRARY_PATH:-}" ]]; then
+            _cleaned=""
+            IFS=':' read -ra _ldparts <<< "$LD_LIBRARY_PATH"
+            for _p in "${_ldparts[@]}"; do
+                [[ -z "$_p" ]] && continue
+                case "$_p" in
+                    "${CONDA_PREFIX:-/dev/null/x}"/lib|\
+                    "${CONDA_PREFIX:-/dev/null/x}"/lib64|\
+                    "${CUDA_HOME:-/dev/null/x}"/lib64|\
+                    *"/cuda"*"/lib64"|*"/cuda"*"/lib"|*"/stubs")
+                        echo "[vllm]   dropping potential NVML-shadowing entry: $_p"
+                        ;;
+                    *)
+                        _cleaned="${_cleaned:+${_cleaned}:}${_p}"
+                        ;;
+                esac
+            done
+            export LD_LIBRARY_PATH="$_cleaned"
+            echo "[vllm]   cleaned LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-<empty>}"
+        fi
+        _gpu_count="$(_torch_cuda_count)"
+        echo "[vllm]   after self-heal: torch.cuda.device_count()=${_gpu_count:-0}"
+    fi
+
+    if [[ "${_gpu_count:-0}" -lt 1 ]]; then
+        echo "[fatal] torch cannot see any CUDA device on $(hostname)."
+        echo "        This is why vLLM dies with 'Failed to infer device type'."
+        echo "        Diagnostics:"
+        echo "          SLURM_GPUS_ON_NODE = ${SLURM_GPUS_ON_NODE:-<unset>}"
+        echo "          CUDA_VISIBLE_DEVICES = ${CUDA_VISIBLE_DEVICES:-<unset>}"
+        echo "          LD_LIBRARY_PATH = ${LD_LIBRARY_PATH:-<empty>}"
+        echo "        nvidia-smi -L:"
+        nvidia-smi -L 2>&1 | sed 's/^/          /' || echo "          (nvidia-smi failed)"
+        echo "        Likely causes / fixes:"
+        echo "          * Job landed on a node with no GPUs — confirm 'sbatch --gpus-per-node=4'"
+        echo "            actually granted GPUs (scontrol show job \$SLURM_JOB_ID | grep -i gres)."
+        echo "          * pip torch/vLLM newer than the node driver supports — rerun the"
+        echo "            bootstrap with HORMUZ_FORCE_REBUILD=1 after pinning a compatible"
+        echo "            torch (e.g. HORMUZ_TORCH_SPEC='torch==2.4.*')."
+        echo "          * Fall back to a cloud LLM: HORMUZ_USE_VLLM=0 PIPELINE_LLM_PROVIDER=anthropic"
+        echo "        For verbose vLLM platform detection, rerun with VLLM_LOGGING_LEVEL=DEBUG."
+        record_bash_failure "${STAGE_PREFIX}_vllm" 1 \
+            "torch.cuda has no visible device on $(hostname); vLLM would fail to infer device type"
+        exit 1
+    fi
+    echo "[vllm] preflight OK: torch sees ${_gpu_count} CUDA device(s)."
 
     # Empire AI Alpha defaults: Llama-3.1-70B-Instruct sharded across
     # 4 GPUs (tensor-parallel=4). 70B in fp16 needs ~140GB, so all
