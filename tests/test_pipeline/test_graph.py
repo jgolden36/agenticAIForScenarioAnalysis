@@ -106,6 +106,102 @@ class TestCreateInitialState:
         assert state["config"]["num_scenarios"] == 2
 
 
+class TestExecuteNodeUncertainty:
+    """The per-model LangGraph node must thread UQ onto its result entry
+    when the (serialized) config enables uncertainty quantification."""
+
+    def _linear_registry(self):
+        from src.common.types import AnalyticalLevel, CommoditySystem
+        from src.models.base import ModelAdapter, ModelOutput, ValidationResult
+        from src.models.registry import ModelRegistry
+
+        class _LinearAdapter(ModelAdapter):
+            @property
+            def model_id(self):
+                return "linear_node_adapter"
+
+            @property
+            def commodity_system(self):
+                return CommoditySystem.OIL
+
+            @property
+            def analytical_level(self):
+                return AnalyticalLevel.COMMODITY
+
+            @property
+            def description(self):
+                return "linear node test adapter"
+
+            def validate_inputs(self, params):
+                return ValidationResult(valid=True)
+
+            def translate_inputs(self, params):
+                return params
+
+            def execute(self, inputs):
+                return ModelOutput(
+                    model_id=self.model_id,
+                    outputs={"y": 2.0 * float(inputs["x"]) + 5.0},
+                )
+
+            def parse_outputs(self, raw):
+                return raw
+
+        reg = ModelRegistry()
+        reg.register(_LinearAdapter())
+        return reg
+
+    def _state(self, enabled: bool):
+        from src.common.types import Scenario
+        from src.models.uncertainty import UncertaintyConfig
+        from src.pipeline.config import PipelineConfig
+
+        config = PipelineConfig(
+            uncertainty=UncertaintyConfig(
+                enabled=enabled,
+                method="perturbation",
+                n_replicates=8,
+                perturbation_pct=10.0,
+                seed=7,
+            )
+        )
+        return {
+            "current_scenario_id": Scenario.A.value,
+            "current_model_id": "linear_node_adapter",
+            "current_params": {"x": 100.0},
+            "current_upstream_overrides": [],
+            "config": config.model_dump(mode="json"),
+        }
+
+    def test_node_populates_uncertainty_when_enabled(self, monkeypatch):
+        import src.pipeline.graph as graph
+
+        reg = self._linear_registry()
+        monkeypatch.setattr(graph, "build_default_registry", lambda *a, **k: reg)
+
+        out = graph._execute_one_model_node(self._state(enabled=True))
+        entry = out["execution_results"][0]
+
+        assert entry["status"] == "completed"
+        assert entry["outputs"]["y"] == 205.0
+        assert "uncertainty" in entry
+        assert entry["uncertainty"]["method"] == "perturbation"
+        q = entry["uncertainty"]["estimates"]["y"]["quantiles"]
+        assert q["p05"] < q["p95"]
+
+    def test_node_omits_uncertainty_when_disabled(self, monkeypatch):
+        import src.pipeline.graph as graph
+
+        reg = self._linear_registry()
+        monkeypatch.setattr(graph, "build_default_registry", lambda *a, **k: reg)
+
+        out = graph._execute_one_model_node(self._state(enabled=False))
+        entry = out["execution_results"][0]
+
+        assert entry["status"] == "completed"
+        assert "uncertainty" not in entry
+
+
 class TestBuildPipelineGraph:
     def test_graph_builds_without_error(self):
         """Verify the graph can be constructed (node/edge consistency)."""
