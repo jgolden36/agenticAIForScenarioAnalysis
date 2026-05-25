@@ -21,6 +21,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from slurm.scripts.stage_utils import (
     get_array_task,
+    get_pipeline_config_path,
     get_project_root,
     get_run_id,
     load_manifest,
@@ -37,7 +38,29 @@ from src.common.wandb_logger import (
     stage_run,
 )
 from src.models.registry import build_default_registry, default_config_dir
+from src.models.uncertainty import UncertaintyConfig, maybe_run_with_uncertainty
+from src.pipeline.config import PipelineConfig
 from src.pipeline.upstream_to_macro import register_overrides_in_outputs
+
+
+def _load_uncertainty_config() -> UncertaintyConfig:
+    """Resolve the uncertainty config from the active pipeline YAML.
+
+    The SLURM array task runs as its own process and never sees the
+    in-memory PipelineConfig the driver built, so re-load it from the
+    same YAML the rest of the pipeline uses. Falls back to a disabled
+    default if the config can't be read, so a malformed config degrades
+    to point estimates rather than crashing the execution stage.
+    """
+    try:
+        config = PipelineConfig.from_yaml(get_pipeline_config_path())
+        return config.execution.uncertainty
+    except Exception as exc:  # noqa: BLE001 — never crash execution on config
+        logger.warning(
+            "Could not load uncertainty config (%s); UQ disabled for this task.",
+            exc,
+        )
+        return UncertaintyConfig()
 
 
 def _outputs_dir() -> Path:
@@ -155,6 +178,18 @@ def main() -> None:
     registry = build_default_registry(default_config_dir())
     adapter = registry.get(model_id)
 
+    uncertainty_config = _load_uncertainty_config()
+    if uncertainty_config.enabled:
+        logger.info(
+            "Uncertainty quantification enabled (method=%s, n_replicates=%d, "
+            "perturbation=%.1f%%) for %s/%s",
+            uncertainty_config.method,
+            uncertainty_config.n_replicates,
+            uncertainty_config.perturbation_pct,
+            scenario_id,
+            model_id,
+        )
+
     result = {
         "scenario_id": scenario_id,
         "model_id": model_id,
@@ -213,7 +248,9 @@ def main() -> None:
                 return
 
             native_inputs = adapter.translate_inputs(params)
-            output = adapter.execute(native_inputs)
+            output = maybe_run_with_uncertainty(
+                adapter, native_inputs, uncertainty_config
+            )
 
             elapsed = time.monotonic() - t0
             result["status"] = ModelExecutionStatus.COMPLETED.value
@@ -222,9 +259,19 @@ def main() -> None:
             )
             if upstream_overrides:
                 result["upstream_overrides"] = upstream_overrides
+            if output.uncertainty is not None:
+                result["uncertainty"] = output.uncertainty.model_dump()
             result["runtime_seconds"] = elapsed
             result["completed_at"] = datetime.now(timezone.utc).isoformat()
-            logger.info(f"Model {model_id} completed in {elapsed:.1f}s")
+            logger.info(
+                f"Model {model_id} completed in {elapsed:.1f}s"
+                + (
+                    f" (uncertainty: {len(output.uncertainty.estimates)} "
+                    "outputs quantified)"
+                    if output.uncertainty is not None
+                    else ""
+                )
+            )
 
         except NotImplementedError as e:
             result["status"] = ModelExecutionStatus.SKIPPED.value

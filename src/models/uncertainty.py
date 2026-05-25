@@ -261,6 +261,33 @@ def aggregate_replicates(
 ExecuteFn = Callable[[Any], ModelOutput]
 
 
+def maybe_run_with_uncertainty(
+    adapter: ModelAdapter,
+    native_inputs: Any,
+    config: "UncertaintyConfig | None",
+    *,
+    execute_fn: ExecuteFn | None = None,
+) -> ModelOutput:
+    """Execute ``adapter`` once, wrapping it in the UQ loop iff enabled.
+
+    This is the single dispatch point every model-execution driver
+    (the ``ModelExecutor`` thread/process pools, the LangGraph
+    ``_execute_one_model_node``, and the SLURM ``run_model.py`` array
+    task) should call so uncertainty quantification fires consistently
+    no matter how the pipeline is launched.
+
+    When ``config`` is ``None`` or ``config.enabled`` is false the
+    adapter's ``execute()`` is called directly and the returned
+    ``ModelOutput.uncertainty`` is left as the adapter produced it.
+    """
+    if config is not None and config.enabled:
+        return run_with_uncertainty(
+            adapter, native_inputs, config, execute_fn=execute_fn
+        )
+    runner = execute_fn or adapter.execute
+    return runner(native_inputs)
+
+
 def run_with_uncertainty(
     adapter: ModelAdapter,
     native_inputs: Any,

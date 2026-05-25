@@ -41,6 +41,7 @@ from src.common.types import (
 from src.interface.comparison import find_robust_outcomes
 from src.interface.provenance import ProvenanceTracker
 from src.models.executor import ModelExecutor
+from src.models.uncertainty import maybe_run_with_uncertainty
 from src.models.registry import (
     ModelRegistry,
     build_default_registry,
@@ -680,24 +681,27 @@ def _execute_one_model_node(state: OverallSimulationState) -> dict:
             }
 
         native_inputs = adapter.translate_inputs(params)
-        output = adapter.execute(native_inputs)
+        output = maybe_run_with_uncertainty(
+            adapter, native_inputs, config.execution.uncertainty
+        )
 
         completed_at = datetime.now(timezone.utc)
         outputs_dict = register_overrides_in_outputs(output.outputs, overrides)
-        return {
-            "execution_results": [{
-                "scenario_id": scenario_id_str,
-                "model_id": model_id,
-                "status": ModelExecutionStatus.COMPLETED.value,
-                "outputs": outputs_dict,
-                "started_at": started_at.isoformat(),
-                "completed_at": completed_at.isoformat(),
-                "runtime_seconds": (completed_at - started_at).total_seconds(),
-                "requires_gpu": reqs.requires_gpu,
-                "gpu_device": output.gpu_device,
-                "worker_id": output.worker_id,
-            }]
+        result_entry: dict[str, Any] = {
+            "scenario_id": scenario_id_str,
+            "model_id": model_id,
+            "status": ModelExecutionStatus.COMPLETED.value,
+            "outputs": outputs_dict,
+            "started_at": started_at.isoformat(),
+            "completed_at": completed_at.isoformat(),
+            "runtime_seconds": (completed_at - started_at).total_seconds(),
+            "requires_gpu": reqs.requires_gpu,
+            "gpu_device": output.gpu_device,
+            "worker_id": output.worker_id,
         }
+        if output.uncertainty is not None:
+            result_entry["uncertainty"] = output.uncertainty.model_dump()
+        return {"execution_results": [result_entry]}
 
     except NotImplementedError as e:
         return {
