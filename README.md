@@ -71,7 +71,7 @@ Every domain model is wrapped by a `ModelAdapter` subclass (`src/models/base.py`
 | `ExcelAdapter` | `src/models/adapters/excel_adapter.py` | `openpyxl` (headless) or `xlwings` (Excel COM) |
 | `AnyLogicAdapter` | `src/models/adapters/anylogic_adapter.py` | Exported standalone Java (JAR) via subprocess |
 
-The executor (`src/models/executor.py`) respects analytical-level ordering, parallelises within levels, isolates failures, and honours per-adapter `ResourceRequirements` for GPU/CPU/SLURM scheduling.
+The executor (`src/models/executor.py`) respects analytical-level ordering, parallelises within levels, isolates failures, honours per-adapter `ResourceRequirements` for GPU/CPU/SLURM scheduling, and applies the step-11 feed-forward barrier between levels (see below), so the imperative orchestrator path communicates model outputs downstream exactly like the LangGraph and SLURM runtimes.
 
 ### Upstream-to-downstream feed-forward (Algorithm 1, step 11)
 
@@ -81,9 +81,11 @@ Module 3 is split in three phases so downstream models (semiconductor / helium-A
 2. **Barrier merge #1 → Phase A2 (commodity_downstream)** — `src/pipeline/upstream_forwarding.py` reads the completed commodity outputs and applies the rules in `configs/upstream_forwarding_mapping.yaml` whose targets sit at `AnalyticalLevel.COMMODITY_DOWNSTREAM`. Today this forwards `world_helium_model.effective_supply_gap_pct` into `simrlfab.helium_supply_reduction_pct` and `argonne_abm.supply_shock_pct`, plus `world_helium_model.disruption_duration_months` into both adapters' `disruption_duration_months`. SimRLFab and Argonne ABM then execute with those merged inputs, so the semiconductor-fab and helium-market-ABM simulations consume the helium model's *computed* sectoral shortfall instead of an LLM estimate. Categorical (`neon_supply_status`) and calibration (`fab_utilization_baseline`, `demand_response_elasticity`) parameters stay on whatever the LLM extracted.
 3. **Barrier merge #2 → Phase B (macro)** — the same machinery is re-invoked, this time with macro models (NEMS, MAM, OpenCGE, PyCGE, MPSGE.jl, MIRAGRODEP) as the targets. It pulls outputs from BOTH the commodity and commodity_downstream phases, so e.g. `oil_price_shock_pct` ← `poles_jrc.peak_price_change_pct`; `commodity_price_shocks.helium` ← `world_helium_model.price_change_pct`; `commodity_price_shocks.fertilizer` ← mean of `futures.peak_price_index_per_commodity[urea, dap, potash]`. Macro adapters then execute with the merged parameters.
 
-`src/synthesis/consistency.py` walks each downstream result's `outputs["_upstream_overrides"]` and automatically flags any LLM-vs-upstream divergence above `defaults.llm_vs_upstream_warn_threshold_pct` (default 50%) as a `ConsistencyFlag`. The synthesis prompt includes an explicit "Upstream-to-Macro Overrides" section so the report attributes downstream findings to the upstream calculation.
+**Multi-source consensus (`combine` policies).** Each forwarding rule may declare `combine: first | mean | median | weighted_mean`. `first` (default) keeps the historical ordered-fallback semantics; the aggregating policies average every upstream source that resolved, so a downstream model consumes a consensus when several upstream models compute the same quantity (today: AISdb + AIS_project rerouting-cost multipliers feed `poles_jrc.rerouting_cost_multiplier` and `mpsge_jl.trade_disruption_spec.trade_cost_multiplier` via `combine: mean`). Per-source `weight:` entries drive `weighted_mean`. Every resolving candidate is recorded on the override audit record (`candidate_sources`), along with the max pairwise deviation between candidates (`cross_source_deviation_pct`).
 
-The same merge logic is invoked from both the local LangGraph orchestrator (the `merge_upstream_into_commodity_downstream_params` and `merge_upstream_into_macro_params` nodes between `execute_commodity_model` → `execute_commodity_downstream_model` → `execute_macro_model` in `src/pipeline/graph.py`) and the SLURM cluster pipeline (`slurm/scripts/dispatch_models.py --tier {commodity_downstream,macro}`, called between Stage 3a, Stage 3a-2, and Stage 3b in `slurm/jobs/*.job` and `slurm/submit_pipeline.sh`). When an upstream model is FAILED / SKIPPED / not in the registry, the LLM-extracted shock is preserved (graceful degradation). The legacy filename `configs/upstream_to_macro_mapping.yaml` and the legacy module `src/pipeline/upstream_to_macro.py` are kept as backwards-compat shims.
+`src/synthesis/consistency.py` walks each downstream result's `outputs["_upstream_overrides"]` and automatically flags (1) any LLM-vs-upstream divergence above `defaults.llm_vs_upstream_warn_threshold_pct` (default 50%) and (2) any disagreement *between upstream sources of the same rule* above `defaults.cross_source_warn_threshold_pct` (default 30%) as `ConsistencyFlag` entries. The synthesis prompt includes an explicit "Upstream-to-Macro Overrides" section so the report attributes downstream findings to the upstream calculation.
+
+The same merge logic is invoked from all three runtimes: the local LangGraph orchestrator (the `merge_upstream_into_commodity_downstream_params` and `merge_upstream_into_macro_params` nodes between `execute_commodity_model` → `execute_commodity_downstream_model` → `execute_macro_model` in `src/pipeline/graph.py`), the imperative orchestrator (`ModelExecutor.execute_all` applies the barrier between analytical levels; pass `apply_upstream_forwarding=False` for ablation runs), and the SLURM cluster pipeline (`slurm/scripts/dispatch_models.py --tier {commodity_downstream,macro}`, called between Stage 3a, Stage 3a-2, and Stage 3b in `slurm/jobs/*.job` and `slurm/submit_pipeline.sh`). When an upstream model is FAILED / SKIPPED / not in the registry, the LLM-extracted shock is preserved (graceful degradation). The legacy filename `configs/upstream_to_macro_mapping.yaml` and the legacy module `src/pipeline/upstream_to_macro.py` are kept as backwards-compat shims.
 
 ---
 
@@ -339,9 +341,25 @@ The single-shot pipeline above answers *"what does our model portfolio say about
 Each iteration of the temporal loop:
 
 1. Pulls a calendar week of news articles and government indicators from a configurable set of sources (NewsData.io, GNews, NewsAPI.org, NewsAPI.ai, EIA Open Data).
-2. Runs an LLM summariser that produces a structured `WeeklyBrief` (headline, quantitative summary, key indicators, per-scenario probability signals, coverage gaps), threading in the previous week's brief as context.
+2. Runs an LLM summariser that produces a structured `WeeklyBrief` (headline, quantitative summary, key indicators, machine-readable `observed_indicators` with stable names + values + units, per-scenario probability signals, coverage gaps), threading in the previous week's brief as context.
 3. Writes a per-week augmented crisis-description YAML into `configs/crisis_descriptions/hormuz_2026_weekly/<date>.yaml` (the baseline file is never mutated; the weekly file appends a `recent_developments` block plus a cumulative `weekly_briefs` history).
 4. Re-runs **all of Algorithm 1** (scenarios → parameter extraction → model execution → synthesis) under a unique `HORMUZ_RUN_ID="weekly_<YYYYMMDD>"`, so each week's full set of state files, model outputs, and synthesis report sits side by side under `data/pipeline_state/weekly_*` and `data/reports/weekly_*` for cross-week comparison.
+
+There are two ways to drive the loop: the **SLURM batch backfill** (below), which re-runs every week of a historical window unconditionally, and the **local automatic updater** (`python -m src.news.updater`), which processes one week per invocation and adds a *materiality gate* — the deterministic comparison in `src/news/materiality.py` between this week's and last week's `observed_indicators` (plus new-actor detection) decides whether a full pipeline rerun is actually warranted, so an unattended cron/scheduler entry does not burn an LLM + model-portfolio run on a week where nothing happened. Every decision is written to `data/reports/weekly_<date>/update_summary.{json,md}` with the per-indicator deltas and reasons, and can be overridden with `--force`.
+
+```bash
+# Local automatic update: last 7 days, rerun Modules 1-4 only if material.
+# --auto-approve is required for unattended runs (checkpoints reviewed post-hoc).
+export EIA_API_KEY=...
+python -m src.news.updater --auto-approve
+
+# Ad-hoc: specific window, custom materiality threshold, forced rerun
+python -m src.news.updater --as-of 2026-04-10 --window-days 7 \
+    --indicator-threshold-pct 5 --force --auto-approve
+
+# Brief-only mode (no pipeline rerun; inspect summariser output first)
+python -m src.news.updater --skip-pipeline
+```
 
 ### Components
 
@@ -353,7 +371,9 @@ Each iteration of the temporal loop:
 | `src/news/newsapi.py` | NewsAPI.org and NewsAPI.ai (Event Registry) |
 | `src/news/eia.py` | EIA Open Data API (WTI, Brent, US crude stocks, Henry Hub gas; series list overridable) |
 | `src/news/aggregator.py` | Fan-out across sources with URL+title-date deduplication and per-source success/failure reporting |
-| `src/news/summarizer.py` | LLM chain producing `WeeklyBrief` + `write_updated_crisis_yaml` helper |
+| `src/news/summarizer.py` | LLM chain producing `WeeklyBrief` (incl. machine-readable `ObservedIndicator` records) + `write_updated_crisis_yaml` helper |
+| `src/news/materiality.py` | Deterministic week-over-week comparison deciding whether a rerun is warranted (indicator deltas, new actors); no LLM call |
+| `src/news/updater.py` | Local automatic update driver (`python -m src.news.updater`): fetch → brief → YAML → materiality gate → orchestrator rerun → `update_summary.{json,md}` |
 | `configs/news_sources.yaml` | Crisis metadata, boolean query, list of source adapter specs |
 | `slurm/scripts/build_weekly_brief.py` | CLI: fetch one week → summarise → write per-week YAML + provenance artefacts |
 | `slurm/jobs/weekly_news_pipeline.job` | Generic SLURM driver: enumerate weeks, build briefs, re-run the pipeline for each |

@@ -628,6 +628,7 @@ slurm/logs/20260423_165005/runtime-stonybrook_ai_cluster_setup-23406-single.json
 slurm/logs/20260423_165005/vllm.log
 slurm/logs/20260423_172400/runtime-stonybrook_ai_cluster_setup-23407-single.json
 slurm/logs/20260423_172400/vllm.log
+slurm/scripts/VISUALIZATIONS.md
 slurm/scripts/__init__.py
 slurm/scripts/build_weekly_brief.py
 slurm/scripts/check_status.py
@@ -942,6 +943,7 @@ tests/test_models/test_oil_bornstein_krusell_rebelo.py
 tests/test_models/test_registry.py
 tests/test_models/test_tools.py
 tests/test_models/test_uncertainty.py
+tests/test_models/test_uncertainty_dispatch.py
 tests/test_models/__pycache__/__init__.cpython-310.pyc
 tests/test_models/__pycache__/__init__.cpython-311.pyc
 tests/test_models/__pycache__/test_adapters.cpython-310-pytest-9.0.3.pyc

@@ -72,6 +72,10 @@ def main() -> int:
                    help="Previous week's brief (plain text).")
     p.add_argument("--brief-out", default=None, type=Path,
                    help="Where to write this week's brief as plain text.")
+    p.add_argument("--brief-json-out", default=None, type=Path,
+                   help="Where to write the structured WeeklyBrief as JSON "
+                        "(machine-readable observed_indicators; consumed by "
+                        "the materiality check in src/news/materiality.py).")
     p.add_argument("--articles-out", default=None, type=Path,
                    help="Where to write the raw fetched articles as JSON.")
     p.add_argument("--report-out", default=None, type=Path,
@@ -179,6 +183,16 @@ def main() -> int:
         args.brief_out.parent.mkdir(parents=True, exist_ok=True)
         args.brief_out.write_text(render_brief_as_text(brief), encoding="utf-8")
         logger.info("Wrote brief text: %s", args.brief_out)
+
+    brief_json_out = args.brief_json_out
+    if brief_json_out is None and args.brief_out is not None:
+        # Default the JSON sibling next to the text brief so SLURM-built
+        # weeks are comparable by the local updater's materiality check.
+        brief_json_out = args.brief_out.with_suffix(".json")
+    if brief_json_out:
+        brief_json_out.parent.mkdir(parents=True, exist_ok=True)
+        brief_json_out.write_text(brief.model_dump_json(indent=2), encoding="utf-8")
+        logger.info("Wrote brief JSON: %s", brief_json_out)
 
     logger.info(
         "Weekly brief built: %d articles -> %d after dedup; sources ok=%s, fail=%s",

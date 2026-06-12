@@ -25,6 +25,12 @@
 #     llm_vs_upstream_warn_threshold_pct: <float>
 #       Default deviation threshold (percent) above which a
 #       ConsistencyFlag is emitted by `src/synthesis/consistency.py`.
+#     cross_source_warn_threshold_pct: <float>
+#       Threshold (max pairwise symmetric percent deviation) above
+#       which disagreement BETWEEN upstream sources of the same rule
+#       surfaces as a ConsistencyFlag (default 30.0). Applies to any
+#       rule where more than one source resolved, whatever the
+#       combine policy.
 #
 #   models:
 #     <downstream_model_id>:
@@ -37,6 +43,8 @@
 #             baseline: <number>          (level_to_pct only)
 #             keys: [k1, k2, ...]         (mean_of_keys only)
 #             value_kind: index | level | percent  (mean_of_keys only)
+#             # Optional: relative weight under combine: weighted_mean.
+#             weight: <positive float, default 1.0>
 #         # Optional: target a single key inside a dict-valued
 #         # downstream parameter (e.g. commodity_price_shocks.lng).
 #         target_key: <key inside the param dict>
@@ -44,6 +52,21 @@
 #         target_param: <name of the downstream param>
 #         # Optional: restrict the rule to a subset of scenarios.
 #         scenarios: [<scenario_id_1>, <scenario_id_2>, ...]
+#         # Optional: how multiple resolving sources interact.
+#         #   first         -- ordered fallback chain (default): the
+#         #                    first source with a usable value wins.
+#         #   mean / median / weighted_mean
+#         #                 -- aggregate every resolving scalar source
+#         #                    so the downstream model consumes a
+#         #                    consensus of the upstream models that
+#         #                    computed the same quantity. List-valued
+#         #                    candidates (price paths) degrade to
+#         #                    `first`. Every resolving candidate is
+#         #                    recorded in the override audit record
+#         #                    (`candidate_sources`) regardless of
+#         #                    policy, and large disagreement between
+#         #                    candidates is auto-flagged.
+#         combine: first | mean | median | weighted_mean
 #
 # Transforms:
 #   identity        -- pass the source value through unchanged.
@@ -74,6 +97,7 @@
 
 defaults:
   llm_vs_upstream_warn_threshold_pct: 50.0
+  cross_source_warn_threshold_pct: 30.0
 
 models:
 
@@ -210,6 +234,12 @@ models:
   # ---------------------------------------------------------------------
   poles_jrc:
     rerouting_cost_multiplier:
+      # AISDB and AIS_project compute the same Cape-of-Good-Hope detour
+      # quantity from independent calibrations (UNCTAD shares + Clarksons
+      # elasticity vs BDTI tanker-rate elasticity); when both ran, their
+      # mean is a better point estimate than either alone, and their
+      # disagreement is auto-flagged above cross_source_warn_threshold_pct.
+      combine: mean
       sources:
         - source_model: aisdb
           source_field: rerouting_cost_multiplier
@@ -429,6 +459,8 @@ models:
     # fallback translates into a synthetic capex shock.
     trade_disruption_spec:
       target_key: trade_cost_multiplier
+      # Same SHIPPING consensus as poles_jrc.rerouting_cost_multiplier.
+      combine: mean
       sources:
         - source_model: aisdb
           source_field: rerouting_cost_multiplier

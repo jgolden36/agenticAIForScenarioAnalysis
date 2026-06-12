@@ -1181,3 +1181,202 @@ def test_backwards_compat_shim_re_exports_public_symbols():
     assert legacy.SourceSpec is SourceSpec
     assert legacy.ComputedShock is ComputedShock
     assert legacy.OverrideRecord is OverrideRecord
+
+
+# ---------------------------------------------------------------------------
+# Combine policies (multi-source consensus)
+# ---------------------------------------------------------------------------
+
+
+def _two_source_mapping(tmp_path: Path, combine: str, weights=None) -> Path:
+    sources = [
+        {
+            "source_model": "aisdb",
+            "source_field": "rerouting_cost_multiplier",
+            "transform": "identity",
+        },
+        {
+            "source_model": "ais_project",
+            "source_field": "rerouting_cost_multiplier",
+            "transform": "identity",
+        },
+    ]
+    if weights:
+        for s, w in zip(sources, weights):
+            s["weight"] = w
+    return _write_mapping(
+        tmp_path,
+        {
+            "models": {
+                "poles_jrc": {
+                    "rerouting_cost_multiplier": {
+                        "combine": combine,
+                        "sources": sources,
+                    }
+                }
+            }
+        },
+    )
+
+
+def _shipping_results(a: float = 1.4, b: float = 1.6) -> list:
+    return [
+        _result(Scenario.A, "aisdb", {"rerouting_cost_multiplier": a}),
+        _result(Scenario.A, "ais_project", {"rerouting_cost_multiplier": b}),
+    ]
+
+
+def test_combine_first_keeps_fallback_semantics_and_records_candidates(
+    tmp_path: Path,
+):
+    mapping = load_mapping(_two_source_mapping(tmp_path, "first"))
+    out = compute_downstream_inputs(
+        Scenario.A.value, _shipping_results(), mapping
+    )
+    shock = out["poles_jrc"][0]
+    assert shock.value == 1.4
+    assert shock.source_model_id == "aisdb"
+    assert shock.combine == "first"
+    # first stops at the first resolving source; only one candidate.
+    assert len(shock.candidate_sources) == 1
+    assert shock.cross_source_deviation_pct is None
+
+
+def test_combine_mean_averages_all_resolving_sources(tmp_path: Path):
+    mapping = load_mapping(_two_source_mapping(tmp_path, "mean"))
+    out = compute_downstream_inputs(
+        Scenario.A.value, _shipping_results(1.4, 1.6), mapping
+    )
+    shock = out["poles_jrc"][0]
+    assert shock.value == pytest.approx(1.5)
+    assert shock.combine == "mean"
+    assert shock.source_model_id == "aisdb+ais_project"
+    assert shock.transform == "combine:mean"
+    assert len(shock.candidate_sources) == 2
+    assert {c["source_model"] for c in shock.candidate_sources} == {
+        "aisdb",
+        "ais_project",
+    }
+    # symmetric pairwise deviation of 1.4 vs 1.6 = 0.2 / 1.5 * 100
+    assert shock.cross_source_deviation_pct == pytest.approx(13.333, abs=0.01)
+
+
+def test_combine_median_with_three_sources(tmp_path: Path):
+    p = _write_mapping(
+        tmp_path,
+        {
+            "models": {
+                "opencge": {
+                    "oil_price_shock_pct": {
+                        "combine": "median",
+                        "sources": [
+                            {
+                                "source_model": m,
+                                "source_field": "shock_pct",
+                                "transform": "identity",
+                            }
+                            for m in ("m1", "m2", "m3")
+                        ],
+                    }
+                }
+            }
+        },
+    )
+    mapping = load_mapping(p)
+    results = [
+        _result(Scenario.A, "m1", {"shock_pct": 10.0}),
+        _result(Scenario.A, "m2", {"shock_pct": 50.0}),
+        _result(Scenario.A, "m3", {"shock_pct": 20.0}),
+    ]
+    out = compute_downstream_inputs(Scenario.A.value, results, mapping)
+    assert out["opencge"][0].value == 20.0
+
+
+def test_combine_weighted_mean_honours_weights(tmp_path: Path):
+    mapping = load_mapping(
+        _two_source_mapping(tmp_path, "weighted_mean", weights=[3.0, 1.0])
+    )
+    out = compute_downstream_inputs(
+        Scenario.A.value, _shipping_results(1.4, 1.6), mapping
+    )
+    shock = out["poles_jrc"][0]
+    assert shock.value == pytest.approx((3.0 * 1.4 + 1.0 * 1.6) / 4.0)
+
+
+def test_combine_mean_with_one_resolving_source_uses_it(tmp_path: Path):
+    """Aggregating policies degrade gracefully when only one source ran."""
+    mapping = load_mapping(_two_source_mapping(tmp_path, "mean"))
+    results = [_result(Scenario.A, "aisdb", {"rerouting_cost_multiplier": 1.4})]
+    out = compute_downstream_inputs(Scenario.A.value, results, mapping)
+    shock = out["poles_jrc"][0]
+    assert shock.value == 1.4
+    assert shock.source_model_id == "aisdb"
+    assert len(shock.candidate_sources) == 1
+
+
+def test_combine_with_list_values_falls_back_to_first(tmp_path: Path):
+    p = _write_mapping(
+        tmp_path,
+        {
+            "models": {
+                "mam": {
+                    "oil_price_path": {
+                        "combine": "mean",
+                        "sources": [
+                            {
+                                "source_model": "m1",
+                                "source_field": "path",
+                                "transform": "identity",
+                            },
+                            {
+                                "source_model": "m2",
+                                "source_field": "path",
+                                "transform": "identity",
+                            },
+                        ],
+                    }
+                }
+            }
+        },
+    )
+    mapping = load_mapping(p)
+    results = [
+        _result(Scenario.A, "m1", {"path": [90.0, 95.0]}),
+        _result(Scenario.A, "m2", {"path": [100.0, 105.0]}),
+    ]
+    out = compute_downstream_inputs(Scenario.A.value, results, mapping)
+    shock = out["mam"][0]
+    assert shock.value == [90.0, 95.0]
+    assert shock.source_model_id == "m1"
+    assert len(shock.candidate_sources) == 2
+
+
+def test_unknown_combine_policy_falls_back_to_first(tmp_path: Path):
+    mapping = load_mapping(_two_source_mapping(tmp_path, "geometric"))
+    assert mapping.by_model["poles_jrc"][0].combine == "first"
+
+
+def test_combine_metadata_survives_into_override_record(tmp_path: Path):
+    mapping = load_mapping(_two_source_mapping(tmp_path, "mean"))
+    out = compute_downstream_inputs(
+        Scenario.A.value, _shipping_results(1.0, 2.0), mapping
+    )
+    merged, records = merge_into_params(
+        "poles_jrc", {"rerouting_cost_multiplier": 1.2}, out["poles_jrc"]
+    )
+    assert merged["rerouting_cost_multiplier"] == pytest.approx(1.5)
+    rec = records[0].to_dict()
+    assert rec["combine"] == "mean"
+    assert len(rec["candidate_sources"]) == 2
+    assert rec["cross_source_deviation_pct"] == pytest.approx(66.667, abs=0.01)
+
+
+def test_cross_source_threshold_parsed_from_defaults(tmp_path: Path):
+    p = _write_mapping(
+        tmp_path,
+        {
+            "defaults": {"cross_source_warn_threshold_pct": 12.5},
+            "models": {},
+        },
+    )
+    assert load_mapping(p).cross_source_warn_threshold_pct == 12.5

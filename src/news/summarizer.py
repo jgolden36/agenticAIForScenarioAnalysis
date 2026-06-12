@@ -61,7 +61,13 @@ SUMMARISER_PROMPT = ChatPromptTemplate.from_messages(
             "   prolonged closure; contained vs. escalated conflict) the "
             "   week's evidence supports or weakens.\n"
             " - Never fabricate numbers or events. If coverage is thin, "
-            "   say so in `coverage_gaps`.\n",
+            "   say so in `coverage_gaps`.\n"
+            " - Fill `observed_indicators` ONLY with numeric values that "
+            "   appear verbatim in the articles or indicator series "
+            "   (e.g. Brent spot price, tanker transit counts, insurance "
+            "   premia). Use stable, lower_snake_case names so the same "
+            "   indicator can be matched week over week. Never estimate "
+            "   or interpolate a value that is not stated.\n",
         ),
         (
             "human",
@@ -75,6 +81,37 @@ SUMMARISER_PROMPT = ChatPromptTemplate.from_messages(
         ),
     ]
 )
+
+
+class ObservedIndicator(BaseModel):
+    """One machine-readable indicator observed in the week's inputs.
+
+    Unlike the free-text ``key_indicators`` bullets, these are
+    structured so downstream code (the materiality check in
+    ``src.news.materiality``, the week-over-week delta report in
+    ``src.news.updater``) can compare values across weeks without
+    re-parsing prose. Values must come verbatim from the articles or
+    indicator series -- the summariser prompt forbids estimation.
+    """
+
+    name: str = Field(
+        ...,
+        description=(
+            "Stable lower_snake_case identifier, e.g. 'brent_spot_usd_bbl', "
+            "'hormuz_daily_transits'. Reuse the same name every week."
+        ),
+    )
+    value: float = Field(..., description="Numeric value as stated in the source.")
+    unit: str | None = Field(
+        default=None, description="Unit, e.g. 'USD/bbl', 'vessels/day', '%'."
+    )
+    change_pct: float | None = Field(
+        default=None,
+        description="Week-over-week percent change IF stated in the source.",
+    )
+    source: str | None = Field(
+        default=None, description="Source name or URL the value came from."
+    )
 
 
 class WeeklyBrief(BaseModel):
@@ -97,6 +134,14 @@ class WeeklyBrief(BaseModel):
         description=(
             "Bullet list of measurable indicators with values and units, "
             "e.g. 'Brent spot price: $112/bbl (+8% w/w)'."
+        ),
+    )
+    observed_indicators: list[ObservedIndicator] = Field(
+        default_factory=list,
+        description=(
+            "Machine-readable counterpart of key_indicators: only values "
+            "explicitly stated in the inputs, with stable names so they "
+            "can be compared week over week."
         ),
     )
     scenario_signals: list[str] = Field(
@@ -225,6 +270,9 @@ def write_updated_crisis_yaml(
         "headline": brief.headline,
         "summary": brief.summary,
         "key_indicators": brief.key_indicators,
+        "observed_indicators": [
+            i.model_dump() for i in brief.observed_indicators
+        ],
         "scenario_signals": brief.scenario_signals,
         "new_actors_or_commodities": brief.new_actors_or_commodities,
         "coverage_gaps": brief.coverage_gaps,
@@ -251,6 +299,14 @@ def render_brief_as_text(brief: WeeklyBrief) -> str:
         "",
         "Key indicators:",
         *(f"  - {x}" for x in brief.key_indicators),
+        "",
+        "Observed indicators (machine-readable):",
+        *(
+            f"  - {i.name} = {i.value}"
+            + (f" {i.unit}" if i.unit else "")
+            + (f" ({i.change_pct:+.1f}% w/w)" if i.change_pct is not None else "")
+            for i in brief.observed_indicators
+        ),
         "",
         "Scenario signals:",
         *(f"  - {x}" for x in brief.scenario_signals),

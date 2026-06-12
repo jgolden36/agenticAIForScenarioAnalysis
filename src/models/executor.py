@@ -9,6 +9,10 @@ parallelizing within levels and sequencing across levels. Provides:
 - ThreadPoolExecutor for I/O-bound models (subprocess, API calls)
 - Per-model environment injection (CUDA_VISIBLE_DEVICES, OMP_NUM_THREADS)
 - Retry logic for transient failures
+- Algorithm 1 step 11 feed-forward barrier between analytical levels
+  (upstream model outputs replace downstream LLM-extracted shocks via
+  configs/upstream_forwarding_mapping.yaml, mirroring the LangGraph
+  barrier nodes and the SLURM dispatcher)
 """
 
 from __future__ import annotations
@@ -19,6 +23,8 @@ from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from datetime import datetime, timezone
 from typing import Any
 
+from pathlib import Path
+
 from src.common.logging import get_logger
 from src.common.types import ANALYTICAL_LEVEL_ORDER, ModelExecutionStatus, Scenario
 from src.models.base import ModelAdapter, ModelOutput, ResourceRequirements
@@ -26,6 +32,13 @@ from src.models.registry import ModelRegistry
 from src.models.uncertainty import UncertaintyConfig, run_with_uncertainty
 from src.pipeline.config import ExecutionConfig
 from src.pipeline.state import ModelExecutionResult
+from src.pipeline.upstream_forwarding import (
+    OverrideRecord,
+    compute_downstream_inputs,
+    load_mapping,
+    merge_into_params,
+    register_overrides_in_outputs,
+)
 
 logger = get_logger(__name__)
 
@@ -104,9 +117,11 @@ class ModelExecutor:
         self,
         registry: ModelRegistry,
         config: ExecutionConfig | None = None,
+        forwarding_mapping_path: Path | str | None = None,
     ) -> None:
         self.registry = registry
         self.config = config or ExecutionConfig()
+        self._forwarding_mapping_path = forwarding_mapping_path
         self._semaphore = asyncio.Semaphore(self.config.max_parallel_models)
 
         gpu_devices = (
@@ -135,26 +150,56 @@ class ModelExecutor:
         self,
         scenario_id: Scenario,
         parameter_sets: dict[str, dict[str, Any]],
+        apply_upstream_forwarding: bool = True,
     ) -> list[ModelExecutionResult]:
         """Execute all models for a scenario, respecting level ordering.
+
+        Between analytical levels this applies the Algorithm 1 step 11
+        feed-forward barrier: completed upstream outputs are mapped
+        through ``configs/upstream_forwarding_mapping.yaml`` and
+        replace the LLM-extracted shock parameters of the downstream
+        level's models before they run (Replace-with-metadata; the
+        override records land on each downstream result's
+        ``outputs["_upstream_overrides"]``). This mirrors the barrier
+        nodes in the LangGraph orchestrator and the SLURM dispatcher
+        so all three runtimes communicate model outputs identically.
 
         Args:
             scenario_id: Which scenario to execute for.
             parameter_sets: Dict of model_id -> parameter dict.
+            apply_upstream_forwarding: Disable to run every model on
+                its LLM-extracted parameters only (useful for ablation
+                runs and tests).
 
         Returns:
             List of execution results for all model runs.
         """
         all_results: list[ModelExecutionResult] = []
+        params: dict[str, dict[str, Any]] = {
+            mid: dict(p) for mid, p in parameter_sets.items()
+        }
+        mapping = (
+            load_mapping(self._forwarding_mapping_path)
+            if apply_upstream_forwarding
+            else None
+        )
 
         for level in ANALYTICAL_LEVEL_ORDER:
             adapters = self.registry.get_by_analytical_level(level)
             adapters_with_params = [
-                a for a in adapters if a.model_id in parameter_sets
+                a for a in adapters if a.model_id in params
             ]
 
             if not adapters_with_params:
                 continue
+
+            overrides_by_model = self._apply_forwarding_barrier(
+                scenario_id,
+                all_results,
+                params,
+                {a.model_id for a in adapters_with_params},
+                mapping,
+            )
 
             logger.info(
                 f"Executing {len(adapters_with_params)} models at "
@@ -163,7 +208,7 @@ class ModelExecutor:
 
             tasks = [
                 self._execute_with_semaphore(
-                    adapter, scenario_id, parameter_sets[adapter.model_id]
+                    adapter, scenario_id, params[adapter.model_id]
                 )
                 for adapter in adapters_with_params
             ]
@@ -173,10 +218,61 @@ class ModelExecutor:
             for result in level_results:
                 if isinstance(result, Exception):
                     logger.error(f"Unexpected error in model execution: {result}")
-                else:
-                    all_results.append(result)
+                    continue
+                records = overrides_by_model.get(result.model_id)
+                if records and result.status == ModelExecutionStatus.COMPLETED:
+                    result.outputs = register_overrides_in_outputs(
+                        result.outputs, records
+                    )
+                all_results.append(result)
 
         return all_results
+
+    def _apply_forwarding_barrier(
+        self,
+        scenario_id: Scenario,
+        upstream_results: list[ModelExecutionResult],
+        params: dict[str, dict[str, Any]],
+        level_model_ids: set[str],
+        mapping: Any,
+    ) -> dict[str, list[OverrideRecord]]:
+        """Merge completed upstream outputs into this level's parameters.
+
+        Mutates ``params`` in place for the models at the current level
+        that have forwarding rules with resolvable upstream sources.
+        Returns the override records per model so the caller can attach
+        them to the corresponding execution results. Graceful no-op when
+        forwarding is disabled, no mapping exists, or no upstream level
+        has produced results yet.
+        """
+        if mapping is None or not mapping.by_model or not upstream_results:
+            return {}
+
+        per_downstream = compute_downstream_inputs(
+            scenario_id.value,
+            upstream_results,
+            mapping,
+            target_models=level_model_ids,
+        )
+
+        overrides_by_model: dict[str, list[OverrideRecord]] = {}
+        for model_id, computed in per_downstream.items():
+            merged, records = merge_into_params(
+                model_id, params[model_id], computed
+            )
+            if not records:
+                continue
+            params[model_id] = merged
+            overrides_by_model[model_id] = records
+
+        if overrides_by_model:
+            logger.info(
+                "Upstream forwarding barrier replaced parameters for %s "
+                "(scenario %s)",
+                sorted(overrides_by_model),
+                scenario_id.value,
+            )
+        return overrides_by_model
 
     async def _execute_with_semaphore(
         self,

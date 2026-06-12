@@ -319,6 +319,90 @@ def check_upstream_overrides(
     return flags
 
 
+def check_cross_source_disagreement(
+    scenario_id: Scenario,
+    results: list[ModelExecutionResult],
+    threshold_pct: float | None = None,
+) -> list[ConsistencyFlag]:
+    """Flag forwarding rules whose upstream sources disagreed with each other.
+
+    When a forwarding rule resolves more than one upstream source (the
+    ``combine`` policies in ``configs/upstream_forwarding_mapping.yaml``,
+    or a fallback chain where several sources had usable values), the
+    merge records every candidate plus the max pairwise deviation in
+    ``cross_source_deviation_pct``. This check surfaces the cases where
+    two upstream models computed materially different values for the
+    same downstream input -- a model-vs-model disagreement at the
+    *input* boundary that the output-level rules cannot see.
+
+    Args:
+        scenario_id: The scenario being checked.
+        results: All execution results for this scenario.
+        threshold_pct: Override the default
+            ``defaults.cross_source_warn_threshold_pct`` from the
+            forwarding mapping YAML (30% when unset).
+    """
+    flags: list[ConsistencyFlag] = []
+    if threshold_pct is None:
+        threshold_pct = load_mapping().cross_source_warn_threshold_pct
+
+    for r in results:
+        outputs = r.outputs or {}
+        overrides = outputs.get("_upstream_overrides") or []
+        if not isinstance(overrides, list):
+            continue
+        for rec in overrides:
+            if not isinstance(rec, dict):
+                continue
+            candidates = rec.get("candidate_sources") or []
+            if len(candidates) < 2:
+                continue
+            deviation = rec.get("cross_source_deviation_pct")
+            try:
+                deviation_f = float(deviation)
+            except (TypeError, ValueError):
+                continue
+            if deviation_f <= threshold_pct:
+                continue
+            scalar_values = [
+                c.get("value")
+                for c in candidates
+                if isinstance(c, dict)
+                and isinstance(c.get("value"), (int, float))
+            ]
+            if len(scalar_values) < 2:
+                continue
+            target_key = rec.get("target_key")
+            field_label = (
+                f"{rec.get('name')}[{target_key}]" if target_key else rec.get("name")
+            )
+            candidate_desc = ", ".join(
+                f"{c.get('source_model')}.{c.get('source_field')}={c.get('value')}"
+                for c in candidates
+                if isinstance(c, dict)
+            )
+            flag = ConsistencyFlag(
+                scenario_id=scenario_id,
+                model_a_id=str(r.model_id),
+                model_b_id=str(rec.get("source_model_id") or "unknown"),
+                variable=str(field_label),
+                value_a=min(scalar_values),
+                value_b=max(scalar_values),
+                tolerance_pct=threshold_pct,
+                deviation_pct=round(deviation_f, 2),
+                message=(
+                    f"Upstream sources disagree on {r.model_id} input "
+                    f"{field_label} (combine={rec.get('combine')}): "
+                    f"{candidate_desc} (max pairwise deviation: "
+                    f"{deviation_f:.1f}%, threshold: {threshold_pct}%)"
+                ),
+            )
+            flags.append(flag)
+            logger.warning(f"Cross-source consistency flag: {flag.message}")
+
+    return flags
+
+
 def check_consistency(
     scenario_id: Scenario,
     results: list[ModelExecutionResult],
@@ -347,6 +431,11 @@ def check_consistency(
     # not model-vs-model output disagreements, so they live alongside
     # rather than inside the rule loop below.
     flags.extend(check_upstream_overrides(scenario_id, results))
+
+    # Surface disagreement BETWEEN upstream sources of the same
+    # forwarding rule (e.g. AISdb vs AIS_project rerouting costs) --
+    # input-boundary model-vs-model disagreement.
+    flags.extend(check_cross_source_disagreement(scenario_id, results))
 
     rules = get_consistency_rules()
 

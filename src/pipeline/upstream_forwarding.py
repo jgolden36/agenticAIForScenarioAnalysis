@@ -35,6 +35,7 @@ the merge logic stays identical across runtimes.
 
 from __future__ import annotations
 
+import statistics
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -44,6 +45,14 @@ import yaml
 from src.common.logging import get_logger
 
 logger = get_logger(__name__)
+
+# Multi-source combine policies a rule may declare. "first" preserves
+# the historical fallback-chain semantics; the other three aggregate
+# every source that resolves so a downstream model consumes a consensus
+# of the upstream models instead of whichever happens to be listed
+# first. Lists (e.g. price paths) are never aggregated -- a rule whose
+# resolved values include a list silently degrades to "first".
+VALID_COMBINE_POLICIES = ("first", "mean", "median", "weighted_mean")
 
 
 # ---------------------------------------------------------------------------
@@ -70,6 +79,10 @@ class SourceSpec:
     # APSIM's [0, 100]% input range with a small safety margin against
     # the 100% boundary, which produces undefined Mitscherlich curves.
     clip_max: float = 95.0
+    # Relative weight used by the ``weighted_mean`` combine policy.
+    # Ignored by every other policy. Must be positive; the parser
+    # falls back to 1.0 for non-positive or non-numeric values.
+    weight: float = 1.0
 
 
 @dataclass(frozen=True)
@@ -84,12 +97,24 @@ class ParamMapping:
     scenario, where desalination/water-supply destruction is part of
     the narrative, while leaving the other four matrix scenarios
     unaffected.
+
+    ``combine`` controls how multiple resolving sources interact.
+    ``first`` (default) keeps the historical ordered-fallback
+    semantics: the first source whose run COMPLETED with a usable
+    value wins. ``mean`` / ``median`` / ``weighted_mean`` aggregate
+    every resolving scalar source, so a downstream model consumes a
+    consensus of the upstream models that computed the same quantity
+    (e.g. AISdb + AIS_project rerouting-cost multipliers). Whatever
+    the policy, every resolving candidate is recorded on the
+    resulting :class:`ComputedShock` so cross-source disagreement is
+    auditable and can surface as a ConsistencyFlag.
     """
 
     target_param: str
     target_key: str | None
     sources: tuple[SourceSpec, ...]
     scenarios: tuple[str, ...] = ()
+    combine: str = "first"
 
 
 @dataclass
@@ -98,11 +123,23 @@ class UpstreamMapping:
 
     by_model: dict[str, list[ParamMapping]] = field(default_factory=dict)
     warn_threshold_pct: float = 50.0
+    # Threshold (max pairwise symmetric percent deviation) above which
+    # disagreement BETWEEN upstream sources of the same rule surfaces
+    # as a ConsistencyFlag in src/synthesis/consistency.py.
+    cross_source_warn_threshold_pct: float = 30.0
 
 
 @dataclass
 class ComputedShock:
-    """One upstream-derived value ready to be merged into downstream params."""
+    """One upstream-derived value ready to be merged into downstream params.
+
+    ``candidate_sources`` records every upstream source that resolved
+    for the rule (model, field, transform, weight, value) regardless
+    of the combine policy, so the provenance chain shows which models
+    were consulted and what each one said. ``cross_source_deviation_pct``
+    is the maximum pairwise symmetric percent deviation among the
+    resolved scalar candidates (None when fewer than two resolved).
+    """
 
     target_param: str
     target_key: str | None
@@ -110,6 +147,9 @@ class ComputedShock:
     source_model_id: str
     source_field: str
     transform: str
+    combine: str = "first"
+    candidate_sources: tuple[dict[str, Any], ...] = ()
+    cross_source_deviation_pct: float | None = None
 
 
 @dataclass
@@ -124,6 +164,9 @@ class OverrideRecord:
     source_field: str
     transform: str
     deviation_pct: float | None
+    combine: str = "first"
+    candidate_sources: tuple[dict[str, Any], ...] = ()
+    cross_source_deviation_pct: float | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -135,6 +178,9 @@ class OverrideRecord:
             "source_field": self.source_field,
             "transform": self.transform,
             "deviation_pct": self.deviation_pct,
+            "combine": self.combine,
+            "candidate_sources": [dict(c) for c in self.candidate_sources],
+            "cross_source_deviation_pct": self.cross_source_deviation_pct,
         }
 
 
@@ -228,12 +274,19 @@ def _parse_mapping_dict(raw: dict[str, Any]) -> UpstreamMapping:
     threshold = float(
         defaults.get("llm_vs_upstream_warn_threshold_pct", 50.0)
     )
+    cross_source_threshold = float(
+        defaults.get("cross_source_warn_threshold_pct", 30.0)
+    )
 
     by_model: dict[str, list[ParamMapping]] = {}
     models = raw.get("models") or {}
     if not isinstance(models, dict):
         logger.warning("upstream forwarding mapping 'models' is not a dict; ignoring")
-        return UpstreamMapping(by_model=by_model, warn_threshold_pct=threshold)
+        return UpstreamMapping(
+            by_model=by_model,
+            warn_threshold_pct=threshold,
+            cross_source_warn_threshold_pct=cross_source_threshold,
+        )
 
     for downstream_model_id, params in models.items():
         if not isinstance(params, dict):
@@ -269,6 +322,7 @@ def _parse_mapping_dict(raw: dict[str, Any]) -> UpstreamMapping:
                             else None
                         ),
                         clip_max=float(s.get("clip_max", 95.0)),
+                        weight=_parse_weight(s.get("weight")),
                     )
                 )
             scenarios_raw = rule_body.get("scenarios") or ()
@@ -278,17 +332,46 @@ def _parse_mapping_dict(raw: dict[str, Any]) -> UpstreamMapping:
                 scenarios_tuple = tuple(str(s) for s in scenarios_raw)
             else:
                 scenarios_tuple = ()
+            combine = str(rule_body.get("combine", "first")).lower()
+            if combine not in VALID_COMBINE_POLICIES:
+                logger.warning(
+                    "Unknown combine policy %r for %s.%s; falling back to 'first'",
+                    combine,
+                    downstream_model_id,
+                    rule_name,
+                )
+                combine = "first"
             param_mappings.append(
                 ParamMapping(
                     target_param=str(target_param),
                     target_key=str(target_key) if target_key is not None else None,
                     sources=tuple(sources),
                     scenarios=scenarios_tuple,
+                    combine=combine,
                 )
             )
         by_model[str(downstream_model_id)] = param_mappings
 
-    return UpstreamMapping(by_model=by_model, warn_threshold_pct=threshold)
+    return UpstreamMapping(
+        by_model=by_model,
+        warn_threshold_pct=threshold,
+        cross_source_warn_threshold_pct=cross_source_threshold,
+    )
+
+
+def _parse_weight(raw: Any) -> float:
+    """Parse a per-source weight, falling back to 1.0 for bad values."""
+    if raw is None:
+        return 1.0
+    try:
+        w = float(raw)
+    except (TypeError, ValueError):
+        logger.warning("Non-numeric source weight %r; using 1.0", raw)
+        return 1.0
+    if w <= 0:
+        logger.warning("Non-positive source weight %r; using 1.0", raw)
+        return 1.0
+    return w
 
 
 # ---------------------------------------------------------------------------
@@ -526,11 +609,37 @@ def compute_downstream_inputs(
 compute_macro_inputs = compute_downstream_inputs
 
 
+def _cross_source_deviation_pct(values: list[float]) -> float | None:
+    """Max pairwise symmetric percent deviation among scalar candidates."""
+    if len(values) < 2:
+        return None
+    worst = 0.0
+    for i in range(len(values)):
+        for j in range(i + 1, len(values)):
+            a, b = values[i], values[j]
+            avg = (abs(a) + abs(b)) / 2.0
+            if avg == 0:
+                continue
+            worst = max(worst, abs(a - b) / avg * 100.0)
+    return worst
+
+
 def _resolve_rule(
     rule: ParamMapping,
     outputs_by_source: dict[str, dict[str, Any]],
 ) -> ComputedShock | None:
-    """Walk ``rule.sources`` in order; return the first successful match."""
+    """Resolve a rule against the available upstream outputs.
+
+    With ``combine == "first"`` (default), walks ``rule.sources`` in
+    order and stops at the first source whose run completed with a
+    usable value -- the historical fallback-chain behaviour. With an
+    aggregating policy (mean / median / weighted_mean), every source
+    is evaluated and the resolved scalar values are combined; list
+    values (e.g. price paths) cannot be aggregated, so a rule whose
+    candidates include a list degrades to "first" with a warning.
+    Every resolving candidate is recorded on the shock either way.
+    """
+    resolved: list[tuple[SourceSpec, float | list[float]]] = []
     for src in rule.sources:
         outputs = outputs_by_source.get(src.source_model)
         if outputs is None:
@@ -541,15 +650,80 @@ def _resolve_rule(
         value = _apply_transform(src, raw)
         if value is None:
             continue
+        resolved.append((src, value))
+        if rule.combine == "first":
+            break
+
+    if not resolved:
+        return None
+
+    candidates = tuple(
+        {
+            "source_model": s.source_model,
+            "source_field": s.source_field,
+            "transform": s.transform,
+            "weight": s.weight,
+            "value": v,
+        }
+        for s, v in resolved
+    )
+    scalar_values = [v for _, v in resolved if isinstance(v, (int, float))]
+    cross_dev = _cross_source_deviation_pct([float(v) for v in scalar_values])
+
+    first_src, first_value = resolved[0]
+    combinable = (
+        rule.combine != "first"
+        and len(resolved) > 1
+        and len(scalar_values) == len(resolved)
+    )
+
+    if not combinable:
+        if rule.combine != "first" and len(resolved) > 1:
+            logger.warning(
+                "combine=%s for %s requested but candidates include "
+                "non-scalar values; using first source %s.%s",
+                rule.combine,
+                rule.target_param,
+                first_src.source_model,
+                first_src.source_field,
+            )
         return ComputedShock(
             target_param=rule.target_param,
             target_key=rule.target_key,
-            value=value,
-            source_model_id=src.source_model,
-            source_field=src.source_field,
-            transform=src.transform,
+            value=first_value,
+            source_model_id=first_src.source_model,
+            source_field=first_src.source_field,
+            transform=first_src.transform,
+            combine=rule.combine,
+            candidate_sources=candidates,
+            cross_source_deviation_pct=cross_dev,
         )
-    return None
+
+    values = [float(v) for v in scalar_values]
+    if rule.combine == "mean":
+        combined = sum(values) / len(values)
+    elif rule.combine == "median":
+        combined = float(statistics.median(values))
+    else:  # weighted_mean (parser guarantees a valid policy)
+        weights = [s.weight for s, _ in resolved]
+        combined = sum(w * v for w, v in zip(weights, values)) / sum(weights)
+
+    model_ids = [s.source_model for s, _ in resolved]
+    fields = []
+    for s, _ in resolved:
+        if s.source_field not in fields:
+            fields.append(s.source_field)
+    return ComputedShock(
+        target_param=rule.target_param,
+        target_key=rule.target_key,
+        value=combined,
+        source_model_id="+".join(model_ids),
+        source_field="+".join(fields),
+        transform=f"combine:{rule.combine}",
+        combine=rule.combine,
+        candidate_sources=candidates,
+        cross_source_deviation_pct=cross_dev,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -634,6 +808,9 @@ def merge_into_params(
                 source_field=shock.source_field,
                 transform=shock.transform,
                 deviation_pct=deviation,
+                combine=shock.combine,
+                candidate_sources=shock.candidate_sources,
+                cross_source_deviation_pct=shock.cross_source_deviation_pct,
             )
         )
         logger.info(
