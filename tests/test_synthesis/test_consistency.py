@@ -188,3 +188,103 @@ def test_check_consistency_includes_upstream_override_flags():
         and f.variable == "oil_price_shock_pct"
         for f in flags
     )
+
+
+# ---------------------------------------------------------------------------
+# Cross-source disagreement (combine policies)
+# ---------------------------------------------------------------------------
+
+from src.synthesis.consistency import check_cross_source_disagreement
+
+
+def _override_with_candidates(deviation_pct, candidates):
+    return {
+        "name": "rerouting_cost_multiplier",
+        "target_key": None,
+        "llm_value": 1.2,
+        "computed_value": 1.5,
+        "source_model_id": "aisdb+ais_project",
+        "source_field": "rerouting_cost_multiplier",
+        "transform": "combine:mean",
+        "deviation_pct": 22.0,
+        "combine": "mean",
+        "candidate_sources": candidates,
+        "cross_source_deviation_pct": deviation_pct,
+    }
+
+
+def test_cross_source_disagreement_flag_above_threshold():
+    candidates = [
+        {
+            "source_model": "aisdb",
+            "source_field": "rerouting_cost_multiplier",
+            "value": 1.0,
+        },
+        {
+            "source_model": "ais_project",
+            "source_field": "rerouting_cost_multiplier",
+            "value": 2.0,
+        },
+    ]
+    results = [
+        _make_result(
+            "poles_jrc",
+            {"_upstream_overrides": [_override_with_candidates(66.7, candidates)]},
+        )
+    ]
+    flags = check_cross_source_disagreement(
+        Scenario.A, results, threshold_pct=30.0
+    )
+    assert len(flags) == 1
+    assert flags[0].model_a_id == "poles_jrc"
+    assert flags[0].value_a == 1.0
+    assert flags[0].value_b == 2.0
+    assert "aisdb" in flags[0].message and "ais_project" in flags[0].message
+
+
+def test_cross_source_no_flag_below_threshold():
+    candidates = [
+        {"source_model": "aisdb", "source_field": "x", "value": 1.4},
+        {"source_model": "ais_project", "source_field": "x", "value": 1.5},
+    ]
+    results = [
+        _make_result(
+            "poles_jrc",
+            {"_upstream_overrides": [_override_with_candidates(6.9, candidates)]},
+        )
+    ]
+    assert (
+        check_cross_source_disagreement(Scenario.A, results, threshold_pct=30.0)
+        == []
+    )
+
+
+def test_cross_source_no_flag_with_single_candidate():
+    candidates = [
+        {"source_model": "aisdb", "source_field": "x", "value": 1.4},
+    ]
+    results = [
+        _make_result(
+            "poles_jrc",
+            {"_upstream_overrides": [_override_with_candidates(None, candidates)]},
+        )
+    ]
+    assert (
+        check_cross_source_disagreement(Scenario.A, results, threshold_pct=30.0)
+        == []
+    )
+
+
+def test_check_consistency_includes_cross_source_flags():
+    candidates = [
+        {"source_model": "aisdb", "source_field": "x", "value": 1.0},
+        {"source_model": "ais_project", "source_field": "x", "value": 2.0},
+    ]
+    results = [
+        _make_result(
+            "poles_jrc",
+            {"_upstream_overrides": [_override_with_candidates(66.7, candidates)]},
+        )
+    ]
+    flags = check_consistency(Scenario.A, results)
+    assert any("Upstream sources disagree" in f.message for f in flags)

@@ -138,12 +138,12 @@ Information flows downward: combat outputs feed commodity models, commodity outp
 
 **Algorithm 1, step 11 — Upstream-to-downstream forwarding (April 2026 extension):**
 
-Step 11 of Algorithm 1 ("Feed commodity outputs into macroeconomic models") is implemented as a generic barrier-based merge mechanism in **both** the local LangGraph orchestrator and the SLURM cluster pipeline. The barrier fires at every analytical-level transition that has mapping rules — today that is *two* transitions:
+Step 11 of Algorithm 1 ("Feed commodity outputs into macroeconomic models") is implemented as a generic barrier-based merge mechanism in **all three runtimes**: the local LangGraph orchestrator, the imperative orchestrator (`ModelExecutor.execute_all` applies the barrier between analytical levels), and the SLURM cluster pipeline. The barrier fires at every analytical-level transition that has mapping rules — today that is *two* transitions:
 
 1. **commodity → commodity_downstream** — `world_helium_model.effective_supply_gap_pct` flows into `simrlfab.helium_supply_reduction_pct` and `argonne_abm.supply_shock_pct`, so the semiconductor-fab and helium-market-ABM simulations consume the helium model's *computed* sectoral shortfall instead of an LLM estimate.
 2. **commodity (+ commodity_downstream) → macro** — POLES-JRC, BKR, World Helium Model, futures, and Energy Flux LNG outputs feed `oil_price_shock_pct`, `commodity_price_shocks`, NEMS scedes overrides, MIRAGRODEP shocks, etc. Every macro adapter (NEMS, MAM, OpenCGE, PyCGE, MPSGE.jl, MIRAGRODEP) already accepts a multi-commodity shock vector; the barrier *populates* it from completed upstream outputs rather than the LLM narrative extraction.
 
-The mapping is declarative and lives in `configs/upstream_forwarding_mapping.yaml` (one rule per downstream input, with ordered fallback sources, transforms `identity | to_percent | level_to_pct{baseline} | mean_of_keys{keys, value_kind}`, an optional `target_key` for sub-keys of dict-valued downstream params such as `commodity_price_shocks.lng`, and an optional `scenarios:` list that restricts a rule to a subset of scenario ids). The merge logic itself is centralised in `src/pipeline/upstream_forwarding.py` so the LangGraph nodes (`merge_upstream_into_commodity_downstream_params`, `merge_upstream_into_macro_params` in `src/pipeline/graph.py`) and the SLURM dispatchers (`slurm/scripts/dispatch_models.py --tier {commodity_downstream,macro}`) produce identical results. The legacy filename `configs/upstream_to_macro_mapping.yaml` and the legacy module `src/pipeline/upstream_to_macro.py` are kept as backwards-compat shims.
+The mapping is declarative and lives in `configs/upstream_forwarding_mapping.yaml` (one rule per downstream input, with ordered fallback sources, transforms `identity | to_percent | level_to_pct{baseline} | mean_of_keys{keys, value_kind}`, an optional `target_key` for sub-keys of dict-valued downstream params such as `commodity_price_shocks.lng`, an optional `scenarios:` list that restricts a rule to a subset of scenario ids, and an optional `combine: first | mean | median | weighted_mean` policy). `combine: first` (the default) keeps the historical ordered-fallback semantics; the aggregating policies evaluate *every* source and merge the resolving scalar candidates, so a downstream model consumes a consensus when several upstream models compute the same quantity — today AISdb + AIS_project rerouting-cost multipliers feed `poles_jrc.rerouting_cost_multiplier` and `mpsge_jl.trade_disruption_spec.trade_cost_multiplier` via `combine: mean` (per-source `weight:` drives `weighted_mean`; list-valued candidates degrade to `first`). Every resolving candidate is recorded in the override record (`candidate_sources` + `cross_source_deviation_pct`), and `src/synthesis/consistency.py :: check_cross_source_disagreement` flags cross-source deviations above `defaults.cross_source_warn_threshold_pct` (default 30%). The merge logic itself is centralised in `src/pipeline/upstream_forwarding.py` so the LangGraph nodes (`merge_upstream_into_commodity_downstream_params`, `merge_upstream_into_macro_params` in `src/pipeline/graph.py`), the imperative executor barrier (`apply_upstream_forwarding=False` disables it for ablation runs), and the SLURM dispatchers (`slurm/scripts/dispatch_models.py --tier {commodity_downstream,macro}`) produce identical results. The legacy filename `configs/upstream_to_macro_mapping.yaml` and the legacy module `src/pipeline/upstream_to_macro.py` are kept as backwards-compat shims.
 
 Override policy is **Replace-with-metadata**: every replaced field overwrites the LLM value but appends an entry to `outputs["_upstream_overrides"]` recording the original LLM value, the upstream-derived value, the source `(model_id, field, transform)`, and the symmetric percent deviation. `src/synthesis/consistency.py` walks these records and emits a `ConsistencyFlag` whenever the deviation exceeds `defaults.llm_vs_upstream_warn_threshold_pct` (default 50%). When no upstream model produced a value (FAILED, SKIPPED, or simply not in the registry), the LLM-extracted shock is preserved — graceful degradation. The same fallback covers fields the helium model has nothing to say about (e.g. SimRLFab's `neon_supply_status` and `fab_utilization_baseline`, Argonne ABM's `demand_response_elasticity`) — those stay LLM-extracted.
 
@@ -210,6 +210,8 @@ This module is a thin orchestration layer over the existing Modules 1–5; it ad
 - `data/news/<date>/articles.json` — raw articles (provenance).
 - `data/news/<date>/report.json` — aggregator FetchReport (per-source success/failure, dedup statistics).
 - `data/news/<date>/brief.txt` — plain-text rendering of the structured `WeeklyBrief`, threaded as context into the next week's summariser prompt.
+- `data/news/<date>/brief.json` — the structured `WeeklyBrief` itself, including the machine-readable `observed_indicators` (stable name + value + unit + source) that drive the week-over-week materiality comparison.
+- `data/reports/weekly_<date>/update_summary.{json,md}` — (local updater) the auditable record of the materiality decision: per-indicator deltas, reasons, whether the pipeline reran, and run-health counts.
 - `data/pipeline_state/weekly_<date>_*` — Module 1–4 state files for that week, isolated by `HORMUZ_RUN_ID="weekly_<YYYYMMDD>"`.
 - `data/reports/weekly_<date>_*` — synthesis reports for that week.
 
@@ -223,13 +225,17 @@ This module is a thin orchestration layer over the existing Modules 1–5; it ad
 | `src/news/newsapi.py` | NewsAPI.org and NewsAPI.ai (Event Registry) adapters |
 | `src/news/eia.py` | EIA Open Data API adapter (default series: WTI, Brent, US crude stocks, Henry Hub gas; overridable) |
 | `src/news/aggregator.py` | Source registry, fan-out, URL+title-date dedup, FetchReport |
-| `src/news/summarizer.py` | LLM chain producing structured `WeeklyBrief` + `write_updated_crisis_yaml` helper |
+| `src/news/summarizer.py` | LLM chain producing structured `WeeklyBrief` (incl. machine-readable `ObservedIndicator` records) + `write_updated_crisis_yaml` helper |
+| `src/news/materiality.py` | Deterministic week-over-week comparison (`assess_materiality`): indicator deltas vs threshold + new-actor detection decide whether a rerun is warranted; no LLM call |
+| `src/news/updater.py` | Local automatic update driver (`python -m src.news.updater`): fetch → brief → weekly YAML → materiality gate → orchestrator rerun (`weekly_<YYYYMMDD>` run id) → `update_summary.{json,md}`. `--force`, `--skip-pipeline`, `--auto-approve` flags |
 | `configs/news_sources.yaml` | Crisis metadata, query, source adapter specs |
 | `slurm/scripts/build_weekly_brief.py` | CLI: fetch one week → summarise → write per-week YAML |
 | `slurm/jobs/weekly_news_pipeline.job` | Generic SLURM driver: enumerate weeks, build briefs, rerun Modules 1–4 |
 | `slurm/jobs/empire_ai_alpha_weekly.job` | Production Empire AI Alpha companion to `empire_ai_alpha.job`: same `suny`-partition / `--gpus-per-node` directives, scratch detection, three-tier W&B key resolution, per-week W&B run groups (`weekly_<YYYYMMDD>`) tagged with the parent batch group, vLLM sidecar shared across all weeks |
 
 **Wiring into the existing pipeline:**
+
+The SLURM batch driver backfills a historical window, re-running every week unconditionally; the local updater (`python -m src.news.updater`) processes one week per invocation and adds the materiality gate, so an unattended cron/scheduler entry only triggers a rerun when an observed indicator moved beyond `MaterialityConfig.indicator_change_threshold_pct` (default 10%) or new actors/commodities appeared. Skipped weeks still produce the brief, the weekly YAML, and the update summary, so the decision is auditable and reversible (`--force`).
 
 The temporal driver re-uses the existing SLURM stage scripts (`run_scenarios.py`, `dispatch_models.py`, `run_parameters.py`, `run_model.py`, `run_synthesis.py`) verbatim. The only change to the existing stages is that `run_scenarios.py` now honours an `HORMUZ_CRISIS_DESCRIPTION` environment variable so each weekly rerun can point Module 1 at its own per-week YAML; everything downstream (parameters, executor, synthesis) is keyed off `HORMUZ_RUN_ID` and is therefore automatically isolated per week.
 
@@ -513,7 +519,9 @@ hormuz-pipeline/
 │   │   ├── __init__.py
 │   │   ├── base.py                    # NewsArticle, NewsSource ABC, NewsSourceError
 │   │   ├── aggregator.py              # Source registry, fan-out, URL+title-date dedup
-│   │   ├── summarizer.py              # LLM WeeklyBrief chain + write_updated_crisis_yaml
+│   │   ├── summarizer.py              # LLM WeeklyBrief chain (+ ObservedIndicator) + write_updated_crisis_yaml
+│   │   ├── materiality.py             # Week-over-week rerun gating (indicator deltas, new actors)
+│   │   ├── updater.py                 # Local automatic update driver (python -m src.news.updater)
 │   │   ├── newsdata.py                # NewsData.io adapter (/archive with /latest fallback)
 │   │   ├── gnews.py                   # GNews /api/v4/search adapter
 │   │   ├── newsapi.py                 # NewsAPI.org and NewsAPI.ai adapters
