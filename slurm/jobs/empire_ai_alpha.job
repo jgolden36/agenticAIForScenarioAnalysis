@@ -165,8 +165,44 @@ fi
 
 # ------------------------------------------------------------------
 # Resolve project root and source common helpers.
+#
+# sbatch sets SLURM_SUBMIT_DIR to the directory `sbatch` was invoked
+# from. The submission examples above run it from the repo root, but
+# submitting from slurm/jobs/ (or anywhere else) used to make this
+# script look for .../slurm/jobs/slurm/jobs/_common.sh — a doubled path
+# that does not exist, so the source failed and every helper it defines
+# (record_bash_failure, hormuz_activate_conda, ...) became
+# "command not found". Walk up from the submit dir (then the cwd) until
+# we find the directory that actually contains slurm/jobs/_common.sh and
+# pyproject.toml, so the job works regardless of where it was submitted
+# from. (BASH_SOURCE can't help: SLURM runs a spool copy of the script.)
 # ------------------------------------------------------------------
-PROJECT_ROOT="${SLURM_SUBMIT_DIR:-$(pwd)}"
+_hormuz_find_project_root() {
+    local d
+    for d in "${SLURM_SUBMIT_DIR:-}" "$(pwd)"; do
+        [[ -z "$d" ]] && continue
+        d="$(cd "$d" 2>/dev/null && pwd)" || continue
+        while [[ -n "$d" && "$d" != "/" ]]; do
+            if [[ -f "$d/slurm/jobs/_common.sh" && -f "$d/pyproject.toml" ]]; then
+                printf '%s\n' "$d"
+                return 0
+            fi
+            d="$(dirname "$d")"
+        done
+    done
+    return 1
+}
+
+PROJECT_ROOT="$(_hormuz_find_project_root || true)"
+if [[ -z "${PROJECT_ROOT:-}" ]]; then
+    echo "[fatal] could not locate the project root (a directory containing" >&2
+    echo "        slurm/jobs/_common.sh and pyproject.toml) starting from" >&2
+    echo "        SLURM_SUBMIT_DIR=${SLURM_SUBMIT_DIR:-<unset>} / cwd=$(pwd)." >&2
+    echo "        Submit from the repo root, e.g.:" >&2
+    echo "          cd /mnt/home/\$USER/agenticAIForScenarioAnalysis" >&2
+    echo "          sbatch slurm/jobs/empire_ai_alpha.job" >&2
+    exit 1
+fi
 cd "$PROJECT_ROOT"
 
 # shellcheck source=./_common.sh
@@ -647,11 +683,21 @@ if [[ "$HORMUZ_AUTO_BUILD" == "1" ]]; then
 
         if [[ $_env_exists -eq 0 ]]; then
             echo "[build] env '${HORMUZ_CONDA_ENV}' not found — creating with python=${HORMUZ_PY_VERSION}"
+            # Accept the Anaconda defaults-channel ToS first; conda >=24.x
+            # otherwise aborts conda create with CondaToSNonInteractiveError
+            # on a fresh Empire AI node (no-op on older conda).
+            hormuz_accept_conda_tos "$CONDA_EXE"
             if ! "$CONDA_EXE" create -y -n "${HORMUZ_CONDA_ENV}" "python=${HORMUZ_PY_VERSION}"; then
-                record_bash_failure "${STAGE_PREFIX}_build" 1 \
-                    "conda create -n ${HORMUZ_CONDA_ENV} failed on $(hostname)"
-                echo "[fatal] conda env creation failed; aborting."
-                exit 1
+                # Fall back to conda-forge only, bypassing the defaults
+                # channels (and their ToS gate) entirely.
+                echo "[build] defaults-channel create failed; retrying via conda-forge only."
+                if ! "$CONDA_EXE" create -y -n "${HORMUZ_CONDA_ENV}" \
+                        --override-channels -c conda-forge "python=${HORMUZ_PY_VERSION}"; then
+                    record_bash_failure "${STAGE_PREFIX}_build" 1 \
+                        "conda create -n ${HORMUZ_CONDA_ENV} failed on $(hostname)"
+                    echo "[fatal] conda env creation failed; aborting."
+                    exit 1
+                fi
             fi
             echo "[build] env created at ${_env_prefix}"
         else
