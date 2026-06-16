@@ -251,6 +251,33 @@ safe_python() {
 }
 
 # ------------------------------------------------------------------
+# hormuz_accept_conda_tos [conda_exe]
+# ------------------------------------------------------------------
+# Recent conda (the Anaconda Terms-of-Service rollout, conda >= 24.x)
+# refuses to create or install environments that resolve packages from
+# the Anaconda "defaults" channels (pkgs/main, pkgs/r) until their ToS
+# have been accepted, aborting non-interactively with:
+#     CondaToSNonInteractiveError: Terms of Service have not been
+#     accepted for the following channels...
+# Accept them up front (best-effort). This is a no-op on older conda
+# where the `tos` subcommand does not exist, and harmless when the ToS
+# were already accepted. Callers that create envs should invoke this
+# before `conda create` / `conda install`.
+# ------------------------------------------------------------------
+hormuz_accept_conda_tos() {
+    local conda_exe="${1:-${CONDA_EXE:-conda}}"
+    command -v "$conda_exe" >/dev/null 2>&1 || conda_exe="conda"
+    local ch
+    for ch in \
+        "https://repo.anaconda.com/pkgs/main" \
+        "https://repo.anaconda.com/pkgs/r" \
+        "https://repo.anaconda.com/pkgs/msys2"; do
+        "$conda_exe" tos accept --override-channels --channel "$ch" \
+            >/dev/null 2>&1 || true
+    done
+}
+
+# ------------------------------------------------------------------
 # hormuz_activate_conda [env_name]
 # ------------------------------------------------------------------
 # Sources the conda shell hook (conda init) and activates the requested

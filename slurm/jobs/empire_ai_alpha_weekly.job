@@ -132,8 +132,43 @@ set -uo pipefail
 
 # ------------------------------------------------------------------
 # Resolve project root and source common helpers.
+#
+# sbatch sets SLURM_SUBMIT_DIR to the directory `sbatch` was invoked
+# from. Submitting from slurm/jobs/ (rather than the repo root) used to
+# make this script look for .../slurm/jobs/slurm/jobs/_common.sh — a
+# doubled path that does not exist, so the source failed and every
+# helper it defines became "command not found". Walk up from the submit
+# dir (then the cwd) until we find the directory that actually contains
+# slurm/jobs/_common.sh and pyproject.toml, so the job works regardless
+# of where it was submitted from. (BASH_SOURCE can't help: SLURM runs a
+# spool copy of the script.)
 # ------------------------------------------------------------------
-PROJECT_ROOT="${SLURM_SUBMIT_DIR:-$(pwd)}"
+_hormuz_find_project_root() {
+    local d
+    for d in "${SLURM_SUBMIT_DIR:-}" "$(pwd)"; do
+        [[ -z "$d" ]] && continue
+        d="$(cd "$d" 2>/dev/null && pwd)" || continue
+        while [[ -n "$d" && "$d" != "/" ]]; do
+            if [[ -f "$d/slurm/jobs/_common.sh" && -f "$d/pyproject.toml" ]]; then
+                printf '%s\n' "$d"
+                return 0
+            fi
+            d="$(dirname "$d")"
+        done
+    done
+    return 1
+}
+
+PROJECT_ROOT="$(_hormuz_find_project_root || true)"
+if [[ -z "${PROJECT_ROOT:-}" ]]; then
+    echo "[fatal] could not locate the project root (a directory containing" >&2
+    echo "        slurm/jobs/_common.sh and pyproject.toml) starting from" >&2
+    echo "        SLURM_SUBMIT_DIR=${SLURM_SUBMIT_DIR:-<unset>} / cwd=$(pwd)." >&2
+    echo "        Submit from the repo root, e.g.:" >&2
+    echo "          cd /mnt/home/\$USER/agenticAIForScenarioAnalysis" >&2
+    echo "          sbatch slurm/jobs/empire_ai_alpha_weekly.job" >&2
+    exit 1
+fi
 cd "$PROJECT_ROOT"
 
 # shellcheck source=./_common.sh
