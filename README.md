@@ -336,6 +336,29 @@ python slurm/scripts/export_results.py    --run-id 20260423_125906
 python slurm/scripts/visualize_results.py --run-id 20260423_125906
 ```
 
+### Revision and audit tooling
+
+The October 2026 revision added a set of audit scripts that read a run's saved state (`data/pipeline_state/<run_id>_*.json`) or, when only the Stage 5 export is available, its report directory (`--from-report-dir`). Their outputs are checked in under `docs/revision/` so the manuscript can cite them; `python scripts/revision/build_all.py --run-id <id> --report-dir <dir> [--baseline configs/baselines/hormuz_2026_analyst.yaml]` regenerates all of them.
+
+| Script | What it produces |
+|---|---|
+| `slurm/scripts/build_coverage_ledger.py` | Per-cell coverage ledger (scenarios x model specs): parameter-extraction status, execution status, skip class, implementation mode, upstream sources; CSV, Markdown, LaTeX, and the `coverage_map.png` figure. |
+| `slurm/scripts/build_model_inventory.py` | Static and run-specific model inventory from `src/models/implementation_info.py` (full upstream model vs analytical reduction vs published-output ingestion, calibration sources, key equations, limitations); `--update-readme` rewrites the tables above. |
+| `slurm/scripts/run_fidelity_audit.py` | Numeric fidelity audit of the synthesis: every outcome value and prose number is matched against the cited model's outputs (exact / rounded / unit-scaled / derived / unmatched); source ids are canonicalised. The same audit runs inline during synthesis (`synthesis.fidelity` in the pipeline config). |
+| `slurm/scripts/trace_provenance.py` | Full provenance chain for one (scenario, model, variable): narrative sentence, extracted parameter, adapter input, forwarding override record, model output, synthesis outcome. |
+| `scripts/revision/anchor_comparison.py` | Cross-scenario table and figure restricted to the models that completed in every scenario. |
+| `scripts/revision/checkpoint_report.py` | How the three analyst checkpoints were recorded per run (auto-approved in batch mode). |
+| `scripts/revision/backend_comparison.py` | Per-backend weekly comparison (cells attempted and completed, clean-synthesis flag, wall-clock) from cluster copies of the weekly report and state directories. |
+| `scripts/revision/coverage_facts.py` | Per-model scenario coverage statements, helium and fertilizer linkage coverage, and the water-linkage status under the tail-risk scenario, derived from the ledger. |
+| `slurm/scripts/run_deterministic_baseline.py` | LLM-free comparator: analyst-authored scenarios and parameters (`configs/baselines/hormuz_2026_analyst.yaml`), the shared executor with forwarding, consistency checks, and a templated synthesis (`src/synthesis/templated.py`); writes the standard state and report files. |
+| `scripts/revision/compare_runs.py` | Numeric diff of two runs' quantitative CSVs with a determinism check and status pairs. |
+| `scripts/revision/effort_metrics.py` | Adapter code and test lines, commit counts, YAML lines per forwarding rule, lines changed by named commits. |
+| `scripts/revision/replay_pycge_scenario_a.py` | Replays the macro kernel at past commits with the recorded Scenario A inputs. |
+| `scripts/revision/software_versions.py`, `scripts/revision/model_licenses.py` | Package and runtime versions per run; per-model license and upstream references. |
+| `scripts/revision/recover_run_from_outputs.py` | Rebuilds a run's per-cell records from `data/outputs/**/metadata.json` filtered by `run_id`. |
+
+Two pipeline changes accompany these tools. Stage 3 state files are now named `<run_id>_model_<tier>_<task>.json` (the three tiers previously overwrote each other's records because their array indices restart at 0), and the forwarding dispatcher only reads `data/outputs/` entries whose `metadata.run_id` matches the current run (`--allow-stale-upstream` restores the old behaviour). A run's `summary.json` carries `clean_synthesis` and the `run_health` block (`src/synthesis/run_health.py`) that defines it.
+
 ---
 
 ## Temporal re-analysis from weekly news
@@ -498,3 +521,5 @@ Three YAML directories drive a run:
 ## License & citation
 
 This is a research codebase. If you use it in academic work, please cite the underlying paper (Golden, Indelicato, Varshney, & Thornsbury, *Agentic AI Modeling for Rapid Analysis of Chokepoint Crises ...*) and respect the licenses of each vendored model under `Models/` (NEMS: public domain, GGM: MIT, MAgPIE: AGPL-3.0, OSeMOSYS / MESSAGEix / TEMOA: see upstream repositories, etc.).
+
+Citation metadata lives in `CITATION.cff` and `.zenodo.json` (software record for the Zenodo release); the per-model license table is generated into `docs/revision/model_licenses.md` by `scripts/revision/model_licenses.py`.

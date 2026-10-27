@@ -1,0 +1,113 @@
+{
+  "run_id": "20260504_222710",
+  "anchors": [
+    "fed_oil",
+    "mam",
+    "mpsge_jl",
+    "nrel",
+    "pycge"
+  ],
+  "scenarios": [
+    "swift_contained",
+    "prolonged_contained",
+    "swift_escalated",
+    "prolonged_escalated",
+    "infrastructure_collapse"
+  ],
+  "variables": [
+    "oil_price_change_pct",
+    "peak_gdp_impact_pct",
+    "peak_cpi_impact_pp",
+    "gdp_impact_pct",
+    "cpi_inflation_pct",
+    "natural_gas_price_change_pct",
+    "welfare_pct_change"
+  ],
+  "n_values": 65,
+  "portfolio": {
+    "ais_project": [
+      "prolonged_contained",
+      "swift_escalated"
+    ],
+    "aisdb": [
+      "prolonged_contained",
+      "swift_escalated"
+    ],
+    "apsim": [
+      "prolonged_contained",
+      "swift_escalated"
+    ],
+    "cwatm": [
+      "swift_escalated"
+    ],
+    "energy_flux_gas_power": [
+      "swift_contained",
+      "prolonged_contained",
+      "swift_escalated"
+    ],
+    "fed_oil": [
+      "swift_contained",
+      "prolonged_contained",
+      "swift_escalated",
+      "prolonged_escalated",
+      "infrastructure_collapse"
+    ],
+    "futures": [
+      "prolonged_contained",
+      "swift_escalated"
+    ],
+    "lngst": [
+      "prolonged_contained",
+      "swift_escalated"
+    ],
+    "mam": [
+      "swift_contained",
+      "prolonged_contained",
+      "swift_escalated",
+      "prolonged_escalated",
+      "infrastructure_collapse"
+    ],
+    "marketsim": [
+      "swift_contained",
+      "prolonged_contained",
+      "swift_escalated"
+    ],
+    "mpsge_jl": [
+      "swift_contained",
+      "prolonged_contained",
+      "swift_escalated",
+      "prolonged_escalated",
+      "infrastructure_collapse"
+    ],
+    "nrel": [
+      "swift_contained",
+      "prolonged_contained",
+      "swift_escalated",
+      "prolonged_escalated",
+      "infrastructure_collapse"
+    ],
+    "poles_jrc": [
+      "swift_contained",
+      "swift_escalated"
+    ],
+    "pycge": [
+      "swift_contained",
+      "prolonged_contained",
+      "swift_escalated",
+      "prolonged_escalated",
+      "infrastructure_collapse"
+    ],
+    "weap_mena": [
+      "swift_escalated"
+    ],
+    "world_fertilizer": [
+      "prolonged_contained",
+      "swift_escalated"
+    ],
+    "world_helium_model": [
+      "prolonged_contained",
+      "swift_escalated"
+    ]
+  },
+  "png": "docs/revision/anchor_comparison_20260504_222710.png"
+}

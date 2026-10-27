@@ -1,0 +1,128 @@
+{
+  "run_id": "baseline_analyst",
+  "completed": 90,
+  "skipped": 59,
+  "failed": 21,
+  "consistency_flags": 24,
+  "outcomes_total": 1220,
+  "clean_synthesis": true,
+  "run_health": {
+    "run_id": "baseline_analyst",
+    "backend": {
+      "provider": "none",
+      "model": "none (deterministic analyst baseline)",
+      "base_url": null
+    },
+    "clean_synthesis": true,
+    "clean_synthesis_definition": "A run has a clean synthesis when (1) the Module 4 synthesis state was written, (2) every (scenario, section) LLM call completed without an unrecoverable error (context_budget_summary.sections_failed == 0), (3) no bash-layer failure was recorded for the synthesis stage, and (4) every scenario in the run has at least one completed model and at least one synthesized outcome.",
+    "criteria": {
+      "synthesis_state_present": true,
+      "sections_failed": 0,
+      "sections_total": 30,
+      "bash_failures_in_synthesis_stage": 0,
+      "scenarios_total": 5,
+      "scenarios_with_completed_model_and_outcome": 5,
+      "synthesis_results_count": 1220
+    },
+    "cells": {
+      "parameter_sets": 170,
+      "parameter_sets_failed": 0,
+      "model_records": 170,
+      "completed": 90,
+      "failed": 21,
+      "skipped": 59
+    },
+    "denominators": {
+      "grid": 170,
+      "scenarios": 5,
+      "model_specs": 34,
+      "parameter_sets": 170,
+      "model_records": 170
+    },
+    "wall_clock": {
+      "stages": {
+        "parameter_extraction_llm_seconds": 0.0,
+        "model_execution_runtime_sum_seconds": 0.097,
+        "model_execution_span_seconds": 0.127,
+        "model_tier_span_seconds[models_baseline]": 0.127,
+        "scenario_generation_seconds": 0.0012,
+        "parameter_extraction_seconds": 0.0475,
+        "model_execution_seconds": 0.182,
+        "synthesis_seconds": 0.2571
+      },
+      "analyst_review_seconds": 0.0,
+      "review_mode": "auto_approved",
+      "seconds_per_completed_model_run": 0.0011,
+      "note": "Model-execution time is the sum of per-cell adapter runtimes; spans are wall-clock between the first start and last completion of the stage. Human review time is zero when the checkpoints were auto-approved (batch mode) and is not included in any figure."
+    },
+    "checkpoints": {
+      "auto_approve": true,
+      "scenarios_validated": true,
+      "parameters_validation_status": {
+        "approved": 170
+      },
+      "synthesis_validated": true,
+      "note": "In SLURM batch mode HORMUZ_AUTO_APPROVE=1 marks all three checkpoints approved without analyst input; the manuscript's 'never run unattended' claim applies to interactive use."
+    },
+    "failure_reasons": {
+      "synthesis_section_errors": {},
+      "bash_failures_by_stage": {},
+      "model_skip_classes": {
+        "missing_config": 10,
+        "missing_data_or_binary": 34,
+        "stub": 15,
+        "runtime_error": 5,
+        "runtime_or_license_missing": 10,
+        "not_implemented_other": 5,
+        "validation_failed": 1
+      }
+    }
+  },
+  "scenarios": [
+    {
+      "scenario_id": "swift_contained",
+      "label": "Swift Resolution, Contained Conflict",
+      "outcomes": 244,
+      "consistency_flags": 7,
+      "failed_models": 4,
+      "completed_models": 18,
+      "skipped_models": 12
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "label": "Prolonged Closure, Contained Conflict",
+      "outcomes": 244,
+      "consistency_flags": 2,
+      "failed_models": 4,
+      "completed_models": 18,
+      "skipped_models": 12
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "label": "Swift Resolution, Escalated Conflict",
+      "outcomes": 244,
+      "consistency_flags": 6,
+      "failed_models": 4,
+      "completed_models": 18,
+      "skipped_models": 12
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "label": "Prolonged Closure, Escalated Conflict",
+      "outcomes": 244,
+      "consistency_flags": 5,
+      "failed_models": 4,
+      "completed_models": 18,
+      "skipped_models": 12
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "label": "Infrastructure Collapse (Tail Risk)",
+      "outcomes": 244,
+      "consistency_flags": 4,
+      "failed_models": 5,
+      "completed_models": 18,
+      "skipped_models": 11
+    }
+  ]
+}

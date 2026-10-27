@@ -1,0 +1,40 @@
+{
+  "run_id": "baseline_analyst",
+  "baseline": {
+    "path": "configs/baselines/hormuz_2026_analyst.yaml",
+    "baseline_id": "hormuz_2026_analyst",
+    "version": 1,
+    "authored": "2026-10"
+  },
+  "synthesis_method": "templated",
+  "upstream_forwarding": true,
+  "llm_calls": 0,
+  "scenarios": [
+    "swift_contained",
+    "prolonged_contained",
+    "swift_escalated",
+    "prolonged_escalated",
+    "infrastructure_collapse"
+  ],
+  "cells": {
+    "parameter_sets": 170,
+    "model_records": 170,
+    "completed": 90,
+    "skipped": 59,
+    "failed": 21
+  },
+  "outcomes": 1220,
+  "consistency_flags": 24,
+  "clean_synthesis": true,
+  "fidelity_strict_match_rate": 1.0,
+  "stage_seconds": {
+    "scenario_generation_seconds": 0.0012,
+    "parameter_extraction_seconds": 0.0475,
+    "model_execution_seconds": 0.182,
+    "synthesis_seconds": 0.2571,
+    "export_seconds": 0.543
+  },
+  "export_return_code": 0,
+  "state_dir": "/home/user/agenticAIForScenarioAnalysis/data/pipeline_state",
+  "report_dir": "/home/user/agenticAIForScenarioAnalysis/data/reports/baseline_analyst"
+}
