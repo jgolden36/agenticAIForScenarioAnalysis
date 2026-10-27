@@ -110,6 +110,34 @@ class ModelExecutionStatus(str, Enum):
     SKIPPED = "skipped"
 
 
+class ImplementationMode(str, Enum):
+    """How a domain model was (or can be) executed by its adapter.
+
+    ``FULL_UPSTREAM`` — the adapter ran the upstream model code or
+    binary (Octave/Dynare, GAMS, Julia, Python package, spreadsheet
+    engine, ...).
+    ``PUBLISHED_OUTPUT_INGESTION`` — the adapter ingested officially
+    published model outputs (e.g. EIA AEO2025 tables for NEMS / MAM)
+    rather than solving the model.
+    ``ANALYTICAL_REDUCTION`` — a closed-form, literature-calibrated
+    reduction of the upstream model implemented inside the adapter
+    (the "analytical MVP" paths).
+    ``STUB`` — ``execute()`` raises ``NotImplementedError``.
+    ``UNKNOWN`` — the run record carries no marker and the adapter
+    declares no default; reported as-is rather than guessed.
+
+    The run-specific model inventory and the coverage ledger report
+    this value per (scenario, model) cell so the manuscript can state
+    which cells used a full model and which used a reduction.
+    """
+
+    FULL_UPSTREAM = "full_upstream"
+    PUBLISHED_OUTPUT_INGESTION = "published_output_ingestion"
+    ANALYTICAL_REDUCTION = "analytical_reduction"
+    STUB = "stub"
+    UNKNOWN = "unknown"
+
+
 class UncertaintyMethod(str, Enum):
     """How an adapter's output uncertainty was quantified.
 

@@ -67,6 +67,22 @@ class ModelExecutionResult(BaseModel):
             "None when UQ was not performed."
         ),
     )
+    metadata: dict[str, Any] = Field(
+        default_factory=dict,
+        description=(
+            "Adapter-supplied ModelOutput.metadata (mode, calibration "
+            "source, solver, elapsed time). Preserved verbatim so the "
+            "run-specific inventory can state which implementation ran."
+        ),
+    )
+    implementation_mode: str | None = Field(
+        default=None,
+        description=(
+            "ImplementationMode value used for a COMPLETED run "
+            "(full_upstream / published_output_ingestion / "
+            "analytical_reduction / unknown). None for SKIPPED / FAILED."
+        ),
+    )
 
 
 class ConsistencyFlag(BaseModel):

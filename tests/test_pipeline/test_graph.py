@@ -201,6 +201,18 @@ class TestExecuteNodeUncertainty:
         assert entry["status"] == "completed"
         assert "uncertainty" not in entry
 
+    def test_node_records_metadata_and_implementation_mode(self, monkeypatch):
+        import src.pipeline.graph as graph
+
+        reg = self._linear_registry()
+        monkeypatch.setattr(graph, "build_default_registry", lambda *a, **k: reg)
+
+        out = graph._execute_one_model_node(self._state(enabled=False))
+        entry = out["execution_results"][0]
+
+        assert entry["metadata"] == {}
+        assert entry["implementation_mode"] == "unknown"
+
 
 class TestBuildPipelineGraph:
     def test_graph_builds_without_error(self):

@@ -106,6 +106,36 @@ class ConsistencyConfig(BaseModel):
     flag_on_missing_model: bool = True
 
 
+class FidelityConfig(BaseModel):
+    """Post-hoc numeric fidelity validator for synthesis output.
+
+    After each section's LLM call, ``src.synthesis.fidelity.audit_section``
+    checks every outcome value against the outputs of the model it cites
+    and repairs malformed source ids. ``on_mismatch`` decides what happens
+    to outcomes whose value matches nothing the cited model produced:
+    ``flag`` keeps them and emits a ConsistencyFlag (model_b_id =
+    ``synthesis_llm``); ``block`` drops them from the report and records
+    a warning; ``off`` disables the validator (audit still available post
+    hoc via ``slurm/scripts/run_fidelity_audit.py``).
+    """
+
+    enabled: bool = True
+    on_mismatch: Literal["flag", "block", "off"] = "flag"
+    reprompt_once: bool = Field(
+        default=False,
+        description=(
+            "Re-invoke the section LLM call once with the list of "
+            "unverifiable outcomes appended before flagging / blocking."
+        ),
+    )
+
+
+class SynthesisConfig(BaseModel):
+    """Module 4 settings."""
+
+    fidelity: FidelityConfig = Field(default_factory=FidelityConfig)
+
+
 class PipelineConfig(BaseModel):
     """Top-level pipeline configuration."""
 
@@ -113,6 +143,7 @@ class PipelineConfig(BaseModel):
     execution: ExecutionConfig = Field(default_factory=ExecutionConfig)
     output: OutputConfig = Field(default_factory=OutputConfig)
     consistency: ConsistencyConfig = Field(default_factory=ConsistencyConfig)
+    synthesis: SynthesisConfig = Field(default_factory=SynthesisConfig)
     uncertainty: UncertaintyConfig = Field(default_factory=UncertaintyConfig)
     num_scenarios: int = 5  # 4 matrix quadrants (A-D) + 1 prescribed tail-risk (E: infrastructure_collapse)
 

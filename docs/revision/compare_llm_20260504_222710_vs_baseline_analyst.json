@@ -1,0 +1,310 @@
+{
+  "label_a": "llm_20260504_222710",
+  "label_b": "baseline_analyst",
+  "dir_a": "data/20260504_222710",
+  "dir_b": "/home/user/agenticAIForScenarioAnalysis/data/reports/baseline_analyst",
+  "tolerance_pct": 0.5,
+  "output_keys": 1755,
+  "output_categories": {
+    "only_in_b": 770,
+    "differs": 794,
+    "identical": 160,
+    "only_in_a": 29,
+    "within_tolerance": 2
+  },
+  "input_keys": 30,
+  "input_categories": {
+    "differs": 30
+  },
+  "cells_compared": 95,
+  "cells_with_identical_inputs": 0,
+  "determinism_violations": [],
+  "status_pairs": {
+    "absent->completed": 43,
+    "absent->failed": 12,
+    "absent->skipped": 16,
+    "completed->completed": 44,
+    "completed->skipped": 5,
+    "failed->completed": 3,
+    "failed->failed": 9,
+    "failed->skipped": 6,
+    "skipped->skipped": 32
+  },
+  "largest_output_differences": [
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "nrel",
+      "output_key": "co2_emissions_pct_change",
+      "group": "outputs",
+      "value_llm_20260504_222710": 1.321,
+      "value_baseline_analyst": -1.488,
+      "abs_diff": -2.809,
+      "rel_diff_pct": 188.7769,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "mpsge_jl",
+      "output_key": "consumption_impact_pct_by_region.MENA_GCC",
+      "group": "outputs",
+      "value_llm_20260504_222710": -0.1206,
+      "value_baseline_analyst": 0.3788,
+      "abs_diff": 0.4994,
+      "rel_diff_pct": 131.8374,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "mpsge_jl",
+      "output_key": "equivalent_variation_pct_by_region.MENA_GCC",
+      "group": "outputs",
+      "value_llm_20260504_222710": -0.1206,
+      "value_baseline_analyst": 0.3788,
+      "abs_diff": 0.4994,
+      "rel_diff_pct": 131.8374,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "mpsge_jl",
+      "output_key": "welfare_pct_change_by_region.MENA_GCC",
+      "group": "outputs",
+      "value_llm_20260504_222710": -0.1206,
+      "value_baseline_analyst": 0.3788,
+      "abs_diff": 0.4994,
+      "rel_diff_pct": 131.8374,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "mpsge_jl",
+      "output_key": "gdp_impact_pct_by_region.MENA_OTHER",
+      "group": "outputs",
+      "value_llm_20260504_222710": 0.4588,
+      "value_baseline_analyst": -0.1366,
+      "abs_diff": -0.5954,
+      "rel_diff_pct": 129.7733,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "nrel",
+      "output_key": "electricity_demand_change_pct",
+      "group": "outputs",
+      "value_llm_20260504_222710": 0.0,
+      "value_baseline_analyst": -3.5,
+      "abs_diff": -3.5,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "ais_project",
+      "output_key": "additional_transit_days",
+      "group": "outputs",
+      "value_llm_20260504_222710": 0.0,
+      "value_baseline_analyst": 9.5,
+      "abs_diff": 9.5,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "ais_project",
+      "output_key": "effective_fleet_capacity_loss_pct",
+      "group": "outputs",
+      "value_llm_20260504_222710": 0.0,
+      "value_baseline_analyst": 34.688,
+      "abs_diff": 34.688,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "ais_project",
+      "output_key": "tanker_rate_change_pct",
+      "group": "outputs",
+      "value_llm_20260504_222710": 0.0,
+      "value_baseline_analyst": 48.562,
+      "abs_diff": 48.562,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "ais_project",
+      "output_key": "voyage_days_lost_per_baseline_voyage",
+      "group": "outputs",
+      "value_llm_20260504_222710": 0.0,
+      "value_baseline_analyst": 28.88,
+      "abs_diff": 28.88,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "apsim",
+      "output_key": "crop_yield_loss_pct",
+      "group": "outputs",
+      "value_llm_20260504_222710": -0.0,
+      "value_baseline_analyst": 20.224,
+      "abs_diff": 20.224,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "apsim",
+      "output_key": "fertilizer_application_reduction_pct",
+      "group": "outputs",
+      "value_llm_20260504_222710": 0.0,
+      "value_baseline_analyst": 16.3366,
+      "abs_diff": 16.3366,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "apsim",
+      "output_key": "irrigation_water_reduction_pct",
+      "group": "outputs",
+      "value_llm_20260504_222710": 0.0,
+      "value_baseline_analyst": 1.961,
+      "abs_diff": 1.961,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "apsim",
+      "output_key": "mean_yield_pct_change",
+      "group": "outputs",
+      "value_llm_20260504_222710": 0.0,
+      "value_baseline_analyst": -20.224,
+      "abs_diff": -20.224,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "apsim",
+      "output_key": "n_limited_yield_share_by_crop.wheat",
+      "group": "outputs",
+      "value_llm_20260504_222710": 0.0,
+      "value_baseline_analyst": 0.904,
+      "abs_diff": 0.904,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "apsim",
+      "output_key": "n_use_efficiency_change_pct",
+      "group": "outputs",
+      "value_llm_20260504_222710": 0.0,
+      "value_baseline_analyst": 9.802,
+      "abs_diff": 9.802,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "apsim",
+      "output_key": "water_limited_yield_share_by_crop.wheat",
+      "group": "outputs",
+      "value_llm_20260504_222710": 0.0,
+      "value_baseline_analyst": 0.096,
+      "abs_diff": 0.096,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "apsim",
+      "output_key": "yield_pct_change_by_crop.wheat",
+      "group": "outputs",
+      "value_llm_20260504_222710": -0.0,
+      "value_baseline_analyst": -20.224,
+      "abs_diff": -20.224,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "lngst",
+      "output_key": "uae_export_reduction_pct",
+      "group": "outputs",
+      "value_llm_20260504_222710": 0.0,
+      "value_baseline_analyst": 85.0,
+      "abs_diff": 85.0,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "mpsge_jl",
+      "output_key": "commodity_price_shocks.helium",
+      "group": "outputs",
+      "value_llm_20260504_222710": 0.0,
+      "value_baseline_analyst": 84.84,
+      "abs_diff": 84.84,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "nrel",
+      "output_key": "electricity_demand_change_pct",
+      "group": "outputs",
+      "value_llm_20260504_222710": 0.0,
+      "value_baseline_analyst": -1.5,
+      "abs_diff": -1.5,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "world_helium_model",
+      "output_key": "demand_rationing_mmscf",
+      "group": "outputs",
+      "value_llm_20260504_222710": 0.0,
+      "value_baseline_analyst": 540.88,
+      "abs_diff": 540.88,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "world_helium_model",
+      "output_key": "effective_supply_gap_pct",
+      "group": "outputs",
+      "value_llm_20260504_222710": 0.0,
+      "value_baseline_analyst": 25.453,
+      "abs_diff": 25.453,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "world_helium_model",
+      "output_key": "inventory_drawdown_months",
+      "group": "outputs",
+      "value_llm_20260504_222710": 0.0,
+      "value_baseline_analyst": 0.01,
+      "abs_diff": 0.01,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "world_helium_model",
+      "output_key": "price_change_pct",
+      "group": "outputs",
+      "value_llm_20260504_222710": 0.0,
+      "value_baseline_analyst": 84.84,
+      "abs_diff": 84.84,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    }
+  ]
+}

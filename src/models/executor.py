@@ -27,7 +27,12 @@ from pathlib import Path
 
 from src.common.logging import get_logger
 from src.common.types import ANALYTICAL_LEVEL_ORDER, ModelExecutionStatus, Scenario
-from src.models.base import ModelAdapter, ModelOutput, ResourceRequirements
+from src.models.base import (
+    ModelAdapter,
+    ModelOutput,
+    ResourceRequirements,
+    resolve_implementation_mode,
+)
 from src.models.registry import ModelRegistry
 from src.models.uncertainty import UncertaintyConfig, run_with_uncertainty
 from src.pipeline.config import ExecutionConfig
@@ -421,6 +426,14 @@ class ModelExecutor:
 
             result.status = ModelExecutionStatus.COMPLETED
             result.outputs = output.outputs
+            # Preserve the adapter's metadata (mode, calibration source,
+            # solver) and label the record with the implementation mode
+            # actually used so the run-specific inventory can report
+            # full-model vs analytical-reduction cells.
+            result.metadata = dict(output.metadata or {})
+            result.implementation_mode = resolve_implementation_mode(
+                output, adapter
+            ).value
             if output.uncertainty is not None:
                 result.uncertainty = output.uncertainty.model_dump()
             result.completed_at = datetime.now(timezone.utc)

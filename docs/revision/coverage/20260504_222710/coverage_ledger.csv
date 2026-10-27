@@ -1,0 +1,356 @@
+scenario_id,model_id,commodity_system,analytical_level,tier,param_status,param_error,in_manifest,exec_status,skip_class,cell_code,implementation_mode,implementation_mode_evidence,runtime_seconds,task_id,manifest_name,outputs_status_this_run,record_source,upstream_sources,stale_upstream,upstream_evidence,error_message
+swift_contained,weap_mena,water,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+swift_contained,sahysmod,water,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+swift_contained,watergap2,water,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+swift_contained,cwatm,water,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+swift_contained,bornstein_krusell_rebelo,oil,commodity,commodity,completed,,,failed,missing_data_or_binary,d,,none,0.00012611690908670425,60,,,csv,,False,flags_only,FileNotFoundError: Dynare .mod file not found: Models/Oil/WorldEquilibriumOilModel/Replication Files/Section 5/supply_shocks_to_non_opec/dynare_codes/World_Economy_Cartel_nonopec_shocks.mod. Verify the section/mod_file configuration.
+swift_contained,poles_jrc,oil,commodity,commodity,completed,,,completed,completed,R,analytical_reduction,adapter_declared,7.88513571023941e-05,68,,,csv,,False,flags_only,
+swift_contained,marketsim,oil,commodity,commodity,completed,,,completed,completed,R,analytical_reduction,adapter_declared,6.421562284231186e-05,76,,,csv,,False,flags_only,
+swift_contained,fed_oil,oil,short_run_macro,macro,completed,,,completed,completed,R,analytical_reduction,adapter_declared,0.0002210652455687523,49,,,csv,poles_jrc,False,flags_only,
+swift_contained,energy_flux_gas_power,lng,commodity,commodity,completed,,,completed,completed,F,full_upstream,adapter_declared,0.0002968953922390938,88,,,csv,,False,flags_only,
+swift_contained,energy_flux_lng_profits,lng,commodity,commodity,completed,,,failed,validation_failed,v,,none,,96,,,csv,,False,flags_only,"Validation failed: Provide either 'price_schedule' (12 rows) or all of 'ttf_peak_price', 'jkm_peak_price', 'hh_crisis_price'."
+swift_contained,ggm,lng,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+swift_contained,lngst,lng,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+swift_contained,world_helium_model,helium_semiconductors,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+swift_contained,argonne_abm,helium_semiconductors,commodity_downstream,commodity_downstream,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+swift_contained,simrlfab,helium_semiconductors,commodity_downstream,commodity_downstream,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+swift_contained,capri,fertilizer_agriculture,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+swift_contained,magpie,fertilizer_agriculture,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+swift_contained,simple_g,fertilizer_agriculture,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+swift_contained,world_fertilizer,fertilizer_agriculture,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+swift_contained,gtap,fertilizer_agriculture,long_run_macro_strategic,macro,completed,,,skipped,stub,s,,none,,26,,,csv,,False,flags_only,"Not yet implemented: GTAPAdapter.execute is not yet implemented. Real integration requires: (1) a licensed GTAP database (version 10+, from the GTAP Center at Purdue University), (2) a GTAP model software installation (RunGTAP or FlexGTAP), (3) writing shock and closure files specifying oil price, fertilizer cost, and trade-route disruption shocks, (4) invoking the GTAP executable via subprocess, and (5) parsing the HAR/SOL solution file for welfare (EV by region), bilateral trade flows, and producer/consumer price changes by sector."
+swift_contained,apsim,fertilizer_agriculture,commodity_downstream,commodity_downstream,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+swift_contained,futures,fertilizer_agriculture,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+swift_contained,aisdb,shipping,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+swift_contained,ais_project,shipping,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+swift_contained,nems,macroeconomic,short_run_macro,macro,completed,,,skipped,missing_data_or_binary,d,,none,,27,,,csv,,False,flags_only,"Not yet implemented: NEMS output directory not found: data/nems_outputs/Hormuz_ScenarioA
+Run NEMS externally and place outputs at this path, or update NEMSConfig.scenario_dir_mapping."
+swift_contained,mam,macroeconomic,short_run_macro,macro,completed,,,completed,completed,I,published_output_ingestion,adapter_declared,0.21335359569638968,28,,,csv,,False,flags_only,
+swift_contained,nrel,macroeconomic,short_run_macro,macro,completed,,,completed,completed,R,analytical_reduction,adapter_declared,0.0002831472083926201,29,,,csv,lngst(not run),True,flags_only,
+swift_contained,mpsge_jl,macroeconomic,long_run_macro_strategic,macro,completed,,,completed,completed,R,analytical_reduction,adapter_declared,0.0003753816708922386,30,,,csv,poles_jrc;lngst(not run);world_helium_model(not run),True,flags_only,
+swift_contained,opencge,macroeconomic,long_run_macro_strategic,macro,completed,,,failed,runtime_error,x,,none,4.592622626572847,31,,,csv,,False,flags_only,"ValidationError: {
+    ""errors"": {
+        ""Z"": [
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list.""
+        ],
+        ""delta_tau_annual"": [
+            ""Not a valid list.""
+        ]
+    }
+}"
+swift_contained,pycge,macroeconomic,long_run_macro_strategic,macro,completed,,,completed,completed,R,analytical_reduction,output_marker,3.281647052615881,32,,,csv,poles_jrc;world_helium_model(not run),True,flags_only,
+swift_contained,miragrodep,macroeconomic,long_run_macro_strategic,macro,completed,,,skipped,runtime_or_license_missing,l,,none,,33,,,csv,,False,flags_only,"Not yet implemented: MIRAGRODEP requires the 'gams' executable on PATH (GAMS + a CONOPT/PATH licence). Install GAMS and ensure 'gams' is on PATH, or set MIRAGRODEPConfig.gams_executable to its absolute path."
+swift_contained,osemosys,energy_systems,long_run_macro_strategic,macro,completed,,,skipped,missing_data_or_binary,d,,none,,34,,,csv,,False,flags_only,Not yet implemented: OSeMOSYS baseline_data_dir not found: data/osemosys/baseline. Provide a baseline dataset (CSV-per-parameter layout).
+swift_contained,messageix,energy_systems,long_run_macro_strategic,macro,completed,,,failed,runtime_or_license_missing,l,,none,1.0710563212633133,35,,,csv,,False,flags_only,JVMNotFoundException: No JVM shared library file (libjvm.so) found. Try setting up the JAVA_HOME environment variable properly.
+swift_contained,temoa,energy_systems,long_run_macro_strategic,macro,completed,,,skipped,missing_data_or_binary,d,,none,,36,,,csv,,False,flags_only,Not yet implemented: TEMOA baseline DB not found: Models/Energy/TEMOA/data_files/utopia.sqlite. Vendor a baseline SQLite (e.g. utopia.sqlite) under Models/Energy/TEMOA/data_files/ or override TEMOAConfig.baseline_db_path.
+prolonged_contained,weap_mena,water,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_contained,sahysmod,water,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_contained,watergap2,water,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_contained,cwatm,water,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_contained,bornstein_krusell_rebelo,oil,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_contained,poles_jrc,oil,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_contained,marketsim,oil,commodity,commodity,completed,,,completed,completed,R,analytical_reduction,adapter_declared,6.191618740558624e-05,61,,,csv,,False,flags_only,
+prolonged_contained,fed_oil,oil,short_run_macro,macro,completed,,,completed,completed,R,analytical_reduction,adapter_declared,0.0002588927745819092,37,,,csv,poles_jrc(not run),True,flags_only,
+prolonged_contained,energy_flux_gas_power,lng,commodity,commodity,completed,,,completed,completed,F,full_upstream,adapter_declared,0.00026225950568914413,62,,,csv,,False,flags_only,
+prolonged_contained,energy_flux_lng_profits,lng,commodity,commodity,completed,,,failed,validation_failed,v,,none,,63,,,csv,,False,flags_only,"Validation failed: Provide either 'price_schedule' (12 rows) or all of 'ttf_peak_price', 'jkm_peak_price', 'hh_crisis_price'."
+prolonged_contained,ggm,lng,commodity,commodity,completed,,,skipped,missing_config,c,,none,,64,,,csv,,False,flags_only,"Not yet implemented: GGMAdapter.execute() requires a GGMConfig. Prerequisites:
+  1. GAMS installation with CPLEX solver license
+  2. gamsapi Python package (pip install gamsapi[transfer])
+  3. GGM model directory with data/SET-Nav/*.xlsx files
+  4. GGMConfig(gams_system_dir=..., model_dir=...)
+"
+prolonged_contained,lngst,lng,commodity,commodity,completed,,,completed,completed,R,analytical_reduction,adapter_declared,5.5437907576560974e-05,65,,,csv,,False,flags_only,
+prolonged_contained,world_helium_model,helium_semiconductors,commodity,commodity,completed,,,completed,completed,R,analytical_reduction,adapter_declared,0.0001435205340385437,66,,,csv,,False,flags_only,
+prolonged_contained,argonne_abm,helium_semiconductors,commodity_downstream,commodity_downstream,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_contained,simrlfab,helium_semiconductors,commodity_downstream,commodity_downstream,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_contained,capri,fertilizer_agriculture,commodity,commodity,completed,,,skipped,stub,s,,none,,67,,,csv,,False,flags_only,"Not yet implemented: CAPRIAdapter.execute is not yet implemented. Real integration requires: (1) a GAMS installation with the CAPRI model repository, (2) writing scenario shock files to the CAPRI scenario directory, (3) invoking the CAPRI GAMS entry point via subprocess, and (4) parsing the CAPRI results database (GDX or CSV output)."
+prolonged_contained,magpie,fertilizer_agriculture,commodity,commodity,completed,,,skipped,missing_data_or_binary,d,,none,,69,,,csv,,False,flags_only,"Not yet implemented: MAgPIE source tree not found. Pass magpie_root to the adapter constructor or set the MAGPIE_ROOT environment variable. Tried: none of Models/Fertilizer/magpie-master/magpie-master, Models/Fertilizer/magpie-master, Models/Fertilizer/magpie"
+prolonged_contained,simple_g,fertilizer_agriculture,commodity,commodity,completed,,,failed,validation_failed,v,,none,,70,,,csv,,False,flags_only,"Validation failed: 'trade_disruption_index' = 30.0 is out of range; expected a value in [0.0, 1.0] where 0 = no disruption and 1 = full closure"
+prolonged_contained,world_fertilizer,fertilizer_agriculture,commodity,commodity,completed,,,completed,completed,R,analytical_reduction,adapter_declared,9.124260395765305e-05,71,,,csv,,False,flags_only,
+prolonged_contained,gtap,fertilizer_agriculture,long_run_macro_strategic,macro,completed,,,skipped,stub,s,,none,,38,,,csv,,False,flags_only,"Not yet implemented: GTAPAdapter.execute is not yet implemented. Real integration requires: (1) a licensed GTAP database (version 10+, from the GTAP Center at Purdue University), (2) a GTAP model software installation (RunGTAP or FlexGTAP), (3) writing shock and closure files specifying oil price, fertilizer cost, and trade-route disruption shocks, (4) invoking the GTAP executable via subprocess, and (5) parsing the HAR/SOL solution file for welfare (EV by region), bilateral trade flows, and producer/consumer price changes by sector."
+prolonged_contained,apsim,fertilizer_agriculture,commodity_downstream,commodity_downstream,completed,,,completed,completed,R,analytical_reduction,adapter_declared,6.214343011379242e-05,72,,,csv,,False,flags_only,
+prolonged_contained,futures,fertilizer_agriculture,commodity,commodity,completed,,,completed,completed,R,analytical_reduction,adapter_declared,7.861200720071793e-05,73,,,csv,,False,flags_only,
+prolonged_contained,aisdb,shipping,commodity,commodity,completed,,,completed,completed,R,analytical_reduction,adapter_declared,0.0001568775624036789,74,,,csv,,False,flags_only,
+prolonged_contained,ais_project,shipping,commodity,commodity,completed,,,completed,completed,R,analytical_reduction,adapter_declared,0.00012117717415094376,75,,,csv,,False,flags_only,
+prolonged_contained,nems,macroeconomic,short_run_macro,macro,completed,,,skipped,missing_data_or_binary,d,,none,,39,,,csv,,False,flags_only,"Not yet implemented: NEMS output directory not found: data/nems_outputs/Hormuz_ScenarioB
+Run NEMS externally and place outputs at this path, or update NEMSConfig.scenario_dir_mapping."
+prolonged_contained,mam,macroeconomic,short_run_macro,macro,completed,,,completed,completed,I,published_output_ingestion,adapter_declared,0.27241542749106884,40,,,csv,,False,flags_only,
+prolonged_contained,nrel,macroeconomic,short_run_macro,macro,completed,,,completed,completed,R,analytical_reduction,adapter_declared,0.00017762836068868637,41,,,csv,lngst,False,flags_only,
+prolonged_contained,mpsge_jl,macroeconomic,long_run_macro_strategic,macro,completed,,,completed,completed,R,analytical_reduction,adapter_declared,0.00039047934114933014,42,,,csv,poles_jrc(not run);lngst;world_helium_model;world_fertilizer,True,flags_only,
+prolonged_contained,opencge,macroeconomic,long_run_macro_strategic,macro,completed,,,failed,runtime_error,x,,none,4.645482312887907,43,,,csv,,False,flags_only,"ValidationError: {
+    ""errors"": {
+        ""Z"": [
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list.""
+        ],
+        ""delta_tau_annual"": [
+            ""Not a valid list.""
+        ]
+    }
+}"
+prolonged_contained,pycge,macroeconomic,long_run_macro_strategic,macro,completed,,,completed,completed,R,analytical_reduction,output_marker,3.132087318226695,44,,,csv,poles_jrc(not run);world_helium_model;world_fertilizer,True,flags_only,
+prolonged_contained,miragrodep,macroeconomic,long_run_macro_strategic,macro,completed,,,skipped,runtime_or_license_missing,l,,none,,45,,,csv,,False,flags_only,"Not yet implemented: MIRAGRODEP requires the 'gams' executable on PATH (GAMS + a CONOPT/PATH licence). Install GAMS and ensure 'gams' is on PATH, or set MIRAGRODEPConfig.gams_executable to its absolute path."
+prolonged_contained,osemosys,energy_systems,long_run_macro_strategic,macro,completed,,,skipped,missing_data_or_binary,d,,none,,46,,,csv,,False,flags_only,Not yet implemented: OSeMOSYS baseline_data_dir not found: data/osemosys/baseline. Provide a baseline dataset (CSV-per-parameter layout).
+prolonged_contained,messageix,energy_systems,long_run_macro_strategic,macro,completed,,,failed,runtime_or_license_missing,l,,none,1.0214138953015208,47,,,csv,,False,flags_only,JVMNotFoundException: No JVM shared library file (libjvm.so) found. Try setting up the JAVA_HOME environment variable properly.
+prolonged_contained,temoa,energy_systems,long_run_macro_strategic,macro,completed,,,skipped,missing_data_or_binary,d,,none,,48,,,csv,,False,flags_only,Not yet implemented: TEMOA baseline DB not found: Models/Energy/TEMOA/data_files/utopia.sqlite. Vendor a baseline SQLite (e.g. utopia.sqlite) under Models/Energy/TEMOA/data_files/ or override TEMOAConfig.baseline_db_path.
+swift_escalated,weap_mena,water,commodity,commodity,completed,,,completed,completed,R,analytical_reduction,adapter_declared,0.0001675635576248169,77,,,csv,,False,flags_only,
+swift_escalated,sahysmod,water,commodity,commodity,completed,,,failed,missing_data_or_binary,d,,none,0.0031884461641311646,78,,,csv,,False,flags_only,FileNotFoundError: [Errno 2] No such file or directory: 'Models/Water/SahysMod/SahysMod.exe'
+swift_escalated,watergap2,water,commodity,commodity,completed,,,skipped,missing_config,c,,none,,79,,,csv,,False,flags_only,"Not yet implemented: WaterGAP2Adapter.execute() requires a WaterGAP2Config. To integrate WaterGAP2:
+  1. Build the binary from the C++ sources at Models/Water/WaterGAP2-v2.2d/HydrologyFrankfurt-WaterGAP2-65f306b/source/ via CMake, OR obtain access to the Frankfurt WaterGAP2 web service.
+  2. Stage global climate forcing NetCDFs (precipitation, temperature) under forcing_data_path.
+  3. Configure the adapter via configs/model_configs/watergap2.yaml.
+  4. Implement either subprocess invocation of the compiled binary or a REST client against the web service inside this method.
+  5. Build a NetCDF damage mask from 'affected_grid_cells' and 'infrastructure_damage_index' and pass it to WaterGAP2.
+  6. Parse gridded NetCDF outputs in parse_outputs."
+swift_escalated,cwatm,water,commodity,commodity,completed,,,completed,completed,R,analytical_reduction,adapter_declared,5.841907113790512e-05,80,,,csv,,False,flags_only,
+swift_escalated,bornstein_krusell_rebelo,oil,commodity,commodity,completed,,,failed,missing_data_or_binary,d,,none,0.0001325877383351326,81,,,csv,,False,flags_only,FileNotFoundError: Dynare .mod file not found: Models/Oil/WorldEquilibriumOilModel/Replication Files/Section 5/supply_shocks_to_non_opec/dynare_codes/World_Economy_Cartel_nonopec_shocks.mod. Verify the section/mod_file configuration.
+swift_escalated,poles_jrc,oil,commodity,commodity,completed,,,completed,completed,R,analytical_reduction,adapter_declared,0.00014275126159191132,82,,,csv,,False,flags_only,
+swift_escalated,marketsim,oil,commodity,commodity,completed,,,completed,completed,R,analytical_reduction,adapter_declared,7.800105959177017e-05,83,,,csv,,False,flags_only,
+swift_escalated,fed_oil,oil,short_run_macro,macro,completed,,,completed,completed,R,analytical_reduction,adapter_declared,0.00020621530711650848,50,,,csv,poles_jrc,False,flags_only,
+swift_escalated,energy_flux_gas_power,lng,commodity,commodity,completed,,,completed,completed,F,full_upstream,adapter_declared,0.0003672689199447632,84,,,csv,,False,flags_only,
+swift_escalated,energy_flux_lng_profits,lng,commodity,commodity,completed,,,failed,validation_failed,v,,none,,85,,,csv,,False,flags_only,"Validation failed: Provide either 'price_schedule' (12 rows) or all of 'ttf_peak_price', 'jkm_peak_price', 'hh_crisis_price'."
+swift_escalated,ggm,lng,commodity,commodity,completed,,,skipped,missing_config,c,,none,,86,,,csv,,False,flags_only,"Not yet implemented: GGMAdapter.execute() requires a GGMConfig. Prerequisites:
+  1. GAMS installation with CPLEX solver license
+  2. gamsapi Python package (pip install gamsapi[transfer])
+  3. GGM model directory with data/SET-Nav/*.xlsx files
+  4. GGMConfig(gams_system_dir=..., model_dir=...)
+"
+swift_escalated,lngst,lng,commodity,commodity,completed,,,completed,completed,R,analytical_reduction,adapter_declared,9.58070158958435e-05,87,,,csv,,False,flags_only,
+swift_escalated,world_helium_model,helium_semiconductors,commodity,commodity,completed,,,completed,completed,R,analytical_reduction,adapter_declared,0.00010816380381584167,89,,,csv,,False,flags_only,
+swift_escalated,argonne_abm,helium_semiconductors,commodity_downstream,commodity_downstream,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+swift_escalated,simrlfab,helium_semiconductors,commodity_downstream,commodity_downstream,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+swift_escalated,capri,fertilizer_agriculture,commodity,commodity,completed,,,skipped,stub,s,,none,,90,,,csv,,False,flags_only,"Not yet implemented: CAPRIAdapter.execute is not yet implemented. Real integration requires: (1) a GAMS installation with the CAPRI model repository, (2) writing scenario shock files to the CAPRI scenario directory, (3) invoking the CAPRI GAMS entry point via subprocess, and (4) parsing the CAPRI results database (GDX or CSV output)."
+swift_escalated,magpie,fertilizer_agriculture,commodity,commodity,completed,,,skipped,missing_data_or_binary,d,,none,,91,,,csv,,False,flags_only,"Not yet implemented: MAgPIE source tree not found. Pass magpie_root to the adapter constructor or set the MAGPIE_ROOT environment variable. Tried: none of Models/Fertilizer/magpie-master/magpie-master, Models/Fertilizer/magpie-master, Models/Fertilizer/magpie"
+swift_escalated,simple_g,fertilizer_agriculture,commodity,commodity,completed,,,skipped,stub,s,,none,,92,,,csv,,False,flags_only,"Not yet implemented: SIMPLEGAdapter.execute is not yet implemented. Real integration requires: (1) a GAMS installation with the SIMPLE-G model, (2) writing scenario shock parameters to a GAMS-compatible input file, (3) invoking the SIMPLE-G GAMS entry point via subprocess, and (4) parsing output GDX or CSV files for agricultural price, trade, and welfare results by region."
+swift_escalated,world_fertilizer,fertilizer_agriculture,commodity,commodity,completed,,,completed,completed,R,analytical_reduction,adapter_declared,9.544286876916885e-05,93,,,csv,,False,flags_only,
+swift_escalated,gtap,fertilizer_agriculture,long_run_macro_strategic,macro,completed,,,skipped,stub,s,,none,,51,,,csv,,False,flags_only,"Not yet implemented: GTAPAdapter.execute is not yet implemented. Real integration requires: (1) a licensed GTAP database (version 10+, from the GTAP Center at Purdue University), (2) a GTAP model software installation (RunGTAP or FlexGTAP), (3) writing shock and closure files specifying oil price, fertilizer cost, and trade-route disruption shocks, (4) invoking the GTAP executable via subprocess, and (5) parsing the HAR/SOL solution file for welfare (EV by region), bilateral trade flows, and producer/consumer price changes by sector."
+swift_escalated,apsim,fertilizer_agriculture,commodity_downstream,commodity_downstream,completed,,,completed,completed,R,analytical_reduction,adapter_declared,0.00022272858768701553,94,,,csv,,False,flags_only,
+swift_escalated,futures,fertilizer_agriculture,commodity,commodity,completed,,,completed,completed,R,analytical_reduction,adapter_declared,7.74310901761055e-05,95,,,csv,,False,flags_only,
+swift_escalated,aisdb,shipping,commodity,commodity,completed,,,completed,completed,R,analytical_reduction,adapter_declared,0.0001231050118803978,97,,,csv,,False,flags_only,
+swift_escalated,ais_project,shipping,commodity,commodity,completed,,,completed,completed,R,analytical_reduction,adapter_declared,5.3510069847106934e-05,98,,,csv,,False,flags_only,
+swift_escalated,nems,macroeconomic,short_run_macro,macro,completed,,,skipped,missing_data_or_binary,d,,none,,52,,,csv,,False,flags_only,"Not yet implemented: NEMS output directory not found: data/nems_outputs/Hormuz_ScenarioC
+Run NEMS externally and place outputs at this path, or update NEMSConfig.scenario_dir_mapping."
+swift_escalated,mam,macroeconomic,short_run_macro,macro,completed,,,completed,completed,I,published_output_ingestion,adapter_declared,0.21382042951881886,53,,,csv,,False,flags_only,
+swift_escalated,nrel,macroeconomic,short_run_macro,macro,completed,,,completed,completed,R,analytical_reduction,adapter_declared,0.00020770449191331863,54,,,csv,lngst,False,flags_only,
+swift_escalated,mpsge_jl,macroeconomic,long_run_macro_strategic,macro,completed,,,completed,completed,R,analytical_reduction,adapter_declared,0.00033837370574474335,55,,,csv,poles_jrc;lngst;world_helium_model;world_fertilizer,False,flags_only,
+swift_escalated,opencge,macroeconomic,long_run_macro_strategic,macro,completed,,,failed,runtime_error,x,,none,4.541917950846255,56,,,csv,,False,flags_only,"ValidationError: {
+    ""errors"": {
+        ""Z"": [
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list.""
+        ],
+        ""delta_tau_annual"": [
+            ""Not a valid list.""
+        ]
+    }
+}"
+swift_escalated,pycge,macroeconomic,long_run_macro_strategic,macro,completed,,,completed,completed,R,analytical_reduction,output_marker,3.055411177687347,57,,,csv,poles_jrc;world_helium_model;world_fertilizer,False,flags_only,
+swift_escalated,miragrodep,macroeconomic,long_run_macro_strategic,macro,completed,,,skipped,runtime_or_license_missing,l,,none,,58,,,csv,,False,flags_only,"Not yet implemented: MIRAGRODEP requires the 'gams' executable on PATH (GAMS + a CONOPT/PATH licence). Install GAMS and ensure 'gams' is on PATH, or set MIRAGRODEPConfig.gams_executable to its absolute path."
+swift_escalated,osemosys,energy_systems,long_run_macro_strategic,macro,completed,,,skipped,missing_data_or_binary,d,,none,,59,,,csv,,False,flags_only,Not yet implemented: OSeMOSYS baseline_data_dir not found: data/osemosys/baseline. Provide a baseline dataset (CSV-per-parameter layout).
+swift_escalated,messageix,energy_systems,long_run_macro_strategic,macro,completed,,,failed,runtime_or_license_missing,l,,none,1.5863097375258803,0,,,csv,,False,flags_only,JVMNotFoundException: No JVM shared library file (libjvm.so) found. Try setting up the JAVA_HOME environment variable properly.
+swift_escalated,temoa,energy_systems,long_run_macro_strategic,macro,completed,,,skipped,missing_data_or_binary,d,,none,,1,,,csv,,False,flags_only,Not yet implemented: TEMOA baseline DB not found: Models/Energy/TEMOA/data_files/utopia.sqlite. Vendor a baseline SQLite (e.g. utopia.sqlite) under Models/Energy/TEMOA/data_files/ or override TEMOAConfig.baseline_db_path.
+prolonged_escalated,weap_mena,water,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_escalated,sahysmod,water,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_escalated,watergap2,water,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_escalated,cwatm,water,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_escalated,bornstein_krusell_rebelo,oil,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_escalated,poles_jrc,oil,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_escalated,marketsim,oil,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_escalated,fed_oil,oil,short_run_macro,macro,completed,,,completed,completed,R,analytical_reduction,adapter_declared,0.00017907097935676575,2,,,csv,,False,flags_only,
+prolonged_escalated,energy_flux_gas_power,lng,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_escalated,energy_flux_lng_profits,lng,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_escalated,ggm,lng,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_escalated,lngst,lng,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_escalated,world_helium_model,helium_semiconductors,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_escalated,argonne_abm,helium_semiconductors,commodity_downstream,commodity_downstream,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_escalated,simrlfab,helium_semiconductors,commodity_downstream,commodity_downstream,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_escalated,capri,fertilizer_agriculture,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_escalated,magpie,fertilizer_agriculture,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_escalated,simple_g,fertilizer_agriculture,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_escalated,world_fertilizer,fertilizer_agriculture,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_escalated,gtap,fertilizer_agriculture,long_run_macro_strategic,macro,completed,,,skipped,stub,s,,none,,3,,,csv,,False,flags_only,"Not yet implemented: GTAPAdapter.execute is not yet implemented. Real integration requires: (1) a licensed GTAP database (version 10+, from the GTAP Center at Purdue University), (2) a GTAP model software installation (RunGTAP or FlexGTAP), (3) writing shock and closure files specifying oil price, fertilizer cost, and trade-route disruption shocks, (4) invoking the GTAP executable via subprocess, and (5) parsing the HAR/SOL solution file for welfare (EV by region), bilateral trade flows, and producer/consumer price changes by sector."
+prolonged_escalated,apsim,fertilizer_agriculture,commodity_downstream,commodity_downstream,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_escalated,futures,fertilizer_agriculture,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_escalated,aisdb,shipping,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_escalated,ais_project,shipping,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+prolonged_escalated,nems,macroeconomic,short_run_macro,macro,completed,,,skipped,missing_data_or_binary,d,,none,,4,,,csv,,False,flags_only,"Not yet implemented: NEMS output directory not found: data/nems_outputs/Hormuz_ScenarioD
+Run NEMS externally and place outputs at this path, or update NEMSConfig.scenario_dir_mapping."
+prolonged_escalated,mam,macroeconomic,short_run_macro,macro,completed,,,completed,completed,I,published_output_ingestion,adapter_declared,0.513776802457869,5,,,csv,,False,flags_only,
+prolonged_escalated,nrel,macroeconomic,short_run_macro,macro,completed,,,completed,completed,R,analytical_reduction,adapter_declared,0.0001670047640800476,6,,,csv,lngst(not run),True,flags_only,
+prolonged_escalated,mpsge_jl,macroeconomic,long_run_macro_strategic,macro,completed,,,completed,completed,R,analytical_reduction,adapter_declared,0.0003138938918709755,7,,,csv,poles_jrc(not run);lngst(not run);world_fertilizer(not run),True,flags_only,
+prolonged_escalated,opencge,macroeconomic,long_run_macro_strategic,macro,completed,,,failed,runtime_error,x,,none,4.96972272079438,8,,,csv,,False,flags_only,"ValidationError: {
+    ""errors"": {
+        ""Z"": [
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list.""
+        ],
+        ""delta_tau_annual"": [
+            ""Not a valid list.""
+        ]
+    }
+}"
+prolonged_escalated,pycge,macroeconomic,long_run_macro_strategic,macro,completed,,,completed,completed,R,analytical_reduction,output_marker,3.22498563118279,9,,,csv,poles_jrc(not run);world_fertilizer(not run),True,flags_only,
+prolonged_escalated,miragrodep,macroeconomic,long_run_macro_strategic,macro,completed,,,skipped,runtime_or_license_missing,l,,none,,10,,,csv,,False,flags_only,"Not yet implemented: MIRAGRODEP requires the 'gams' executable on PATH (GAMS + a CONOPT/PATH licence). Install GAMS and ensure 'gams' is on PATH, or set MIRAGRODEPConfig.gams_executable to its absolute path."
+prolonged_escalated,osemosys,energy_systems,long_run_macro_strategic,macro,completed,,,skipped,missing_data_or_binary,d,,none,,11,,,csv,,False,flags_only,Not yet implemented: OSeMOSYS baseline_data_dir not found: data/osemosys/baseline. Provide a baseline dataset (CSV-per-parameter layout).
+prolonged_escalated,messageix,energy_systems,long_run_macro_strategic,macro,completed,,,failed,runtime_or_license_missing,l,,none,1.0116836819797754,12,,,csv,,False,flags_only,JVMNotFoundException: No JVM shared library file (libjvm.so) found. Try setting up the JAVA_HOME environment variable properly.
+prolonged_escalated,temoa,energy_systems,long_run_macro_strategic,macro,completed,,,skipped,missing_data_or_binary,d,,none,,13,,,csv,,False,flags_only,Not yet implemented: TEMOA baseline DB not found: Models/Energy/TEMOA/data_files/utopia.sqlite. Vendor a baseline SQLite (e.g. utopia.sqlite) under Models/Energy/TEMOA/data_files/ or override TEMOAConfig.baseline_db_path.
+infrastructure_collapse,weap_mena,water,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+infrastructure_collapse,sahysmod,water,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+infrastructure_collapse,watergap2,water,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+infrastructure_collapse,cwatm,water,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+infrastructure_collapse,bornstein_krusell_rebelo,oil,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+infrastructure_collapse,poles_jrc,oil,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+infrastructure_collapse,marketsim,oil,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+infrastructure_collapse,fed_oil,oil,short_run_macro,macro,completed,,,completed,completed,R,analytical_reduction,adapter_declared,0.0001964811235666275,14,,,csv,,False,flags_only,
+infrastructure_collapse,energy_flux_gas_power,lng,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+infrastructure_collapse,energy_flux_lng_profits,lng,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+infrastructure_collapse,ggm,lng,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+infrastructure_collapse,lngst,lng,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+infrastructure_collapse,world_helium_model,helium_semiconductors,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+infrastructure_collapse,argonne_abm,helium_semiconductors,commodity_downstream,commodity_downstream,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+infrastructure_collapse,simrlfab,helium_semiconductors,commodity_downstream,commodity_downstream,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+infrastructure_collapse,capri,fertilizer_agriculture,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+infrastructure_collapse,magpie,fertilizer_agriculture,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+infrastructure_collapse,simple_g,fertilizer_agriculture,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+infrastructure_collapse,world_fertilizer,fertilizer_agriculture,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+infrastructure_collapse,gtap,fertilizer_agriculture,long_run_macro_strategic,macro,completed,,,skipped,stub,s,,none,,15,,,csv,,False,flags_only,"Not yet implemented: GTAPAdapter.execute is not yet implemented. Real integration requires: (1) a licensed GTAP database (version 10+, from the GTAP Center at Purdue University), (2) a GTAP model software installation (RunGTAP or FlexGTAP), (3) writing shock and closure files specifying oil price, fertilizer cost, and trade-route disruption shocks, (4) invoking the GTAP executable via subprocess, and (5) parsing the HAR/SOL solution file for welfare (EV by region), bilateral trade flows, and producer/consumer price changes by sector."
+infrastructure_collapse,apsim,fertilizer_agriculture,commodity_downstream,commodity_downstream,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+infrastructure_collapse,futures,fertilizer_agriculture,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+infrastructure_collapse,aisdb,shipping,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+infrastructure_collapse,ais_project,shipping,commodity,commodity,completed,,,no_record,record_missing,-,,none,,,,,csv,,False,flags_only,
+infrastructure_collapse,nems,macroeconomic,short_run_macro,macro,completed,,,failed,validation_failed,v,,none,,16,,,csv,,False,flags_only,"Validation failed: scenario_id 'infrastructure_collapse' not in NEMS output mapping. Available: baseline, prolonged_contained, prolonged_escalated, swift_contained, swift_escalated"
+infrastructure_collapse,mam,macroeconomic,short_run_macro,macro,completed,,,completed,completed,I,published_output_ingestion,adapter_declared,0.19919193722307682,17,,,csv,,False,flags_only,
+infrastructure_collapse,nrel,macroeconomic,short_run_macro,macro,completed,,,completed,completed,R,analytical_reduction,adapter_declared,0.00026523228734731674,18,,,csv,lngst(not run),True,flags_only,
+infrastructure_collapse,mpsge_jl,macroeconomic,long_run_macro_strategic,macro,completed,,,completed,completed,R,analytical_reduction,adapter_declared,0.00033151544630527496,19,,,csv,poles_jrc(not run);lngst(not run);world_helium_model(not run);world_fertilizer(not run);cwatm(not run),True,flags_only,
+infrastructure_collapse,opencge,macroeconomic,long_run_macro_strategic,macro,completed,,,failed,runtime_error,x,,none,4.609199174679816,20,,,csv,,False,flags_only,"ValidationError: {
+    ""errors"": {
+        ""Z"": [
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list."",
+            ""Not a valid list.""
+        ],
+        ""delta_tau_annual"": [
+            ""Not a valid list.""
+        ]
+    }
+}"
+infrastructure_collapse,pycge,macroeconomic,long_run_macro_strategic,macro,completed,,,completed,completed,R,analytical_reduction,output_marker,3.022943951189518,21,,,csv,poles_jrc(not run);world_helium_model(not run);cwatm(not run),True,flags_only,
+infrastructure_collapse,miragrodep,macroeconomic,long_run_macro_strategic,macro,completed,,,skipped,runtime_or_license_missing,l,,none,,22,,,csv,,False,flags_only,"Not yet implemented: MIRAGRODEP requires the 'gams' executable on PATH (GAMS + a CONOPT/PATH licence). Install GAMS and ensure 'gams' is on PATH, or set MIRAGRODEPConfig.gams_executable to its absolute path."
+infrastructure_collapse,osemosys,energy_systems,long_run_macro_strategic,macro,completed,,,skipped,missing_data_or_binary,d,,none,,23,,,csv,,False,flags_only,Not yet implemented: OSeMOSYS baseline_data_dir not found: data/osemosys/baseline. Provide a baseline dataset (CSV-per-parameter layout).
+infrastructure_collapse,messageix,energy_systems,long_run_macro_strategic,macro,completed,,,failed,runtime_or_license_missing,l,,none,1.004852520301938,24,,,csv,,False,flags_only,JVMNotFoundException: No JVM shared library file (libjvm.so) found. Try setting up the JAVA_HOME environment variable properly.
+infrastructure_collapse,temoa,energy_systems,long_run_macro_strategic,macro,completed,,,skipped,missing_data_or_binary,d,,none,,25,,,csv,,False,flags_only,Not yet implemented: TEMOA baseline DB not found: Models/Energy/TEMOA/data_files/utopia.sqlite. Vendor a baseline SQLite (e.g. utopia.sqlite) under Models/Energy/TEMOA/data_files/ or override TEMOAConfig.baseline_db_path.

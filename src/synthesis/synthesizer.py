@@ -13,6 +13,7 @@ on small-context LLMs (see ``src/synthesis/sectioning.py``).
 from __future__ import annotations
 
 import asyncio
+from collections import Counter
 from typing import Any, Callable
 
 from langchain_core.language_models import BaseChatModel
@@ -184,12 +185,34 @@ def _format_uncertainty_bullet(unc: dict[str, float] | None) -> str | None:
     return "  - uncertainty: " + "; ".join(parts)
 
 
-def _format_outcome_bullet(outcome: SynthesizedOutcome) -> str:
+REDUCTION_MARKER = "†"  # dagger: analytical reduction of the named model
+INGESTION_MARKER = "‡"  # double dagger: published-output ingestion
+
+
+def implementation_marker(mode: str | None) -> str:
+    """Marker appended to a model id in rendered reports by implementation mode."""
+    if mode == "analytical_reduction":
+        return REDUCTION_MARKER
+    if mode == "published_output_ingestion":
+        return INGESTION_MARKER
+    return ""
+
+
+def _format_outcome_bullet(
+    outcome: SynthesizedOutcome, mode_by_model: dict[str, str | None] | None = None
+) -> str:
     """Render a single SynthesizedOutcome as a Markdown bullet."""
     unit = f" {outcome.unit}" if outcome.unit else ""
+    marker = ""
+    if mode_by_model:
+        # Source ids can list several models ("pycge, mpsge_jl"); mark the
+        # bullet when any cited model ran as a reduction / ingestion.
+        cited = [s.strip() for s in str(outcome.source_model_id).split(",")]
+        markers = {implementation_marker(mode_by_model.get(c)) for c in cited}
+        marker = "".join(sorted(m for m in markers if m))
     line = (
         f"- **{outcome.variable}**: {outcome.value}{unit} "
-        f"_(source: `{outcome.source_model_id}`)_"
+        f"_(source: `{outcome.source_model_id}`{marker})_"
     )
     if outcome.narrative:
         line += f"\n  - {outcome.narrative}"
@@ -211,7 +234,10 @@ def _format_outcome_bullet(outcome: SynthesizedOutcome) -> str:
     return line
 
 
-def render_scenario_markdown(synthesis: ScenarioSynthesis) -> str:
+def render_scenario_markdown(
+    synthesis: ScenarioSynthesis,
+    mode_by_model: dict[str, str | None] | None = None,
+) -> str:
     """Render a ``ScenarioSynthesis`` as a self-contained Markdown report.
 
     Sections are grouped by ``(time_horizon, outcome_scope)`` with one
@@ -219,12 +245,19 @@ def render_scenario_markdown(synthesis: ScenarioSynthesis) -> str:
     warnings are listed at the bottom so the analyst can see what was
     excluded.
 
+    ``mode_by_model`` (``model_id -> ImplementationMode value``) marks each
+    outcome whose source ran as an analytical reduction (dagger) or as
+    published-output ingestion (double dagger) so a reader never mistakes
+    a reduction for the upstream model; a legend is appended when any
+    marker was used.
+
     Used by both the SLURM driver (`slurm/scripts/run_synthesis.py`) and
     the imperative orchestrator to populate `data/reports/<run_id>/`.
     """
     lines: list[str] = []
     lines.append(f"# Scenario {synthesis.scenario_id.value}: {synthesis.scenario_label}")
     lines.append("")
+    used_markers: set[str] = set()
 
     if synthesis.sections:
         for section in synthesis.sections:
@@ -239,10 +272,30 @@ def render_scenario_markdown(synthesis: ScenarioSynthesis) -> str:
                 lines.append("")
                 continue
             for outcome in section.outcomes:
-                lines.append(_format_outcome_bullet(outcome))
+                bullet = _format_outcome_bullet(outcome, mode_by_model)
+                if REDUCTION_MARKER in bullet.split("\n")[0]:
+                    used_markers.add(REDUCTION_MARKER)
+                if INGESTION_MARKER in bullet.split("\n")[0]:
+                    used_markers.add(INGESTION_MARKER)
+                lines.append(bullet)
             lines.append("")
     else:
         lines.append("_No synthesized sections produced for this scenario._")
+        lines.append("")
+
+    if used_markers:
+        lines.append("## Implementation markers")
+        lines.append("")
+        if REDUCTION_MARKER in used_markers:
+            lines.append(
+                f"- {REDUCTION_MARKER} the cited model ran as a closed-form, literature-calibrated "
+                "reduction implemented in its adapter, not as the upstream model (see the model inventory)."
+            )
+        if INGESTION_MARKER in used_markers:
+            lines.append(
+                f"- {INGESTION_MARKER} the cited model's values are ingested published outputs "
+                "(EIA AEO tables), not a scenario-specific solve."
+            )
         lines.append("")
 
     if synthesis.uncertainty_interpretation is not None:
@@ -965,6 +1018,99 @@ def _aggregate_sections_into_scenario(
     )
 
 
+def _apply_fidelity_validator(
+    scoped: ScopedSynthesis,
+    section_results: list[ModelExecutionResult],
+    scenario_id: Scenario,
+    known_ids: list[str],
+    fidelity_config: Any,
+    chain: Runnable,
+    prompt_inputs: dict[str, Any],
+) -> tuple[ScopedSynthesis, list[ConsistencyFlag], list[str], dict[str, Any]]:
+    """Audit one section's outcomes against the model outputs it was built from.
+
+    Returns ``(scoped, flags, warnings, metrics)``. Source ids are
+    canonicalised in place (the raw id is kept on
+    ``source_model_id_raw``), every outcome gets ``fidelity_status``,
+    mismatches become ConsistencyFlags (``on_mismatch: flag``) or are
+    dropped (``on_mismatch: block``). With ``reprompt_once`` the section
+    call is repeated once with the mismatch list appended to the model
+    results before the policy applies.
+    """
+    from src.synthesis.fidelity import (  # noqa: WPS433
+        MISMATCH_CATEGORIES,
+        audit_section,
+        format_fidelity_feedback,
+    )
+
+    def _run(sc: ScopedSynthesis):
+        return audit_section(sc, section_results, known_ids, scenario_id.value)
+
+    audits = _run(scoped)
+    mismatched = [a for a in audits if a.category in MISMATCH_CATEGORIES]
+    reprompted = False
+    if mismatched and getattr(fidelity_config, "reprompt_once", False):
+        retry_inputs = dict(prompt_inputs)
+        retry_inputs["model_results"] = (
+            str(prompt_inputs.get("model_results", ""))
+            + "\n\n### Correction required\n"
+            + format_fidelity_feedback(mismatched)
+        )
+        try:
+            candidate = chain.invoke(retry_inputs)
+            candidate_audits = _run(candidate)
+            candidate_mismatched = [a for a in candidate_audits if a.category in MISMATCH_CATEGORIES]
+            if len(candidate_mismatched) < len(mismatched):
+                scoped, audits, mismatched = candidate, candidate_audits, candidate_mismatched
+            reprompted = True
+        except Exception as exc:  # noqa: BLE001 — keep the first answer
+            logger.warning(f"Fidelity re-prompt failed; keeping first answer: {exc}")
+
+    flags: list[ConsistencyFlag] = []
+    warnings: list[str] = []
+    kept: list[SynthesizedOutcome] = []
+    for outcome, audit in zip(scoped.outcomes, audits):
+        if audit.source_canonicalization and audit.source_model_ids:
+            outcome.source_model_id_raw = audit.source_model_id_raw
+            outcome.source_model_id = ", ".join(audit.source_model_ids)
+        outcome.fidelity_status = audit.category
+        if audit.category in MISMATCH_CATEGORIES:
+            model_value = next((m.matched_value for m in audit.number_matches if m.matched_value is not None), None)
+            flags.append(ConsistencyFlag(
+                scenario_id=scenario_id,
+                model_a_id=outcome.source_model_id or "unknown",
+                model_b_id="synthesis_llm",
+                variable=outcome.variable,
+                value_a=model_value,
+                value_b=outcome.value,
+                tolerance_pct=0.0,
+                deviation_pct=0.0,
+                message=(
+                    f"Synthesis fidelity: outcome '{outcome.variable}' value {outcome.value!r} "
+                    f"(source {audit.source_model_id_raw!r}) could not be matched to any output of the "
+                    f"cited model ({audit.category})."
+                    + (" Dropped from the report." if fidelity_config.on_mismatch == "block" else "")
+                ),
+            ))
+            if fidelity_config.on_mismatch == "block":
+                warnings.append(
+                    f"Fidelity validator dropped outcome '{outcome.variable}' ({audit.category})"
+                )
+                continue
+        kept.append(outcome)
+    if fidelity_config.on_mismatch == "block":
+        scoped.outcomes = kept
+    metrics = {
+        "outcomes": len(audits),
+        "mismatched": len(mismatched),
+        "dropped": len(audits) - len(kept) if fidelity_config.on_mismatch == "block" else 0,
+        "canonicalized_sources": sum(1 for a in audits if any(a.source_canonicalization.values())),
+        "by_category": dict(Counter(a.category for a in audits)),
+        "reprompted": reprompted,
+    }
+    return scoped, flags, warnings, metrics
+
+
 def synthesize_by_section(
     llm: BaseChatModel,
     scenario_id: Scenario,
@@ -973,6 +1119,7 @@ def synthesize_by_section(
     consistency_config=None,
     routes: list[SectionRoute] | None = None,
     on_truncation: Callable[[SectionKey, int], None] | None = None,
+    fidelity_config: Any = None,
 ) -> tuple[list[ConsistencyFlag], ScenarioSynthesis, dict[SectionKey, dict[str, Any]]]:
     """Run consistency checks then synthesize one LLM call per section.
 
@@ -986,18 +1133,38 @@ def synthesize_by_section(
             ``load_section_routes()``.
         on_truncation: Optional callback ``(section_key, attempt) -> None``
             invoked when ``with_overflow_retry`` halves the prompt.
+        fidelity_config: Optional ``FidelityConfig``; when enabled (and
+            ``on_mismatch != "off"``) every section's outcomes are audited
+            against the model outputs they cite (see
+            ``src.synthesis.fidelity``).
 
     Returns:
         A 3-tuple ``(flags, scenario_synthesis, section_metrics)``:
-        - ``flags``: cross-model consistency flags for the scenario.
+        - ``flags``: cross-model consistency flags for the scenario
+          (plus fidelity flags when the validator is on).
         - ``scenario_synthesis``: aggregated ``ScenarioSynthesis``.
         - ``section_metrics``: per-section dict with ``model_count``,
           ``prompt_tokens``, ``status`` (``"ok"|"empty"|"failed"``),
-          and ``truncation_attempts``. Used by the SLURM driver to
-          surface budget telemetry into the W&B summary.
+          ``truncation_attempts`` and, when the validator ran,
+          ``fidelity``. Used by the SLURM driver to surface telemetry
+          into the W&B summary.
     """
     routes = routes or load_section_routes()
-    flags = check_consistency(scenario_id, results, consistency_config)
+    flags = list(check_consistency(scenario_id, results, consistency_config))
+    validator_on = bool(
+        fidelity_config is not None
+        and getattr(fidelity_config, "enabled", False)
+        and getattr(fidelity_config, "on_mismatch", "off") != "off"
+    )
+    known_ids: list[str] = []
+    if validator_on:
+        known_ids = [r.model_id for r in results]
+        try:
+            from src.parameters.model_specs import ALL_MODEL_SPECS  # noqa: WPS433
+
+            known_ids += [m for m in ALL_MODEL_SPECS if m not in known_ids]
+        except Exception:  # noqa: BLE001
+            pass
 
     # Build section -> [model_id] routing once for the whole scenario.
     completed_results = [
@@ -1115,6 +1282,14 @@ def synthesize_by_section(
             section_outputs.append(scoped)
             continue
 
+        fidelity_metrics: dict[str, Any] | None = None
+        if validator_on:
+            scoped, fid_flags, fid_warnings, fidelity_metrics = _apply_fidelity_validator(
+                scoped, section_results, scenario_id, known_ids, fidelity_config, chain, prompt_inputs
+            )
+            flags.extend(fid_flags)
+            consistency_warnings.update(fid_warnings)
+
         section_outputs.append(scoped)
         section_metrics[section_key] = {
             "model_count": len(section_results),
@@ -1122,6 +1297,8 @@ def synthesize_by_section(
             "status": "ok",
             "truncation_attempts": truncation_events.get(section_key, 0),
         }
+        if fidelity_metrics is not None:
+            section_metrics[section_key]["fidelity"] = fidelity_metrics
 
     # Failed/skipped models from the scenario as a whole (not just this
     # section). ScopedSynthesis itself has no failed_models /

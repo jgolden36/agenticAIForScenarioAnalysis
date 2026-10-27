@@ -1,0 +1,24 @@
+{
+  "title": "Agentic AI orchestration pipeline for rapid analysis of chokepoint crises (Strait of Hormuz 2026 case)",
+  "upload_type": "software",
+  "description": "LangGraph-based orchestration of a multi-model, multi-scenario analytical pipeline for chokepoint crises. The release used for the revised Communications Engineering manuscript includes the domain-model adapters and analytical reductions, the upstream-to-downstream forwarding mechanism, the synthesis fidelity audit, the per-cell coverage ledger, the run-specific model inventory, and the deterministic analyst baseline (configs/baselines/hormuz_2026_analyst.yaml) used as the comparator for the LLM-driven path. Given names and ORCIDs of the co-authors are to be completed by the authors before publishing the record.",
+  "creators": [
+    {"name": "Golden, Dana", "affiliation": "Stony Brook University"},
+    {"name": "Indelicato"},
+    {"name": "Varshney"},
+    {"name": "Thornsbury"}
+  ],
+  "keywords": [
+    "agentic AI",
+    "scenario analysis",
+    "chokepoint crises",
+    "Strait of Hormuz",
+    "energy economics",
+    "LangGraph",
+    "computable general equilibrium"
+  ],
+  "access_right": "open",
+  "version": "0.1.0",
+  "language": "eng",
+  "notes": "Companion software for the manuscript 'Agentic AI Modeling for Rapid Analysis of Chokepoint Crises Along Strategic and Economic Dimensions: A Case Study of the Closure of the Strait of Hormuz' (Communications Engineering, manuscript 28847ff1). Vendored upstream models under Models/ keep their own licenses; see docs/revision/model_licenses.md."
+}

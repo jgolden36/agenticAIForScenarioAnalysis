@@ -1,0 +1,72 @@
+[
+  {
+    "step": "coverage_ledger",
+    "ok": true,
+    "return": 0
+  },
+  {
+    "step": "model_inventory",
+    "ok": true,
+    "return": 0
+  },
+  {
+    "step": "fidelity_audit",
+    "ok": true,
+    "return": 0
+  },
+  {
+    "step": "anchor_comparison",
+    "ok": true,
+    "return": 0
+  },
+  {
+    "step": "checkpoint_report",
+    "ok": true,
+    "return": 0
+  },
+  {
+    "step": "coverage_facts",
+    "ok": true,
+    "return": 0
+  },
+  {
+    "step": "pycge_replay",
+    "ok": true,
+    "return": 0
+  },
+  {
+    "step": "effort_metrics",
+    "ok": true,
+    "return": 0
+  },
+  {
+    "step": "software_versions",
+    "ok": true,
+    "return": 0
+  },
+  {
+    "step": "model_licenses",
+    "ok": true,
+    "return": 0
+  },
+  {
+    "step": "deterministic_baseline",
+    "ok": true,
+    "return": 0
+  },
+  {
+    "step": "compare_runs",
+    "ok": true,
+    "return": 0
+  },
+  {
+    "step": "baseline_coverage_ledger",
+    "ok": true,
+    "return": 0
+  },
+  {
+    "step": "copy_baseline_summary",
+    "ok": true,
+    "return": 0
+  }
+]

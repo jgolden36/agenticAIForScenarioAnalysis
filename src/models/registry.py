@@ -84,6 +84,50 @@ class ModelRegistry:
             if a.resource_requirements.requires_gpu
         )
 
+    def inventory(self) -> list[dict[str, Any]]:
+        """One row per registered adapter describing how it is implemented.
+
+        Joins the adapter's identity (``model_id``, commodity system,
+        analytical level, adapter source path) with its
+        :class:`~src.models.base.ImplementationInfo`. Used by
+        ``slurm/scripts/build_model_inventory.py`` to emit the model
+        inventory tables for the README and the manuscript SI, and by the
+        README sync test.
+        """
+        import inspect
+
+        root = Path(__file__).resolve().parents[2]
+        rows: list[dict[str, Any]] = []
+        for adapter in self._adapters.values():
+            info = adapter.implementation_info
+            try:
+                path = Path(inspect.getfile(type(adapter))).resolve()
+                adapter_path = str(path.relative_to(root)) if path.is_relative_to(root) else str(path)
+            except (TypeError, OSError):  # pragma: no cover - builtins / dynamic classes
+                adapter_path = ""
+            rows.append({
+                "model_id": adapter.model_id,
+                "display_name": info.display_name or adapter.model_id,
+                "display_name_reduced": info.display_name_reduced,
+                "commodity_system": adapter.commodity_system.value,
+                "analytical_level": adapter.analytical_level.value,
+                "adapter_path": adapter_path,
+                "adapter_class": type(adapter).__name__,
+                "status_label": info.status_label,
+                "mode_when_executed": info.mode_when_executed.value,
+                "modes_available": [m.value for m in info.modes_available],
+                "requires_config": info.requires_config,
+                "platform": info.platform,
+                "upstream_reference": info.upstream_reference,
+                "calibration_sources": list(info.calibration_sources),
+                "key_equations": list(info.key_equations),
+                "limitations": list(info.limitations),
+                "license_notes": info.license_notes,
+                "description": adapter.description,
+            })
+        rows.sort(key=lambda r: (r["commodity_system"], r["model_id"]))
+        return rows
+
     def __len__(self) -> int:
         return len(self._adapters)
 

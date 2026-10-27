@@ -12,7 +12,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from src.common.types import AnalyticalLevel, CommoditySystem
+from src.common.types import AnalyticalLevel, CommoditySystem, ImplementationMode
 
 
 class ValidationResult(BaseModel):
@@ -154,6 +154,177 @@ class UncertaintyReport(BaseModel):
     )
 
 
+class ImplementationInfo(BaseModel):
+    """Static description of how an adapter implements its domain model.
+
+    Populated per adapter so the registry can emit a run-independent
+    model inventory (platform, calibration sources, key equations,
+    limitations) and so the runtimes can label each execution record
+    with the :class:`ImplementationMode` that was actually used.
+    """
+
+    mode_when_executed: ImplementationMode = Field(
+        default=ImplementationMode.UNKNOWN,
+        description=(
+            "Mode ``execute()`` runs in when it returns normally and the "
+            "ModelOutput carries no explicit mode marker. Config-aware "
+            "adapters that branch at runtime should instead tag "
+            "``ModelOutput.metadata['mode']``."
+        ),
+    )
+    modes_available: list[ImplementationMode] = Field(
+        default_factory=list,
+        description="Every mode this adapter can run in (full, reduction, ...).",
+    )
+    status_label: str = Field(
+        default="",
+        description=(
+            "Human-readable status used in the inventory tables, e.g. "
+            "'Real', 'Real (config-aware)', 'Real (analytical MVP)', "
+            "'Config-aware stub', 'Stub'."
+        ),
+    )
+    requires_config: bool = Field(
+        default=False,
+        description=(
+            "True when the full upstream path only runs with a YAML config "
+            "(binary / data / licence paths) and execute() raises "
+            "NotImplementedError without one."
+        ),
+    )
+    display_name: str = Field(default="", description="Human-readable model name.")
+    display_name_reduced: str = Field(
+        default="",
+        description=(
+            "Name to print when the analytical reduction ran, e.g. "
+            "'POLES-calibrated reduction'. Empty when no reduction exists."
+        ),
+    )
+    platform: str = Field(default="", description="Language / runtime of the upstream model.")
+    upstream_reference: str = Field(
+        default="", description="Citation or URL for the upstream model."
+    )
+    calibration_sources: list[str] = Field(
+        default_factory=list,
+        description="Literature estimates the reduction is calibrated against.",
+    )
+    key_equations: list[str] = Field(
+        default_factory=list,
+        description="One-line statements of the reduced-form equations.",
+    )
+    limitations: list[str] = Field(
+        default_factory=list,
+        description="Main limitations relative to the upstream model.",
+    )
+    license_notes: str = Field(
+        default="", description="Licensing restrictions on the upstream model."
+    )
+
+
+# Tokens that adapters already write into ``ModelOutput.metadata`` (keys
+# ``mode`` / ``execution_mode`` / ``engine``) or into ``outputs``
+# (``_execution_mode``), mapped onto the canonical enum. Unknown tokens
+# resolve to ``None`` so the caller can fall back to the adapter's
+# declared default instead of guessing.
+_MODE_TOKENS: dict[str, ImplementationMode] = {
+    "analytical_mvp": ImplementationMode.ANALYTICAL_REDUCTION,
+    "analytical": ImplementationMode.ANALYTICAL_REDUCTION,
+    "analytical_reduction": ImplementationMode.ANALYTICAL_REDUCTION,
+    "closed_form": ImplementationMode.ANALYTICAL_REDUCTION,
+    "kernel_fallback": ImplementationMode.ANALYTICAL_REDUCTION,
+    "mvp": ImplementationMode.ANALYTICAL_REDUCTION,
+    "output_ingestion": ImplementationMode.PUBLISHED_OUTPUT_INGESTION,
+    "aeo_ingestion": ImplementationMode.PUBLISHED_OUTPUT_INGESTION,
+    "published_output_ingestion": ImplementationMode.PUBLISHED_OUTPUT_INGESTION,
+    "ingestion": ImplementationMode.PUBLISHED_OUTPUT_INGESTION,
+    "stub": ImplementationMode.STUB,
+    "full_upstream": ImplementationMode.FULL_UPSTREAM,
+    "subprocess": ImplementationMode.FULL_UPSTREAM,
+    "remote": ImplementationMode.FULL_UPSTREAM,
+    "eviews_subprocess": ImplementationMode.FULL_UPSTREAM,
+    "cge_modeling": ImplementationMode.FULL_UPSTREAM,
+    "octave": ImplementationMode.FULL_UPSTREAM,
+    "octave_dynare": ImplementationMode.FULL_UPSTREAM,
+    "dynare": ImplementationMode.FULL_UPSTREAM,
+    "gams": ImplementationMode.FULL_UPSTREAM,
+    "julia": ImplementationMode.FULL_UPSTREAM,
+    "juliacall": ImplementationMode.FULL_UPSTREAM,
+    "excel": ImplementationMode.FULL_UPSTREAM,
+    "xlwings": ImplementationMode.FULL_UPSTREAM,
+    "openpyxl": ImplementationMode.FULL_UPSTREAM,
+    "anylogic": ImplementationMode.FULL_UPSTREAM,
+    "jar": ImplementationMode.FULL_UPSTREAM,
+    "r": ImplementationMode.FULL_UPSTREAM,
+    "rscript": ImplementationMode.FULL_UPSTREAM,
+    "rpy2": ImplementationMode.FULL_UPSTREAM,
+    "native": ImplementationMode.FULL_UPSTREAM,
+    "python": ImplementationMode.FULL_UPSTREAM,
+    "cli": ImplementationMode.FULL_UPSTREAM,
+    "api": ImplementationMode.FULL_UPSTREAM,
+    "http": ImplementationMode.FULL_UPSTREAM,
+    "ogcore": ImplementationMode.FULL_UPSTREAM,
+    "ixmp": ImplementationMode.FULL_UPSTREAM,
+    "pyomo": ImplementationMode.FULL_UPSTREAM,
+    "com": ImplementationMode.FULL_UPSTREAM,
+}
+
+_MODE_METADATA_KEYS = ("mode", "execution_mode", "implementation_mode", "engine")
+_MODE_OUTPUT_KEYS = ("_implementation_mode", "_execution_mode")
+
+
+def normalize_mode_token(token: Any) -> ImplementationMode | None:
+    """Map a free-form mode token to :class:`ImplementationMode` (or None)."""
+    if token is None:
+        return None
+    if isinstance(token, ImplementationMode):
+        return token
+    key = str(token).strip().lower().replace("-", "_").replace(" ", "_")
+    return _MODE_TOKENS.get(key)
+
+
+def resolve_implementation_mode(
+    output: "ModelOutput | None",
+    adapter: "ModelAdapter | None" = None,
+    outputs: dict[str, Any] | None = None,
+) -> ImplementationMode:
+    """Determine the implementation mode a completed execution used.
+
+    Precedence: explicit markers in ``ModelOutput.metadata`` (``mode``,
+    ``execution_mode``, ``implementation_mode``, ``engine``), then
+    markers in the outputs dict (``_execution_mode``,
+    ``_used_analytical_mvp``, ``_macro_source`` ending in
+    ``kernel_fallback``), then the adapter's declared
+    ``implementation_info.mode_when_executed``, then ``UNKNOWN``.
+    ``outputs`` may be passed on its own (e.g. when re-reading persisted
+    ``output.json`` files) in which case ``output`` can be ``None``.
+    """
+    metadata: dict[str, Any] = {}
+    if output is not None:
+        metadata = output.metadata or {}
+        if outputs is None:
+            outputs = output.outputs
+    outputs = outputs or {}
+
+    for key in _MODE_METADATA_KEYS:
+        mode = normalize_mode_token(metadata.get(key))
+        if mode is not None:
+            return mode
+    for key in _MODE_OUTPUT_KEYS:
+        mode = normalize_mode_token(outputs.get(key))
+        if mode is not None:
+            return mode
+    if outputs.get("_used_analytical_mvp") is True:
+        return ImplementationMode.ANALYTICAL_REDUCTION
+    macro_source = outputs.get("_macro_source")
+    if isinstance(macro_source, str) and macro_source.endswith("kernel_fallback"):
+        return ImplementationMode.ANALYTICAL_REDUCTION
+    if adapter is not None:
+        declared = adapter.implementation_info.mode_when_executed
+        if declared != ImplementationMode.UNKNOWN:
+            return declared
+    return ImplementationMode.UNKNOWN
+
+
 class ModelAdapter(ABC):
     """Abstract base class for all domain model adapters.
 
@@ -194,6 +365,24 @@ class ModelAdapter(ABC):
         isolation. Defaults to a minimal single-threaded CPU profile.
         """
         return ResourceRequirements()
+
+    @property
+    def implementation_info(self) -> ImplementationInfo:
+        """Static implementation description used by the model inventory.
+
+        Resolved from the central table in
+        ``src/models/implementation_info.py`` by ``model_id``; subclasses
+        may override. An adapter without an entry gets the conservative
+        default (``UNKNOWN`` mode, no calibration sources) so it is
+        reported as unannotated rather than mislabelled.
+        """
+        try:
+            from src.models.implementation_info import IMPLEMENTATION_INFO  # noqa: WPS433
+
+            info = IMPLEMENTATION_INFO.get(self.model_id)
+        except Exception:  # noqa: BLE001 — never let inventory metadata break execution
+            info = None
+        return info if info is not None else ImplementationInfo()
 
     @abstractmethod
     def validate_inputs(self, params: dict[str, Any]) -> ValidationResult:

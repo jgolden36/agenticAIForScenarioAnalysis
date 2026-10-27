@@ -28,6 +28,23 @@ class SynthesizedOutcome(BaseModel):
     value: str
     unit: str | None = None
     source_model_id: str
+    source_model_id_raw: str | None = Field(
+        default=None,
+        description=(
+            "The source id exactly as the LLM wrote it when the fidelity "
+            "validator had to repair it (e.g. 'mpse_jl' -> 'mpsge_jl'); "
+            "None when no repair was needed."
+        ),
+    )
+    fidelity_status: str = Field(
+        default="",
+        description=(
+            "Fidelity-audit category for this outcome's value (exact, "
+            "rounded, unit_scaled, matched_other_key, derived_arithmetic, "
+            "source_not_run, source_unknown, unmatched, non_numeric). "
+            "Empty when the validator did not run."
+        ),
+    )
     narrative: str = ""
     reliability_note: str = ""
     regional_distribution: dict[str, float] | None = None

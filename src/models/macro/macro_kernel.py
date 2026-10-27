@@ -283,6 +283,64 @@ REGIONAL_CPI_MULTIPLIERS: dict[str, dict[str, float]] = {
 # still propagate regionally rather than silently zero.
 DEFAULT_REGIONAL_MULTIPLIER: float = 1.0
 
+# Approximate shares of world GDP at purchasing-power parity for the
+# unified regions (IMF World Economic Outlook, April 2024 vintage, rounded
+# and renormalised to 100). Used only to build a *world-weighted* mean of
+# the per-region rows; the headline ``gdp_impact_pct`` of
+# :func:`compute_macro_outcomes` is NOT a world aggregate (see
+# ``AGGREGATE_DEFINITION``).
+WORLD_GDP_SHARES_PPP: dict[str, float] = {
+    "US": 15.0,
+    "CHN": 18.7,
+    "IND": 7.9,
+    "EU": 14.5,
+    "MENA_GCC": 2.4,
+    "MENA_OTHER": 3.0,
+    "SSA": 3.0,
+    "LAC": 7.3,
+    "ROW": 28.2,
+}
+
+AGGREGATE_DEFINITION: str = (
+    "gdp_impact_pct / cpi_inflation_pct are the kernel's OECD/US-calibrated "
+    "reference-economy response (multiplier 1.0 on every commodity), not a "
+    "world aggregate. They coincide with the ROW regional row whenever the "
+    "helium and water shocks are zero (ROW uses multiplier 0.5 on those two "
+    "commodities) and differ otherwise. The *_world_weighted fields are the "
+    "IMF WEO 2024 PPP-share-weighted mean of the regional rows."
+)
+
+
+def world_weighted_aggregate(
+    regional_rows: list[dict[str, Any]],
+    field: str,
+    shares: dict[str, float] | None = None,
+) -> float | None:
+    """PPP-share-weighted mean of ``field`` over the regional rows.
+
+    Weights are renormalised over the regions present so a partial table
+    still yields a finite mean. Returns ``None`` when no row carries a
+    numeric value for ``field``.
+    """
+    shares = shares or WORLD_GDP_SHARES_PPP
+    total = 0.0
+    weight_sum = 0.0
+    for row in regional_rows or []:
+        region = row.get("region")
+        value = row.get(field)
+        if region not in shares or value is None:
+            continue
+        try:
+            v = float(value)
+        except (TypeError, ValueError):
+            continue
+        w = shares[region]
+        total += w * v
+        weight_sum += w
+    if weight_sum <= 0:
+        return None
+    return round(total / weight_sum, 4)
+
 
 # ---------------------------------------------------------------------------
 # Public API
@@ -488,6 +546,10 @@ def compute_macro_outcomes(
         "interest_rate_impact_pct": round(interest_rate_pct, 4),
         "sectoral_output_pct_change": sectoral,
         "regional_vars": regional,
+        # World-weighted companions to the reference-economy headline.
+        "gdp_impact_pct_world_weighted": world_weighted_aggregate(regional, "gdp_impact_pct"),
+        "cpi_inflation_pct_world_weighted": world_weighted_aggregate(regional, "cpi_inflation_pct"),
+        "_aggregate_definition": AGGREGATE_DEFINITION,
         "_inputs": {
             "commodity_shocks": shocks,
             "duration_months": float(duration_months),

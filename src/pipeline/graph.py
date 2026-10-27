@@ -40,6 +40,7 @@ from src.common.types import (
 )
 from src.interface.comparison import find_robust_outcomes
 from src.interface.provenance import ProvenanceTracker
+from src.models.base import resolve_implementation_mode
 from src.models.executor import ModelExecutor
 from src.models.uncertainty import maybe_run_with_uncertainty
 from src.models.registry import (
@@ -698,6 +699,12 @@ def _execute_one_model_node(state: OverallSimulationState) -> dict:
             "requires_gpu": reqs.requires_gpu,
             "gpu_device": output.gpu_device,
             "worker_id": output.worker_id,
+            # Adapter metadata + implementation mode survive into Module 4
+            # so the run-specific inventory can label each cell.
+            "metadata": dict(output.metadata or {}),
+            "implementation_mode": resolve_implementation_mode(
+                output, adapter
+            ).value,
         }
         if output.uncertainty is not None:
             result_entry["uncertainty"] = output.uncertainty.model_dump()

@@ -156,7 +156,7 @@ Adding a new intra-tier dependency is a YAML-only change: append a `models: <dow
 - Model runs should be parallelized where dependencies allow. Within each analytical level, models can run in parallel. Across levels, they are sequential.
 - Each model wrapper must capture stdout/stderr, convergence diagnostics, and timing information.
 - Failures in individual model runs should be isolated—a single model failure should not crash the pipeline.
-- Stage 3 splits into three phases on the cluster: `Stage 3a` runs combat + commodity models; the dispatcher is then invoked with `--tier commodity_downstream` (audit at `data/pipeline_state/<run_id>_commodity_downstream_overrides.json`) and `Stage 3a-2` runs SimRLFab and Argonne ABM with helium-derived shocks; the dispatcher is invoked again with `--tier macro` (audit at `data/pipeline_state/<run_id>_macro_overrides.json`) and `Stage 3b` runs the macro models. The local LangGraph encodes the same split as two barrier nodes between `execute_commodity_model`, `execute_commodity_downstream_model`, and `execute_macro_model`.
+- Stage 3 splits into three phases on the cluster: `Stage 3a` runs combat + commodity models; the dispatcher is then invoked with `--tier commodity_downstream` (audit at `data/pipeline_state/<run_id>_commodity_downstream_overrides.json`) and `Stage 3a-2` runs SimRLFab and Argonne ABM with helium-derived shocks; the dispatcher is invoked again with `--tier macro` (audit at `data/pipeline_state/<run_id>_macro_overrides.json`) and `Stage 3b` runs the macro models. The local LangGraph encodes the same split as two barrier nodes between `execute_commodity_model`, `execute_commodity_downstream_model`, and `execute_macro_model`. Each tier's array indices restart at 0, so Stage 3 state records are named `<run_id>_model_<tier>_<task>.json` (`slurm/scripts/stage_utils.py :: model_state_stage`); the earlier `<run_id>_model_<task>.json` naming let the macro tier overwrite the commodity tier's records (observed on run 20260504_222710, recoverable with `scripts/revision/recover_run_from_outputs.py` from `data/outputs/**/metadata.json`). The dispatcher's upstream loader keeps only `data/outputs/` entries whose `metadata.run_id` equals the current run and lists ignored stale entries under `_stale_upstream_ignored` in the override audit JSON (`--allow-stale-upstream` disables the filter). Parameter-extraction failures now leave a `status: failed` record in `<run_id>_params_<task>.json` and are skipped by the dispatcher.
 
 ### Module 4: Output Synthesis
 
@@ -175,6 +175,7 @@ Adding a new intra-tier dependency is a YAML-only change: append a `models: <dow
 - The consistency check is not a formality. Models operating at different scales can produce contradictory implications. The synthesis module must detect and flag these.
 - Results should be traceable: every number in the synthesis must link back to a specific model run with specific inputs.
 - The LLM is used here to generate narrative summaries, but the underlying quantitative results must not be modified or interpolated by the LLM.
+- **Fidelity validator (October 2026):** `src/synthesis/fidelity.py` audits every `SynthesizedOutcome` and every number in its prose against the cited model's outputs (categories: exact, rounded, unit_scaled, matched_other_key, derived_arithmetic, source_not_run, source_unknown, unmatched, non_numeric), canonicalises malformed source ids (the raw id is kept on `source_model_id_raw`), and, when `synthesis.fidelity.enabled` is on in `PipelineConfig`, runs inline after each section call: mismatches become `ConsistencyFlag`s (`on_mismatch: flag`) or are dropped (`block`), optionally after one re-prompt with the mismatch list (`reprompt_once`). `slurm/scripts/run_fidelity_audit.py` runs the same audit post hoc on a saved run. `src/synthesis/run_health.py :: assess_run` defines **clean synthesis** (synthesis state written, zero failed sections, no synthesis-stage bash failure, every scenario has a completed model and an outcome) and the explicit denominators and wall-clock split written to `summary.json`.
 
 ### Module 5: Analyst Interface
 
@@ -335,11 +336,18 @@ The derived-macro augmentation runs `src/models/macro/macro_kernel.py :: derive_
 
 ### Implementation status summary
 
-- **Fully wired (real `execute`) — 10 adapters:** Bornstein-Krusell-Rebelo, Energy Flux Gas Power, Energy Flux LNG Profits, NEMS, MAM, OpenCGE, MIRAGRODEP, OSeMOSYS, MESSAGEix, TEMOA. The three energy-systems adapters (OSeMOSYS, MESSAGEix, TEMOA) additionally augment their outputs with macro_kernel-derived `gdp_impact_pct` / `cpi_inflation_pct` / `consumption_impact_pct` / `welfare_pct_change` tagged `_macro_source: <model>_derived`.
-- **Real config-aware (activate when YAML is provided) — 5 adapters:** SahysMod, CWatM, GGM, SimRLFab, MAgPIE.
-- **Real (analytical MVP mode) — 16 adapters:** POLES-JRC, World Helium Model, Futures, CWatM (analytical fallback when `_config is None`), **PyCGE** (closed-form macro kernel fallback when `cge_modeling` is missing or its pre-alpha API does not match), **AISdb**, **AIS_project**, **Fed Workhorse Oil**, **MarketSim**, **MPSGE.jl** (analytical fallback when no `JuliaConfig`), **NREL** (with macro_kernel-derived companion outputs), **Argonne Helium ABM** (analytical fallback when no `AnyLogicConfig`; 20 stochastic replications), **World Fertilizer Model** (analytical fallback when no `GAMSConfig`), **APSIM**, **LNGST** (analytical fallback when no `ExcelConfig`), **WEAP-MENA** (analytical fallback when no `WEAPConfig`). These use closed-form formulas with literature-sourced calibration so every commodity system (including SHIPPING, which previously had zero runnable models) has at least one runnable model on the cluster MVP. Real upstream-model execution paths (where they exist) are preserved and activated when the corresponding YAML/data assets are provided.
-- **Config-aware stubs (dispatch wired, real `execute` pending) — 1 adapter:** WaterGAP2.
-- **Typed stubs (awaiting upstream code) — 3 adapters:** CAPRI, SIMPLE-G, GTAP.
+The authoritative per-model record is `src/models/implementation_info.py` (`IMPLEMENTATION_INFO`), rendered into the README tables by `python slurm/scripts/build_model_inventory.py --update-readme` and checked by `tests/test_docs/test_readme_inventory_sync.py`. Each entry declares the `ImplementationMode` the adapter uses when it runs without extra configuration (`mode_when_executed`), the modes it can reach with configuration (`modes_available`), its platform, upstream reference, calibration sources, key equations, limitations and license notes. Every execution record now carries the mode actually used (`implementation_mode`), so a run-specific inventory can state which cells ran the upstream model and which ran a reduction.
+
+Counts by default mode (34 adapters):
+
+- **full_upstream** (12): bornstein_krusell_rebelo, energy_flux_gas_power, energy_flux_lng_profits, ggm, magpie, messageix, miragrodep, opencge, osemosys, sahysmod, simrlfab, temoa
+- **published_output_ingestion** (2): mam, nems
+- **analytical_reduction** (16): ais_project, aisdb, apsim, argonne_abm, cwatm, fed_oil, futures, lngst, marketsim, mpsge_jl, nrel, poles_jrc, pycge, weap_mena, world_fertilizer, world_helium_model
+- **stub** (4): capri, gtap, simple_g, watergap2
+
+Status labels in the inventory: Config-aware stub (1); Real (8); Real (analytical MVP) (9); Real (analytical MVP) + config-aware full path (7); Real (config-aware) (4); Real (published-output ingestion) + optional full path (2); Stub (3).
+
+In rendered reports an analytical reduction is marked with a dagger and published-output ingestion with a double dagger (`src/synthesis/synthesizer.py :: implementation_marker`), so a reader never mistakes a reduction for the upstream model.
 
 ### MVP commodity-system coverage
 
@@ -532,6 +540,10 @@ hormuz-pipeline/
 │       ├── llm.py                     # LLM client configuration (LangChain)
 │       ├── types.py                   # Shared type definitions and enums
 │       └── logging.py                 # Structured logging
+│
+├── scripts/revision/                  # Revision analyses (baseline comparison, effort metrics, replays, facts)
+├── docs/revision/                     # Generated audit tables and records cited by the manuscript
+├── CITATION.cff, .zenodo.json         # Software citation metadata
 │
 ├── tests/
 │   ├── __init__.py
@@ -735,6 +747,18 @@ Non-Python prerequisites required by specific adapters (not pip-installable): GA
 - The specific prompt engineering for scenario generation and parameter extraction. The `prompts.py` files contain initial templates that are refined iteratively based on output quality.
 - The web-based analyst interface. The initial implementation uses CLI-based review (`src/interface/review.py`). A web UI is a future extension.
 - Deployment, CI/CD, or cloud infrastructure. This is a research codebase.
+
+## Revision and audit tooling (October 2026)
+
+Scripts added for the Communications Engineering revision live in `scripts/revision/` (one-off analyses) and `slurm/scripts/` (stage-style tools); their outputs are checked in under `docs/revision/` and regenerated with `python scripts/revision/build_all.py --run-id <id> --report-dir <dir> [--baseline configs/baselines/hormuz_2026_analyst.yaml]`.
+
+- `slurm/scripts/build_coverage_ledger.py` / `src/interface/coverage.py`: per-cell ledger (34 model specs x 5 scenarios) with execution status, skip class (`stub`, `missing_config`, `missing_data_or_binary`, `license_or_runtime`, `validation_failed`, `timeout`, `runtime_error`, `record_missing`, `not_dispatched`, ...), implementation mode and upstream sources; `coverage_map.png` in `visualize_results.py`.
+- `slurm/scripts/build_model_inventory.py`: static and run-specific inventories from `IMPLEMENTATION_INFO`; `--update-readme`.
+- `slurm/scripts/run_fidelity_audit.py`, `slurm/scripts/trace_provenance.py` (`src/interface/provenance.py :: ProvenanceTracker` now records narrative sentences, override records and synthesis outcomes per traced variable).
+- `scripts/revision/anchor_comparison.py`, `checkpoint_report.py`, `backend_comparison.py`, `coverage_facts.py`, `replay_pycge_scenario_a.py`, `effort_metrics.py`, `software_versions.py`, `model_licenses.py`, `recover_run_from_outputs.py`.
+- Deterministic comparator: `configs/baselines/hormuz_2026_analyst.yaml` + `slurm/scripts/run_deterministic_baseline.py` run Modules 2-4 with no LLM (analyst parameters, shared `ModelExecutor` with forwarding, `check_consistency`, templated synthesis in `src/synthesis/templated.py`); `scripts/revision/compare_runs.py` diffs it against an LLM run.
+- Macro kernel additions: `gdp_impact_pct_world_weighted` (IMF WEO PPP shares, `macro_kernel.world_weighted_aggregate`) alongside the reference-economy headline, and `fed_oil` exposes its reduced-form identities (`_reduced_form_equations`).
+- Citation metadata: `CITATION.cff`, `.zenodo.json`.
 
 ## Companion documents
 

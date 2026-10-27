@@ -1,0 +1,564 @@
+# Analyst-authored deterministic baseline for the Hormuz 2026 case.
+#
+# This file replaces Module 1 (scenario generation) and Module 2 (parameter
+# extraction) with fixed, analyst-written inputs so the rest of the pipeline
+# (Module 3 execution with upstream forwarding, Module 4 consistency checks,
+# a templated LLM-free synthesis) can be run with no language model at all.
+# It is the comparator for the "what does the agentic layer add" experiment
+# (Reviewer 2, point 1): the same adapters run on the same framework, the
+# only difference being who wrote the scenario parameters.
+#
+# Structure
+#   scenarios:   one entry per Scenario id (label, short narrative, the
+#                quantitative assumptions the narrative commits to).
+#   models:      one block per model id in src/parameters/model_specs.
+#                `default` holds parameters shared by every scenario;
+#                `by_scenario.<scenario_id>` overrides them. The runner
+#                merges default <- by_scenario and injects `scenario_id`.
+#   anchors:     documentation of the per-scenario anchor values the model
+#                blocks were derived from. Not read by the runner.
+#
+# Every value is an analyst judgement anchored on the scenario framework
+# (configs/scenario_frameworks/hormuz_2026.yaml), the crisis description, and
+# the published figures cited inline. Where the LLM-driven run of
+# 2026-05-04 recorded an applied shock (quantitative_results.csv,
+# `_applied_shocks.*` and `_inputs.*` rows) the analyst value is stated next
+# to it so the two can be compared. Categorical values use the vocabularies
+# the adapters validate against.
+#
+# Run with:
+#   python slurm/scripts/run_deterministic_baseline.py \
+#       --baseline configs/baselines/hormuz_2026_analyst.yaml --run-id baseline_analyst
+
+baseline_id: hormuz_2026_analyst
+version: 1
+authored: "2026-10"
+description: >
+  Analyst-authored scenario parameters for the five Hormuz 2026 scenarios
+  (four Schwartz matrix quadrants plus the prescribed infrastructure-collapse
+  tail risk). Values are fixed and documented so the pipeline can be rerun
+  without a language model.
+
+provenance:
+  framework: configs/scenario_frameworks/hormuz_2026.yaml
+  crisis_description: configs/crisis_descriptions/hormuz_2026.yaml
+  llm_run_for_comparison: "20260504_222710"
+  notes: >
+    Oil transit through the Strait is about 20-21 mb/d (EIA, 2024), of which
+    roughly 2.6 mb/d can bypass via the Saudi East-West pipeline and the UAE
+    Habshan-Fujairah line (EIA, 2023), so the net loss is capped near 17-18 mb/d
+    in the acute phase. Qatar exports about 77-80 Mt/yr of LNG (about 20 pct of
+    global trade) and supplies about 30 pct of world helium (USGS, 2024). GCC
+    desalination serves roughly 40 million people. Price anchors are analyst
+    judgements consistent with Hamilton (2009) supply-shock elasticities and
+    the 2022 European gas crisis as the LNG reference.
+
+# Per-scenario anchors (documentation; the model blocks carry the values).
+anchors:
+  swift_contained:
+    closure_weeks: 5
+    acute_duration_months: 1.25
+    net_oil_supply_loss_mbd: 14.0
+    oil_price_shock_pct: 50.0
+    henry_hub_change_pct: 15.0
+    qatar_lng_export_loss_pct: 85.0
+    helium_supply_loss_pct: 70.0
+    desalination_capacity_loss_pct: 0.0
+    fertilizer_price_shock_pct: 20.0
+    llm_run_applied_oil_shock_pct: 54.79
+  prolonged_contained:
+    closure_weeks: 20
+    acute_duration_months: 4.5
+    net_oil_supply_loss_mbd: 15.0
+    oil_price_shock_pct: 65.0
+    henry_hub_change_pct: 25.0
+    qatar_lng_export_loss_pct: 90.0
+    helium_supply_loss_pct: 85.0
+    desalination_capacity_loss_pct: 2.0
+    fertilizer_price_shock_pct: 35.0
+    llm_run_applied_oil_shock_pct: 60.5
+  swift_escalated:
+    closure_weeks: 6
+    acute_duration_months: 1.5
+    net_oil_supply_loss_mbd: 16.0
+    oil_price_shock_pct: 60.0
+    henry_hub_change_pct: 20.0
+    qatar_lng_export_loss_pct: 90.0
+    helium_supply_loss_pct: 85.0
+    desalination_capacity_loss_pct: 15.0
+    fertilizer_price_shock_pct: 30.0
+    llm_run_applied_oil_shock_pct: 58.25
+  prolonged_escalated:
+    closure_weeks: 26
+    acute_duration_months: 6.0
+    net_oil_supply_loss_mbd: 17.0
+    oil_price_shock_pct: 80.0
+    henry_hub_change_pct: 35.0
+    qatar_lng_export_loss_pct: 95.0
+    helium_supply_loss_pct: 95.0
+    desalination_capacity_loss_pct: 30.0
+    fertilizer_price_shock_pct: 45.0
+    llm_run_applied_oil_shock_pct: 51.82
+  infrastructure_collapse:
+    closure_weeks: 22
+    acute_duration_months: 6.0
+    infrastructure_recovery_months: 24.0
+    net_oil_supply_loss_mbd: 13.5
+    oil_price_shock_pct: 95.0
+    henry_hub_change_pct: 45.0
+    qatar_lng_export_loss_pct: 65.0
+    helium_supply_loss_pct: 80.0
+    desalination_capacity_loss_pct: 70.0
+    fertilizer_price_shock_pct: 60.0
+    llm_run_applied_oil_shock_pct: 48.36
+
+scenarios:
+  - scenario_id: swift_contained
+    label: "Swift Resolution, Contained Conflict"
+    narrative: >
+      The Strait is mined and closed to commercial traffic in mid-February
+      2026. A US-led naval escort regime and a brokered ceasefire restore
+      transit after five weeks. The conflict stays on the Iran-US/Israel axis;
+      no Gulf state infrastructure is struck. Net oil supply loss is about 14
+      mb/d after pipeline bypass, Qatari LNG loading stops for the closure
+      window, and helium shipments from Ras Laffan halt. Prices spike and
+      retrace within a quarter; there is no lasting damage to productive
+      capacity.
+    quantitative_assumptions:
+      closure_duration_weeks: 5
+      net_oil_supply_loss_mbd: 14.0
+      qatar_lng_export_loss_pct: 85
+      helium_supply_loss_pct: 70
+      desalination_capacity_loss_pct: 0
+      oil_price_peak_change_pct: 50
+    consistency_notes: "Short, sharp disruption; no infrastructure damage."
+  - scenario_id: prolonged_contained
+    label: "Prolonged Closure, Contained Conflict"
+    narrative: >
+      Iran keeps the Strait closed as a bargaining chip for about five months
+      while hostilities stay limited to the Iran-US/Israel axis. Bypass
+      pipelines run at capacity, strategic reserves are drawn down, and OPEC
+      spare capacity outside the Gulf is used. Qatari LNG and helium exports
+      stay offline for the full window. Markets price a structural shortfall,
+      fertilizer feedstock costs rise with natural gas, and shipping reroutes
+      around the Cape of Good Hope for the duration.
+    quantitative_assumptions:
+      closure_duration_weeks: 20
+      net_oil_supply_loss_mbd: 15.0
+      qatar_lng_export_loss_pct: 90
+      helium_supply_loss_pct: 85
+      desalination_capacity_loss_pct: 2
+      oil_price_peak_change_pct: 65
+    consistency_notes: "Prolonged shortfall without physical destruction."
+  - scenario_id: swift_escalated
+    label: "Swift Resolution, Escalated Conflict"
+    narrative: >
+      The Strait reopens after six weeks, but the conflict widens: strikes on
+      Gulf coastal targets damage some desalination intakes and a loading
+      terminal, Houthi attacks disrupt Bab el-Mandeb, and war-risk insurance
+      spikes across the region. Oil and LNG flows resume quickly, yet repair
+      work and the second chokepoint keep rerouting costs elevated. About
+      fifteen percent of GCC desalination capacity is lost for several months.
+    quantitative_assumptions:
+      closure_duration_weeks: 6
+      net_oil_supply_loss_mbd: 16.0
+      qatar_lng_export_loss_pct: 90
+      helium_supply_loss_pct: 85
+      desalination_capacity_loss_pct: 15
+      oil_price_peak_change_pct: 60
+    consistency_notes: "Short closure, broad conflict, partial infrastructure damage."
+  - scenario_id: prolonged_escalated
+    label: "Prolonged Closure, Escalated Conflict"
+    narrative: >
+      A six-month closure combined with a regional war. Repeated strikes on
+      Gulf energy and water infrastructure remove about thirty percent of
+      desalination capacity, Qatari LNG trains are idled, helium supply from
+      Qatar is effectively lost, and Bab el-Mandeb is contested. Net oil loss
+      peaks near 17 mb/d. Humanitarian pressure in coastal GCC cities grows
+      through the second quarter of the closure.
+    quantitative_assumptions:
+      closure_duration_weeks: 26
+      net_oil_supply_loss_mbd: 17.0
+      qatar_lng_export_loss_pct: 95
+      helium_supply_loss_pct: 95
+      desalination_capacity_loss_pct: 30
+      oil_price_peak_change_pct: 80
+    consistency_notes: "Prolonged closure with sustained infrastructure damage."
+  - scenario_id: infrastructure_collapse
+    label: "Infrastructure Collapse (Tail Risk)"
+    narrative: >
+      The prolonged-and-escalated path ends in the destruction of a large
+      share of Gulf export and water infrastructure. The Strait formally
+      reopens at month five, but throughput stays capped at 50-60 percent of
+      pre-crisis volumes through year two. Seventy percent of GCC desalination
+      capacity is lost with a two-year restoration, Ras Laffan runs at 30-40
+      percent of nameplate for 18-24 months, and Saudi and UAE terminals lose
+      5-8 mb/d of export capacity for 9-15 months. Reconstruction absorbs USD
+      250-400 billion over three to five years.
+    quantitative_assumptions:
+      closure_duration_weeks: 22
+      infrastructure_recovery_months: 24
+      net_oil_supply_loss_mbd: 13.5
+      qatar_lng_export_loss_pct: 65
+      helium_supply_loss_pct: 80
+      desalination_capacity_loss_pct: 70
+      oil_price_peak_change_pct: 95
+      reconstruction_overhang_bn_usd: 325
+    consistency_notes: "supply_infrastructure_status = destroyed for the water adapters."
+
+models:
+  # ------------------------------------------------------------------ WATER
+  weap_mena:
+    default:
+      affected_countries: ["SAU", "ARE", "QAT", "KWT", "BHR"]
+      alternative_supply_available: true
+    by_scenario:
+      swift_contained: {desalination_capacity_loss_pct: 0.0, disruption_duration_weeks: 5, population_affected_millions: 0.0}
+      prolonged_contained: {desalination_capacity_loss_pct: 2.0, disruption_duration_weeks: 20, population_affected_millions: 1.0}
+      swift_escalated: {desalination_capacity_loss_pct: 15.0, disruption_duration_weeks: 12, population_affected_millions: 8.0}
+      prolonged_escalated: {desalination_capacity_loss_pct: 30.0, disruption_duration_weeks: 30, population_affected_millions: 16.0}
+      infrastructure_collapse: {desalination_capacity_loss_pct: 70.0, disruption_duration_weeks: 96, population_affected_millions: 40.0, alternative_supply_available: false}
+  sahysmod:
+    default: {}
+    by_scenario:
+      swift_contained: {irrigation_water_reduction_pct: 0.0, salinity_increase_factor: 1.0, disruption_duration_weeks: 5}
+      prolonged_contained: {irrigation_water_reduction_pct: 2.0, salinity_increase_factor: 1.02, disruption_duration_weeks: 20}
+      swift_escalated: {irrigation_water_reduction_pct: 10.0, salinity_increase_factor: 1.1, disruption_duration_weeks: 12}
+      prolonged_escalated: {irrigation_water_reduction_pct: 25.0, salinity_increase_factor: 1.25, disruption_duration_weeks: 30}
+      infrastructure_collapse: {irrigation_water_reduction_pct: 60.0, salinity_increase_factor: 1.6, disruption_duration_weeks: 96}
+  watergap2:
+    default:
+      affected_grid_cells: "GCC coastal basins (Arabian Peninsula east coast, 0.5 degree cells)"
+    by_scenario:
+      swift_contained: {infrastructure_damage_index: 0.0, disruption_duration_months: 1.25}
+      prolonged_contained: {infrastructure_damage_index: 0.05, disruption_duration_months: 4.5}
+      swift_escalated: {infrastructure_damage_index: 0.3, disruption_duration_months: 3.0}
+      prolonged_escalated: {infrastructure_damage_index: 0.5, disruption_duration_months: 7.0}
+      infrastructure_collapse: {infrastructure_damage_index: 0.9, disruption_duration_months: 24.0}
+  cwatm:
+    default: {}
+    by_scenario:
+      swift_contained: {water_demand_change_pct: 0.0, supply_infrastructure_status: intact, disruption_duration_months: 1.25}
+      prolonged_contained: {water_demand_change_pct: 2.0, supply_infrastructure_status: intact, disruption_duration_months: 4.5}
+      swift_escalated: {water_demand_change_pct: 5.0, supply_infrastructure_status: partially_damaged, disruption_duration_months: 3.0}
+      prolonged_escalated: {water_demand_change_pct: 8.0, supply_infrastructure_status: partially_damaged, disruption_duration_months: 7.0}
+      infrastructure_collapse: {water_demand_change_pct: 10.0, supply_infrastructure_status: destroyed, disruption_duration_months: 24.0}
+
+  # -------------------------------------------------------------------- OIL
+  bornstein_krusell_rebelo:
+    default:
+      spr_release_mbd: 2.0
+      opec_spare_capacity_mbd: 3.0
+      demand_elasticity_override: -0.1
+      section: "Section 5/supply_shocks_to_non_opec"
+    by_scenario:
+      swift_contained: {supply_loss_mbd: 14.0, disruption_duration_months: 1.25}
+      prolonged_contained: {supply_loss_mbd: 15.0, disruption_duration_months: 4.5, spr_release_mbd: 3.0}
+      swift_escalated: {supply_loss_mbd: 16.0, disruption_duration_months: 1.5}
+      prolonged_escalated: {supply_loss_mbd: 17.0, disruption_duration_months: 6.0, spr_release_mbd: 3.0, opec_spare_capacity_mbd: 2.0}
+      infrastructure_collapse: {supply_loss_mbd: 13.5, disruption_duration_months: 12.0, spr_release_mbd: 3.0, opec_spare_capacity_mbd: 2.0}
+  poles_jrc:
+    default:
+      substitute_energy_availability: 0.3
+    by_scenario:
+      swift_contained: {supply_loss_mbd: 14.0, disruption_duration_months: 1.25, rerouting_cost_multiplier: 1.4, insurance_premium_increase_pct: 300.0}
+      prolonged_contained: {supply_loss_mbd: 15.0, disruption_duration_months: 4.5, rerouting_cost_multiplier: 1.5, insurance_premium_increase_pct: 500.0}
+      swift_escalated: {supply_loss_mbd: 16.0, disruption_duration_months: 1.5, rerouting_cost_multiplier: 1.6, insurance_premium_increase_pct: 600.0, substitute_energy_availability: 0.25}
+      prolonged_escalated: {supply_loss_mbd: 17.0, disruption_duration_months: 6.0, rerouting_cost_multiplier: 1.7, insurance_premium_increase_pct: 900.0, substitute_energy_availability: 0.25}
+      infrastructure_collapse: {supply_loss_mbd: 13.5, disruption_duration_months: 12.0, rerouting_cost_multiplier: 1.8, insurance_premium_increase_pct: 1000.0, substitute_energy_availability: 0.2}
+  marketsim:
+    default: {}
+    by_scenario:
+      swift_contained: {oil_price_shock_pct: 50.0, natural_gas_price_change_pct: 15.0, disruption_duration_months: 1.25}
+      prolonged_contained: {oil_price_shock_pct: 65.0, natural_gas_price_change_pct: 25.0, disruption_duration_months: 4.5}
+      swift_escalated: {oil_price_shock_pct: 60.0, natural_gas_price_change_pct: 20.0, disruption_duration_months: 1.5}
+      prolonged_escalated: {oil_price_shock_pct: 80.0, natural_gas_price_change_pct: 35.0, disruption_duration_months: 6.0}
+      infrastructure_collapse: {oil_price_shock_pct: 95.0, natural_gas_price_change_pct: 45.0, disruption_duration_months: 12.0}
+  fed_oil:
+    default:
+      shock_type: supply
+      fed_funds_rate_baseline: 3.75
+    by_scenario:
+      swift_contained: {oil_price_change_pct: 50.0, disruption_duration_quarters: 1}
+      prolonged_contained: {oil_price_change_pct: 65.0, disruption_duration_quarters: 2}
+      swift_escalated: {oil_price_change_pct: 60.0, disruption_duration_quarters: 1}
+      prolonged_escalated: {oil_price_change_pct: 80.0, disruption_duration_quarters: 2}
+      infrastructure_collapse: {oil_price_change_pct: 95.0, disruption_duration_quarters: 4}
+
+  # -------------------------------------------------------------------- LNG
+  energy_flux_gas_power:
+    default:
+      build_scenario: central
+      projection_years: 10
+    by_scenario:
+      swift_contained: {}
+      prolonged_contained: {}
+      swift_escalated: {}
+      prolonged_escalated: {build_scenario: stretch}
+      infrastructure_collapse: {build_scenario: stretch}
+  energy_flux_lng_profits:
+    default: {}
+    by_scenario:
+      swift_contained: {disruption_duration_months: 2, ttf_peak_price: 25.0, jkm_peak_price: 27.0, hh_crisis_price: 4.5}
+      prolonged_contained: {disruption_duration_months: 5, ttf_peak_price: 35.0, jkm_peak_price: 38.0, hh_crisis_price: 5.5}
+      swift_escalated: {disruption_duration_months: 2, ttf_peak_price: 30.0, jkm_peak_price: 33.0, hh_crisis_price: 5.0}
+      prolonged_escalated: {disruption_duration_months: 6, ttf_peak_price: 45.0, jkm_peak_price: 48.0, hh_crisis_price: 6.5}
+      infrastructure_collapse: {disruption_duration_months: 12, ttf_peak_price: 55.0, jkm_peak_price: 58.0, hh_crisis_price: 7.5}
+  ggm:
+    default:
+      strait_closure_flag: true
+      iran_lng_export_loss_pct: 100.0
+      rerouting_available: false
+      scenario_label: NPS
+      time_horizon: "2025"
+    by_scenario:
+      swift_contained: {qatar_lng_export_loss_pct: 85.0, uae_lng_export_loss_pct: 80.0, disruption_duration_months: 1.25, insurance_premium_multiplier: 4.0}
+      prolonged_contained: {qatar_lng_export_loss_pct: 90.0, uae_lng_export_loss_pct: 85.0, disruption_duration_months: 4.5, insurance_premium_multiplier: 6.0}
+      swift_escalated: {qatar_lng_export_loss_pct: 90.0, uae_lng_export_loss_pct: 85.0, disruption_duration_months: 1.5, insurance_premium_multiplier: 7.0}
+      prolonged_escalated: {qatar_lng_export_loss_pct: 95.0, uae_lng_export_loss_pct: 90.0, disruption_duration_months: 6.0, insurance_premium_multiplier: 10.0}
+      infrastructure_collapse: {qatar_lng_export_loss_pct: 65.0, uae_lng_export_loss_pct: 60.0, disruption_duration_months: 18.0, insurance_premium_multiplier: 10.0}
+  lngst:
+    default: {}
+    by_scenario:
+      swift_contained: {qatar_export_reduction_pct: 85.0, uae_export_reduction_pct: 80.0, spot_price_multiplier: 1.8, disruption_duration_months: 1.25}
+      prolonged_contained: {qatar_export_reduction_pct: 90.0, uae_export_reduction_pct: 85.0, spot_price_multiplier: 2.5, disruption_duration_months: 4.5}
+      swift_escalated: {qatar_export_reduction_pct: 90.0, uae_export_reduction_pct: 85.0, spot_price_multiplier: 2.2, disruption_duration_months: 1.5}
+      prolonged_escalated: {qatar_export_reduction_pct: 95.0, uae_export_reduction_pct: 90.0, spot_price_multiplier: 3.0, disruption_duration_months: 6.0}
+      infrastructure_collapse: {qatar_export_reduction_pct: 65.0, uae_export_reduction_pct: 60.0, spot_price_multiplier: 3.5, disruption_duration_months: 18.0}
+
+  # ----------------------------------------------------- HELIUM / SEMICONDUCTORS
+  world_helium_model:
+    default:
+      strategic_reserve_release: true
+    by_scenario:
+      swift_contained: {qatar_helium_supply_loss_pct: 70.0, disruption_duration_months: 1.25}
+      prolonged_contained: {qatar_helium_supply_loss_pct: 85.0, disruption_duration_months: 4.5}
+      swift_escalated: {qatar_helium_supply_loss_pct: 85.0, disruption_duration_months: 1.5}
+      prolonged_escalated: {qatar_helium_supply_loss_pct: 95.0, disruption_duration_months: 6.0}
+      infrastructure_collapse: {qatar_helium_supply_loss_pct: 80.0, disruption_duration_months: 24.0}
+  argonne_abm:
+    # supply_shock_pct and disruption_duration_months are replaced by
+    # world_helium_model outputs when forwarding is on; the analyst values
+    # below are the fallback and the "before" value in the override record.
+    default:
+      demand_response_elasticity: -0.3
+    by_scenario:
+      swift_contained: {supply_shock_pct: 21.0, disruption_duration_months: 1.25}
+      prolonged_contained: {supply_shock_pct: 25.5, disruption_duration_months: 4.5}
+      swift_escalated: {supply_shock_pct: 25.5, disruption_duration_months: 1.5}
+      prolonged_escalated: {supply_shock_pct: 28.5, disruption_duration_months: 6.0}
+      infrastructure_collapse: {supply_shock_pct: 24.0, disruption_duration_months: 24.0}
+  simrlfab:
+    default:
+      fab_utilization_baseline: 0.85
+    by_scenario:
+      swift_contained: {helium_supply_reduction_pct: 21.0, neon_supply_status: normal, disruption_duration_months: 1.25}
+      prolonged_contained: {helium_supply_reduction_pct: 25.5, neon_supply_status: normal, disruption_duration_months: 4.5}
+      swift_escalated: {helium_supply_reduction_pct: 25.5, neon_supply_status: constrained, disruption_duration_months: 1.5}
+      prolonged_escalated: {helium_supply_reduction_pct: 28.5, neon_supply_status: constrained, disruption_duration_months: 6.0}
+      infrastructure_collapse: {helium_supply_reduction_pct: 24.0, neon_supply_status: severely_disrupted, disruption_duration_months: 24.0}
+
+  # ------------------------------------------------- FERTILIZER / AGRICULTURE
+  capri:
+    default: {}
+    by_scenario:
+      swift_contained: {fertilizer_price_shock_pct: 20.0, energy_price_change_pct: 15.0, disruption_duration_months: 1.25}
+      prolonged_contained: {fertilizer_price_shock_pct: 35.0, energy_price_change_pct: 25.0, disruption_duration_months: 4.5}
+      swift_escalated: {fertilizer_price_shock_pct: 30.0, energy_price_change_pct: 20.0, disruption_duration_months: 1.5}
+      prolonged_escalated: {fertilizer_price_shock_pct: 45.0, energy_price_change_pct: 35.0, disruption_duration_months: 6.0}
+      infrastructure_collapse: {fertilizer_price_shock_pct: 60.0, energy_price_change_pct: 45.0, disruption_duration_months: 12.0}
+  magpie:
+    default:
+      ssp_scenario: SSP2
+      affected_regions: ["MEA", "SAS", "EUR"]
+    by_scenario:
+      swift_contained: {fertilizer_price_shock_pct: 20.0, crop_yield_impact_pct: -0.5, water_availability_change_pct: 0.0, energy_price_shock_pct: 15.0}
+      prolonged_contained: {fertilizer_price_shock_pct: 35.0, crop_yield_impact_pct: -2.0, water_availability_change_pct: -1.0, energy_price_shock_pct: 25.0}
+      swift_escalated: {fertilizer_price_shock_pct: 30.0, crop_yield_impact_pct: -1.5, water_availability_change_pct: -5.0, energy_price_shock_pct: 20.0}
+      prolonged_escalated: {fertilizer_price_shock_pct: 45.0, crop_yield_impact_pct: -4.0, water_availability_change_pct: -12.0, energy_price_shock_pct: 35.0}
+      infrastructure_collapse: {fertilizer_price_shock_pct: 60.0, crop_yield_impact_pct: -8.0, water_availability_change_pct: -35.0, energy_price_shock_pct: 45.0}
+  simple_g:
+    default: {}
+    by_scenario:
+      swift_contained: {fertilizer_price_shock_pct: 20.0, energy_price_shock_pct: 15.0, trade_disruption_index: 0.2}
+      prolonged_contained: {fertilizer_price_shock_pct: 35.0, energy_price_shock_pct: 25.0, trade_disruption_index: 0.4}
+      swift_escalated: {fertilizer_price_shock_pct: 30.0, energy_price_shock_pct: 20.0, trade_disruption_index: 0.4}
+      prolonged_escalated: {fertilizer_price_shock_pct: 45.0, energy_price_shock_pct: 35.0, trade_disruption_index: 0.6}
+      infrastructure_collapse: {fertilizer_price_shock_pct: 60.0, energy_price_shock_pct: 45.0, trade_disruption_index: 0.8}
+  world_fertilizer:
+    default: {}
+    by_scenario:
+      swift_contained: {natural_gas_price_change_pct: 15.0, middle_east_production_loss_pct: 60.0, disruption_duration_months: 1.25}
+      prolonged_contained: {natural_gas_price_change_pct: 25.0, middle_east_production_loss_pct: 70.0, disruption_duration_months: 4.5}
+      swift_escalated: {natural_gas_price_change_pct: 20.0, middle_east_production_loss_pct: 70.0, disruption_duration_months: 1.5}
+      prolonged_escalated: {natural_gas_price_change_pct: 35.0, middle_east_production_loss_pct: 80.0, disruption_duration_months: 6.0}
+      infrastructure_collapse: {natural_gas_price_change_pct: 45.0, middle_east_production_loss_pct: 85.0, disruption_duration_months: 12.0}
+  gtap:
+    default:
+      trade_route_disruption_spec:
+        hormuz_transit_fraction_lost: 1.0
+        cape_rerouting_cost_multiplier: 1.5
+    by_scenario:
+      swift_contained: {oil_price_shock_pct: 50.0, fertilizer_price_shock_pct: 20.0, disruption_duration_months: 1.25}
+      prolonged_contained: {oil_price_shock_pct: 65.0, fertilizer_price_shock_pct: 35.0, disruption_duration_months: 4.5}
+      swift_escalated: {oil_price_shock_pct: 60.0, fertilizer_price_shock_pct: 30.0, disruption_duration_months: 1.5}
+      prolonged_escalated: {oil_price_shock_pct: 80.0, fertilizer_price_shock_pct: 45.0, disruption_duration_months: 6.0}
+      infrastructure_collapse: {oil_price_shock_pct: 95.0, fertilizer_price_shock_pct: 60.0, disruption_duration_months: 12.0}
+  apsim:
+    # Both percentage inputs are replaced by world_fertilizer / cwatm outputs
+    # when forwarding is on (price_to_demand_reduction, elasticity 0.35).
+    default:
+      growing_season: "2026_winter_wheat"
+    by_scenario:
+      swift_contained: {fertilizer_application_reduction_pct: 7.0, irrigation_water_reduction_pct: 0.0}
+      prolonged_contained: {fertilizer_application_reduction_pct: 12.0, irrigation_water_reduction_pct: 1.0}
+      swift_escalated: {fertilizer_application_reduction_pct: 10.0, irrigation_water_reduction_pct: 5.0}
+      prolonged_escalated: {fertilizer_application_reduction_pct: 15.0, irrigation_water_reduction_pct: 12.0}
+      infrastructure_collapse: {fertilizer_application_reduction_pct: 20.0, irrigation_water_reduction_pct: 35.0}
+  futures:
+    default:
+      commodities: ["wheat", "corn", "soybeans", "natural_gas", "urea"]
+      forecast_horizon_months: 12
+    by_scenario:
+      swift_contained: {initial_price_shock_pct: 20.0}
+      prolonged_contained: {initial_price_shock_pct: 35.0}
+      swift_escalated: {initial_price_shock_pct: 30.0}
+      prolonged_escalated: {initial_price_shock_pct: 45.0}
+      infrastructure_collapse: {initial_price_shock_pct: 60.0}
+
+  # --------------------------------------------------------------- SHIPPING
+  aisdb:
+    default:
+      strait_closure_flag: true
+      alternative_routes: ["cape_of_good_hope"]
+      vessel_types: ["tanker", "lng_carrier", "container", "bulk_carrier"]
+    by_scenario:
+      swift_contained: {}
+      prolonged_contained: {}
+      swift_escalated: {alternative_routes: ["cape_of_good_hope", "suez_canal"]}
+      prolonged_escalated: {alternative_routes: ["cape_of_good_hope", "suez_canal"]}
+      infrastructure_collapse: {alternative_routes: ["cape_of_good_hope", "suez_canal"]}
+  ais_project:
+    default:
+      strait_closure_flag: true
+      rerouting_via_cape: true
+    by_scenario:
+      swift_contained: {fleet_size_change_pct: -2.0, disruption_duration_months: 1.25}
+      prolonged_contained: {fleet_size_change_pct: -5.0, disruption_duration_months: 4.5}
+      swift_escalated: {fleet_size_change_pct: -4.0, disruption_duration_months: 1.5}
+      prolonged_escalated: {fleet_size_change_pct: -8.0, disruption_duration_months: 6.0}
+      infrastructure_collapse: {fleet_size_change_pct: -10.0, disruption_duration_months: 12.0}
+
+  # ---------------------------------------------------------- MACROECONOMIC
+  nems:
+    default:
+      shock_window_start_year: 2026
+    by_scenario:
+      swift_contained: {oil_price_shock_pct: 50.0, natural_gas_price_shock_pct: 15.0, lng_price_shock_pct: 80.0, disruption_duration_months: 1.25}
+      prolonged_contained: {oil_price_shock_pct: 65.0, natural_gas_price_shock_pct: 25.0, lng_price_shock_pct: 150.0, disruption_duration_months: 4.5}
+      swift_escalated: {oil_price_shock_pct: 60.0, natural_gas_price_shock_pct: 20.0, lng_price_shock_pct: 120.0, disruption_duration_months: 1.5}
+      prolonged_escalated: {oil_price_shock_pct: 80.0, natural_gas_price_shock_pct: 35.0, lng_price_shock_pct: 200.0, disruption_duration_months: 6.0}
+      infrastructure_collapse: {oil_price_shock_pct: 95.0, natural_gas_price_shock_pct: 45.0, lng_price_shock_pct: 250.0, disruption_duration_months: 12.0}
+  mam:
+    default: {}
+    by_scenario:
+      swift_contained: {disruption_duration_months: 1.25}
+      prolonged_contained: {disruption_duration_months: 4.5}
+      swift_escalated: {disruption_duration_months: 1.5}
+      prolonged_escalated: {disruption_duration_months: 6.0}
+      infrastructure_collapse: {disruption_duration_months: 12.0}
+  nrel:
+    default: {}
+    by_scenario:
+      swift_contained: {natural_gas_price_change_pct: 15.0, electricity_demand_change_pct: -0.5, disruption_duration_months: 1.25}
+      prolonged_contained: {natural_gas_price_change_pct: 25.0, electricity_demand_change_pct: -1.5, disruption_duration_months: 4.5}
+      swift_escalated: {natural_gas_price_change_pct: 20.0, electricity_demand_change_pct: -1.0, disruption_duration_months: 1.5}
+      prolonged_escalated: {natural_gas_price_change_pct: 35.0, electricity_demand_change_pct: -2.5, disruption_duration_months: 6.0}
+      infrastructure_collapse: {natural_gas_price_change_pct: 45.0, electricity_demand_change_pct: -3.5, disruption_duration_months: 12.0}
+  mpsge_jl:
+    # oil_price_shock_pct, commodity_price_shocks.* and the trade cost
+    # multiplier are replaced by upstream outputs when forwarding is on.
+    default: {}
+    by_scenario:
+      swift_contained:
+        oil_price_shock_pct: 50.0
+        commodity_price_shocks: {lng: 60.0, fertilizer: 20.0, helium: 40.0}
+        trade_disruption_spec: {affected_regions: [MENA_GCC, CHN, IND, EU], trade_cost_multiplier: 1.4}
+        disruption_duration_months: 1.25
+      prolonged_contained:
+        oil_price_shock_pct: 65.0
+        commodity_price_shocks: {lng: 90.0, fertilizer: 35.0, helium: 60.0}
+        trade_disruption_spec: {affected_regions: [MENA_GCC, CHN, IND, EU], trade_cost_multiplier: 1.5}
+        disruption_duration_months: 4.5
+      swift_escalated:
+        oil_price_shock_pct: 60.0
+        commodity_price_shocks: {lng: 80.0, fertilizer: 30.0, helium: 60.0}
+        trade_disruption_spec: {affected_regions: [MENA_GCC, MENA_OTHER, CHN, IND, EU], trade_cost_multiplier: 1.6}
+        disruption_duration_months: 1.5
+      prolonged_escalated:
+        oil_price_shock_pct: 80.0
+        commodity_price_shocks: {lng: 120.0, fertilizer: 45.0, helium: 80.0}
+        trade_disruption_spec: {affected_regions: [MENA_GCC, MENA_OTHER, CHN, IND, EU], trade_cost_multiplier: 1.7}
+        disruption_duration_months: 6.0
+      infrastructure_collapse:
+        oil_price_shock_pct: 95.0
+        commodity_price_shocks: {lng: 150.0, fertilizer: 60.0, helium: 90.0, water: 40.0}
+        trade_disruption_spec: {affected_regions: [MENA_GCC, MENA_OTHER, CHN, IND, EU], trade_cost_multiplier: 1.8}
+        disruption_duration_months: 12.0
+  opencge:
+    default: {}
+    by_scenario:
+      swift_contained: {oil_price_shock_pct: 50.0, commodity_price_shocks: {lng: 60.0, fertilizer: 20.0, helium: 40.0}, disruption_duration_months: 1.25}
+      prolonged_contained: {oil_price_shock_pct: 65.0, commodity_price_shocks: {lng: 90.0, fertilizer: 35.0, helium: 60.0}, disruption_duration_months: 4.5}
+      swift_escalated: {oil_price_shock_pct: 60.0, commodity_price_shocks: {lng: 80.0, fertilizer: 30.0, helium: 60.0}, disruption_duration_months: 1.5}
+      prolonged_escalated: {oil_price_shock_pct: 80.0, commodity_price_shocks: {lng: 120.0, fertilizer: 45.0, helium: 80.0}, disruption_duration_months: 6.0}
+      infrastructure_collapse: {oil_price_shock_pct: 95.0, commodity_price_shocks: {lng: 150.0, fertilizer: 60.0, helium: 90.0, water: 40.0}, disruption_duration_months: 12.0}
+  pycge:
+    default: {}
+    by_scenario:
+      swift_contained: {oil_price_shock_pct: 50.0, commodity_price_shocks: {lng: 60.0, fertilizer: 20.0, helium: 40.0}, disruption_duration_months: 1.25}
+      prolonged_contained: {oil_price_shock_pct: 65.0, commodity_price_shocks: {lng: 90.0, fertilizer: 35.0, helium: 60.0}, disruption_duration_months: 4.5}
+      swift_escalated: {oil_price_shock_pct: 60.0, commodity_price_shocks: {lng: 80.0, fertilizer: 30.0, helium: 60.0}, disruption_duration_months: 1.5}
+      prolonged_escalated: {oil_price_shock_pct: 80.0, commodity_price_shocks: {lng: 120.0, fertilizer: 45.0, helium: 80.0}, disruption_duration_months: 6.0}
+      infrastructure_collapse: {oil_price_shock_pct: 95.0, commodity_price_shocks: {lng: 150.0, fertilizer: 60.0, helium: 90.0, water: 40.0}, disruption_duration_months: 12.0}
+  miragrodep:
+    default:
+      agricultural_trade_disruption_spec:
+        affected_corridors: ["Gulf-South Asia", "Gulf-East Asia", "Black Sea-MENA"]
+        shipping_cost_multiplier: 1.5
+        affected_commodities: ["wheat", "rice", "urea", "dap"]
+    by_scenario:
+      swift_contained: {oil_price_shock_pct: 50.0, fertilizer_price_shock_pct: 20.0, disruption_duration_months: 1.25}
+      prolonged_contained: {oil_price_shock_pct: 65.0, fertilizer_price_shock_pct: 35.0, disruption_duration_months: 4.5}
+      swift_escalated: {oil_price_shock_pct: 60.0, fertilizer_price_shock_pct: 30.0, disruption_duration_months: 1.5}
+      prolonged_escalated: {oil_price_shock_pct: 80.0, fertilizer_price_shock_pct: 45.0, disruption_duration_months: 6.0}
+      infrastructure_collapse: {oil_price_shock_pct: 95.0, fertilizer_price_shock_pct: 60.0, disruption_duration_months: 12.0}
+
+  # --------------------------------------------------------- ENERGY SYSTEMS
+  osemosys:
+    default:
+      co2_price_baseline_usd_per_t: 50.0
+    by_scenario:
+      swift_contained: {oil_supply_loss_mbd: 14.0, gas_supply_loss_bcfd: 9.0, disruption_duration_months: 1.25, lng_export_capacity_loss_pct: 20.0, capital_cost_multiplier: 1.02}
+      prolonged_contained: {oil_supply_loss_mbd: 15.0, gas_supply_loss_bcfd: 10.0, disruption_duration_months: 4.5, lng_export_capacity_loss_pct: 22.0, capital_cost_multiplier: 1.05}
+      swift_escalated: {oil_supply_loss_mbd: 16.0, gas_supply_loss_bcfd: 10.0, disruption_duration_months: 1.5, lng_export_capacity_loss_pct: 22.0, capital_cost_multiplier: 1.05}
+      prolonged_escalated: {oil_supply_loss_mbd: 17.0, gas_supply_loss_bcfd: 11.0, disruption_duration_months: 6.0, lng_export_capacity_loss_pct: 25.0, capital_cost_multiplier: 1.1}
+      infrastructure_collapse: {oil_supply_loss_mbd: 13.5, gas_supply_loss_bcfd: 8.0, disruption_duration_months: 24.0, lng_export_capacity_loss_pct: 18.0, capital_cost_multiplier: 1.2}
+  messageix:
+    default:
+      co2_price_baseline_usd_per_t: 50.0
+    by_scenario:
+      swift_contained: {oil_supply_loss_mbd: 14.0, gas_supply_loss_bcfd: 9.0, disruption_duration_months: 1.25, lng_export_capacity_loss_pct: 20.0, capital_cost_multiplier: 1.02}
+      prolonged_contained: {oil_supply_loss_mbd: 15.0, gas_supply_loss_bcfd: 10.0, disruption_duration_months: 4.5, lng_export_capacity_loss_pct: 22.0, capital_cost_multiplier: 1.05}
+      swift_escalated: {oil_supply_loss_mbd: 16.0, gas_supply_loss_bcfd: 10.0, disruption_duration_months: 1.5, lng_export_capacity_loss_pct: 22.0, capital_cost_multiplier: 1.05}
+      prolonged_escalated: {oil_supply_loss_mbd: 17.0, gas_supply_loss_bcfd: 11.0, disruption_duration_months: 6.0, lng_export_capacity_loss_pct: 25.0, capital_cost_multiplier: 1.1}
+      infrastructure_collapse: {oil_supply_loss_mbd: 13.5, gas_supply_loss_bcfd: 8.0, disruption_duration_months: 24.0, lng_export_capacity_loss_pct: 18.0, capital_cost_multiplier: 1.2}
+  temoa:
+    default:
+      co2_price_baseline_usd_per_t: 50.0
+    by_scenario:
+      swift_contained: {oil_supply_loss_mbd: 14.0, gas_supply_loss_bcfd: 9.0, disruption_duration_months: 1.25, lng_export_capacity_loss_pct: 20.0, capital_cost_multiplier: 1.02}
+      prolonged_contained: {oil_supply_loss_mbd: 15.0, gas_supply_loss_bcfd: 10.0, disruption_duration_months: 4.5, lng_export_capacity_loss_pct: 22.0, capital_cost_multiplier: 1.05}
+      swift_escalated: {oil_supply_loss_mbd: 16.0, gas_supply_loss_bcfd: 10.0, disruption_duration_months: 1.5, lng_export_capacity_loss_pct: 22.0, capital_cost_multiplier: 1.05}
+      prolonged_escalated: {oil_supply_loss_mbd: 17.0, gas_supply_loss_bcfd: 11.0, disruption_duration_months: 6.0, lng_export_capacity_loss_pct: 25.0, capital_cost_multiplier: 1.1}
+      infrastructure_collapse: {oil_supply_loss_mbd: 13.5, gas_supply_loss_bcfd: 8.0, disruption_duration_months: 24.0, lng_export_capacity_loss_pct: 18.0, capital_cost_multiplier: 1.2}

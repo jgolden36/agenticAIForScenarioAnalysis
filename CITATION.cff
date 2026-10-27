@@ -1,0 +1,45 @@
+# Citation metadata for this repository (Citation File Format 1.2.0).
+# Given names and ORCIDs for the co-authors are left for the authors to
+# complete before the Zenodo release; the family names follow the manuscript.
+cff-version: 1.2.0
+message: "If you use this software, please cite both the software record and the paper below."
+type: software
+title: "Agentic AI orchestration pipeline for rapid analysis of chokepoint crises (Strait of Hormuz 2026 case)"
+abstract: >-
+  LangGraph-based orchestration of a multi-model, multi-scenario analytical pipeline that
+  bridges short-run and long-run, micro and macro, and economic and strategic assessment of
+  chokepoint crises. Includes domain-model adapters (Python, Julia, GAMS, R, AnyLogic, Octave,
+  EViews, Fortran, Excel), analyst checkpoints, upstream-to-downstream forwarding, cross-model
+  consistency checks, a synthesis fidelity audit, a coverage ledger, and a deterministic
+  analyst baseline for comparison with the LLM-driven path.
+authors:
+  - family-names: Golden
+    given-names: Dana
+    affiliation: Stony Brook University
+    email: dana.golden@stonybrook.edu
+  - family-names: Indelicato
+  - family-names: Varshney
+  - family-names: Thornsbury
+version: 0.1.0
+date-released: "2026-10-27"
+repository-code: "https://github.com/jgolden36/agenticAIForScenarioAnalysis"
+keywords:
+  - agentic AI
+  - scenario analysis
+  - chokepoint crises
+  - Strait of Hormuz
+  - energy economics
+  - LangGraph
+  - computable general equilibrium
+preferred-citation:
+  type: article
+  title: "Agentic AI Modeling for Rapid Analysis of Chokepoint Crises Along Strategic and Economic Dimensions: A Case Study of the Closure of the Strait of Hormuz"
+  authors:
+    - family-names: Golden
+      given-names: Dana
+    - family-names: Indelicato
+    - family-names: Varshney
+    - family-names: Thornsbury
+  journal: "Communications Engineering"
+  year: 2026
+  notes: "Manuscript 28847ff1, under revision."

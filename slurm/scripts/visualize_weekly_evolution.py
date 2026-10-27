@@ -56,6 +56,7 @@ import argparse
 import base64
 import csv
 import html
+import json
 import os
 import re
 import sys
@@ -230,6 +231,71 @@ def aggregate_long_form(weeks: list[tuple[str, Path]]) -> dict[str, list[dict]]:
         "quantitative": quant_long,
         "status": status_long,
         "flags": flags_long,
+    }
+
+
+def _split_list(value: str | None) -> set[str] | None:
+    if not value:
+        return None
+    items = {v.strip() for v in value.split(",") if v.strip()}
+    return items or None
+
+
+def filter_long_form(
+    long_form: dict[str, list[dict]],
+    variables: str | None = None,
+    scenarios: str | None = None,
+) -> dict[str, list[dict]]:
+    """Restrict the long-form tables to the requested variables / scenarios."""
+    var_set = _split_list(variables)
+    scen_set = _split_list(scenarios)
+    if var_set is None and scen_set is None:
+        return long_form
+    out: dict[str, list[dict]] = {}
+    for key, rows in long_form.items():
+        kept = []
+        for r in rows:
+            if scen_set is not None and r.get("scenario_id") and r["scenario_id"] not in scen_set:
+                continue
+            var = r.get("outcome_variable") or r.get("output_key")
+            if var_set is not None and var is not None and var not in var_set:
+                continue
+            kept.append(r)
+        out[key] = kept
+    return out
+
+
+def figure_definition(
+    long_form: dict[str, list[dict]],
+    weeks: list[tuple[str, Path]],
+    variables: str | None,
+    scenarios: str | None,
+) -> dict[str, Any]:
+    """Describe, per synthesis panel, exactly what is plotted."""
+    panels: dict[str, dict[str, Any]] = {}
+    for r in long_form.get("synthesis", []):
+        key = f"{r['outcome_scope']}/{r['time_horizon']}"
+        panel = panels.setdefault(key, {"outcome_scope": r["outcome_scope"], "time_horizon": r["time_horizon"], "series": {}})
+        series = panel["series"].setdefault(r["outcome_variable"], {"scenarios": set(), "weeks": set(), "source_models": set(), "n_points": 0})
+        series["scenarios"].add(r["scenario_id"])
+        series["weeks"].add(r["week"])
+        series["source_models"].add(r.get("source_model_id") or "")
+        series["n_points"] += 1
+    for panel in panels.values():
+        for s in panel["series"].values():
+            s["scenarios"] = sorted(s["scenarios"])
+            s["weeks"] = sorted(s["weeks"])
+            s["source_models"] = sorted(m for m in s["source_models"] if m)
+    return {
+        "weeks_found": [w for w, _ in weeks],
+        "weeks_plotted": sorted({r["week"] for r in long_form.get("synthesis", [])}),
+        "filters": {"variables": sorted(_split_list(variables) or []) or None, "scenarios": sorted(_split_list(scenarios) or []) or None},
+        "aggregation": (
+            "One point per (scenario, outcome variable, week): the value stored in that week's "
+            "synthesis_outcomes.csv for the named source model. No averaging across models or scenarios "
+            "is performed; where several scenarios are listed, each is its own line."
+        ),
+        "panels": panels,
     }
 
 
@@ -633,12 +699,26 @@ def _embed_image(path: Path) -> str:
             f'src="data:image/png;base64,{b64}" />')
 
 
+def _display_path(p: Path) -> str:
+    """Render a report path relative to the repo data dir when possible, else as given.
+
+    ``--reports-root`` may point outside the repository (for example at a
+    local copy of cluster artefacts), in which case the path is shown as-is.
+    """
+    for base in (reports_root().parent, Path.cwd()):
+        try:
+            return str(p.relative_to(base))
+        except ValueError:
+            continue
+    return str(p)
+
+
 def _summary_table(weeks: list[tuple[str, Path]]) -> str:
     if not weeks:
         return "<p class='meta'>No weekly runs discovered.</p>"
     rows = "".join(
         f"<tr><td>{html.escape(d)}</td><td><code>weekly_{d.replace('-', '')}"
-        f"</code></td><td><code>{html.escape(str(p.relative_to(reports_root().parent)))}"
+        f"</code></td><td><code>{html.escape(_display_path(p))}"
         f"</code></td></tr>"
         for d, p in weeks
     )
@@ -809,6 +889,16 @@ def main(argv: list[str] | None = None) -> int:
         default=6,
         help="How many highest-spread synthesis variables to plot (default: 6).",
     )
+    parser.add_argument(
+        "--variables",
+        default=None,
+        help="Comma-separated outcome variables / output keys to keep (default: all).",
+    )
+    parser.add_argument(
+        "--scenarios",
+        default=None,
+        help="Comma-separated scenario ids to keep (default: all).",
+    )
     args = parser.parse_args(argv)
 
     log_slurm_context()
@@ -839,6 +929,17 @@ def main(argv: list[str] | None = None) -> int:
     csv_dir = out_root / "csv"
 
     long_form = aggregate_long_form(weeks)
+    long_form = filter_long_form(long_form, variables=args.variables, scenarios=args.scenarios)
+    # Machine-readable statement of what every panel aggregates (which
+    # scenarios, variables, source models and weeks) so a figure caption
+    # can be checked against the data rather than inferred.
+    definition_path = fig_dir / "figure_definition.json"
+    definition_path.parent.mkdir(parents=True, exist_ok=True)
+    definition_path.write_text(
+        json.dumps(figure_definition(long_form, weeks, args.variables, args.scenarios), indent=2),
+        encoding="utf-8",
+    )
+    logger.info(f"wrote {definition_path}")
     long_csv_paths: dict[str, Path | None] = {
         "synthesis": write_long_csv(
             csv_dir / "synthesis_outcomes_long.csv",
