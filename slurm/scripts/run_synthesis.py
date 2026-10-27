@@ -37,6 +37,7 @@ from src.pipeline.state import (
     ModelExecutionResult,
     ScenarioNarrativeState,
 )
+from src.synthesis.run_health import assess_run
 from src.synthesis.synthesizer import (
     render_scenario_markdown,
     synthesize_by_section,
@@ -119,6 +120,7 @@ def write_synthesis_artifacts(
     with open(out / "synthesis.json", "w") as f:
         json.dump(synthesis_state, f, indent=2, default=str)
 
+    run_health = synthesis_state.get("run_health") or {}
     summary = {
         "run_id": run_id,
         "completed": synthesis_state.get("completed", 0),
@@ -126,6 +128,8 @@ def write_synthesis_artifacts(
         "failed": synthesis_state.get("failed", 0),
         "consistency_flags": len(synthesis_state.get("consistency_flags", []) or []),
         "outcomes_total": len(synthesis_state.get("synthesis_results", []) or []),
+        "clean_synthesis": run_health.get("clean_synthesis"),
+        "run_health": run_health,
         "scenarios": [
             {
                 "scenario_id": entry["scenario_id"],
@@ -425,6 +429,16 @@ def main() -> None:
             },
             "fidelity_summary": fidelity_summary,
         }
+        # Run-level health (the operational "clean synthesis" definition,
+        # explicit denominators, wall-clock split, checkpoint handling).
+        synthesis_state["run_health"] = assess_run(
+            run_id,
+            synthesis_state=synthesis_state,
+            model_results=model_results,
+            param_results=param_results,
+            bash_failures=bash_failures,
+            scenarios_state=scenarios_state,
+        )
         save_state(run_id, "synthesis", synthesis_state)
         write_synthesis_artifacts(run_id, synthesis_state, per_scenario_artifacts)
 
