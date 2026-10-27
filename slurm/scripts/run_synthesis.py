@@ -300,6 +300,7 @@ def main() -> None:
                 narrative=narrative_state,
                 results=scenario_results,
                 consistency_config=config.consistency,
+                fidelity_config=config.synthesis.fidelity,
             )
             all_flags.extend([f.model_dump() for f in flags])
 
@@ -345,7 +346,12 @@ def main() -> None:
                         "outcome_variable": outcome.variable,
                         "value": outcome.value,
                         "source_model_id": outcome.source_model_id,
+                        "source_model_id_raw": outcome.source_model_id_raw,
+                        "fidelity_status": outcome.fidelity_status,
                         "narrative_summary": outcome.narrative,
+                        "reliability_note": outcome.reliability_note,
+                        "distribution_note": outcome.distribution_note,
+                        "uncertainty_note": outcome.uncertainty_note,
                     })
 
             scenario_completed = sum(
@@ -387,6 +393,15 @@ def main() -> None:
         sections_truncated = sum(
             1 for ev in context_budget_events if ev.get("truncation_attempts", 0) > 0
         )
+        fidelity_events = [ev.get("fidelity") for ev in context_budget_events if ev.get("fidelity")]
+        fidelity_summary = {
+            "validator": config.synthesis.fidelity.model_dump(),
+            "sections_audited": len(fidelity_events),
+            "outcomes_audited": sum(f.get("outcomes", 0) for f in fidelity_events),
+            "outcomes_mismatched": sum(f.get("mismatched", 0) for f in fidelity_events),
+            "outcomes_dropped": sum(f.get("dropped", 0) for f in fidelity_events),
+            "sources_canonicalized": sum(f.get("canonicalized_sources", 0) for f in fidelity_events),
+        }
 
         synthesis_state = {
             "run_id": run_id,
@@ -408,6 +423,7 @@ def main() -> None:
                 "sections_truncated": sections_truncated,
                 "truncation_attempts_total": truncations_total,
             },
+            "fidelity_summary": fidelity_summary,
         }
         save_state(run_id, "synthesis", synthesis_state)
         write_synthesis_artifacts(run_id, synthesis_state, per_scenario_artifacts)
