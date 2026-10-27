@@ -245,32 +245,37 @@ class PipelineOrchestrator:
         """Module 3: Execute all models for all scenarios."""
         logger.info("Module 3: Executing domain models...")
 
-        for scenario in Scenario:
-            # Build parameter dict for this scenario
-            param_dict: dict[str, dict] = {}
-            for ps in state.parameter_sets:
-                if ps.scenario_id == scenario:
-                    param_dict[ps.model_id] = {
-                        p.name: p.value for p in ps.parameters
-                    }
+        async def _run_all() -> None:
+            # A single event loop for every scenario: the executor's
+            # concurrency semaphore binds to the loop that first uses it,
+            # so one asyncio.run() per scenario would silently drop every
+            # model after the first scenario.
+            for scenario in Scenario:
+                # Build parameter dict for this scenario
+                param_dict: dict[str, dict] = {}
+                for ps in state.parameter_sets:
+                    if ps.scenario_id == scenario:
+                        param_dict[ps.model_id] = {
+                            p.name: p.value for p in ps.parameters
+                        }
 
-            if not param_dict:
-                continue
+                if not param_dict:
+                    continue
 
-            results = asyncio.run(
-                self.executor.execute_all(scenario, param_dict)
-            )
-            state.execution_results.extend(results)
+                results = await self.executor.execute_all(scenario, param_dict)
+                state.execution_results.extend(results)
 
-            completed = sum(
-                1
-                for r in results
-                if r.status == ModelExecutionStatus.COMPLETED
-            )
-            logger.info(
-                f"Scenario {scenario.value}: {completed}/{len(results)} "
-                f"models completed"
-            )
+                completed = sum(
+                    1
+                    for r in results
+                    if r.status == ModelExecutionStatus.COMPLETED
+                )
+                logger.info(
+                    f"Scenario {scenario.value}: {completed}/{len(results)} "
+                    f"models completed"
+                )
+
+        asyncio.run(_run_all())
 
     def _synthesize_results(self, state: PipelineState) -> None:
         """Module 4: Consistency checks and synthesis."""
