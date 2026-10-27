@@ -289,6 +289,89 @@ def plot_model_status_by_system(rows: list[dict], out: Path) -> Path | None:
 
 
 # --------------------------------------------------------------------
+# Figure: coverage map (scenario x model matrix with skip reasons).
+# --------------------------------------------------------------------
+
+_COVERAGE_CLASS_COLORS = {
+    "completed/full_upstream": "#1b7837",
+    "completed/published_output_ingestion": "#5aae61",
+    "completed/analytical_reduction": "#a6dba0",
+    "completed/unknown": "#d9f0d3",
+    "validation_failed": "#d6604d",
+    "timeout": "#b2182b",
+    "runtime_error": "#f4a582",
+    "runtime_or_license_missing": "#fddbc7",
+    "missing_data_or_binary": "#fee090",
+    "missing_config": "#fdae61",
+    "stub": "#bababa",
+    "not_implemented_other": "#878787",
+    "not_registered": "#4d4d4d",
+    "parameter_extraction_failed": "#c2a5cf",
+    "parameter_extraction_missing": "#e7d4e8",
+    "not_in_manifest": "#9970ab",
+    "record_overwritten": "#762a83",
+    "record_missing": "#f7f7f7",
+}
+
+
+def plot_coverage_map(rows: list[dict], out: Path, run_id: str = "") -> Path | None:
+    """Scenario x model matrix coloured by skip class; cell text = ledger code.
+
+    ``rows`` are ``CoverageCell.to_dict()`` records from
+    ``src/interface/coverage.py`` (or the ``coverage_ledger.csv`` rows).
+    """
+    if not HAS_MPL or not rows:
+        return None
+    from matplotlib.patches import Patch  # noqa: WPS433
+
+    scenarios = list(dict.fromkeys(r.get("scenario_id", "") for r in rows))
+    models = sorted(
+        dict.fromkeys(r.get("model_id", "") for r in rows),
+        key=lambda m: (next((r.get("commodity_system", "") for r in rows if r.get("model_id") == m), ""), m),
+    )
+    by_key = {(r.get("scenario_id"), r.get("model_id")): r for r in rows}
+
+    def _class_key(r: dict) -> str:
+        if r.get("exec_status") == "completed":
+            return f"completed/{r.get('implementation_mode') or 'unknown'}"
+        return str(r.get("skip_class") or "record_missing")
+
+    fig_h = max(6.0, 0.28 * len(models) + 2.5)
+    fig, ax = plt.subplots(figsize=(max(7.0, 1.3 * len(scenarios) + 4.5), fig_h))
+    used: dict[str, str] = {}
+    for yi, m in enumerate(models):
+        for xi, s in enumerate(scenarios):
+            r = by_key.get((s, m))
+            key = _class_key(r) if r else "record_missing"
+            color = _COVERAGE_CLASS_COLORS.get(key, "#f7f7f7")
+            used[key] = color
+            ax.add_patch(plt.Rectangle((xi, yi), 1, 1, facecolor=color, edgecolor="white", linewidth=0.8))
+            code = (r or {}).get("cell_code") or "-"
+            stale = bool((r or {}).get("stale_upstream"))
+            ax.text(xi + 0.5, yi + 0.5, code + ("*" if stale else ""), ha="center", va="center", fontsize=7,
+                    color="black" if key.startswith("completed") or key in ("record_missing", "stub") else "white")
+    short = {"swift_contained": "A", "prolonged_contained": "B", "swift_escalated": "C",
+             "prolonged_escalated": "D", "infrastructure_collapse": "E"}
+    ax.set_xlim(0, len(scenarios))
+    ax.set_ylim(0, len(models))
+    ax.set_xticks([i + 0.5 for i in range(len(scenarios))])
+    ax.set_xticklabels([short.get(s, s) for s in scenarios], fontsize=9)
+    ax.set_yticks([i + 0.5 for i in range(len(models))])
+    ax.set_yticklabels(models, fontsize=7)
+    ax.invert_yaxis()
+    ax.set_xlabel("Scenario")
+    ax.set_title(f"Model coverage by scenario{(' (run ' + run_id + ')') if run_id else ''}", fontsize=10)
+    legend_order = [k for k in _COVERAGE_CLASS_COLORS if k in used]
+    handles = [Patch(facecolor=_COVERAGE_CLASS_COLORS[k], edgecolor="gray", label=k.replace("completed/", "completed: ").replace("_", " ")) for k in legend_order]
+    ax.legend(handles=handles, loc="upper left", bbox_to_anchor=(1.01, 1.0), fontsize=7, frameon=False,
+              title="* = a forwarded input cites a source that did not run", title_fontsize=7)
+    fig.tight_layout()
+    fig.savefig(out, dpi=160, bbox_inches="tight")
+    plt.close(fig)
+    return out
+
+
+# --------------------------------------------------------------------
 # Figure: synthesis outcomes grid (one panel per time_horizon × scope).
 # --------------------------------------------------------------------
 
@@ -2148,6 +2231,7 @@ def write_index_html(
     for label, key in (
         ("Model status by scenario", "status_scenario"),
         ("Model status by commodity system", "status_system"),
+        ("Coverage map (why each cell did or did not contribute)", "coverage_map"),
         ("Headline synthesised outcomes", "outcomes_grid"),
         ("Cross-model quantitative heatmap", "quant_heatmap"),
         ("Cross-model consistency flags", "consistency"),
@@ -2459,6 +2543,20 @@ def main(argv: list[str] | None = None) -> int:
         )
         if p:
             figures["status_system"] = p
+        # Coverage map: prefer the ledger written by build_coverage_ledger.py
+        # (full evidence); fall back to a CSV-derived ledger otherwise.
+        try:
+            from src.interface.coverage import ledger_from_report_csv  # noqa: WPS433
+
+            ledger_csv = reports_root(run_id) / "coverage" / "coverage_ledger.csv"
+            ledger_rows = _read_csv(ledger_csv) if ledger_csv.exists() else [
+                c.to_dict() for c in ledger_from_report_csv(run_id, csv_dir)
+            ]
+            p = plot_coverage_map(ledger_rows, fig_dir / "coverage_map.png", run_id=run_id)
+            if p:
+                figures["coverage_map"] = p
+        except Exception:
+            logger.warning("coverage_map.png skipped:\n" + traceback.format_exc())
         p = plot_synthesis_outcomes_grid(
             synthesis_rows, fig_dir / "synthesis_outcomes_grid.png"
         )
