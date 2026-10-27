@@ -102,6 +102,47 @@ def test_persist_skipped_writes_only_metadata(fake_project_root):
     assert "Not yet implemented" in meta["error_message"]
 
 
+def test_persist_records_implementation_mode_and_adapter_metadata(fake_project_root):
+    """metadata.json carries the mode used and the adapter's own metadata."""
+    res = _result(ModelExecutionStatus.COMPLETED.value, with_outputs=True)
+    res["implementation_mode"] = "analytical_reduction"
+    res["manifest_name"] = "models_macro"
+    res["metadata"] = {"mode": "analytical_mvp", "calibration_source": "Hamilton (2009)"}
+    run_model._persist_per_model_outputs("run-010", "swift_contained", "pycge", res)
+
+    meta = json.loads(
+        (fake_project_root / "data" / "outputs" / "swift_contained" / "pycge" / "metadata.json").read_text()
+    )
+    assert meta["implementation_mode"] == "analytical_reduction"
+    assert meta["manifest_name"] == "models_macro"
+    assert meta["adapter_metadata"]["calibration_source"] == "Hamilton (2009)"
+
+
+def test_model_state_stage_is_tier_qualified():
+    """Each Stage 3 tier restarts its array index at 0; the state key must
+    not collide across tiers (regression for run 20260504_222710, where the
+    macro tier overwrote commodity records 0-59)."""
+    from slurm.scripts.stage_utils import model_state_stage, tier_from_manifest_name
+
+    assert tier_from_manifest_name("models") == "all"
+    assert tier_from_manifest_name(None) == "all"
+    assert tier_from_manifest_name("models_commodity") == "commodity"
+    assert tier_from_manifest_name("models_macro_cpu") == "macro_cpu"
+
+    keys = {
+        model_state_stage("models_commodity", 7),
+        model_state_stage("models_commodity_downstream", 7),
+        model_state_stage("models_macro", 7),
+        model_state_stage("models_macro_gpu", 7),
+    }
+    assert len(keys) == 4
+    assert model_state_stage("models_macro", 7) == "model_macro_7"
+    # Every reader globs <run_id>_model_*.json; the new keys still match.
+    import fnmatch
+    for k in keys:
+        assert fnmatch.fnmatch(f"run_{k}.json", "run_model_*.json")
+
+
 def test_persist_overwrites_previous_run(fake_project_root):
     """Re-running the same (scenario, model) overwrites the prior output."""
     res1 = _result(ModelExecutionStatus.COMPLETED.value, with_outputs=True)

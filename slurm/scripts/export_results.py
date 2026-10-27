@@ -226,6 +226,8 @@ def write_model_status_csv(run_id: str, model_results: list[dict]) -> Path:
         "scenario_id",
         "model_id",
         "status",
+        "implementation_mode",
+        "manifest_name",
         "resource_class",
         "node",
         "slurm_job_id",

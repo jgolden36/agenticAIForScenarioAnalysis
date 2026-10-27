@@ -139,6 +139,41 @@ def test_executor_failure_isolation():
     assert statuses["fail_model"] == ModelExecutionStatus.FAILED
 
 
+class MetadataAdapter(SuccessAdapter):
+    @property
+    def model_id(self):
+        return "meta_model"
+
+    def execute(self, inputs):
+        return ModelOutput(
+            model_id="meta_model",
+            outputs={"price": 1.0},
+            metadata={"mode": "analytical_mvp", "calibration_source": "Hamilton (2009)"},
+        )
+
+
+def test_executor_surfaces_metadata_and_implementation_mode():
+    """ModelOutput.metadata must survive into the execution record and
+    label the record with the implementation mode that ran."""
+    registry = ModelRegistry()
+    registry.register(MetadataAdapter())
+    registry.register(SuccessAdapter())
+    executor = ModelExecutor(registry)
+
+    results = asyncio.run(
+        executor.execute_all(
+            Scenario.A,
+            {"meta_model": {"param1": 1.0}, "success_model": {"param1": 1.0}},
+        )
+    )
+    by_id = {r.model_id: r for r in results}
+    assert by_id["meta_model"].metadata["calibration_source"] == "Hamilton (2009)"
+    assert by_id["meta_model"].implementation_mode == "analytical_reduction"
+    # No marker and no declaration -> reported as unknown, never guessed.
+    assert by_id["success_model"].implementation_mode == "unknown"
+    assert by_id["success_model"].metadata == {}
+
+
 def test_executor_stub_skipped():
     """Test that NotImplementedError results in SKIPPED status."""
     registry = ModelRegistry()

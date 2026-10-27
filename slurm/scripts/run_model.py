@@ -27,10 +27,12 @@ from slurm.scripts.stage_utils import (
     load_manifest,
     log_slurm_context,
     logger,
+    model_state_stage,
     save_state,
 )
 
 from src.common.types import ModelExecutionStatus
+from src.models.base import resolve_implementation_mode
 from src.common.wandb_logger import (
     WandbLogger,
     log_model_execution,
@@ -76,14 +78,16 @@ def _persist_per_model_outputs(
     """Write per-model outputs/metadata to data/outputs/<scenario>/<model>/.
 
     - On COMPLETED: writes both ``output.json`` (raw adapter outputs) and
-      ``metadata.json`` (status, runtime, slurm context).
+      ``metadata.json`` (status, runtime, slurm context, implementation
+      mode, adapter metadata).
     - On FAILED / SKIPPED: writes only ``metadata.json`` so failures are
       auditable on disk (the directory will exist with an explanatory
       metadata.json instead of being silently absent).
 
     Filenames are stable within a (scenario, model) pair — re-running a
     scenario overwrites the previous attempt's output. The ``run_id`` is
-    embedded in metadata.json for provenance.
+    embedded in metadata.json for provenance, and the upstream-forwarding
+    dispatcher uses it to ignore outputs left behind by other runs.
     """
     target_dir = _outputs_dir() / scenario_id / model_id
     target_dir.mkdir(parents=True, exist_ok=True)
@@ -93,6 +97,7 @@ def _persist_per_model_outputs(
         "scenario_id": scenario_id,
         "model_id": model_id,
         "task_id": result.get("task_id"),
+        "manifest_name": result.get("manifest_name"),
         "status": result.get("status"),
         "started_at": result.get("started_at"),
         "completed_at": result.get("completed_at"),
@@ -101,6 +106,8 @@ def _persist_per_model_outputs(
         "slurm_job_id": result.get("slurm_job_id"),
         "resource_class": result.get("resource_class"),
         "error_message": result.get("error_message"),
+        "implementation_mode": result.get("implementation_mode"),
+        "adapter_metadata": result.get("metadata") or {},
     }
     # Surface upstream-to-macro overrides on metadata so the synthesis
     # stage can reason about which macro inputs were replaced without
@@ -134,6 +141,12 @@ def main() -> None:
     if task_id >= len(manifest):
         logger.warning(f"Task {task_id} exceeds manifest size {len(manifest)}, exiting")
         return
+
+    # State records are keyed by (manifest tier, task id). The three
+    # Stage 3 tiers each restart their array index at 0, so a plain
+    # ``model_<task_id>`` key let the macro tier overwrite the commodity
+    # tier's records before synthesis (observed on run 20260504_222710).
+    state_stage = model_state_stage(manifest_name, task_id)
 
     entry = manifest[task_id]
     scenario_id = entry["scenario_id"]
@@ -194,6 +207,7 @@ def main() -> None:
         "scenario_id": scenario_id,
         "model_id": model_id,
         "task_id": task_id,
+        "manifest_name": manifest_name,
         "node": task["node"],
         "slurm_job_id": task["job_id"],
         "resource_class": resource_class,
@@ -225,7 +239,7 @@ def main() -> None:
             result["status"] = ModelExecutionStatus.FAILED.value
             result["error_message"] = f"Model {model_id} not found in registry"
             result["completed_at"] = datetime.now(timezone.utc).isoformat()
-            save_state(run_id, f"model_{task_id}", result)
+            save_state(run_id, state_stage, result)
             _persist_per_model_outputs(run_id, scenario_id, model_id, result)
             log_model_execution(wb, result)
             logger.error(result["error_message"])
@@ -241,7 +255,7 @@ def main() -> None:
                     f"Validation failed: {'; '.join(validation.errors)}"
                 )
                 result["completed_at"] = datetime.now(timezone.utc).isoformat()
-                save_state(run_id, f"model_{task_id}", result)
+                save_state(run_id, state_stage, result)
                 _persist_per_model_outputs(run_id, scenario_id, model_id, result)
                 log_model_execution(wb, result)
                 logger.error(result["error_message"])
@@ -257,6 +271,10 @@ def main() -> None:
             result["outputs"] = register_overrides_in_outputs(
                 output.outputs, upstream_overrides
             )
+            result["metadata"] = dict(output.metadata or {})
+            result["implementation_mode"] = resolve_implementation_mode(
+                output, adapter
+            ).value
             if upstream_overrides:
                 result["upstream_overrides"] = upstream_overrides
             if output.uncertainty is not None:
@@ -287,7 +305,7 @@ def main() -> None:
             result["completed_at"] = datetime.now(timezone.utc).isoformat()
             logger.error(f"Model {model_id} failed after {elapsed:.1f}s: {e}")
 
-        save_state(run_id, f"model_{task_id}", result)
+        save_state(run_id, state_stage, result)
         _persist_per_model_outputs(run_id, scenario_id, model_id, result)
         log_model_execution(wb, result)
 

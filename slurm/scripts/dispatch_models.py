@@ -12,6 +12,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
@@ -108,14 +109,36 @@ def generate_parameter_manifest(run_id: str) -> int:
 
 
 def _load_param_entries(run_id: str) -> list[dict]:
-    """Read every per-task parameter extraction result for a run."""
+    """Read every usable per-task parameter extraction result for a run.
+
+    Records written by ``run_parameters.py`` with ``status: failed``
+    (LLM call raised, or the extractor exhausted its retries and
+    returned no parameters) are excluded from dispatch and logged, so a
+    (scenario, model) pair with no extracted parameters never reaches
+    ``run_model.py`` only to fail validation there. The coverage ledger
+    (``src/interface/coverage.py``) reads the same files and reports
+    these cells as ``not_dispatched / parameter_extraction_failed``.
+    """
     import glob
 
     pattern = str(state_dir() / f"{run_id}_params_*.json")
     out: list[dict] = []
+    skipped: list[str] = []
     for pf in sorted(Path(p) for p in glob.glob(pattern)):
         with open(pf) as f:
-            out.append(json.load(f))
+            rec = json.load(f)
+        status = str(rec.get("status") or "completed").lower()
+        if status == "failed" or not isinstance(rec.get("parameters"), list):
+            skipped.append(f"{rec.get('scenario_id')}/{rec.get('model_id')}")
+            continue
+        out.append(rec)
+    if skipped:
+        logger.warning(
+            "Skipping %d (scenario, model) pair(s) whose parameter "
+            "extraction failed: %s",
+            len(skipped),
+            ", ".join(skipped),
+        )
     return out
 
 
@@ -183,11 +206,19 @@ def _model_id_to_level(
     return {a.model_id: a.analytical_level for a in registry.all_adapters()}
 
 
-def generate_model_manifest(run_id: str, tier: str = "all") -> dict[str, int]:
+def generate_model_manifest(
+    run_id: str,
+    tier: str = "all",
+    allow_stale_upstream: bool = False,
+) -> dict[str, int]:
     """Create manifests for Module 3 model execution array jobs.
 
     Args:
         run_id: pipeline run id.
+        allow_stale_upstream: when True, the downstream tiers may consume
+            ``data/outputs/`` entries written by *other* run ids (the
+            pre-revision behaviour). Default False: only outputs whose
+            ``metadata.json`` carries this ``run_id`` feed the barrier.
         tier:
             - ``"all"``  (legacy): one combined ``models`` manifest with
               every model and no upstream-to-downstream forwarding.
@@ -263,6 +294,7 @@ def generate_model_manifest(run_id: str, tier: str = "all") -> dict[str, int]:
             manifest_name="models_commodity_downstream",
             audit_filename=f"{run_id}_commodity_downstream_overrides.json",
             log_label="commodity-downstream-dispatch",
+            allow_stale_upstream=allow_stale_upstream,
         )
 
     # tier == "macro"
@@ -274,6 +306,7 @@ def generate_model_manifest(run_id: str, tier: str = "all") -> dict[str, int]:
         manifest_name="models_macro",
         audit_filename=f"{run_id}_macro_overrides.json",
         log_label="macro-dispatch",
+        allow_stale_upstream=allow_stale_upstream,
     )
 
 
@@ -285,6 +318,7 @@ def _generate_downstream_manifest(
     manifest_name: str,
     audit_filename: str,
     log_label: str,
+    allow_stale_upstream: bool = False,
 ) -> dict[str, int]:
     """Shared body for the commodity_downstream and macro dispatchers.
 
@@ -296,8 +330,14 @@ def _generate_downstream_manifest(
     commodity and commodity_downstream results.
     """
     mapping = load_mapping()
-    upstream_results = _load_upstream_outputs(run_id, log_label)
-    overrides_audit: dict[str, dict[str, list[dict]]] = {}
+    upstream_results = _load_upstream_outputs(
+        run_id, log_label, allow_stale=allow_stale_upstream
+    )
+    # Reserved key (not a scenario id): outputs from other run ids that
+    # were ignored. Recorded in the audit file so a reviewer can see that
+    # no stale upstream value reached this tier.
+    stale_ignored = upstream_results.pop("_stale_upstream_ignored", [])
+    overrides_audit: dict[str, Any] = {}
 
     entries: list[dict] = []
     for ps in param_entries:
@@ -336,6 +376,8 @@ def _generate_downstream_manifest(
             )
         )
 
+    if stale_ignored:
+        overrides_audit["_stale_upstream_ignored"] = stale_ignored
     if overrides_audit:
         audit_path = state_dir() / audit_filename
         with open(audit_path, "w") as f:
@@ -348,7 +390,9 @@ def _generate_downstream_manifest(
 
 
 def _load_upstream_outputs(
-    run_id: str, log_label: str = "upstream-dispatch"
+    run_id: str,
+    log_label: str = "upstream-dispatch",
+    allow_stale: bool = False,
 ) -> dict[str, list[dict]]:
     """Load every completed upstream model output, grouped by scenario.
 
@@ -357,6 +401,15 @@ def _load_upstream_outputs(
     each run's status. SKIPPED / FAILED runs are propagated so
     ``compute_downstream_inputs`` can correctly fall back to the next
     upstream source.
+
+    Only entries whose ``metadata.run_id`` equals ``run_id`` are used.
+    ``data/outputs/`` is keyed by (scenario, model) and overwritten on
+    every run, so without this filter a downstream tier could consume an
+    output left behind by an earlier run whenever the current run's
+    upstream model was skipped or failed. Stale entries are counted and
+    logged (and surfaced in the override audit under
+    ``_stale_upstream_ignored``). ``allow_stale=True`` restores the
+    pre-revision behaviour for deliberate reuse.
 
     Returns outputs from ALL prior tiers (commodity AND
     commodity_downstream); the merge function is itself level-aware
@@ -373,11 +426,12 @@ def _load_upstream_outputs(
         )
         return out
 
-    for scenario_dir in outputs_root.iterdir():
+    stale: list[str] = []
+    for scenario_dir in sorted(outputs_root.iterdir()):
         if not scenario_dir.is_dir():
             continue
         scenario_id = scenario_dir.name
-        for model_dir in scenario_dir.iterdir():
+        for model_dir in sorted(scenario_dir.iterdir()):
             if not model_dir.is_dir():
                 continue
             metadata_path = model_dir / "metadata.json"
@@ -386,6 +440,12 @@ def _load_upstream_outputs(
                 with open(metadata_path) as f:
                     metadata = json.load(f)
             except (FileNotFoundError, json.JSONDecodeError):
+                continue
+            entry_run_id = metadata.get("run_id")
+            if not allow_stale and entry_run_id != run_id:
+                stale.append(
+                    f"{scenario_id}/{model_dir.name} (run_id={entry_run_id})"
+                )
                 continue
             status = (metadata.get("status") or "").lower()
             outputs_blob: dict = {}
@@ -399,16 +459,30 @@ def _load_upstream_outputs(
                 "scenario_id": scenario_id,
                 "model_id": model_dir.name,
                 "status": status,
+                "run_id": entry_run_id,
                 "outputs": outputs_blob if isinstance(outputs_blob, dict) else {},
             })
 
     total = sum(len(v) for v in out.values())
     logger.info(
-        "[%s] Loaded %d upstream outputs across %d scenarios",
+        "[%s] Loaded %d upstream outputs across %d scenarios for run %s",
         log_label,
         total,
         len(out),
+        run_id,
     )
+    if stale:
+        logger.warning(
+            "[%s] Ignored %d upstream output(s) from other run ids "
+            "(pass --allow-stale-upstream to reuse them): %s",
+            log_label,
+            len(stale),
+            ", ".join(stale[:20]) + (" ..." if len(stale) > 20 else ""),
+        )
+        out.setdefault("_stale_upstream_ignored", [])  # marker for audits
+        out["_stale_upstream_ignored"] = [
+            {"entry": s} for s in stale
+        ]
     return out
 
 
@@ -418,6 +492,16 @@ def main() -> None:
                         help="Which stage to generate manifests for")
     parser.add_argument("--run-id", default=None,
                         help="Pipeline run ID (default: from env)")
+    parser.add_argument(
+        "--allow-stale-upstream",
+        action="store_true",
+        help=(
+            "Let the commodity_downstream / macro barriers consume "
+            "data/outputs/ entries written by other run ids. Off by "
+            "default so a skipped or failed upstream model never "
+            "silently inherits a previous run's output."
+        ),
+    )
     parser.add_argument(
         "--tier",
         choices=["all", "commodity", "commodity_downstream", "macro"],
@@ -443,7 +527,9 @@ def main() -> None:
         print(f"MANIFEST_COUNT={count}")
         return
 
-    counts = generate_model_manifest(run_id, tier=args.tier)
+    counts = generate_model_manifest(
+        run_id, tier=args.tier, allow_stale_upstream=args.allow_stale_upstream
+    )
     if args.tier == "all":
         print(f"MANIFEST_COUNT_ALL={counts['models']}")
         print(f"MANIFEST_COUNT_CPU={counts['models_cpu']}")

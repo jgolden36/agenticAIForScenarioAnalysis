@@ -87,6 +87,33 @@ def save_manifest(run_id: str, name: str, entries: list[dict]) -> Path:
     return out
 
 
+def tier_from_manifest_name(manifest_name: str | None) -> str:
+    """Derive a short tier label from a Stage 3 manifest name.
+
+    ``models`` (the legacy combined manifest) -> ``all``;
+    ``models_commodity`` -> ``commodity``; ``models_macro_cpu`` ->
+    ``macro_cpu``. The label is embedded in the model state filename so
+    the three Stage 3 tiers (commodity, commodity_downstream, macro),
+    whose SLURM array indices each restart at 0, can no longer overwrite
+    each other's ``<run_id>_model_*.json`` records.
+    """
+    name = (manifest_name or "models").strip()
+    if name == "models":
+        return "all"
+    if name.startswith("models_"):
+        name = name[len("models_"):]
+    return name or "all"
+
+
+def model_state_stage(manifest_name: str | None, task_id: int) -> str:
+    """Stage key for one model execution record: ``model_<tier>_<task_id>``.
+
+    Every reader globs ``<run_id>_model_*.json`` so both the legacy
+    ``model_<task_id>`` files and the tier-qualified files are picked up.
+    """
+    return f"model_{tier_from_manifest_name(manifest_name)}_{task_id}"
+
+
 def load_manifest(run_id: str, name: str) -> list[dict]:
     """Load a manifest file."""
     path = manifests_dir() / f"{run_id}_{name}.json"

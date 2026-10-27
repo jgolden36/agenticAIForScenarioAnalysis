@@ -42,6 +42,70 @@ from src.pipeline.config import PipelineConfig
 from src.scenarios.schemas import QuantitativeAssumption, ScenarioNarrative
 
 
+def build_param_record(
+    scenario_id: str,
+    model_id: str,
+    parameters: list[dict],
+    *,
+    warnings: list[str] | None = None,
+    runtime_seconds: float | None = None,
+    auto_approve: bool = False,
+) -> dict:
+    """Shape one parameter-extraction record for ``<run_id>_params_<task>.json``.
+
+    ``status`` is ``completed`` when at least one parameter was extracted.
+    An extraction that exhausted its retries returns no parameters and a
+    warning list (see ``build_parameter_extractor``); that record is
+    marked ``failed`` with the warnings joined into ``error_message`` so
+    the dispatcher skips it and the coverage ledger can report *why* the
+    (scenario, model) cell was never dispatched.
+    """
+    warnings = list(warnings or [])
+    status = "completed"
+    error_message: str | None = None
+    if not parameters:
+        status = "failed"
+        error_message = (
+            "; ".join(warnings)
+            if warnings
+            else "Parameter extraction returned no parameters"
+        )
+    return {
+        "scenario_id": scenario_id,
+        "model_id": model_id,
+        "status": status,
+        "error_message": error_message,
+        "warnings": warnings,
+        "runtime_seconds": runtime_seconds,
+        "parameters": parameters,
+        "validation_status": (
+            ValidationStatus.APPROVED.value
+            if auto_approve and status == "completed"
+            else ValidationStatus.PENDING.value
+        ),
+    }
+
+
+def failed_param_record(
+    scenario_id: str,
+    model_id: str,
+    exc: BaseException,
+    *,
+    runtime_seconds: float | None = None,
+) -> dict:
+    """Record for an extraction whose LLM call raised before returning."""
+    return {
+        "scenario_id": scenario_id,
+        "model_id": model_id,
+        "status": "failed",
+        "error_message": f"{type(exc).__name__}: {exc}",
+        "warnings": [],
+        "runtime_seconds": runtime_seconds,
+        "parameters": [],
+        "validation_status": ValidationStatus.PENDING.value,
+    }
+
+
 def main() -> None:
     log_slurm_context()
     run_id = get_run_id()
@@ -125,10 +189,29 @@ def main() -> None:
 
         model_spec = ALL_MODEL_SPECS[model_id]
         t0 = time.monotonic()
-        extraction = extractor.invoke({
-            "scenario": scenario_obj,
-            "model_spec": model_spec,
-        })
+        try:
+            extraction = extractor.invoke({
+                "scenario": scenario_obj,
+                "model_spec": model_spec,
+            })
+        except Exception as exc:  # noqa: BLE001 — record, never lose the cell
+            runtime_seconds = time.monotonic() - t0
+            param_set = failed_param_record(
+                scenario_id_str, model_id, exc, runtime_seconds=runtime_seconds
+            )
+            save_state(run_id, f"params_{task_id}", param_set)
+            logger.error(
+                f"Parameter extraction FAILED for {scenario_id_str}/{model_id} "
+                f"after {runtime_seconds:.1f}s: {param_set['error_message']}"
+            )
+            log_parameter_extraction(
+                wb,
+                scenario_id=scenario_id_str,
+                model_id=model_id,
+                parameters=[],
+                runtime_seconds=runtime_seconds,
+            )
+            return
         runtime_seconds = time.monotonic() - t0
 
         param_list = [
@@ -145,23 +228,27 @@ def main() -> None:
             }
             for p in extraction.parameters
         ]
-        param_set = {
-            "scenario_id": scenario_id_str,
-            "model_id": model_id,
-            "parameters": param_list,
-            "validation_status": (
-                ValidationStatus.APPROVED.value
-                if auto_approve_enabled()
-                else ValidationStatus.PENDING.value
-            ),
-        }
+        param_set = build_param_record(
+            scenario_id_str,
+            model_id,
+            param_list,
+            warnings=list(getattr(extraction, "warnings", []) or []),
+            runtime_seconds=runtime_seconds,
+            auto_approve=auto_approve_enabled(),
+        )
 
         # Each array task saves its own result; they are merged before Module 3
         save_state(run_id, f"params_{task_id}", param_set)
-        logger.info(
-            f"Extracted {len(param_set['parameters'])} parameters "
-            f"for {scenario_id_str}/{model_id} in {runtime_seconds:.1f}s"
-        )
+        if param_set["status"] == "failed":
+            logger.error(
+                f"Parameter extraction produced no parameters for "
+                f"{scenario_id_str}/{model_id}: {param_set['error_message']}"
+            )
+        else:
+            logger.info(
+                f"Extracted {len(param_set['parameters'])} parameters "
+                f"for {scenario_id_str}/{model_id} in {runtime_seconds:.1f}s"
+            )
 
         log_parameter_extraction(
             wb,
