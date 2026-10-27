@@ -184,12 +184,34 @@ def _format_uncertainty_bullet(unc: dict[str, float] | None) -> str | None:
     return "  - uncertainty: " + "; ".join(parts)
 
 
-def _format_outcome_bullet(outcome: SynthesizedOutcome) -> str:
+REDUCTION_MARKER = "†"  # dagger: analytical reduction of the named model
+INGESTION_MARKER = "‡"  # double dagger: published-output ingestion
+
+
+def implementation_marker(mode: str | None) -> str:
+    """Marker appended to a model id in rendered reports by implementation mode."""
+    if mode == "analytical_reduction":
+        return REDUCTION_MARKER
+    if mode == "published_output_ingestion":
+        return INGESTION_MARKER
+    return ""
+
+
+def _format_outcome_bullet(
+    outcome: SynthesizedOutcome, mode_by_model: dict[str, str | None] | None = None
+) -> str:
     """Render a single SynthesizedOutcome as a Markdown bullet."""
     unit = f" {outcome.unit}" if outcome.unit else ""
+    marker = ""
+    if mode_by_model:
+        # Source ids can list several models ("pycge, mpsge_jl"); mark the
+        # bullet when any cited model ran as a reduction / ingestion.
+        cited = [s.strip() for s in str(outcome.source_model_id).split(",")]
+        markers = {implementation_marker(mode_by_model.get(c)) for c in cited}
+        marker = "".join(sorted(m for m in markers if m))
     line = (
         f"- **{outcome.variable}**: {outcome.value}{unit} "
-        f"_(source: `{outcome.source_model_id}`)_"
+        f"_(source: `{outcome.source_model_id}`{marker})_"
     )
     if outcome.narrative:
         line += f"\n  - {outcome.narrative}"
@@ -211,7 +233,10 @@ def _format_outcome_bullet(outcome: SynthesizedOutcome) -> str:
     return line
 
 
-def render_scenario_markdown(synthesis: ScenarioSynthesis) -> str:
+def render_scenario_markdown(
+    synthesis: ScenarioSynthesis,
+    mode_by_model: dict[str, str | None] | None = None,
+) -> str:
     """Render a ``ScenarioSynthesis`` as a self-contained Markdown report.
 
     Sections are grouped by ``(time_horizon, outcome_scope)`` with one
@@ -219,12 +244,19 @@ def render_scenario_markdown(synthesis: ScenarioSynthesis) -> str:
     warnings are listed at the bottom so the analyst can see what was
     excluded.
 
+    ``mode_by_model`` (``model_id -> ImplementationMode value``) marks each
+    outcome whose source ran as an analytical reduction (dagger) or as
+    published-output ingestion (double dagger) so a reader never mistakes
+    a reduction for the upstream model; a legend is appended when any
+    marker was used.
+
     Used by both the SLURM driver (`slurm/scripts/run_synthesis.py`) and
     the imperative orchestrator to populate `data/reports/<run_id>/`.
     """
     lines: list[str] = []
     lines.append(f"# Scenario {synthesis.scenario_id.value}: {synthesis.scenario_label}")
     lines.append("")
+    used_markers: set[str] = set()
 
     if synthesis.sections:
         for section in synthesis.sections:
@@ -239,10 +271,30 @@ def render_scenario_markdown(synthesis: ScenarioSynthesis) -> str:
                 lines.append("")
                 continue
             for outcome in section.outcomes:
-                lines.append(_format_outcome_bullet(outcome))
+                bullet = _format_outcome_bullet(outcome, mode_by_model)
+                if REDUCTION_MARKER in bullet.split("\n")[0]:
+                    used_markers.add(REDUCTION_MARKER)
+                if INGESTION_MARKER in bullet.split("\n")[0]:
+                    used_markers.add(INGESTION_MARKER)
+                lines.append(bullet)
             lines.append("")
     else:
         lines.append("_No synthesized sections produced for this scenario._")
+        lines.append("")
+
+    if used_markers:
+        lines.append("## Implementation markers")
+        lines.append("")
+        if REDUCTION_MARKER in used_markers:
+            lines.append(
+                f"- {REDUCTION_MARKER} the cited model ran as a closed-form, literature-calibrated "
+                "reduction implemented in its adapter, not as the upstream model (see the model inventory)."
+            )
+        if INGESTION_MARKER in used_markers:
+            lines.append(
+                f"- {INGESTION_MARKER} the cited model's values are ingested published outputs "
+                "(EIA AEO tables), not a scenario-specific solve."
+            )
         lines.append("")
 
     if synthesis.uncertainty_interpretation is not None:

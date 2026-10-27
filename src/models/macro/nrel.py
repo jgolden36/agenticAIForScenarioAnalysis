@@ -310,6 +310,8 @@ class NRELAdapter(ModelAdapter):
             "cpi_inflation_pct": macro_kernel_out["cpi_inflation_pct"],
             "consumption_impact_pct": macro_kernel_out["consumption_impact_pct"],
             "welfare_pct_change": macro_kernel_out["welfare_pct_change"],
+            "gdp_impact_pct_world_weighted": macro_kernel_out.get("gdp_impact_pct_world_weighted"),
+            "_aggregate_definition": macro_kernel_out.get("_aggregate_definition"),
             "_macro_source": "nrel_derived",
         }
 

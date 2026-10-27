@@ -176,6 +176,22 @@ class ImplementationInfo(BaseModel):
         default_factory=list,
         description="Every mode this adapter can run in (full, reduction, ...).",
     )
+    status_label: str = Field(
+        default="",
+        description=(
+            "Human-readable status used in the inventory tables, e.g. "
+            "'Real', 'Real (config-aware)', 'Real (analytical MVP)', "
+            "'Config-aware stub', 'Stub'."
+        ),
+    )
+    requires_config: bool = Field(
+        default=False,
+        description=(
+            "True when the full upstream path only runs with a YAML config "
+            "(binary / data / licence paths) and execute() raises "
+            "NotImplementedError without one."
+        ),
+    )
     display_name: str = Field(default="", description="Human-readable model name.")
     display_name_reduced: str = Field(
         default="",
@@ -354,11 +370,19 @@ class ModelAdapter(ABC):
     def implementation_info(self) -> ImplementationInfo:
         """Static implementation description used by the model inventory.
 
-        Override in subclasses. The default is deliberately conservative
-        (``UNKNOWN`` mode, no calibration sources) so an adapter that has
-        not been annotated is reported as such rather than mislabelled.
+        Resolved from the central table in
+        ``src/models/implementation_info.py`` by ``model_id``; subclasses
+        may override. An adapter without an entry gets the conservative
+        default (``UNKNOWN`` mode, no calibration sources) so it is
+        reported as unannotated rather than mislabelled.
         """
-        return ImplementationInfo()
+        try:
+            from src.models.implementation_info import IMPLEMENTATION_INFO  # noqa: WPS433
+
+            info = IMPLEMENTATION_INFO.get(self.model_id)
+        except Exception:  # noqa: BLE001 — never let inventory metadata break execution
+            info = None
+        return info if info is not None else ImplementationInfo()
 
     @abstractmethod
     def validate_inputs(self, params: dict[str, Any]) -> ValidationResult:

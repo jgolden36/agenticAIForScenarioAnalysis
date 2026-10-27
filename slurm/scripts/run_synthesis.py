@@ -361,10 +361,13 @@ def main() -> None:
                 if r.status == ModelExecutionStatus.FAILED
             )
 
+            mode_by_model = {
+                r.model_id: r.implementation_mode for r in scenario_results
+            }
             per_scenario_artifacts.append({
                 "scenario_id": scenario.value,
                 "label": narrative_data["label"],
-                "markdown": render_scenario_markdown(synthesis),
+                "markdown": render_scenario_markdown(synthesis, mode_by_model),
                 "outcome_count": scenario_outcome_count,
                 "consistency_flag_count": len(flags),
                 "completed_models": scenario_completed,

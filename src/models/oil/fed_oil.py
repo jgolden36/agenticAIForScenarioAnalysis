@@ -128,11 +128,14 @@ class FedOilAdapter(ModelAdapter):
     @property
     def description(self) -> str:
         return (
-            "Fed Workhorse Oil Model (Baumeister-Hamilton SVAR) — structural vector "
-            "autoregression for macroeconomic transmission of oil price shocks. "
-            "Decomposes oil shocks into supply, demand, and speculative components and "
-            "traces impulse responses of GDP, CPI, federal funds rate, and unemployment "
-            "over a 2–8 quarter short-run horizon."
+            "Baumeister-Hamilton (2019 AER) oil-shock SVAR, closed-form reduction. "
+            "Not a Federal Reserve model: the historical 'Fed workhorse' label refers "
+            "to the framework's use in Fed policy analysis. Decomposes oil shocks into "
+            "supply, demand, and speculative components and traces reduced-form "
+            "impulse responses of GDP, CPI, the federal funds rate, and unemployment "
+            "over a 2–8 quarter short-run horizon. Peak CPI = 2 x peak FFR and peak "
+            "unemployment = 0.5 x |peak GDP| hold by construction (Taylor coefficient "
+            "0.5, Okun coefficient -0.5); see outputs['_reduced_form_equations']."
         )
 
     def validate_inputs(self, params: dict[str, Any]) -> ValidationResult:
@@ -305,6 +308,23 @@ class FedOilAdapter(ModelAdapter):
             "fevd_oil_share": _SHOCK_TYPE_FEVD.get(shock_type, 0.20),
             "zlb_binding": zlb_binding,
             "horizon_quarters": horizon,
+            # The IRF paths are deterministic functions of the two kernel
+            # peaks, so the ratios below are identities of the reduced
+            # form rather than independent results. Stated explicitly so
+            # the synthesis and the manuscript do not present them as
+            # separate findings.
+            "_reduced_form_equations": [
+                f"gdp_q = peak_gdp x {_IRF_DECAY_GDP}^q; cpi_q = peak_cpi x {_IRF_DECAY_CPI}^q",
+                f"ffr_0 = {_TAYLOR_COEFF_INFLATION} x cpi_0; ffr_q = {_IRF_DECAY_FFR} x ffr_(q-1) + "
+                f"{_TAYLOR_COEFF_INFLATION} x (cpi_q - cpi_(q-1))",
+                f"unemployment_q = {_OKUN_COEFF} x gdp_q",
+                f"identities: peak_cpi_impact_pp = {1.0 / _TAYLOR_COEFF_INFLATION:g} x peak_ffr_impact_pp; "
+                f"peak_unemployment_impact_pp = {abs(_OKUN_COEFF):g} x |peak_gdp_impact_pct|",
+            ],
+            "_implementation_note": (
+                "Closed-form reduction calibrated on Baumeister & Hamilton (2019 AER); "
+                "the estimated SVAR itself was not run."
+            ),
         }
 
         return ModelOutput(
