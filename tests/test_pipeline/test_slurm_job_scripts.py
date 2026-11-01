@@ -50,3 +50,53 @@ def test_revision_job_requires_run_id():
     )
     assert proc.returncode != 0
     assert "HORMUZ_RUN_ID" in proc.stderr
+
+
+def _lock_root(tmp_path: Path, run_id: str, holder: str) -> Path:
+    """A fake project root whose slurm/jobs is the real one, with a pre-existing lock."""
+    root = tmp_path / "root"
+    (root / "slurm").mkdir(parents=True)
+    (root / "slurm" / "jobs").symlink_to(JOBS, target_is_directory=True)
+    lock = root / "slurm" / "logs" / run_id / "revision.lock.d"
+    lock.mkdir(parents=True)
+    (lock / "job_id").write_text(holder + "\n")
+    return root
+
+
+def _stub_squeue(tmp_path: Path, running: bool) -> Path:
+    bindir = tmp_path / "bin"
+    bindir.mkdir()
+    stub = bindir / "squeue"
+    body = 'echo "999999 batch hormuz-revision user R 0:10 1 node"' if running else "exit 0"
+    stub.write_text("#!/bin/bash\n" + body + "\n")
+    stub.chmod(0o755)
+    return bindir
+
+
+def _run_revision_job(root: Path, bindir: Path, run_id: str) -> subprocess.CompletedProcess:
+    import os
+
+    env = {**os.environ, "PATH": f"{bindir}:{os.environ.get('PATH', '')}", "HORMUZ_STDBUF_REEXEC": "1",
+           "SLURM_SUBMIT_DIR": str(root), "HORMUZ_RUN_ID": run_id, "HORMUZ_CONDA_ENV": "definitely_missing_env"}
+    env.pop("SLURM_JOB_ID", None)
+    return subprocess.run(["bash", str(JOBS / "stonybrook_ai_cluster-revision.job")], cwd=root,
+                          capture_output=True, text=True, env=env, timeout=120)
+
+
+def test_revision_job_refuses_to_start_when_holder_is_running(tmp_path):
+    root = _lock_root(tmp_path, "locktest", "999999")
+    proc = _run_revision_job(root, _stub_squeue(tmp_path, running=True), "locktest")
+    assert proc.returncode == 3, proc.stdout + proc.stderr
+    assert "999999" in proc.stderr and "scancel 999999" in proc.stderr
+    # The other job's lock is left in place.
+    assert (root / "slurm" / "logs" / "locktest" / "revision.lock.d" / "job_id").read_text().strip() == "999999"
+
+
+def test_revision_job_removes_stale_lock_and_releases_its_own(tmp_path):
+    root = _lock_root(tmp_path, "locktest", "999999")
+    proc = _run_revision_job(root, _stub_squeue(tmp_path, running=False), "locktest")
+    assert "stale lock from job 999999" in proc.stdout
+    # The job continues past the lock (and fails later at conda activation in this
+    # environment); the EXIT trap releases the lock it took.
+    assert proc.returncode != 3
+    assert not (root / "slurm" / "logs" / "locktest" / "revision.lock.d").exists()

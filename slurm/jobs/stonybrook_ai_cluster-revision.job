@@ -43,14 +43,22 @@
 #   sbatch --export=ALL,HORMUZ_RUN_ID=weekly_20260315,HORMUZ_BACKEND_REPORTS_ROOT=$PWD/data/reports,HORMUZ_BACKEND_STATE_ROOT=$PWD/data/pipeline_state \
 #       slurm/jobs/stonybrook_ai_cluster-revision.job
 #
-#   # Two jobs at once: give each baseline its own id.
-#   sbatch --export=ALL,HORMUZ_RUN_ID=<id>,HORMUZ_BASELINE_RUN_ID=baseline_analyst_<id> ...
+#   # Two jobs on DIFFERENT runs at once: give each baseline its own id
+#   # (replace RUN_ID with the real id; never paste angle-bracket placeholders,
+#   # bash reads < and > as redirections):
+#   sbatch --export=ALL,HORMUZ_RUN_ID=RUN_ID,HORMUZ_BASELINE_RUN_ID=baseline_analyst_RUN_ID \
+#       slurm/jobs/stonybrook_ai_cluster-revision.job
+#
+# A second job on the SAME run id refuses to start while the first is queued
+# or running (per-run lock slurm/logs/<run_id>/revision.lock.d; exit 3).
+# HORMUZ_REVISION_FORCE=1 overrides the lock.
 #
 # Toggles: HORMUZ_RECOVER_FROM_OUTPUTS (0), HORMUZ_RECOVER_OVERWRITE (0),
 # HORMUZ_RUN_POSTPROCESS (= HORMUZ_RECOVER_FROM_OUTPUTS), HORMUZ_RUN_BASELINE (1),
 # HORMUZ_BASELINE_RUN_ID (baseline_analyst), HORMUZ_REPORT_DIR, HORMUZ_REVISION_OUT_DIR,
 # HORMUZ_REVISION_SKIP, HORMUZ_EXPORT_USE_LLM (0 here), HORMUZ_VIZ_NO_TIMESERIES (0),
-# HORMUZ_BACKEND_REPORTS_ROOT / HORMUZ_BACKEND_STATE_ROOT, HORMUZ_CONDA_ENV (hormuz).
+# HORMUZ_BACKEND_REPORTS_ROOT / HORMUZ_BACKEND_STATE_ROOT, HORMUZ_CONDA_ENV (hormuz),
+# HORMUZ_REVISION_FORCE (0).
 #
 # Exit status: the build_all.py return code (1 when any revision step
 # failed), so the END/FAIL mail reflects the artefacts, not the
@@ -106,6 +114,39 @@ source "${PROJECT_ROOT}/slurm/jobs/_common.sh"
 source "${PROJECT_ROOT}/slurm/jobs/_revision_stage.sh"
 
 STAGE_PREFIX="stonybrook_ai_cluster_revision"
+
+# ------------------------------------------------------------------
+# Per-run lock. A second revision job on the same run id would race
+# this one: same output directory, same baseline id, and a recovery
+# pass rewriting the state records the other job reads. mkdir is
+# atomic on the shared home, so it serves as the lock; the holder's
+# SLURM job id is recorded so a lock left by a dead job is recognised
+# as stale (squeue no longer lists it) and removed.
+# ------------------------------------------------------------------
+LOCK_DIR="${RUN_LOG_DIR}/revision.lock.d"
+if [[ "${HORMUZ_REVISION_FORCE:-0}" == "1" ]]; then
+    echo "[lock] HORMUZ_REVISION_FORCE=1: skipping the per-run lock."
+    mkdir -p "$LOCK_DIR"
+elif ! mkdir "$LOCK_DIR" 2>/dev/null; then
+    LOCK_HOLDER="$(cat "${LOCK_DIR}/job_id" 2>/dev/null || echo unknown)"
+    LOCK_HOLDER_RUNNING=0
+    if command -v squeue >/dev/null 2>&1 && [[ "$LOCK_HOLDER" =~ ^[0-9]+$ ]]; then
+        if [[ -n "$(squeue -h -j "$LOCK_HOLDER" 2>/dev/null)" ]]; then
+            LOCK_HOLDER_RUNNING=1
+        fi
+    fi
+    if [[ "$LOCK_HOLDER_RUNNING" == "1" ]]; then
+        echo "[lock] ERROR: revision job ${LOCK_HOLDER} already holds ${LOCK_DIR} for run ${HORMUZ_RUN_ID}." >&2
+        echo "[lock]        Wait for it, run 'scancel ${LOCK_HOLDER}', or resubmit with --dependency=afterany:${LOCK_HOLDER}." >&2
+        echo "[lock]        HORMUZ_REVISION_FORCE=1 overrides the lock." >&2
+        exit 3
+    fi
+    echo "[lock] stale lock from job ${LOCK_HOLDER} (not in the queue); removing ${LOCK_DIR}."
+    rm -rf "$LOCK_DIR"
+    mkdir -p "$LOCK_DIR"
+fi
+echo "${SLURM_JOB_ID:-local}" > "${LOCK_DIR}/job_id"
+trap 'rm -rf "$LOCK_DIR"' EXIT
 
 SBATCH_OUT="${PROJECT_ROOT}/slurm/logs/stonybrook_ai_cluster-revision-${SLURM_JOB_ID:-local}.out"
 SBATCH_ERR="${PROJECT_ROOT}/slurm/logs/stonybrook_ai_cluster-revision-${SLURM_JOB_ID:-local}.err"
