@@ -324,7 +324,7 @@ pytest tests/test_models   # adapter contract tests only
 
 ### Per-run output artefacts
 
-The SLURM driver (`slurm/jobs/stonybrook_ai_cluster.job`) runs two trailing post-processing stages over the synthesis output of every run, both gated to be best-effort so a missing optional dep can't fail a run:
+The Stony Brook drivers (`slurm/jobs/stonybrook_ai_cluster.job` and `slurm/jobs/stonybrook_ai_cluster-Althea.job`) run trailing post-processing stages over the synthesis output of every run, all gated to be best-effort so a missing optional dep can't fail a run. The Althea driver takes them from the shared include `slurm/jobs/_revision_stage.sh` and adds a Stage 7 that writes the revision artefacts to `docs/revision/runs/<run_id>/` (toggles: `HORMUZ_RUN_REVISION`, `HORMUZ_RUN_BASELINE`, `HORMUZ_BASELINE_RUN_ID`, `HORMUZ_REVISION_OUT_DIR`, `HORMUZ_REVISION_SKIP`; see the section below).
 
 - **Stage 5 — quantitative + qualitative export** (`slurm/scripts/export_results.py`). Emits `data/reports/<run_id>/csv/{model_status,synthesis_outcomes,quantitative_results,consistency_flags}.csv`, per-(scenario, model) tables under `csv/raw/<scenario>/`, and per-scenario plain-prose narratives under `qualitative/<scenario>.md` plus a cross-scenario index.
 - **Stage 6 — visualization suite** (`slurm/scripts/visualize_results.py`). Reads the Stage 5 CSVs + qualitative narratives and emits PNG figures (status by scenario / commodity system, headline-outcomes grid, per-row-normalised cross-model heatmap, consistency-flag bars, per-CSV time-series line/bar plots) plus a single self-contained `data/reports/<run_id>/figures/index.html` dashboard that embeds every figure inline alongside the rendered narrative markdown. Requires the `[viz]` extra (`pip install -e ".[viz]"` — matplotlib + pandas + markdown). The dashboard degrades to a text-only HTML report when any of those are unavailable.
@@ -358,6 +358,26 @@ The October 2026 revision added a set of audit scripts that read a run's saved s
 | `scripts/revision/recover_run_from_outputs.py` | Rebuilds a run's per-cell records from `data/outputs/**/metadata.json` filtered by `run_id`. |
 
 Two pipeline changes accompany these tools. Stage 3 state files are now named `<run_id>_model_<tier>_<task>.json` (the three tiers previously overwrote each other's records because their array indices restart at 0), and the forwarding dispatcher only reads `data/outputs/` entries whose `metadata.run_id` matches the current run (`--allow-stale-upstream` restores the old behaviour). A run's `summary.json` carries `clean_synthesis` and the `run_health` block (`src/synthesis/run_health.py`) that defines it.
+
+#### Running the revision tools on the cluster
+
+Two Stony Brook jobs cover the cluster side. The full LLM driver `slurm/jobs/stonybrook_ai_cluster-Althea.job` now ends with validation, export, figures and a Stage 7 that runs `build_all.py` for the fresh run. The CPU-only job `slurm/jobs/stonybrook_ai_cluster-revision.job` does the same for a run that already exists, with no LLM and no GPU:
+
+```bash
+# Revision artefacts for an existing run (state files present)
+sbatch --export=ALL,HORMUZ_RUN_ID=20260504_222710 slurm/jobs/stonybrook_ai_cluster-revision.job
+
+# Recovery pass for the tier-collision run: rebuild records from data/outputs,
+# then validation, export (--no-llm), figures, and Stage 7
+sbatch --export=ALL,HORMUZ_RUN_ID=20260504_222710,HORMUZ_RECOVER_FROM_OUTPUTS=1 \
+    slurm/jobs/stonybrook_ai_cluster-revision.job
+
+# Report-only inputs, no baseline, skip the steps that need git history
+sbatch --export=ALL,HORMUZ_RUN_ID=20260504_222710,HORMUZ_REPORT_DIR=$PWD/data/20260504_222710,HORMUZ_RUN_BASELINE=0,HORMUZ_REVISION_SKIP=pycge_replay\,effort_metrics \
+    slurm/jobs/stonybrook_ai_cluster-revision.job
+```
+
+Both jobs share the functions in `slurm/jobs/_revision_stage.sh`. Outputs go to `docs/revision/runs/<run_id>/` (override with `HORMUZ_REVISION_OUT_DIR`), the deterministic baseline is rerun as `HORMUZ_BASELINE_RUN_ID` (default `baseline_analyst`; use a unique id when two jobs run at once), and `software_versions.md` picks up the `pip freeze` and the runtime sidecars from `slurm/logs/<run_id>/`. `HORMUZ_BACKEND_REPORTS_ROOT` and `HORMUZ_BACKEND_STATE_ROOT` add the weekly backend comparison. The recovery pass does not rerun synthesis, so `synthesis_outcomes.csv` keeps reflecting the record set the LLM saw while the status CSV, quantitative CSV and ledger reflect the recovered set. `build_all.py` itself gained `--runtime-dir` and `--skip <step,...>` for the same purposes.
 
 ---
 

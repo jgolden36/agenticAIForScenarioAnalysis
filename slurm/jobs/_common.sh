@@ -41,8 +41,11 @@
 # Resolve the project root (sbatch sets SLURM_SUBMIT_DIR; fall back to
 # the common.sh location otherwise so the helper still works locally).
 HORMUZ_PROJECT_ROOT="${SLURM_SUBMIT_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
-HORMUZ_STATE_DIR="${HORMUZ_PROJECT_ROOT}/data/pipeline_state"
-HORMUZ_LOG_DIR="${HORMUZ_PROJECT_ROOT}/slurm/logs"
+# Both directories can be pre-set by the caller (the revision job routes
+# its bash-failure records away from the published run's state dir, and
+# the test-suite points them at a temporary folder).
+HORMUZ_STATE_DIR="${HORMUZ_STATE_DIR:-${HORMUZ_PROJECT_ROOT}/data/pipeline_state}"
+HORMUZ_LOG_DIR="${HORMUZ_LOG_DIR:-${HORMUZ_PROJECT_ROOT}/slurm/logs}"
 
 mkdir -p "$HORMUZ_STATE_DIR" "$HORMUZ_LOG_DIR"
 
@@ -231,6 +234,10 @@ safe_python() {
     set +e
     "$@"
     local rc=$?
+    # Expose the real exit code to callers that use continue_on_failure=1
+    # (the function itself returns 0 in that mode to keep dependency
+    # chains alive, which hides the code from `$?`).
+    HORMUZ_SAFE_PYTHON_RC=$rc
     if [[ "$_had_errexit" == "1" ]]; then
         set -e
     fi

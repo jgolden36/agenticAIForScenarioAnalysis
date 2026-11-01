@@ -1,0 +1,238 @@
+#!/bin/bash
+# ==================================================================
+# Hormuz pipeline: revision artefacts for an EXISTING run on the Stony
+# Brook AI cluster. CPU only, no LLM, no GPU.
+#
+# What it does, in order, for HORMUZ_RUN_ID:
+#   00. (optional, HORMUZ_RECOVER_FROM_OUTPUTS=1) rebuild the per-cell
+#       record set from data/outputs/<scenario>/<model>/metadata.json
+#       (scripts/revision/recover_run_from_outputs.py). Needed for run
+#       20260504_222710, whose commodity-tier records were overwritten
+#       by the macro tier before the tier-safe state-file naming fix.
+#   4b/5/6. (HORMUZ_RUN_POSTPROCESS=1; default on when recovering)
+#       validation, CSV + qualitative export (--no-llm), figures.
+#   07. scripts/revision/build_all.py: coverage ledger, run-specific
+#       model inventory, fidelity audit, anchor comparison, checkpoint
+#       report, coverage facts, pycge replay, effort metrics, software
+#       versions, model licenses, plus the deterministic analyst baseline
+#       and its comparison with this run (HORMUZ_RUN_BASELINE=1).
+#       Optional weekly backend comparison when
+#       HORMUZ_BACKEND_REPORTS_ROOT is set.
+#
+# Outputs
+#   docs/revision/runs/<run_id>/   (override with HORMUZ_REVISION_OUT_DIR)
+#   data/reports/<run_id>/         validation / csv / qualitative / figures when post-processing ran
+#   data/reports/<baseline_run_id>/ and data/pipeline_state/<baseline_run_id>_*
+#   slurm/logs/<run_id>/           pip_freeze.txt, runtime-*.json, bash-failure records of THIS job
+#
+# ------------------------------------------------------------------
+# Submission examples (from the repo root on the submit node)
+# ------------------------------------------------------------------
+#   # Revision artefacts for an intact run (state files present):
+#   sbatch --export=ALL,HORMUZ_RUN_ID=20260504_222710 slurm/jobs/stonybrook_ai_cluster-revision.job
+#
+#   # Recovery pass for the tier-collision run, then validation, export, figures, Stage 7:
+#   sbatch --export=ALL,HORMUZ_RUN_ID=20260504_222710,HORMUZ_RECOVER_FROM_OUTPUTS=1 \
+#       slurm/jobs/stonybrook_ai_cluster-revision.job
+#
+#   # Report-only inputs (state files gone), no baseline, skip the steps that need git history:
+#   sbatch --export=ALL,HORMUZ_RUN_ID=20260504_222710,HORMUZ_REPORT_DIR=$PWD/data/20260504_222710,HORMUZ_RUN_BASELINE=0,HORMUZ_REVISION_SKIP=pycge_replay\,effort_metrics \
+#       slurm/jobs/stonybrook_ai_cluster-revision.job
+#
+#   # Weekly backend comparison in the same job:
+#   sbatch --export=ALL,HORMUZ_RUN_ID=weekly_20260315,HORMUZ_BACKEND_REPORTS_ROOT=$PWD/data/reports,HORMUZ_BACKEND_STATE_ROOT=$PWD/data/pipeline_state \
+#       slurm/jobs/stonybrook_ai_cluster-revision.job
+#
+#   # Two jobs at once: give each baseline its own id.
+#   sbatch --export=ALL,HORMUZ_RUN_ID=<id>,HORMUZ_BASELINE_RUN_ID=baseline_analyst_<id> ...
+#
+# Toggles: HORMUZ_RECOVER_FROM_OUTPUTS (0), HORMUZ_RECOVER_OVERWRITE (0),
+# HORMUZ_RUN_POSTPROCESS (= HORMUZ_RECOVER_FROM_OUTPUTS), HORMUZ_RUN_BASELINE (1),
+# HORMUZ_BASELINE_RUN_ID (baseline_analyst), HORMUZ_REPORT_DIR, HORMUZ_REVISION_OUT_DIR,
+# HORMUZ_REVISION_SKIP, HORMUZ_EXPORT_USE_LLM (0 here), HORMUZ_VIZ_NO_TIMESERIES (0),
+# HORMUZ_BACKEND_REPORTS_ROOT / HORMUZ_BACKEND_STATE_ROOT, HORMUZ_CONDA_ENV (hormuz).
+#
+# Exit status: the build_all.py return code (1 when any revision step
+# failed), so the END/FAIL mail reflects the artefacts, not the
+# best-effort post-processing stages.
+# ==================================================================
+#SBATCH --job-name=hormuz-revision
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=32G
+#SBATCH --time=04:00:00
+#SBATCH --output=slurm/logs/stonybrook_ai_cluster-revision-%j.out
+#SBATCH --error=slurm/logs/stonybrook_ai_cluster-revision-%j.err
+#SBATCH --mail-type=END,FAIL
+
+set -uo pipefail
+
+# Line-buffered logs so progress echoes land in the .out file immediately.
+if command -v stdbuf >/dev/null 2>&1; then
+    if [[ -z "${HORMUZ_STDBUF_REEXEC:-}" ]]; then
+        export HORMUZ_STDBUF_REEXEC=1
+        exec stdbuf -oL -eL "$0" "$@"
+    fi
+fi
+
+if [[ "${HORMUZ_TRACE:-0}" == "1" ]]; then
+    export PS4='+ [$(date -u +%H:%M:%S)] ${BASH_SOURCE##*/}:${LINENO}: '
+    set -x
+fi
+
+# ------------------------------------------------------------------
+# Project root, helpers, run identification.
+# ------------------------------------------------------------------
+PROJECT_ROOT="${SLURM_SUBMIT_DIR:-$(pwd)}"
+cd "$PROJECT_ROOT"
+
+: "${HORMUZ_RUN_ID:?set HORMUZ_RUN_ID to an existing run id, e.g. sbatch --export=ALL,HORMUZ_RUN_ID=20260504_222710 slurm/jobs/stonybrook_ai_cluster-revision.job}"
+export HORMUZ_RUN_ID
+
+# Route everything this job writes (runtime inventory, bash-failure
+# records, pip freeze) into the run's log folder. The state dir is
+# redirected on purpose: bash-failure records from post-hoc tooling must
+# not land in data/pipeline_state, where run_health would count them as
+# failures of the published run itself.
+RUN_LOG_DIR="${PROJECT_ROOT}/slurm/logs/${HORMUZ_RUN_ID}"
+mkdir -p "$RUN_LOG_DIR"
+export HORMUZ_LOG_DIR="$RUN_LOG_DIR"
+export HORMUZ_STATE_DIR="$RUN_LOG_DIR"
+
+# shellcheck source=./_common.sh
+source "${PROJECT_ROOT}/slurm/jobs/_common.sh"
+# shellcheck source=./_revision_stage.sh
+source "${PROJECT_ROOT}/slurm/jobs/_revision_stage.sh"
+
+STAGE_PREFIX="stonybrook_ai_cluster_revision"
+
+SBATCH_OUT="${PROJECT_ROOT}/slurm/logs/stonybrook_ai_cluster-revision-${SLURM_JOB_ID:-local}.out"
+SBATCH_ERR="${PROJECT_ROOT}/slurm/logs/stonybrook_ai_cluster-revision-${SLURM_JOB_ID:-local}.err"
+if [[ -n "${SLURM_JOB_ID:-}" ]]; then
+    ln -sf "$SBATCH_OUT" "${RUN_LOG_DIR}/driver-revision-${SLURM_JOB_ID}.out" 2>/dev/null || true
+    ln -sf "$SBATCH_ERR" "${RUN_LOG_DIR}/driver-revision-${SLURM_JOB_ID}.err" 2>/dev/null || true
+fi
+
+# ------------------------------------------------------------------
+# Job defaults. No LLM is reachable here, so the qualitative export uses
+# its deterministic templates; W&B is off; no GPU is requested.
+# ------------------------------------------------------------------
+export HORMUZ_CONDA_ENV="${HORMUZ_CONDA_ENV:-hormuz}"
+export HORMUZ_AUTO_APPROVE=1
+export HORMUZ_EXPORT_USE_LLM="${HORMUZ_EXPORT_USE_LLM:-0}"
+export HORMUZ_EXPORT_EXEC_SUMMARY_LLM="${HORMUZ_EXPORT_EXEC_SUMMARY_LLM:-0}"
+export WANDB_MODE="${WANDB_MODE:-disabled}"
+export CUDA_VISIBLE_DEVICES=""
+HORMUZ_RECOVER_FROM_OUTPUTS="${HORMUZ_RECOVER_FROM_OUTPUTS:-0}"
+HORMUZ_RUN_POSTPROCESS="${HORMUZ_RUN_POSTPROCESS:-$HORMUZ_RECOVER_FROM_OUTPUTS}"
+HORMUZ_REPORT_DIR="${HORMUZ_REPORT_DIR:-${PROJECT_ROOT}/data/reports/${HORMUZ_RUN_ID}}"
+HORMUZ_REVISION_OUT_DIR="${HORMUZ_REVISION_OUT_DIR:-${PROJECT_ROOT}/docs/revision/runs/${HORMUZ_RUN_ID}}"
+export HORMUZ_REPORT_DIR HORMUZ_REVISION_OUT_DIR
+
+echo "================================================================"
+echo "  Hormuz revision job on Stony Brook AI Cluster"
+echo "  Job ID:        ${SLURM_JOB_ID:-local}"
+echo "  Node:          $(hostname)"
+echo "  Run ID:        ${HORMUZ_RUN_ID}"
+echo "  Project root:  ${PROJECT_ROOT}"
+echo "  Report dir:    ${HORMUZ_REPORT_DIR}"
+echo "  Out dir:       ${HORMUZ_REVISION_OUT_DIR}"
+echo "  Recover:       ${HORMUZ_RECOVER_FROM_OUTPUTS}   Post-process: ${HORMUZ_RUN_POSTPROCESS}   Baseline: ${HORMUZ_RUN_BASELINE:-1}"
+echo "  Skip steps:    ${HORMUZ_REVISION_SKIP:-none}"
+echo "  Started at:    $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+echo "================================================================"
+
+# ------------------------------------------------------------------
+# Conda environment (the one the LLM run used; no auto-build here).
+# ------------------------------------------------------------------
+_hormuz_mod() {
+    local label="$1"; shift
+    if command -v module >/dev/null 2>&1; then
+        timeout --preserve-status 60s bash -c "module $* </dev/null" 2>/dev/null
+        return $?
+    fi
+    return 127
+}
+echo "[progress] loading Lmod modules..."
+_hormuz_mod "purge" purge || true
+if ! _hormuz_mod "anaconda3" load anaconda3; then
+    if ! _hormuz_mod "anaconda" load anaconda; then
+        echo "[module] anaconda not available; relying on PATH"
+    fi
+fi
+
+if ! hormuz_activate_conda "${HORMUZ_CONDA_ENV}"; then
+    record_bash_failure "${STAGE_PREFIX}_setup" 1 \
+        "hormuz_activate_conda failed for env '${HORMUZ_CONDA_ENV}' on $(hostname)"
+    echo "[setup] ERROR: could not activate conda env '${HORMUZ_CONDA_ENV}'."
+    echo "[setup]        Create it with the main driver (HORMUZ_AUTO_BUILD=1) or: conda create -n ${HORMUZ_CONDA_ENV} python=3.11 && pip install -e \".[dev,adapters,viz]\""
+    exit 1
+fi
+echo "[setup] python: $(python --version 2>&1) at $(command -v python)"
+if ! python -c "import matplotlib" >/dev/null 2>&1; then
+    echo "[setup] WARNING: matplotlib missing; figures (Stage 6, coverage map, anchor plot) will be skipped."
+    echo "[setup]          pip install -e \".[viz]\" adds matplotlib, pandas and markdown."
+fi
+record_runtime_inventory "${STAGE_PREFIX}_setup"
+
+# ------------------------------------------------------------------
+# Input sanity (warn, do not abort: build_all falls back to the report
+# directory when state files are absent).
+# ------------------------------------------------------------------
+STATE_FILES=$(ls -1 "${PROJECT_ROOT}/data/pipeline_state/${HORMUZ_RUN_ID}_"*.json 2>/dev/null | wc -l | tr -d ' ')
+echo "[inputs] ${STATE_FILES} state file(s) for ${HORMUZ_RUN_ID} under data/pipeline_state"
+if [[ "$STATE_FILES" == "0" && ! -d "${HORMUZ_REPORT_DIR}/csv" ]]; then
+    echo "[inputs] WARNING: neither state files nor ${HORMUZ_REPORT_DIR}/csv exist; most revision steps will fail."
+fi
+if [[ "$HORMUZ_RECOVER_FROM_OUTPUTS" == "1" && ! -d "${HORMUZ_OUTPUTS_ROOT:-${PROJECT_ROOT}/data/outputs}" ]]; then
+    echo "[inputs] ERROR: recovery requested but ${HORMUZ_OUTPUTS_ROOT:-${PROJECT_ROOT}/data/outputs} does not exist."
+    record_bash_failure "${STAGE_PREFIX}_00_recover" 1 "data/outputs missing"
+    exit 1
+fi
+
+# ------------------------------------------------------------------
+# 00. Recovery (optional).
+# ------------------------------------------------------------------
+if [[ "$HORMUZ_RECOVER_FROM_OUTPUTS" == "1" ]]; then
+    if ! hormuz_stage_recover "${HORMUZ_RUN_ID}" "${STAGE_PREFIX}" "${HORMUZ_REVISION_OUT_DIR}"; then
+        echo "[recover] Aborting: recovery failed (rc=${HORMUZ_RECOVER_RC:-1})."
+        exit "${HORMUZ_RECOVER_RC:-1}"
+    fi
+fi
+
+# ------------------------------------------------------------------
+# 4b / 5 / 6. Validation, export, figures (optional).
+# ------------------------------------------------------------------
+if [[ "$HORMUZ_RUN_POSTPROCESS" == "1" ]]; then
+    hormuz_stage_postprocess "${HORMUZ_RUN_ID}" "${STAGE_PREFIX}"
+else
+    echo "[postprocess] HORMUZ_RUN_POSTPROCESS=0; keeping the run's existing validation / csv / figures."
+fi
+
+# ------------------------------------------------------------------
+# 07. Revision artefacts.
+# ------------------------------------------------------------------
+hormuz_stage_revision "${HORMUZ_RUN_ID}" "${STAGE_PREFIX}"
+
+# ------------------------------------------------------------------
+# Summary
+# ------------------------------------------------------------------
+echo ""
+echo "================================================================"
+echo "  Hormuz revision job complete"
+echo "  Run ID:       ${HORMUZ_RUN_ID}"
+echo "  Finished at:  $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+if [[ "$HORMUZ_RECOVER_FROM_OUTPUTS" == "1" ]]; then
+    echo "  Recovery rc:  ${HORMUZ_RECOVER_RC:-?}   report: ${HORMUZ_REVISION_OUT_DIR}/recovery_${HORMUZ_RUN_ID}.md"
+fi
+if [[ "$HORMUZ_RUN_POSTPROCESS" == "1" ]]; then
+    echo "  4b/5/6 rc:    validation=${HORMUZ_VALIDATION_RC:-?} export=${HORMUZ_EXPORT_RC:-?} viz=${HORMUZ_VIZ_RC:-?}"
+    echo "  Reports:      ${PROJECT_ROOT}/data/reports/${HORMUZ_RUN_ID}/{validation.md,csv/,qualitative/,figures/index.html}"
+fi
+hormuz_revision_summary "${HORMUZ_RUN_ID}"
+echo "  Run log dir:  ${RUN_LOG_DIR}"
+echo "  Driver log:   ${SBATCH_OUT}"
+echo "================================================================"
+
+exit "${HORMUZ_REVISION_RC:-1}"

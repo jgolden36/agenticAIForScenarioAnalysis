@@ -43,6 +43,20 @@ def test_runtime_inventories_and_backends(tmp_path):
     assert d["llm_backends"][0]["model"] == "gpt-oss-120b" and any(p["package"] == "langgraph" for p in d["packages"])
 
 
+def test_runtime_inventories_recursive_and_filtered_by_run(tmp_path):
+    logs = tmp_path / "logs"
+    (logs / "r").mkdir(parents=True)
+    (logs / "other").mkdir()
+    rt = {"python": "Python 3.11.9", "conda": "", "gams": "", "julia": "", "R": "", "java": "", "cuda": ""}
+    (logs / "r" / "runtime-a-1-single.json").write_text(json.dumps({"stage": "a", "run_id": "r", "hostname": "tesla1", "runtimes": rt}))
+    (logs / "other" / "runtime-b-2-single.json").write_text(json.dumps({"stage": "b", "run_id": "other", "hostname": "quadro1", "runtimes": rt}))
+    (logs / "runtime-c-3-single.json").write_text(json.dumps({"stage": "c", "run_id": "", "hostname": "h100", "runtimes": rt}))
+    filtered = runtime_inventories(logs, None, ["r"])
+    assert {r["hostname"] for r in filtered} == {"tesla1", "h100"}
+    everything = runtime_inventories(logs, None, [])
+    assert {r["hostname"] for r in everything} == {"tesla1", "quadro1", "h100"}
+
+
 def test_model_licenses_cover_registry():
     data = license_rows()
     assert len(data) >= 34 and all(r["license_notes"] for r in data)

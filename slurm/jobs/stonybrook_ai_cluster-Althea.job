@@ -50,6 +50,22 @@
 #   --   dispatch model manifests
 #   03.  Module 3 — model execution    (loop over manifest)
 #   04.  Module 4 — synthesis
+#   04b. output validation             (slurm/scripts/run_validation.py)
+#   05.  CSV + qualitative export      (slurm/scripts/export_results.py)
+#   06.  figures + dashboard           (slurm/scripts/visualize_results.py)
+#   07.  revision artefacts            (scripts/revision/build_all.py: coverage
+#        ledger, run-specific inventory, fidelity audit, anchor comparison,
+#        checkpoint report, coverage facts, pycge replay, effort metrics,
+#        software versions, model licenses, deterministic analyst baseline
+#        + comparison) into docs/revision/runs/<run_id>/
+#
+# Stages 4b to 7 are bash-best-effort (the synthesis rc stays the job's
+# exit status) and come from slurm/jobs/_revision_stage.sh. Toggles:
+#   HORMUZ_EXPORT_USE_LLM (1), HORMUZ_EXPORT_EXEC_SUMMARY_LLM (1),
+#   HORMUZ_VIZ_NO_TIMESERIES (0), HORMUZ_VALIDATION_FAIL_ON_ERROR (0),
+#   HORMUZ_RUN_REVISION (1), HORMUZ_RUN_BASELINE (1),
+#   HORMUZ_BASELINE_RUN_ID (baseline_analyst), HORMUZ_REVISION_OUT_DIR,
+#   HORMUZ_REVISION_SKIP (e.g. pycge_replay,effort_metrics on a shallow clone).
 #
 # All HITL checkpoints are auto-approved; for interactive review run
 # `python -m src.pipeline.graph` locally instead.
@@ -213,6 +229,8 @@ cd "$PROJECT_ROOT"
 
 # shellcheck source=./_common.sh
 source "${PROJECT_ROOT}/slurm/jobs/_common.sh"
+# shellcheck source=./_revision_stage.sh
+source "${PROJECT_ROOT}/slurm/jobs/_revision_stage.sh"
 
 STAGE_PREFIX="stonybrook_ai_cluster"
 
@@ -1032,6 +1050,37 @@ echo "[synthesis] ${HORMUZ_BASH_FAILURE_COUNT} bash-layer failure record(s) from
 safe_python "${STAGE_PREFIX}_04_synthesis" 0 -- python slurm/scripts/run_synthesis.py
 rc=$?
 
+# ==================================================================
+#  Stages 4b / 5 / 6 — validation, CSV + qualitative export, figures
+#
+# Shared functions from slurm/jobs/_revision_stage.sh. Best-effort: a
+# failure is recorded as a bash-failure record and surfaced in the
+# summary, but the synthesis rc above stays the job's exit status so a
+# missing optional dependency cannot mask a successful pipeline run.
+# The vLLM sidecar is still alive here (cleanup runs on EXIT), so the
+# Stage 5 qualitative pass uses the same LLM as the pipeline unless
+# HORMUZ_EXPORT_USE_LLM=0.
+# ==================================================================
+hormuz_stage_postprocess "${HORMUZ_RUN_ID}" "${STAGE_PREFIX}"
+
+# ==================================================================
+#  Stage 7 — revision artefacts (scripts/revision/build_all.py)
+#
+# Coverage ledger, run-specific model inventory, fidelity audit, anchor
+# comparison, checkpoint report, coverage facts, pycge replay, effort
+# metrics, software versions (pip freeze + runtime sidecars from this
+# run's log dir), model licenses, and the deterministic analyst
+# baseline with its comparison against this run. Written to
+# docs/revision/runs/<run_id>/ so successive runs never overwrite each
+# other. Disable with HORMUZ_RUN_REVISION=0.
+# ==================================================================
+if [[ "${HORMUZ_RUN_REVISION:-1}" == "1" ]]; then
+    hormuz_stage_revision "${HORMUZ_RUN_ID}" "${STAGE_PREFIX}"
+else
+    echo ""
+    echo "[revision] HORMUZ_RUN_REVISION=0; skipping Stage 7."
+fi
+
 # ------------------------------------------------------------------
 # Summary
 # ------------------------------------------------------------------
@@ -1040,9 +1089,15 @@ echo "================================================================"
 echo "  Hormuz pipeline complete on Stony Brook AI Cluster"
 echo "  Run ID:       ${HORMUZ_RUN_ID}"
 echo "  Synthesis rc: ${rc}"
+echo "  4b/5/6 rc:    validation=${HORMUZ_VALIDATION_RC:-?} export=${HORMUZ_EXPORT_RC:-?} viz=${HORMUZ_VIZ_RC:-?}"
 echo "  Finished at:  $(date -u +%Y-%m-%dT%H:%M:%SZ)"
 echo "  State files:  ${PROJECT_ROOT}/data/pipeline_state/${HORMUZ_RUN_ID}_*"
-echo "  Reports:      ${PROJECT_ROOT}/data/reports/"
+echo "  Reports:      ${PROJECT_ROOT}/data/reports/${HORMUZ_RUN_ID}/"
+echo "                  synthesis.{json,md} + <scenario>.md       (Stage 4)"
+echo "                  validation.{json,md}                      (Stage 4b)"
+echo "                  csv/, qualitative/                        (Stage 5)"
+echo "                  figures/index.html                        (Stage 6)"
+hormuz_revision_summary "${HORMUZ_RUN_ID}"
 echo "  Run log dir:  ${RUN_LOG_DIR}"
 echo "                  driver-${SLURM_JOB_ID:-N/A}.out / .err  (symlinks)"
 echo "                  vllm.log                                (if sidecar ran)"
