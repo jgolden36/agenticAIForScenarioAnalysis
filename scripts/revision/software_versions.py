@@ -89,14 +89,25 @@ def _load_json(path: Path) -> Any | None:
 
 
 def runtime_inventories(runtime_dir: Path | None, state_dir: Path | None, run_ids: list[str]) -> list[dict[str, Any]]:
-    """Distinct (hostname, runtimes) records from sidecars and run-wide jsonl files."""
+    """Distinct (hostname, runtimes) records from sidecars and run-wide jsonl files.
+
+    Sidecars are searched recursively because the SLURM drivers write them
+    into per-run folders (``slurm/logs/<run_id>/runtime-*.json``). When
+    ``run_ids`` is given, sidecars that name a different run are dropped;
+    sidecars with no run id (written before HORMUZ_RUN_ID was set) are kept.
+    """
+    wanted = set(run_ids or [])
     records: list[dict[str, Any]] = []
     if runtime_dir and runtime_dir.exists():
-        for p in sorted(runtime_dir.glob("runtime-*.json")):
+        for p in sorted(runtime_dir.rglob("runtime-*.json")):
             rec = _load_json(p)
-            if isinstance(rec, dict):
-                rec["_source"] = str(p)
-                records.append(rec)
+            if not isinstance(rec, dict):
+                continue
+            rid = str(rec.get("run_id") or "")
+            if wanted and rid and rid not in wanted:
+                continue
+            rec["_source"] = str(p)
+            records.append(rec)
     if state_dir and state_dir.exists():
         for rid in run_ids or ["*"]:
             for p in sorted(state_dir.glob(f"{rid}_runtime.jsonl")):
@@ -172,7 +183,7 @@ def render_markdown(d: dict[str, Any]) -> str:
             lines.append(f"| {r['run_id'] or ''} | {r['stage'] or ''} | {r['hostname'] or ''} | {r['gpu'] or ''} | {r['conda_env'] or ''} | "
                          f"{r['python'] or '-'} | {r['gams'] or '-'} | {r['julia'] or '-'} | {r['R'] or '-'} | {r['java'] or '-'} | {r['cuda'] or '-'} |")
     else:
-        lines.append("_No runtime sidecars found (`slurm/logs/runtime-*.json`, `<run_id>_runtime.jsonl`)._")
+        lines.append("_No runtime sidecars found (`slurm/logs/**/runtime-*.json`, `<run_id>_runtime.jsonl`)._")
     lines += ["", "## LLM backends per run", "", "| run | provider | model | base url | temperature | state file |", "|---|---|---|---|---|---|"]
     for r in d["llm_backends"]:
         lines.append(f"| {r['run_id']} | {r['provider'] or '-'} | {r['model'] or '-'} | {r['base_url'] or '-'} | {r['temperature'] if r['temperature'] is not None else '-'} | "
