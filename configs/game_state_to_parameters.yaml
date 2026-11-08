@@ -1,0 +1,224 @@
+# =====================================================================
+# Game state -> adapter parameters -> game state (DRAFT, v0.1, 2026-11-08)
+# =====================================================================
+#
+# The war game (jgolden36/EconomicWarGames, package `ewg`) resolves a weekly
+# Hormuz crisis round and asks this pipeline for calibrated numbers. This file
+# is the declarative seam between the two: how a serialised `GameState` becomes
+# the parameter dict each Tier 1 adapter already validates, and how each
+# adapter's outputs flow back into the game's state variables. It is written in
+# the style of `upstream_forwarding_mapping.yaml` so the same vocabulary
+# (sources, transforms, combine, candidate_sources) covers both directions.
+#
+# Status: a draft the plan in docs/game/INTEGRATION_PLAN.md proposes. No code
+# reads it yet. The loader is Phase H2 of that plan (`src/game/adjudicator.py`).
+#
+# Vocabulary of the inbound side (`inputs:`):
+#   state.<path>   a field of the game's round request (see docs/game/INTEGRATION_PLAN.md,
+#                  section 5.1 for the request schema)
+#   expr           a small arithmetic expression over state fields and the constants
+#                  below; the loader evaluates it with a restricted evaluator, never eval()
+#   const          a literal
+#   categorical    a mapping from an escalation rung or a flag to the vocabulary the
+#                  adapter validates against
+#
+# Every parameter the game sets is recorded on the round's provenance record as
+# {model_id, param, rule, state_fields_used, value}, so the debrief can show why
+# POLES saw 14.2 mb/d and not 16.
+# =====================================================================
+
+version: 1
+baseline_id: game_baseline_2025         # the frozen EIA/IEA/Comtrade snapshot the game ships (Phase H0)
+
+constants:
+  # Pre-crisis Hormuz throughput. EIA World Oil Transit Chokepoints (1H 2025 average);
+  # the design report carries 20.9 mb/d, the analyst baseline rounds to 20-21.
+  hormuz_oil_baseline_mbd: 20.9
+  # EIA: 11.4 Bcf/d of LNG through the Strait, over 20 percent of global LNG trade.
+  hormuz_lng_baseline_bcfd: 11.4
+  # Qatar's share of Hormuz LNG; 93 percent of Qatar's exports transit the Strait.
+  qatar_share_of_hormuz_lng: 0.93
+  # Pre-crisis war-risk premium, percent of hull value per transit (design report).
+  war_risk_baseline_pct: 0.25
+  # Weeks per crisis round (the design report's weekly clock).
+  round_weeks: 1
+
+inputs:
+
+  # ------------------------------------------------------------ OIL (Tier 1)
+  poles_jrc:
+    supply_loss_mbd:
+      # Net loss after bypass and releases is what the kernel also uses as the
+      # shortfall S. The adapter's upper bound is 25 mb/d.
+      expr: "max(0, hormuz_oil_baseline_mbd * (1 - state.strait.transit_capacity) - state.bypass.east_west_mbd - state.bypass.adcop_mbd - state.bypass.other_mbd - state.releases.total_mbd)"
+    disruption_duration_months:
+      # Expected remaining closure in months, from the control cell's rung-conditioned
+      # duration expectation (Section 5.1 of the plan), never from a player order.
+      expr: "max(0.25, state.expectations.remaining_closure_weeks / 4.33)"
+    rerouting_cost_multiplier:
+      # Round N reads what AISdb and AIS_project returned in round N-1 (combine: mean),
+      # so the oil model sees the shipping models' number, as the pipeline's forwarding
+      # rule already does for the same parameter. Round 1 uses the baseline constant.
+      from_previous_round: {source_models: [aisdb, ais_project], field: rerouting_cost_multiplier, combine: mean, default: 1.0}
+    insurance_premium_increase_pct:
+      # Percent increase over the pre-crisis premium on the Hormuz lane.
+      expr: "max(0, (state.lanes.hormuz.war_risk_pct / war_risk_baseline_pct - 1) * 100)"
+    substitute_energy_availability:
+      # Demand restraint and fuel switching orders raise substitutability within [0, 1].
+      expr: "min(1, 0.2 + 0.5 * state.restraint.demand_reduction_share)"
+
+  marketsim:
+    oil_price_shock_pct:
+      from_previous_round: {source_models: [poles_jrc], field: peak_price_change_pct, default: 0.0}
+    natural_gas_price_change_pct:
+      from_previous_round: {source_models: [lngst], field: implied_price_impulse_pct, default: 0.0}
+    disruption_duration_months:
+      expr: "max(0.25, state.expectations.remaining_closure_weeks / 4.33)"
+
+  fed_oil:
+    shock_type: {const: supply}
+    fed_funds_rate_baseline: {state: state.macro.US.policy_rate_pct}
+    oil_price_change_pct:
+      from_previous_round: {source_models: [poles_jrc], field: peak_price_change_pct, default: 0.0}
+    disruption_duration_quarters:
+      expr: "max(1, round(state.expectations.remaining_closure_weeks / 13))"
+
+  # ------------------------------------------------------------ LNG (Tier 1)
+  lngst:
+    qatar_export_reduction_pct:
+      # Qatar output x T x (1 - damaged share), the design report's LNG availability rule.
+      expr: "100 * (1 - state.strait.transit_capacity * (1 - state.damage.qatar_lng_share_lost))"
+    uae_export_reduction_pct:
+      expr: "100 * (1 - state.strait.transit_capacity)"
+    spot_price_multiplier:
+      # The game's own LNG price index from the previous round, floored at 1.
+      expr: "max(1.0, state.prices.lng_index)"
+    disruption_duration_months:
+      expr: "max(0.25, state.expectations.remaining_closure_weeks / 4.33)"
+
+  # ------------------------------------------------------------ SHIPPING (Tier 1)
+  aisdb:
+    strait_closure_flag:
+      expr: "state.strait.transit_capacity < 0.5"
+    alternative_routes:
+      # Bab el-Mandeb contested (Red Sea card, escalation rung >= 5) removes Suez.
+      categorical: {field: state.lanes.bab_el_mandeb.contested, "false": [cape_of_good_hope, suez_canal], "true": [cape_of_good_hope]}
+    vessel_types: {const: [tanker, lng_carrier, container, bulk_carrier]}
+
+  ais_project:
+    strait_closure_flag:
+      expr: "state.strait.transit_capacity < 0.5"
+    rerouting_via_cape: {const: true}
+    fleet_size_change_pct:
+      # Mines and seizures remove hulls; escorts return some.
+      expr: "-(100 * state.strait.mine_density * 0.1 + state.losses.tankers_seized_or_hit * 0.2)"
+    disruption_duration_months:
+      expr: "max(0.25, state.expectations.remaining_closure_weeks / 4.33)"
+
+  # ------------------------------------------------------------ SECOND-ORDER CARDS (Tier 1)
+  world_helium_model:
+    strategic_reserve_release: {state: state.releases.helium_reserve_release}
+    qatar_helium_supply_loss_pct:
+      expr: "100 * (1 - state.strait.transit_capacity * (1 - state.damage.ras_laffan_share_lost))"
+    disruption_duration_months:
+      expr: "max(0.25, state.expectations.remaining_closure_weeks / 4.33)"
+
+  world_fertilizer:
+    natural_gas_price_change_pct:
+      from_previous_round: {source_models: [lngst], field: implied_price_impulse_pct, default: 0.0}
+    middle_east_production_loss_pct:
+      expr: "100 * (1 - state.strait.transit_capacity)"
+    disruption_duration_months:
+      expr: "max(0.25, state.expectations.remaining_closure_weeks / 4.33)"
+
+  # The macro adapters (pycge, mpsge_jl) are Tier 2: run at era boundaries through the
+  # existing forwarding mapping, not here. Their inputs come from the Tier 1 outputs
+  # via configs/upstream_forwarding_mapping.yaml unchanged.
+
+# =====================================================================
+# Outbound: adapter outputs -> game state updates.
+# `combine` and `transform` mean what they mean in upstream_forwarding_mapping.yaml.
+# Every update carries candidate_sources and cross_source_deviation_pct, and the
+# game shows the deviation as an uncertainty band (plan, section 7).
+# =====================================================================
+outputs:
+
+  prices.oil_index_pct:
+    sources:
+      - {source_model: poles_jrc, source_field: peak_price_change_pct, transform: identity}
+    # bornstein_krusell_rebelo joins this list with combine: mean once its Octave path is
+    # available on the game host; the pipeline's consistency rule for the pair applies.
+    combine: mean
+    tier0_role: price_multiplier        # Tier 0 keeps its own elasticity rule; this calibrates it
+
+  prices.lng_index_pct:
+    sources:
+      - {source_model: lngst, source_field: implied_price_impulse_pct, transform: identity}
+    combine: first
+
+  prices.lng_hub_usd_mmbtu:
+    sources:
+      - {source_model: lngst, source_field: ttf_price, transform: identity, target_key: TTF}
+      - {source_model: lngst, source_field: jkm_price, transform: identity, target_key: JKM}
+      - {source_model: lngst, source_field: henry_hub_price, transform: identity, target_key: HH}
+    tier0_role: asia_europe_spread      # JKM minus TTF drives the LNG cargo auction reserve price
+
+  lanes.cape.cost_multiplier:
+    sources:
+      - {source_model: aisdb, source_field: rerouting_cost_multiplier, transform: identity}
+      - {source_model: ais_project, source_field: rerouting_cost_multiplier, transform: identity}
+    combine: mean
+
+  fleet.effective_capacity_loss_pct:
+    sources:
+      - {source_model: aisdb, source_field: effective_fleet_capacity_loss_pct, transform: identity}
+      - {source_model: ais_project, source_field: effective_fleet_capacity_loss_pct, transform: identity}
+    combine: mean
+    tier0_role: spot_tanker_auction_supply
+
+  lanes.hormuz.war_risk_pct_model:
+    # The model's view of the premium. The game's lane premium R stays the Tier 0 state
+    # variable (escorts and attacks move it); this is shown beside it, not written over it.
+    sources:
+      - {source_model: aisdb, source_field: war_risk_insurance_premium_pct, transform: identity}
+
+  cards.helium_gap_pct:
+    sources:
+      - {source_model: world_helium_model, source_field: effective_supply_gap_pct, transform: identity}
+    tier0_role: second_order_card_trigger   # fires the helium / chips card above a threshold
+
+  cards.fertilizer_index_pct:
+    sources:
+      - {source_model: world_fertilizer, source_field: fertilizer_price_index_pct, transform: identity}
+    tier0_role: next_era_food_penalty
+
+  macro.US.oil_shock_gdp_pct:
+    sources:
+      - {source_model: fed_oil, source_field: peak_gdp_impact_pct, transform: identity}
+    tier0_role: us_dashboard_only          # US-only model; feeds the US team's dashboard, no other seat
+
+  macro.US.oil_shock_cpi_pp:
+    sources:
+      - {source_model: fed_oil, source_field: peak_cpi_impact_pp, transform: identity}
+    tier0_role: us_dashboard_only
+
+  welfare.US.consumer_surplus_loss_bn_usd:
+    sources:
+      - {source_model: marketsim, source_field: consumer_surplus_loss_bn_usd, transform: identity}
+    tier0_role: us_dashboard_only
+
+# Era-boundary (Tier 2) outputs, read from a full pipeline run or the response surface,
+# keyed by the unified region taxonomy in configs/region_crosswalk.yaml.
+era_outputs:
+  macro.<team>.gdp_gap_pct:
+    sources:
+      - {source_model: mpsge_jl, source_field: gdp_impact_pct_by_region, transform: identity}
+      - {source_model: pycge, source_field: regional_vars, transform: identity}
+    combine: mean
+    team_region_crosswalk:
+      US: US
+      China: CHN
+      EU: EU
+      GCC: MENA_GCC
+      India: IND
+      Japan-Korea: ROW          # no JPN/KOR row in the unified taxonomy today; see plan, risk list
