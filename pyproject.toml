@@ -136,6 +136,15 @@ news = [
     # HTTPS, so `requests` is the only hard dependency.
     "requests>=2.31",
 ]
+game = [
+    # The economic war game adjudicator (src/game/api.py): a small HTTP
+    # service the EconomicWarGames server calls once per crisis round.
+    # Runs the analytical-MVP adapters directly, no LLM. See
+    # docs/game/ADJUDICATOR.md.
+    "fastapi>=0.115",
+    "uvicorn>=0.23",
+    "httpx>=0.24",
+]
 llm-providers = [
     # Optional cloud LLM providers. langchain-openai is already a
     # core dependency (used by vLLM / Ollama / OpenAI). Installing

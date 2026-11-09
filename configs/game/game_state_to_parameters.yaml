@@ -1,0 +1,148 @@
+# Game state -> pipeline adapter parameters (integration plan, Section 5.1).
+#
+# Read by src/game/mapping.py. Each adapter block lists the parameters its analytical-MVP path
+# needs. A parameter is either a literal (number, string, bool, list) or {expr: "..."}: a
+# small arithmetic expression over the round's world variables and the frozen baseline. The
+# evaluator (mapping.py :: evaluate) accepts numbers, names, dotted lookups, + - * / unary
+# minus, comparisons, and/or/not, the ternary `a if c else b`, and the functions
+# min max abs round clamp. Nothing else, so every rule is auditable from this file alone.
+#
+# Names available in expressions:
+#   world.*      the RoundRequest.world fields (transit_capacity_pct, mine_density,
+#                escalation_rung, qatar_damaged_share, bypass_used_mbd, stock_release_mbd,
+#                demand_restraint_mbd, war_risk_premium_pct, weeks_elapsed,
+#                expected_remaining_weeks, rerouting_via_cape, helium_reserve_release_mmscf)
+#   baseline.*   configs/game/hormuz_2026_baseline.yaml with every {value,...} record collapsed
+#                to its value, e.g. baseline.pre_crisis.oil_transit_mbd
+#   derived.*    the entries below, evaluated in order before any adapter block
+#
+# Parameters that other models compute (poles_jrc.rerouting_cost_multiplier,
+# world_fertilizer.natural_gas_price_change_pct, marketsim.*, fed_oil.*) still carry a fallback
+# value here. The adjudicator replaces them through configs/upstream_forwarding_mapping.yaml and
+# records the replacement as an override, the same Replace-with-metadata policy the pipeline uses.
+
+version: 1
+
+derived:
+  closure_fraction: {expr: "clamp(1 - world.transit_capacity_pct / 100, 0, 1)"}
+  gross_oil_loss_mbd: {expr: "baseline.pre_crisis.oil_transit_mbd * derived.closure_fraction"}
+  net_oil_loss_mbd: {expr: "max(0, derived.gross_oil_loss_mbd - world.bypass_used_mbd - world.stock_release_mbd - world.demand_restraint_mbd)"}
+  total_weeks: {expr: "max(1, world.weeks_elapsed + world.expected_remaining_weeks)"}
+  duration_months: {expr: "clamp(derived.total_weeks * 12 / 52, 0.5, 36)"}
+  duration_months_int: {expr: "clamp(round(derived.duration_months), 1, 12)"}
+  duration_quarters: {expr: "max(1, round(derived.duration_months / 3))"}
+  # Qatar LNG and helium leave through the strait with no bypass; damage removes capacity even
+  # when the strait is open.
+  qatar_export_reduction_pct: {expr: "clamp(100 * (1 - (1 - derived.closure_fraction) * (1 - world.qatar_damaged_share)), 0, 100)"}
+  premium_increase_pct: {expr: "max(0, 100 * (world.war_risk_premium_pct - baseline.pre_crisis.war_risk_premium_pct) / baseline.pre_crisis.war_risk_premium_pct)"}
+  strait_closed: {expr: "world.transit_capacity_pct < 50"}
+  spot_multiplier: {expr: "baseline.designer_parameters.lng_spot_multiplier_by_rung[clamp(world.escalation_rung, 0, 7)]"}
+
+models:
+  aisdb:
+    strait_closure_flag: {expr: "derived.strait_closed"}
+    alternative_routes: {expr: "['cape_of_good_hope', 'suez_canal'] if world.escalation_rung >= 5 else ['cape_of_good_hope']"}
+    vessel_types: ["tanker", "lng_carrier", "container", "bulk_carrier"]
+
+  ais_project:
+    strait_closure_flag: {expr: "derived.strait_closed"}
+    rerouting_via_cape: {expr: "world.rerouting_via_cape"}
+    fleet_size_change_pct: 0.0
+    disruption_duration_months: {expr: "derived.duration_months"}
+
+  poles_jrc:
+    supply_loss_mbd: {expr: "clamp(derived.net_oil_loss_mbd, 0, 25)"}
+    disruption_duration_months: {expr: "derived.duration_months"}
+    # replaced by the mean of aisdb and ais_project through the forwarding mapping
+    rerouting_cost_multiplier: {expr: "1.0 + 0.4 * derived.closure_fraction"}
+    insurance_premium_increase_pct: {expr: "derived.premium_increase_pct"}
+    substitute_energy_availability: 0.3
+
+  lngst:
+    qatar_export_reduction_pct: {expr: "derived.qatar_export_reduction_pct"}
+    uae_export_reduction_pct: {expr: "clamp(100 * derived.closure_fraction, 0, 100)"}
+    spot_price_multiplier: {expr: "derived.spot_multiplier"}
+    disruption_duration_months: {expr: "derived.duration_months"}
+
+  world_helium_model:
+    qatar_helium_supply_loss_pct: {expr: "derived.qatar_export_reduction_pct"}
+    disruption_duration_months: {expr: "clamp(derived.duration_months, 0, 36)"}
+    strategic_reserve_release: {expr: "clamp(world.helium_reserve_release_mmscf, 0, 10000)"}
+
+  world_fertilizer:
+    # replaced by lngst.implied_price_impulse_pct x gas pass-through when forwarding resolves
+    natural_gas_price_change_pct: {expr: "baseline.designer_parameters.fertilizer_gas_passthrough * 100 * derived.closure_fraction"}
+    middle_east_production_loss_pct: {expr: "clamp(100 * derived.closure_fraction, 0, 100)"}
+    disruption_duration_months: {expr: "derived.duration_months"}
+
+  futures:
+    # replaced by world_fertilizer.fertilizer_price_index_pct when forwarding resolves
+    initial_price_shock_pct: {expr: "clamp(60 * derived.closure_fraction, 0, 500)"}
+    commodities: ["urea", "ammonia", "wheat", "natural_gas"]
+    forecast_horizon_months: 12
+
+  marketsim:
+    # both shocks replaced by poles_jrc and lngst outputs when forwarding resolves
+    oil_price_shock_pct: {expr: "clamp(600 * derived.net_oil_loss_mbd / baseline.pre_crisis.global_oil_demand_mbd, 0, 400)"}
+    natural_gas_price_change_pct: {expr: "clamp(100 * derived.closure_fraction, 0, 400)"}
+    disruption_duration_months: {expr: "derived.duration_months"}
+
+  fed_oil:
+    oil_price_change_pct: {expr: "clamp(600 * derived.net_oil_loss_mbd / baseline.pre_crisis.global_oil_demand_mbd, 0, 400)"}
+    shock_type: supply
+    disruption_duration_quarters: {expr: "derived.duration_quarters"}
+    fed_funds_rate_baseline: 4.0
+
+# Pipeline forwarding rules the game turns off. In the pipeline the war-risk premium is an LLM
+# estimate that AISdb's constant improves on; in the game it is observed state the players move
+# with escorts, attacks and backstops, so the game's own value stands.
+forwarding_disable:
+  - poles_jrc.insurance_premium_increase_pct
+
+# Game-side forwarding rules the pipeline mapping does not carry. Same schema as
+# configs/upstream_forwarding_mapping.yaml `models:` blocks. They are merged on top of the
+# pipeline mapping so one file states every substitution the adjudicator can make.
+forwarding_extra:
+  world_fertilizer:
+    natural_gas_price_change_pct:
+      sources:
+        - source_model: lngst
+          source_field: implied_price_impulse_pct
+          transform: identity
+  futures:
+    initial_price_shock_pct:
+      sources:
+        - source_model: world_fertilizer
+          source_field: fertilizer_price_index_pct
+          transform: identity
+  marketsim:
+    natural_gas_price_change_pct:
+      sources:
+        - source_model: lngst
+          source_field: implied_price_impulse_pct
+          transform: identity
+
+# How model outputs become the game's price multipliers (plan Section 5.2). The ramp spreads a
+# model's peak over the first rounds of the disruption; it is a designer parameter.
+outputs:
+  oil:
+    source_model: poles_jrc
+    source_field: peak_price_change_pct
+    ramp_weeks_key: price_ramp_weeks_energy
+  diesel:
+    source_model: poles_jrc
+    source_field: peak_price_change_pct
+    scale_key: diesel_crack_passthrough
+    ramp_weeks_key: price_ramp_weeks_energy
+  lng:
+    source_model: lngst
+    source_field: implied_price_impulse_pct
+    ramp_weeks_key: price_ramp_weeks_energy
+  fertilizer_n:
+    source_model: world_fertilizer
+    source_field: nitrogen_price_pct
+    ramp_weeks_key: price_ramp_weeks_slow
+  helium:
+    source_model: world_helium_model
+    source_field: price_change_pct
+    ramp_weeks_key: price_ramp_weeks_slow
