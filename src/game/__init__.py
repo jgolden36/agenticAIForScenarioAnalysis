@@ -8,10 +8,16 @@ graph is involved: adapters are called directly through the ``ModelAdapter`` con
 ``configs/upstream_forwarding_mapping.yaml`` pass computed shocks between them, and every number
 in the answer carries the model id, output key and implementation mode it came from.
 
-See ``docs/game/INTEGRATION_PLAN.md`` and ``docs/game/ADJUDICATOR.md``.
+The agricultural module (``AgriAdjudicator``, ``POST /adjudicate/agri``) runs the fertilizer, crop
+yield (APSIM), futures and macro adapters for the game's ``agri`` ruleset the same way.
+
+See ``docs/game/INTEGRATION_PLAN.md``, ``docs/game/ADJUDICATOR.md`` and ``docs/game/AGRI.md``.
 """
 
 from .schemas import RoundRequest, RoundResponse, WorldState  # noqa: F401
 from .adjudicator import Adjudicator  # noqa: F401
+from .agri_schemas import AgriRoundRequest, AgriRoundResponse  # noqa: F401
+from .agri import AgriAdjudicator  # noqa: F401
 
-__all__ = ["Adjudicator", "RoundRequest", "RoundResponse", "WorldState"]
+__all__ = ["Adjudicator", "AgriAdjudicator", "AgriRoundRequest", "AgriRoundResponse", "RoundRequest",
+           "RoundResponse", "WorldState"]

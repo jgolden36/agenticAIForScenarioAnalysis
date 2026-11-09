@@ -1,0 +1,64 @@
+# Designer baseline for the economic war game's agricultural module (the `agri` ruleset).
+#
+# Read by src/game/agri.py. Every numeric leaf is a record {value, unit, source, status[, note]}
+# like configs/game/hormuz_2026_baseline.yaml. The status tag says how far to trust it:
+#
+#   primary    a figure read from the issuing agency's own release
+#   secondary  a figure reported by the press or a broker citing a primary source
+#   designer   a game parameter chosen by the designers, to be calibrated in playtests
+#
+# Nothing here is a primary or secondary statistic. The game's agricultural scenario is
+# synthetic (every production, stock and trade number on its board is made up), and this file
+# only holds the constants the Tier 1 bridge needs. Several of them are copies of values owned
+# by a pipeline adapter or the forwarding mapping; the adjudicator reads the owner first and uses
+# the copy only when the owner is absent, so a change in the owner wins.
+
+baseline_id: agri_2027_game
+version: 1
+as_of: "2026-11-09"
+description: >
+  Constants for the Tier 1 agricultural adjudicator: crop-name crosswalks between the game and
+  the adapters, the fertilizer-price to application bridge, the futures horizon, and the default
+  team-to-region crosswalk. Every value is a designer parameter.
+
+revision_log:
+  - {version: 1, as_of: "2026-11-09", note: "First version, for the agri ruleset MVP."}
+
+sources:
+  forwarding_rule: "configs/upstream_forwarding_mapping.yaml, apsim.fertilizer_application_reduction_pct (transform price_to_demand_reduction, elasticity 0.35, Hendricks & Smith 2018)"
+  apsim_mvp: "src/models/fertilizer/apsim.py analytical MVP (Mitscherlich N response, Sinclair & Park 1993; FAO 1979 water response)"
+  world_fertilizer_mvp: "src/models/fertilizer/world_fertilizer.py analytical MVP (Yara 2024; FAO 2024 trade shares)"
+  futures_mvp: "src/models/fertilizer/futures.py analytical MVP (AR(1) decay, CBOT/NYMEX/CME 2010 to 2023 half-lives)"
+  macro_kernel: "src/models/macro/macro_kernel.py compute_regional_macro_outcomes"
+  game_design: "EconomicWarGames scenarios/grain-2027-synthetic and its crisis.json (designer values)"
+
+# Crop-name crosswalks. Not numbers, so plain values rather than records.
+crop_names:
+  game: [wheat, rice, maize, soybeans]
+  apsim: {wheat: wheat, rice: rice, maize: maize, soybeans: soybean}
+  futures: {wheat: wheat, rice: rice, maize: corn, soybeans: soybeans}
+
+designer_parameters:
+  fertilizer_application_elasticity:
+    {value: 0.35, unit: "pct application cut per pct farm-gate price rise", source: forwarding_rule, status: designer,
+     note: "copy of the forwarding rule's elasticity; the adjudicator reads the rule first"}
+  application_cut_cap_pct:
+    {value: 95.0, unit: pct, source: forwarding_rule, status: designer,
+     note: "copy of the forwarding rule's clip_max; keeps APSIM's Mitscherlich curve away from 100 pct"}
+  futures_horizon_months: {value: 12, unit: months, source: game_design, status: designer}
+  default_expected_shock_months: {value: 6, unit: months, source: game_design, status: designer}
+  tier_disagreement_warn_pct:
+    {value: 50.0, unit: pct, source: game_design, status: designer,
+     note: "flag when Tier 1 nitrogen differs from the game's Tier 0 Hormuz component by more than this"}
+
+# Default team -> macro-kernel region crosswalk, used only for a team the request names without
+# a region. The request always carries the region; this is the game's own seat list.
+teams:
+  US: {region: US}
+  CHN: {region: CHN}
+  EU: {region: EU}
+  BRA: {region: LAC}
+  RUS: {region: ROW}
+  IND: {region: IND}
+  MENA: {region: MENA_OTHER}
+  ROW: {region: ROW}

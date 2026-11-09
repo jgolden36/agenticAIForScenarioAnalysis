@@ -55,6 +55,7 @@ class ModelProvenance(BaseModel):
 class ModelRun(BaseModel):
     model_id: str
     status: str
+    label: str | None = Field(None, description="Which call this was when one model runs several times a round")
     implementation_mode: str = "unknown"
     runtime_ms: float = 0.0
     inputs: dict[str, Any] = Field(default_factory=dict)

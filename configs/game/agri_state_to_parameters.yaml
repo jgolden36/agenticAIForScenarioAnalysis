@@ -1,0 +1,78 @@
+# Agricultural round state -> pipeline adapter parameters (docs/game/AGRI.md).
+#
+# Read by src/game/agri.py with the evaluator in src/game/mapping.py (arithmetic, comparisons,
+# and/or/not, the ternary, dotted and indexed lookups, list literals, string +, and the functions
+# min max abs round clamp; nothing else). Every rule is auditable from this file alone.
+#
+# Names available in expressions:
+#   world.*      AgriRoundRequest.world (gas_price_change_pct, middle_east_fertilizer_loss_pct,
+#                hormuz_transit_capacity_pct, fertilizer_price_change_pct, hormuz_component_pct,
+#                expected_shock_months, crop_price_change_pct)
+#   baseline.*   configs/game/agri_2027_baseline.yaml with every record collapsed to its value
+#   derived.*    the `derived` block, then `after_fertilizer`, plus two values the adjudicator sets
+#                from the forwarding mapping before the per-team rules run:
+#                  derived.elasticity               apsim rule elasticity (0.35)
+#                  derived.application_cut_cap_pct  apsim rule clip_max (95)
+#   upstream.*   in `after_fertilizer` only: upstream.ran_world_fertilizer (bool) and, when true,
+#                upstream.world_fertilizer.* (that run's outputs)
+#   team.*       in `per_team` only: the request's team block, plus the per-team derived values
+#                as they are computed in file order
+#   crop.*       in the per-crop blocks: {game, apsim, futures, deficit_pct, price_change_pct}
+
+version: 1
+
+derived:
+  hormuz_active: {expr: "world.gas_price_change_pct != 0 or world.middle_east_fertilizer_loss_pct != 0"}
+  duration_months: {expr: "clamp(world.expected_shock_months, 0.5, 24)"}
+
+models:
+  # Runs only when derived.hormuz_active. The other fertilizer causes in the game (export bans,
+  # a control-cell shock) have no input in this model, so they stay the game's numbers.
+  world_fertilizer:
+    natural_gas_price_change_pct: {expr: "world.gas_price_change_pct"}
+    middle_east_production_loss_pct: {expr: "clamp(world.middle_east_fertilizer_loss_pct, 0, 100)"}
+    disruption_duration_months: {expr: "derived.duration_months"}
+
+after_fertilizer:
+  # Tier 1 replaces only the Hormuz part of the game's fertilizer change.
+  n_world_pct:
+    expr: >-
+      upstream.world_fertilizer.nitrogen_price_pct + world.fertilizer_price_change_pct - world.hormuz_component_pct
+      if upstream.ran_world_fertilizer else world.fertilizer_price_change_pct
+
+per_team:
+  derived:
+    farmgate_change_pct:
+      expr: "100 * ((1 + team.fertilizer_passthrough * derived.n_world_pct / 100) * (1 - team.fertilizer_subsidy_pct / 100) - 1)"
+    # The pipeline's price_to_demand_reduction bridge, applied to the team's own farm-gate price.
+    application_reduction_pct:
+      expr: "clamp(derived.elasticity * max(0, team.farmgate_change_pct), 0, derived.application_cut_cap_pct)"
+
+  # One APSIM run per team, nitrogen only: every game crop is named so APSIM simulates all four.
+  apsim_nitrogen:
+    fertilizer_application_reduction_pct: {expr: "team.application_reduction_pct"}
+    irrigation_water_reduction_pct: 0.0
+    growing_season: "game_wheat_rice_maize_soybean"
+
+  # One APSIM run per (team, crop) under a pending drought, water only.
+  apsim_water:
+    fertilizer_application_reduction_pct: 0.0
+    irrigation_water_reduction_pct: {expr: "clamp(crop.deficit_pct, 0, 95)"}
+    growing_season: {expr: "'game_' + crop.apsim"}
+
+futures:
+  # One run per crop the request prices, seeded with the game's Tier 0 crop price change.
+  per_crop:
+    initial_price_shock_pct: {expr: "crop.price_change_pct"}
+    commodities: {expr: "[crop.futures]"}
+    forecast_horizon_months: {expr: "baseline.designer_parameters.futures_horizon_months"}
+  # One run for urea, seeded with the world nitrogen change.
+  urea:
+    initial_price_shock_pct: {expr: "derived.n_world_pct"}
+    commodities: ["urea"]
+    forecast_horizon_months: {expr: "baseline.designer_parameters.futures_horizon_months"}
+
+macro:
+  shocks:
+    fertilizer: {expr: "derived.n_world_pct"}
+  duration_months: {expr: "derived.duration_months"}
