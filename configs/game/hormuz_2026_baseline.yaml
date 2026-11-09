@@ -1,0 +1,219 @@
+# Frozen Hormuz 2026 baseline for the economic war game.
+#
+# This is the dated snapshot the game plays on (integration plan, Phase 0). Every leaf is a
+# record {value, unit, source, status[, note]}. The status tag says how far to trust it:
+#
+#   primary    a figure read from the issuing agency's own release (EIA, IEA, DOE, QatarEnergy)
+#   secondary  a figure reported by the press or a broker citing a primary source
+#   designer   a game parameter chosen by the designers, to be calibrated in playtests
+#
+# The 2026 crisis is ongoing and EIA says its 2026 Hormuz figures are being revised frequently.
+# The game UI labels every number with this file's `as_of` date. Do not update values in place:
+# bump `as_of` and `version`, and note the change in `revision_log`.
+
+baseline_id: hormuz_2026_game
+version: 1
+as_of: "2026-11-08"
+description: >
+  Pre-crisis structure of Strait of Hormuz energy flows, the bypass and stock buffers available
+  to the six player teams, what happened in 2026 up to the snapshot date, and the designer
+  parameters of the Tier 0 clearing rule. Read by src/game/baseline.py and mirrored into the
+  game's scenarios/hormuz-2026/crisis.json.
+
+revision_log:
+  - {version: 1, as_of: "2026-11-08", note: "First frozen snapshot for the classroom MVP."}
+
+sources:
+  eia_wotc: "EIA, World Oil Transit Chokepoints (June 2025 update)"
+  eia_gesd: "EIA, Global Energy Security Data, first report 13 May 2026 and later tables"
+  eia_tie: "EIA, Today in Energy, Hormuz crude destinations (June 2025)"
+  iea_ca: "IEA, Update on IEA collective action decision of 11 March 2026"
+  iea_stocks: "IEA, Oil security and emergency response (90-day net-import obligation)"
+  doe_spr: "DOE, SPR Quick Facts (inventory as of 16 October 2026)"
+  qatarenergy: "QatarEnergy force majeure statements as reported by Al Jazeera, 24 March 2026"
+  marsh_howden: "Marsh (Marcus Baker) and Howden Re 2026 Strait of Hormuz war-risk reports, via press"
+  platts: "S&P Global Platts, Dated Brent record 7 April 2026"
+  ier_reuters: "Institute for Energy Research citing Reuters on Saudi East-West ramp and UAE pipeline"
+  design_report: "Designing a Supply-Chain Economic War Game for the Classroom (Nov 2026), Hormuz subgame spec"
+  pipeline_baseline: "configs/baselines/hormuz_2026_analyst.yaml (analyst-authored pipeline parameters)"
+
+pre_crisis:
+  oil_transit_mbd: {value: 20.9, unit: mb/d, source: eia_wotc, status: primary,
+                    note: "1H 2025 average; about 20 pct of global liquids consumption"}
+  lng_transit_bcfd: {value: 11.4, unit: Bcf/d, source: eia_wotc, status: primary,
+                     note: "over 20 pct of global LNG trade, mainly Qatari"}
+  asia_share_of_crude_pct: {value: 84.0, unit: pct, source: eia_tie, status: primary}
+  cn_in_jp_kr_share_pct: {value: 69.0, unit: pct, source: eia_tie, status: primary}
+  saudi_share_pct: {value: 38.0, unit: pct, source: eia_tie, status: primary}
+  us_imports_via_hormuz_mbd: {value: 0.5, unit: mb/d, source: eia_tie, status: primary}
+  qatar_lng_via_hormuz_pct: {value: 93.0, unit: pct, source: eia_wotc, status: secondary}
+  qatar_lng_mtpa: {value: 77.0, unit: Mt/yr, source: pipeline_baseline, status: secondary}
+  qatar_helium_share_pct: {value: 30.0, unit: pct, source: pipeline_baseline, status: secondary}
+  war_risk_premium_pct: {value: 0.25, unit: pct of hull per transit, source: marsh_howden, status: secondary,
+                         note: "0.15 to 0.25 pre-war"}
+  brent_usd_per_bbl: {value: 80.0, unit: USD/bbl, source: pipeline_baseline, status: designer,
+                      note: "matches the poles_jrc analytical baseline price"}
+  global_oil_demand_mbd: {value: 102.0, unit: mb/d, source: pipeline_baseline, status: secondary}
+  global_lng_trade_bcfd: {value: 55.0, unit: Bcf/d, source: pipeline_baseline, status: secondary}
+
+bypass:
+  east_west:
+    name: "Saudi East-West (Petroline), Abqaiq to Yanbu"
+    capacity_mbd: {value: 7.0, unit: mb/d, source: ier_reuters, status: secondary,
+                   note: "design capacity after expansion; Yanbu berths bind before this"}
+    usable_mbd: {value: 4.0, unit: mb/d, source: eia_wotc, status: secondary,
+                 note: "EIA puts usable Saudi plus UAE bypass near 4.7 mb/d combined"}
+    pre_crisis_use_mbd: {value: 2.1, unit: mb/d, source: pipeline_baseline, status: secondary}
+  adcop:
+    name: "UAE ADCOP, Habshan to Fujairah"
+    capacity_mbd: {value: 1.8, unit: mb/d, source: eia_wotc, status: secondary}
+    usable_mbd: {value: 1.5, unit: mb/d, source: eia_wotc, status: secondary}
+    pre_crisis_use_mbd: {value: 0.5, unit: mb/d, source: pipeline_baseline, status: secondary}
+  other:
+    name: "Goreh-Jask and Iraq-Turkey"
+    capacity_mbd: {value: 1.9, unit: mb/d, source: eia_wotc, status: secondary,
+                   note: "1.6 Iraq-Turkey nameplate plus 0.3 Goreh-Jask effective"}
+    usable_mbd: {value: 0.5, unit: mb/d, source: eia_wotc, status: secondary}
+    pre_crisis_use_mbd: {value: 0.2, unit: mb/d, source: eia_wotc, status: secondary}
+  lng_bypass_bcfd: {value: 0.0, unit: Bcf/d, source: eia_wotc, status: primary,
+                    note: "Qatari LNG has no pipeline alternative"}
+
+stocks:
+  us_spr_inventory_mb: {value: 282.2, unit: million bbl, source: doe_spr, status: primary,
+                        note: "as of 16 October 2026, down from 411 at end-2025"}
+  us_spr_max_drawdown_mbd: {value: 4.4, unit: mb/d, source: doe_spr, status: primary}
+  us_spr_lag_days: {value: 13, unit: days, source: doe_spr, status: primary,
+                    note: "oil reaches market 13 days from Presidential decision; two weekly rounds"}
+  iea_collective_action_mb: {value: 400.0, unit: million bbl, source: iea_ca, status: primary,
+                             note: "11 March 2026; previous record 182.7 in 2022"}
+  iea_released_by_october_mb: {value: 325.0, unit: million bbl, source: iea_ca, status: secondary}
+  g7_additional_mb: {value: 100.0, unit: million bbl, source: iea_ca, status: secondary, note: "diesel focus"}
+  iea_obligation_days: {value: 90, unit: days of net imports, source: iea_stocks, status: primary}
+
+crisis_2026:
+  war_start: {value: "2026-02-28", unit: date, source: design_report, status: secondary}
+  closure_start: {value: "2026-03-03", unit: date, source: design_report, status: secondary}
+  q1_transit_mbd: {value: 14.9, unit: mb/d, source: eia_gesd, status: primary, note: "revised from 14.6"}
+  q2_transit_mbd: {value: 4.9, unit: mb/d, source: eia_gesd, status: primary}
+  ras_laffan_capacity_out_pct: {value: 17.0, unit: pct of Qatar LNG export capacity, source: qatarenergy, status: secondary}
+  ras_laffan_lost_revenue_bn_usd: {value: 20.0, unit: bn USD/yr, source: qatarenergy, status: secondary}
+  saudi_east_west_ramp_mbd: {value: 7.0, unit: mb/d, source: ier_reuters, status: secondary}
+  war_risk_premium_range_pct: {value: [3.0, 10.0], unit: pct of hull, source: marsh_howden, status: secondary}
+  brent_futures_peak_usd: {value: [118.0, 121.0], unit: USD/bbl, source: design_report, status: secondary, note: "March 2026"}
+  dated_brent_record_usd: {value: 144.42, unit: USD/bbl, source: platts, status: secondary, note: "7 April 2026"}
+  calibration_check: {value: "about 10 mb/d net loss against large stock releases gave roughly +60 pct Brent in a month",
+                      unit: text, source: design_report, status: secondary}
+
+designer_parameters:
+  # Tier 0 clearing rule: price change (fraction) = shortfall / (|elasticity| x world demand).
+  oil_demand_elasticity: {value: -0.10, unit: dimensionless, source: design_report, status: designer}
+  lng_demand_elasticity: {value: -0.08, unit: dimensionless, source: design_report, status: designer}
+  diesel_crack_passthrough: {value: 1.15, unit: ratio of diesel to crude price change, source: design_report, status: designer,
+                             note: "the 2026 G7 release was diesel-focused because distillates tightened faster than crude"}
+  fertilizer_gas_passthrough: {value: 0.5, unit: ratio, source: pipeline_baseline, status: designer}
+  price_ramp_weeks_energy: {value: 4, unit: weeks, source: design_report, status: designer,
+                            note: "Tier 1 peak reached over four rounds; matches the one-month Brent run-up"}
+  price_ramp_weeks_slow: {value: 8, unit: weeks, source: design_report, status: designer,
+                          note: "fertilizer and helium reach their model peak over eight rounds"}
+  expected_duration_weeks_default: {value: 8, unit: weeks, source: design_report, status: designer}
+  helium_reserve_release_default_mmscf: {value: 50.0, unit: MMscf, source: pipeline_baseline, status: designer}
+  lng_spot_multiplier_by_rung: {value: [1.0, 1.1, 1.3, 1.6, 1.8, 2.2, 2.5, 3.0], unit: ratio, source: pipeline_baseline, status: designer,
+                                note: "index by escalation rung 0 to 7"}
+  war_risk_cap_pct: {value: 10.0, unit: pct of hull, source: design_report, status: designer}
+  escort_premium_reduction_pct_per_unit: {value: 0.6, unit: pct points per escort unit, source: design_report, status: designer}
+  attack_premium_increase_pct: {value: 2.0, unit: pct points per attack, source: design_report, status: designer}
+  mine_clear_rate_per_unit: {value: 0.15, unit: fraction of density per unit per round, source: design_report, status: designer}
+  mine_strike_probability_per_unit_density: {value: 0.08, unit: probability, source: design_report, status: designer}
+  okun_coefficient: {value: 0.5, unit: pp unemployment per pct GDP gap, source: design_report, status: designer}
+  energy_cpi_passthrough: {value: 0.08, unit: pct CPI per pct energy price, source: design_report, status: designer}
+  legitimacy_weights: {value: {inflation: 0.6, shortage: 1.5, fiscal: 0.2, rally: 0.3}, unit: points per unit, source: design_report, status: designer}
+  legitimacy_collapse_threshold: {value: 30.0, unit: index 0 to 100, source: design_report, status: designer}
+  round_seconds: {value: 480, unit: seconds, source: design_report, status: designer}
+  max_orders_per_round: {value: 3, unit: count, source: design_report, status: designer}
+  escalation_ladder:
+    value: ["calm", "harassment", "seizures", "mining", "strikes on tankers", "strikes on infrastructure", "closure", "regional war"]
+    unit: rung labels 0 to 7
+    source: design_report
+    status: designer
+
+# Pipeline scenario label used only for scenario-scoped forwarding rules and for labeling.
+scenario_label_rule:
+  infrastructure_collapse_if_damaged_share_at_least: {value: 0.30, unit: fraction, source: pipeline_baseline, status: designer}
+  escalated_if_rung_at_least: {value: 5, unit: rung, source: design_report, status: designer}
+  swift_if_expected_total_weeks_at_most: {value: 6, unit: weeks, source: pipeline_baseline, status: designer}
+
+teams:
+  # region: unified macro-kernel region (src/models/macro/macro_kernel.py UNIFIED_REGIONS)
+  # hormuz_import_mbd: crude plus products that transit the strait and land with this team
+  US:
+    name: "United States"
+    region: US
+    countries: [USA]
+    oil_demand_mbd: {value: 20.3, unit: mb/d, source: pipeline_baseline, status: secondary}
+    hormuz_import_mbd: {value: 0.5, unit: mb/d, source: eia_tie, status: primary}
+    lng_hormuz_import_bcfd: {value: 0.0, unit: Bcf/d, source: eia_wotc, status: primary}
+    stock_mb: {value: 282.2, unit: million bbl, source: doe_spr, status: primary}
+    max_drawdown_mbd: {value: 4.4, unit: mb/d, source: doe_spr, status: primary}
+    release_lag_rounds: {value: 2, unit: rounds, source: doe_spr, status: primary}
+    fiscal_space: {value: 100.0, unit: index, source: design_report, status: designer}
+  CHN:
+    name: "China"
+    region: CHN
+    countries: [CHN]
+    oil_demand_mbd: {value: 16.5, unit: mb/d, source: pipeline_baseline, status: secondary}
+    hormuz_import_mbd: {value: 5.4, unit: mb/d, source: eia_tie, status: designer, note: "derived from the 69 pct four-buyer share"}
+    lng_hormuz_import_bcfd: {value: 2.4, unit: Bcf/d, source: pipeline_baseline, status: designer}
+    stock_mb: {value: 450.0, unit: million bbl, source: pipeline_baseline, status: designer, note: "government reserve; commercial excluded"}
+    max_drawdown_mbd: {value: 2.0, unit: mb/d, source: design_report, status: designer}
+    release_lag_rounds: {value: 1, unit: rounds, source: design_report, status: designer}
+    fiscal_space: {value: 100.0, unit: index, source: design_report, status: designer}
+  EU:
+    name: "European Union"
+    region: EU
+    countries: [DEU, FRA, ITA, ESP, NLD, POL, BEL, GRC]
+    oil_demand_mbd: {value: 12.5, unit: mb/d, source: pipeline_baseline, status: secondary}
+    hormuz_import_mbd: {value: 1.5, unit: mb/d, source: eia_tie, status: designer}
+    lng_hormuz_import_bcfd: {value: 1.8, unit: Bcf/d, source: pipeline_baseline, status: designer}
+    stock_mb: {value: 420.0, unit: million bbl, source: iea_stocks, status: designer, note: "public emergency stocks under the 90-day rule"}
+    max_drawdown_mbd: {value: 2.0, unit: mb/d, source: design_report, status: designer}
+    release_lag_rounds: {value: 1, unit: rounds, source: design_report, status: designer}
+    fiscal_space: {value: 90.0, unit: index, source: design_report, status: designer}
+  GCC:
+    name: "Gulf Cooperation Council"
+    region: MENA_GCC
+    countries: [SAU, ARE, QAT, KWT, OMN, BHR]
+    oil_demand_mbd: {value: 5.0, unit: mb/d, source: pipeline_baseline, status: secondary}
+    hormuz_import_mbd: {value: 0.0, unit: mb/d, source: eia_wotc, status: primary}
+    hormuz_export_mbd: {value: 17.0, unit: mb/d, source: eia_wotc, status: secondary, note: "crude and products loaded inside the Gulf"}
+    lng_hormuz_import_bcfd: {value: 0.0, unit: Bcf/d, source: eia_wotc, status: primary}
+    stock_mb: {value: 0.0, unit: million bbl, source: design_report, status: designer}
+    max_drawdown_mbd: {value: 0.0, unit: mb/d, source: design_report, status: designer}
+    release_lag_rounds: {value: 0, unit: rounds, source: design_report, status: designer}
+    fiscal_space: {value: 110.0, unit: index, source: design_report, status: designer}
+  IND:
+    name: "India"
+    region: IND
+    countries: [IND]
+    oil_demand_mbd: {value: 5.5, unit: mb/d, source: pipeline_baseline, status: secondary}
+    hormuz_import_mbd: {value: 2.0, unit: mb/d, source: eia_tie, status: designer}
+    lng_hormuz_import_bcfd: {value: 1.2, unit: Bcf/d, source: pipeline_baseline, status: designer}
+    stock_mb: {value: 39.0, unit: million bbl, source: pipeline_baseline, status: secondary, note: "5.33 Mt strategic reserve"}
+    max_drawdown_mbd: {value: 0.5, unit: mb/d, source: design_report, status: designer}
+    release_lag_rounds: {value: 1, unit: rounds, source: design_report, status: designer}
+    fiscal_space: {value: 70.0, unit: index, source: design_report, status: designer}
+  JPK:
+    name: "Japan and Korea"
+    region: ROW
+    countries: [JPN, KOR]
+    oil_demand_mbd: {value: 5.9, unit: mb/d, source: pipeline_baseline, status: secondary}
+    hormuz_import_mbd: {value: 3.0, unit: mb/d, source: eia_tie, status: designer}
+    lng_hormuz_import_bcfd: {value: 2.5, unit: Bcf/d, source: pipeline_baseline, status: designer}
+    stock_mb: {value: 650.0, unit: million bbl, source: pipeline_baseline, status: designer, note: "Japan public plus Korea public stocks"}
+    max_drawdown_mbd: {value: 1.5, unit: mb/d, source: design_report, status: designer}
+    release_lag_rounds: {value: 1, unit: rounds, source: design_report, status: designer}
+    fiscal_space: {value: 85.0, unit: index, source: design_report, status: designer}
+    caveat: "The macro kernel has no Japan-Korea region; ROW is the nearest row and understates their import exposure."
+
+control_cell:
+  plays: [Iran, Russia, shipping industry, insurers]
+  note: "The host seat. Moves the escalation rung, places attacks and news. Every move records a why."
