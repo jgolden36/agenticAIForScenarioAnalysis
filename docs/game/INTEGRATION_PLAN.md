@@ -272,4 +272,19 @@ The game calls the adjudicator once per crisis round from its request handler an
 answer in the action payload, so a restart replays the game without the service. When the service
 is unreachable the game resolves on its Tier 0 rule and shows a fallback badge (Section 4.4).
 
-Phases 3 to 7 are not started.
+Phases 3 and 5 to 7 are not started.
+
+**Agricultural module (9 November 2026).** The game gained an `agri` ruleset (quarterly clock,
+crop calendars, trade measures, crop and livestock disease, a Hormuz link to fertilizer and Gulf
+food imports). This repo serves it twice over. See `docs/game/AGRI.md`.
+
+- **Tier 1, no LLM.** `src/game/agri.py`, `POST /adjudicate/agri`: `world_fertilizer` (only under a
+  Hormuz shock), the farm-gate rule and the APSIM bridge per team, APSIM nitrogen and drought runs,
+  `futures` per crop and for urea, the macro kernel per team region.
+- **Phase 4 started, for agriculture.** `src/control_cell/` (`python -m src.control_cell.api`):
+  the LLM drafts shock cards against the game's control menu (Section 6, "scenario generation
+  becomes the event deck") and maps a team's free-text novel action onto its order menu
+  ("parameter extraction becomes the matrix-game adjudicator"). Every item is validated against
+  the menus and rejected with reasons, never repaired. The game records each answer in its action
+  log and applies a card or a mapping only after the host approves it. The news brief and NPC
+  statements are not started.

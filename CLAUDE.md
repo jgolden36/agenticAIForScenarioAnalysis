@@ -765,6 +765,26 @@ Scripts added for the Communications Engineering revision live in `scripts/revis
 
 The pipeline is the deep adjudicator for the economic war game in the sibling repo `EconomicWarGames` (plan: `docs/game/INTEGRATION_PLAN.md`; contract: `docs/game/ADJUDICATOR.md`). `src/game/adjudicator.py :: Adjudicator.adjudicate(RoundRequest) -> RoundResponse` runs the analytical-MVP adapters directly through the `ModelAdapter` contract for one weekly crisis round, in three stages (shipping; oil, LNG, helium, fertilizer, futures; MarketSim, Fed oil, then `macro_kernel.compute_regional_macro_outcomes` per team region). Forwarding is resolved per model with `compute_downstream_inputs` + `merge_into_params`, so same-level rules the executor never fires (AISdb + AIS_project -> `poles_jrc.rerouting_cost_multiplier`) do fire here; `configs/game/game_state_to_parameters.yaml` maps game state to adapter parameters with small audited expressions and adds or disables forwarding rules for the game. `configs/game/hormuz_2026_baseline.yaml` is the dated snapshot every game number traces to (`{value, unit, source, status}` records). `python -m src.game.api` serves it (extra `[game]`). Rules that bind: no LLM call anywhere in `src/game/`; every returned number carries `model_id`, `output_key` and `implementation_mode`; a model failure is a `fallbacks` entry, never an exception; the game records the response in its action log so a replay never calls the service.
 
+### Agricultural module (`src/game/agri.py`, `src/control_cell/`, November 2026)
+
+The game's `agri` ruleset has two services here; the contract is `docs/game/AGRI.md`.
+
+- `src/game/agri.py :: AgriAdjudicator` answers `POST /adjudicate/agri` on the same app. It runs
+  `world_fertilizer` (only under a Hormuz shock), then per team the farm-gate rule and the APSIM
+  bridge (elasticity and cap read from the apsim rule in `configs/upstream_forwarding_mapping.yaml`),
+  APSIM nitrogen-only and drought water-only runs, `futures` per crop and for urea, and the macro
+  kernel. Parameters are expressions in `configs/game/agri_state_to_parameters.yaml`; designer
+  constants are records in `configs/game/agri_2027_baseline.yaml`. Same rules as above: no LLM,
+  provenance on every number, failures are `fallbacks`. Crop prices stay the game's Tier 0 rule.
+- `src/control_cell/` is the control cell's LLM tools (`python -m src.control_cell.api`, port 8032):
+  `POST /agri/cards` drafts shock cards, `POST /agri/novel` maps a team's free-text novel action
+  onto its order menu. It lives outside `src/game/` so the adjudicator stays LLM-free. The game
+  sends its menus; `validate.py` rejects anything outside them with reasons and never clamps or
+  repairs. No LLM configured, or a failed call, is HTTP 200 `{"status": "unavailable", "reason"}`.
+- The LLM output is a proposal. The game records the whole answer (with `prompt_sha256`, provider,
+  model and the raw structured output) in its action log and applies a card or a mapping only
+  after the host approves it, so a replay never calls the LLM.
+
 ## Companion documents
 
 - **`README.md`** — public-facing project overview, quick install, current model implementation status (kept in sync with the inventory tables above), and end-user documentation for the Module 6 temporal weekly driver.

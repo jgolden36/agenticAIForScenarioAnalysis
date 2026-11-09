@@ -2,7 +2,8 @@
 
 The economic war game (repo `EconomicWarGames`) runs a weekly Hormuz crisis clock. Each round it
 clears markets with its own Tier 0 rule, then asks this service for the numbers the pipeline's
-analytical-MVP adapters compute for the same world state. This document is the contract.
+analytical-MVP adapters compute for the same world state. This document is the contract. The agricultural module's endpoint (`POST /adjudicate/agri`) and
+the control-cell LLM tools are in `docs/game/AGRI.md`.
 
 ## What it is, and is not
 
