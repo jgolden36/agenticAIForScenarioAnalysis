@@ -281,11 +281,39 @@ def maybe_run_with_uncertainty(
     ``ModelOutput.uncertainty`` is left as the adapter produced it.
     """
     if config is not None and config.enabled:
+        if adapter.model_id in uq_skip_models():
+            # Expensive full upstream solves: one baseline run only. The
+            # point estimate is the same either way (the baseline replicate
+            # is unperturbed); only the quantile bands are omitted.
+            runner = execute_fn or adapter.execute
+            out = runner(native_inputs)
+            if isinstance(out, ModelOutput):
+                out.metadata = dict(out.metadata or {})
+                out.metadata["uncertainty_skipped"] = (
+                    "perturbation replicates skipped for an expensive full-model "
+                    "solve (HORMUZ_UQ_SKIP_MODELS)"
+                )
+            return out
         return run_with_uncertainty(
             adapter, native_inputs, config, execute_fn=execute_fn
         )
     runner = execute_fn or adapter.execute
     return runner(native_inputs)
+
+
+# Full upstream models whose single solve takes minutes to hours, so 20
+# perturbed replicates per scenario do not fit in a job. Override with a
+# comma list in HORMUZ_UQ_SKIP_MODELS ("" to replicate every model).
+DEFAULT_UQ_SKIP_MODELS: tuple[str, ...] = ("opencge", "simrlfab")
+
+
+def uq_skip_models() -> set[str]:
+    import os
+
+    env = os.environ.get("HORMUZ_UQ_SKIP_MODELS")
+    if env is None:
+        return set(DEFAULT_UQ_SKIP_MODELS)
+    return {m.strip() for m in env.split(",") if m.strip()}
 
 
 def run_with_uncertainty(

@@ -1,0 +1,13 @@
+variable,series,run,scenario,scenario_id,model,model_level,model_pct,observed_baseline,observed_peak,observed_peak_month,observed_peak_pct,observed_last_pct,pct_gap_pp,note
+Brent (USD/bbl),brent,may,A,swift_contained,poles_jrc,123.83,54.8,63.6,125.0,2026-10,96.5,96.5,-41.7,
+Brent (USD/bbl),brent,may,C,swift_escalated,poles_jrc,126.6,58.2,63.6,125.0,2026-10,96.5,96.5,-38.2,
+Henry Hub (USD/MMBtu),henry_hub,may,B,prolonged_contained,lngst,5.188,72.9,4.25,2.77,2026-04,-34.8,-30.4,107.7,LNGST reports a post-shock level
+Henry Hub (USD/MMBtu),henry_hub,may,C,swift_escalated,lngst,5.188,72.9,4.25,2.77,2026-04,-34.8,-30.4,107.7,LNGST reports a post-shock level
+TTF / Europe gas (USD/MMBtu),ttf,may,B,prolonged_contained,lngst,24.903,126.4,10.42,28.5,2026-10,173.5,173.5,-47.1,LNGST reports a post-shock level
+TTF / Europe gas (USD/MMBtu),ttf,may,C,swift_escalated,lngst,24.903,126.4,10.42,28.5,2026-10,173.5,173.5,-47.1,LNGST reports a post-shock level
+JKM (model) vs Japan LNG import price (observed),lng_japan,may,B,prolonged_contained,lngst,28.438,118.8,11.32,16.59,2026-10,46.6,46.6,72.2,"observed series is a contract-weighted proxy, slower than JKM spot"
+JKM (model) vs Japan LNG import price (observed),lng_japan,may,C,swift_escalated,lngst,28.438,118.8,11.32,16.59,2026-10,46.6,46.6,72.2,"observed series is a contract-weighted proxy, slower than JKM spot"
+Urea (USD/t),urea,may,B,prolonged_contained,world_fertilizer,,49.8,409.3,856.9,2026-04,109.4,2.6,-59.7,model reports percent change only
+Urea (USD/t),urea,may,C,swift_escalated,world_fertilizer,,49.8,409.3,856.9,2026-04,109.4,2.6,-59.7,model reports percent change only
+DAP (USD/t),dap,may,B,prolonged_contained,world_fertilizer,,2.5,627.5,803.1,2026-10,28.0,28.0,-25.5,model reports percent change only
+DAP (USD/t),dap,may,C,swift_escalated,world_fertilizer,,2.5,627.5,803.1,2026-10,28.0,28.0,-25.5,model reports percent change only

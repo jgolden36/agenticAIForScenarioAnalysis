@@ -45,6 +45,23 @@ def state_dir() -> Path:
     return d
 
 
+def outputs_root(project_root: Path | None = None) -> Path:
+    """Per-model output tree (``<scenario>/<model>/{output,metadata}.json``).
+
+    Defaults to ``<project>/data/outputs``. ``HORMUZ_OUTPUTS_ROOT``
+    redirects it (relative paths resolve against the project root), so a
+    supplementary run can execute without overwriting the shared tree that
+    other runs' recovery depends on. The writer (run_model.py) and the
+    upstream-forwarding reader (dispatch_models.py) both use this.
+    """
+    root = project_root if project_root is not None else get_project_root()
+    env = os.environ.get("HORMUZ_OUTPUTS_ROOT")
+    if env:
+        p = Path(env)
+        return p if p.is_absolute() else root / p
+    return root / "data" / "outputs"
+
+
 def manifests_dir() -> Path:
     """Return the manifests directory, creating it if necessary."""
     d = state_dir() / "manifests"

@@ -1,0 +1,391 @@
+{
+  "run_id": "20260504_222710",
+  "scenario_id": "swift_escalated",
+  "outcome_variable": "oil_price_shock_pct",
+  "source_model_id": "mpsge_jl",
+  "synthesized_value": 58.25,
+  "narrative_summary": "The oil price shock is expected to be 58.25% due to the Strait of Hormuz closure.",
+  "synthesis_outcomes": [
+    {
+      "time_horizon": "long_run",
+      "outcome_scope": "macro",
+      "value": "{mpsge_jl: 58.25, pycge: 58.25}",
+      "source_model_id": "mpsge_jl, pycge",
+      "narrative_summary": "The oil price shock is expected to be 58.25% due to the Strait of Hormuz closure."
+    }
+  ],
+  "model_status": "completed",
+  "implementation_mode": null,
+  "model_outputs": {
+    "oil_price_shock_pct": 58.25,
+    "trade_cost_multiplier": 1.1869,
+    "commodity_price_shocks": {
+      "oil": 58.25,
+      "lng": 126.39090909090909,
+      "fertilizer": 23.756,
+      "helium": 0.0,
+      "water": 0.0,
+      "capex": 5.607000000000001
+    },
+    "disruption_duration_months": 4.0,
+    "gdp_impact_pct": -0.8695,
+    "cpi_inflation_pct": 2.7539,
+    "consumption_impact_pct": -1.9711,
+    "welfare_pct_change": -1.9711,
+    "wage_impact_pct": 1.2176,
+    "interest_rate_impact_pct": 1.1596,
+    "sectoral_output_pct_change": {
+      "agriculture": -0.1244,
+      "industry": -0.2334,
+      "energy": 0.5824,
+      "services": -0.7012
+    },
+    "regional_vars": [
+      {
+        "region": "US",
+        "gdp_impact_pct": -0.701,
+        "cpi_inflation_pct": 2.7539,
+        "consumption_impact_pct": -1.8026,
+        "welfare_pct_change": -1.8026,
+        "wage_impact_pct": 1.3018,
+        "interest_rate_impact_pct": 1.2017
+      },
+      {
+        "region": "CHN",
+        "gdp_impact_pct": -1.252,
+        "cpi_inflation_pct": 3.3882,
+        "consumption_impact_pct": -2.6073,
+        "welfare_pct_change": -2.6073,
+        "wage_impact_pct": 1.4069,
+        "interest_rate_impact_pct": 1.3811
+      },
+      {
+        "region": "IND",
+        "gdp_impact_pct": -1.7514,
+        "cpi_inflation_pct": 5.3754,
+        "consumption_impact_pct": -3.9016,
+        "welfare_pct_change": -3.9016,
+        "wage_impact_pct": 2.3496,
+        "interest_rate_impact_pct": 2.2499
+      },
+      {
+        "region": "EU",
+        "gdp_impact_pct": -1.7942,
+        "cpi_inflation_pct": 5.2916,
+        "consumption_impact_pct": -3.9109,
+        "welfare_pct_change": -3.9109,
+        "wage_impact_pct": 2.2779,
+        "interest_rate_impact_pct": 2.1973
+      },
+      {
+        "region": "MENA_GCC",
+        "gdp_impact_pct": 2.6828,
+        "cpi_inflation_pct": 0.9943,
+        "consumption_impact_pct": 2.2851,
+        "welfare_pct_change": 2.2851,
+        "wage_impact_pct": 1.938,
+        "interest_rate_impact_pct": 1.1678
+      },
+      {
+        "region": "MENA_OTHER",
+        "gdp_impact_pct": 0.5871,
+        "cpi_inflation_pct": 3.6333,
+        "consumption_impact_pct": -0.8663,
+        "welfare_pct_change": -0.8663,
+        "wage_impact_pct": 2.4735,
+        "interest_rate_impact_pct": 1.9634
+      },
+      {
+        "region": "SSA",
+        "gdp_impact_pct": -1.1685,
+        "cpi_inflation_pct": 4.991,
+        "consumption_impact_pct": -3.1649,
+        "welfare_pct_change": -3.1649,
+        "wage_impact_pct": 2.4103,
+        "interest_rate_impact_pct": 2.2034
+      },
+      {
+        "region": "LAC",
+        "gdp_impact_pct": -0.4662,
+        "cpi_inflation_pct": 2.8826,
+        "consumption_impact_pct": -1.6193,
+        "welfare_pct_change": -1.6193,
+        "wage_impact_pct": 1.4964,
+        "interest_rate_impact_pct": 1.3247
+      },
+      {
+        "region": "ROW",
+        "gdp_impact_pct": -0.8695,
+        "cpi_inflation_pct": 2.7539,
+        "consumption_impact_pct": -1.9711,
+        "welfare_pct_change": -1.9711,
+        "wage_impact_pct": 1.2176,
+        "interest_rate_impact_pct": 1.1596
+      }
+    ],
+    "gdp_impact_pct_by_region": {
+      "US": -0.701,
+      "CHN": -1.252,
+      "IND": -1.7514,
+      "EU": -1.7942,
+      "MENA_GCC": 2.6828,
+      "MENA_OTHER": 0.5871,
+      "SSA": -1.1685,
+      "LAC": -0.4662,
+      "ROW": -0.8695
+    },
+    "cpi_inflation_pct_by_region": {
+      "US": 2.7539,
+      "CHN": 3.3882,
+      "IND": 5.3754,
+      "EU": 5.2916,
+      "MENA_GCC": 0.9943,
+      "MENA_OTHER": 3.6333,
+      "SSA": 4.991,
+      "LAC": 2.8826,
+      "ROW": 2.7539
+    },
+    "consumption_impact_pct_by_region": {
+      "US": -1.8026,
+      "CHN": -2.6073,
+      "IND": -3.9016,
+      "EU": -3.9109,
+      "MENA_GCC": 2.2851,
+      "MENA_OTHER": -0.8663,
+      "SSA": -3.1649,
+      "LAC": -1.6193,
+      "ROW": -1.9711
+    },
+    "welfare_pct_change_by_region": {
+      "US": -1.8026,
+      "CHN": -2.6073,
+      "IND": -3.9016,
+      "EU": -3.9109,
+      "MENA_GCC": 2.2851,
+      "MENA_OTHER": -0.8663,
+      "SSA": -3.1649,
+      "LAC": -1.6193,
+      "ROW": -1.9711
+    },
+    "equivalent_variation_pct_by_region": {
+      "US": -1.8026,
+      "CHN": -2.6073,
+      "IND": -3.9016,
+      "EU": -3.9109,
+      "MENA_GCC": 2.2851,
+      "MENA_OTHER": -0.8663,
+      "SSA": -3.1649,
+      "LAC": -1.6193,
+      "ROW": -1.9711
+    },
+    "terms_of_trade_pct_change_by_region": {
+      "US": -0.0291,
+      "CHN": -0.1748,
+      "IND": -0.2913,
+      "EU": -0.233,
+      "MENA_GCC": 0.5242,
+      "MENA_OTHER": 0.1748,
+      "SSA": -0.2039,
+      "LAC": -0.0583,
+      "ROW": -0.0583
+    },
+    "bilateral_trade_flow_change_pct": {
+      "MENA_GCC": {
+        "CHN": -6.355,
+        "IND": -5.607,
+        "EU": -4.112,
+        "US": -1.495,
+        "ROW": -3.738
+      },
+      "CHN": {
+        "MENA_GCC": -4.859
+      },
+      "IND": {
+        "MENA_GCC": -4.112
+      },
+      "EU": {
+        "MENA_GCC": -3.364
+      },
+      "US": {
+        "MENA_GCC": -1.121
+      }
+    },
+    "_upstream_overrides": [
+      {
+        "name": "oil_price_shock_pct",
+        "target_key": null,
+        "llm_value": 0.0,
+        "computed_value": 58.25,
+        "source_model_id": "poles_jrc",
+        "source_field": "peak_price_change_pct",
+        "transform": "identity",
+        "deviation_pct": 200.0
+      },
+      {
+        "name": "commodity_price_shocks",
+        "target_key": "lng",
+        "llm_value": 25,
+        "computed_value": 126.39090909090909,
+        "source_model_id": "lngst",
+        "source_field": "ttf_price",
+        "transform": "level_to_pct",
+        "deviation_pct": 133.94583558517985
+      },
+      {
+        "name": "commodity_price_shocks",
+        "target_key": "helium",
+        "llm_value": 30,
+        "computed_value": 0.0,
+        "source_model_id": "world_helium_model",
+        "source_field": "price_change_pct",
+        "transform": "identity",
+        "deviation_pct": 200.0
+      },
+      {
+        "name": "commodity_price_shocks",
+        "target_key": "fertilizer",
+        "llm_value": 0,
+        "computed_value": 23.756,
+        "source_model_id": "world_fertilizer",
+        "source_field": "fertilizer_price_index_pct",
+        "transform": "identity",
+        "deviation_pct": 200.0
+      },
+      {
+        "name": "trade_disruption_spec",
+        "target_key": "trade_cost_multiplier",
+        "llm_value": null,
+        "computed_value": 1.1869,
+        "source_model_id": "aisdb",
+        "source_field": "rerouting_cost_multiplier",
+        "transform": "identity",
+        "deviation_pct": null
+      }
+    ]
+  },
+  "model_runtime_seconds": 0.00033837370574474335,
+  "upstream_overrides": [
+    {
+      "name": "oil_price_shock_pct",
+      "target_key": null,
+      "llm_value": 0.0,
+      "computed_value": 58.25,
+      "source_model_id": "poles_jrc",
+      "source_field": "peak_price_change_pct",
+      "transform": "identity",
+      "deviation_pct": 200.0,
+      "flagged": true,
+      "threshold_pct": 50.0,
+      "source_ran_in_run": true
+    },
+    {
+      "name": "commodity_price_shocks",
+      "target_key": "lng",
+      "llm_value": 25,
+      "computed_value": 126.39090909090909,
+      "source_model_id": "lngst",
+      "source_field": "ttf_price",
+      "transform": "level_to_pct",
+      "deviation_pct": 133.94583558517985,
+      "flagged": true,
+      "threshold_pct": 50.0,
+      "source_ran_in_run": true
+    },
+    {
+      "name": "commodity_price_shocks",
+      "target_key": "helium",
+      "llm_value": 30,
+      "computed_value": 0.0,
+      "source_model_id": "world_helium_model",
+      "source_field": "price_change_pct",
+      "transform": "identity",
+      "deviation_pct": 200.0,
+      "flagged": true,
+      "threshold_pct": 50.0,
+      "source_ran_in_run": true
+    },
+    {
+      "name": "commodity_price_shocks",
+      "target_key": "fertilizer",
+      "llm_value": 0,
+      "computed_value": 23.756,
+      "source_model_id": "world_fertilizer",
+      "source_field": "fertilizer_price_index_pct",
+      "transform": "identity",
+      "deviation_pct": 200.0,
+      "flagged": true,
+      "threshold_pct": 50.0,
+      "source_ran_in_run": true
+    },
+    {
+      "name": "trade_disruption_spec",
+      "target_key": "trade_cost_multiplier",
+      "llm_value": null,
+      "computed_value": 1.1869,
+      "source_model_id": "aisdb",
+      "source_field": "rerouting_cost_multiplier",
+      "transform": "identity",
+      "deviation_pct": null,
+      "flagged": false,
+      "threshold_pct": 50.0,
+      "source_ran_in_run": true
+    }
+  ],
+  "model_inputs": {
+    "oil_price_shock_pct": 0.0,
+    "trade_disruption_spec": {
+      "corridors": [
+        "Strait of Hormuz"
+      ],
+      "volume_disruption_pct": 0.21
+    },
+    "commodity_price_shocks": {
+      "oil": 0,
+      "lng": 25,
+      "fertilizer": 0,
+      "helium": 30,
+      "water": 0
+    },
+    "disruption_duration_months": 4.0
+  },
+  "parameter_confidence": {
+    "oil_price_shock_pct": "low",
+    "trade_disruption_spec": "high",
+    "commodity_price_shocks": "high",
+    "disruption_duration_months": "high"
+  },
+  "parameter_units": {
+    "oil_price_shock_pct": "percent",
+    "trade_disruption_spec": "spec",
+    "commodity_price_shocks": "dict[str, percent]",
+    "disruption_duration_months": "months"
+  },
+  "parameter_notes": {
+    "oil_price_shock_pct": "No explicit oil price shock mentioned in the narrative; defaulting to 0% shock.",
+    "trade_disruption_spec": "",
+    "commodity_price_shocks": "",
+    "disruption_duration_months": ""
+  },
+  "parameter_validation_status": "approved",
+  "scenario_label": "Swift Escalated Conflict",
+  "scenario_narrative_excerpt": "February 2026: The Strait of Hormuz is closed due to a military escalation between Iran and a US/Israel coalition. The closure disrupts approximately 21% of global oil supply and 25% of global LNG trade. Qatar, the world's largest LNG exporter, is effectively blockaded. The disruption also threatens Persian Gulf desalination plants serving tens of millions of people and approximately 30% of global helium supply.\n\nFebruary 20, 2026: The US and Israel launch a series of airstrikes against Iranian ",
+  "relevant_assumptions": {
+    "closure_duration": "120 days",
+    "oil_supply_disruption": "0.21",
+    "lng_trade_disruption": "0.25"
+  },
+  "narrative_sentences": {
+    "trade_disruption_spec": [
+      "The closure disrupts approximately 21% of global oil supply and 25% of global LNG trade."
+    ],
+    "disruption_duration_months": [
+      "The closure lasted for 4 months, causing significant economic disruption."
+    ]
+  },
+  "chain_links": {
+    "narrative": true,
+    "parameters": true,
+    "model_run": true,
+    "synthesis": true
+  }
+}

@@ -83,6 +83,35 @@ FERTILIZER_MODEL_SPECS: dict[str, dict] = {
             {"name": "growing_season", "description": "Affected growing season(s)", "unit": "categorical", "type": "string"},
         ],
     },
+    "apsim_gtap": {
+        "model_id": "apsim_gtap",
+        "description": (
+            "APSIM-GTAP (AgResilience) — Julia GTAPv7 global CGE coupled to an APSIM maize "
+            "emulator through a GTAP<->crop fixed point; Gulf chemicals/extraction output "
+            "losses and a rerouting trade wedge give regional GDP, food and grain prices"
+        ),
+        "commodity_system": "fertilizer_agriculture",
+        "analytical_level": "long_run_macro_strategic",
+        "platform": "Julia (GTAPv7, JuMP/Ipopt) + Python/PyTorch (APSIM emulator) via subprocess",
+        "required_parameters": [
+            {"name": "middle_east_fertilizer_production_loss_pct", "description": "Loss of Gulf (GTAP West Asia) fertilizer/chemicals production", "unit": "percent", "type": "percent"},
+            {"name": "gulf_oil_supply_loss_mbd", "description": "Gulf oil supply lost to the market", "unit": "mb/d", "type": "non_negative_number"},
+            {"name": "trade_cost_multiplier", "description": "Shipping cost multiplier for rerouted Gulf exports (1.0 = no rerouting; Cape route ~1.4-1.8x)", "unit": "factor", "type": "positive_number"},
+            {"name": "disruption_duration_months", "description": "Duration of disruption (GTAP is annual; capped at 12 months)", "unit": "months", "type": "positive_number"},
+        ],
+        "optional_parameters": [
+            {"name": "coupling_elasticity", "description": "Pass-through from US chemicals consumption change to field nitrogen (default 1.0)", "unit": "elasticity", "type": "number"},
+        ],
+        "output_variables": [
+            {"name": "us_gdp_pct", "description": "US real GDP change", "unit": "percent"},
+            {"name": "gulf_gdp_pct", "description": "West Asia (Gulf) real GDP change", "unit": "percent"},
+            {"name": "gdp_change_by_region", "description": "Real GDP change, 18 GTAP regions", "unit": "percent"},
+            {"name": "food_price_pct_by_region", "description": "Processed food consumer price change by region", "unit": "percent"},
+            {"name": "gro_price_pct_by_region", "description": "Grain consumer price change by region", "unit": "percent"},
+            {"name": "us_maize_yield_change_pct", "description": "US maize yield change at the GTAP-crop fixed point", "unit": "percent"},
+            {"name": "open_loop_gap", "description": "Fixed point minus one-pass (open-loop) result", "unit": "percentage points"},
+        ],
+    },
     "futures": {
         "model_id": "futures",
         "description": "Commodity futures price trajectory forecasting",

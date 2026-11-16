@@ -1,0 +1,15 @@
+backend,run_id,week,cells_attempted,denominator_basis,grid_cells,completed,failed,skipped,synthesis_outcomes,sections_failed,sections_total,clean_synthesis,model_runtime_sum_s,model_span_s,param_llm_s,s_per_completed_model,review_mode,failure_reasons
+anthropic-opus-4-8,cmp_fill_20261102_anthropic-opus-4-8_20260215,cmp_fill_20261102_anthropic-opus-4-8_20260215,170,parameter_sets,170,90,31,49,242,0,30,True,37.995,26.878,1896.753,0.4222,auto_approved,
+anthropic-opus-4-8,cmp_fill_20261102_anthropic-opus-4-8_20260301,cmp_fill_20261102_anthropic-opus-4-8_20260301,170,parameter_sets,170,90,31,49,226,0,30,True,40.973,37.257,1926.612,0.4553,auto_approved,
+anthropic-opus-4-8,cmp_fill_20261102_anthropic-opus-4-8_20260308,cmp_fill_20261102_anthropic-opus-4-8_20260308,170,parameter_sets,170,90,30,50,261,0,30,True,45.344,41.212,1954.627,0.5038,auto_approved,
+anthropic-opus-4-8,cmp_fill_20261102_anthropic-opus-4-8_20260315,cmp_fill_20261102_anthropic-opus-4-8_20260315,170,parameter_sets,170,90,31,49,229,0,30,True,43.339,40.598,1998.602,0.4815,auto_approved,
+anthropic-opus-4-8,cmp_fill_20261102_anthropic-opus-4-8_20260322,cmp_fill_20261102_anthropic-opus-4-8_20260322,170,parameter_sets,170,90,29,51,236,0,30,True,43.788,40.289,1919.601,0.4865,auto_approved,
+anthropic-opus-4-8,cmp_fill_20261102_anthropic-opus-4-8_20260405,cmp_fill_20261102_anthropic-opus-4-8_20260405,170,parameter_sets,170,90,30,50,225,0,30,True,46.054,40.624,1978.636,0.5117,auto_approved,
+anthropic-sonnet-4-6,cmp_fill_20261102_anthropic-sonnet-4-6_20260222,cmp_fill_20261102_anthropic-sonnet-4-6_20260222,170,parameter_sets,170,90,26,54,508,0,30,True,71.541,49.161,3366.198,0.7949,auto_approved,
+anthropic-sonnet-4-6,cmp_fill_20261102_anthropic-sonnet-4-6_20260301,cmp_fill_20261102_anthropic-sonnet-4-6_20260301,170,parameter_sets,170,90,26,54,472,0,30,True,70.745,51.526,3157.472,0.7861,auto_approved,
+anthropic-sonnet-4-6,cmp_fill_20261102_anthropic-sonnet-4-6_20260308,cmp_fill_20261102_anthropic-sonnet-4-6_20260308,170,parameter_sets,170,90,26,54,459,0,30,True,68.296,48.622,3398.142,0.7588,auto_approved,
+anthropic-sonnet-4-6,cmp_fill_20261102_anthropic-sonnet-4-6_20260315,cmp_fill_20261102_anthropic-sonnet-4-6_20260315,170,parameter_sets,170,90,26,54,478,0,30,True,62.075,43.552,3171.745,0.6897,auto_approved,
+anthropic-sonnet-4-6,cmp_fill_20261102_anthropic-sonnet-4-6_20260329,cmp_fill_20261102_anthropic-sonnet-4-6_20260329,170,parameter_sets,170,90,26,54,477,0,30,True,61.445,42.342,3274.684,0.6827,auto_approved,
+groq-gpt-oss-120b,cmp_fill_20261102_groq-gpt-oss-120b_20260329,cmp_fill_20261102_groq-gpt-oss-120b_20260329,170,parameter_sets,170,90,28,50,862,0,30,True,47.476,28.579,525.233,0.5275,auto_approved,
+groq-gpt-oss-120b,cmp_fill_20261102_groq-gpt-oss-120b_20260405,cmp_fill_20261102_groq-gpt-oss-120b_20260405,170,parameter_sets,170,90,29,50,840,0,30,True,42.348,29.342,499.781,0.4705,auto_approved,
+groq-gpt-oss-20b,cmp_fill_20261102_groq-gpt-oss-20b_20260308,cmp_fill_20261102_groq-gpt-oss-20b_20260308,170,parameter_sets,170,90,27,51,659,8,30,False,38.537,26.945,343.32,0.4282,auto_approved,BadRequestError: 8

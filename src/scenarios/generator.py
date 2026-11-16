@@ -80,6 +80,17 @@ def _format_framework_inputs(inputs: dict) -> dict:
     }
 
 
+def require_scenario_count(scenario_set: ScenarioSet, expected: int) -> None:
+    """Raise when Module 1 returned fewer scenarios than the framework asks for."""
+    found = len(scenario_set.scenarios)
+    if found < expected:
+        raise ValueError(
+            f"Scenario generation returned {found} of {expected} scenarios; "
+            "the reply may have been truncated at the output-token cap "
+            "(PIPELINE_LLM_MAX_COMPLETION_TOKENS)."
+        )
+
+
 def build_scenario_generator(llm: BaseChatModel) -> Runnable:
     """Build the scenario generation chain.
 

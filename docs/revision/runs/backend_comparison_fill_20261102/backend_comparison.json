@@ -1,0 +1,1469 @@
+{
+  "definition": "A run has a clean synthesis when (1) the Module 4 synthesis state was written, (2) every (scenario, section) LLM call completed without an unrecoverable error (context_budget_summary.sections_failed == 0), (3) no bash-layer failure was recorded for the synthesis stage, and (4) every scenario in the run has at least one completed model and at least one synthesized outcome.",
+  "rows": [
+    {
+      "backend": "anthropic-opus-4-8",
+      "run_id": "cmp_fill_20261102_anthropic-opus-4-8_20260215",
+      "week": "cmp_fill_20261102_anthropic-opus-4-8_20260215",
+      "cells_attempted": 170,
+      "denominator_basis": "parameter_sets",
+      "grid_cells": 170,
+      "completed": 90,
+      "failed": 31,
+      "skipped": 49,
+      "synthesis_outcomes": 242,
+      "sections_failed": 0,
+      "sections_total": 30,
+      "clean_synthesis": true,
+      "model_runtime_sum_s": 37.995,
+      "model_span_s": 26.878,
+      "param_llm_s": 1896.753,
+      "s_per_completed_model": 0.4222,
+      "review_mode": "auto_approved",
+      "failure_reasons": ""
+    },
+    {
+      "backend": "anthropic-opus-4-8",
+      "run_id": "cmp_fill_20261102_anthropic-opus-4-8_20260301",
+      "week": "cmp_fill_20261102_anthropic-opus-4-8_20260301",
+      "cells_attempted": 170,
+      "denominator_basis": "parameter_sets",
+      "grid_cells": 170,
+      "completed": 90,
+      "failed": 31,
+      "skipped": 49,
+      "synthesis_outcomes": 226,
+      "sections_failed": 0,
+      "sections_total": 30,
+      "clean_synthesis": true,
+      "model_runtime_sum_s": 40.973,
+      "model_span_s": 37.257,
+      "param_llm_s": 1926.612,
+      "s_per_completed_model": 0.4553,
+      "review_mode": "auto_approved",
+      "failure_reasons": ""
+    },
+    {
+      "backend": "anthropic-opus-4-8",
+      "run_id": "cmp_fill_20261102_anthropic-opus-4-8_20260308",
+      "week": "cmp_fill_20261102_anthropic-opus-4-8_20260308",
+      "cells_attempted": 170,
+      "denominator_basis": "parameter_sets",
+      "grid_cells": 170,
+      "completed": 90,
+      "failed": 30,
+      "skipped": 50,
+      "synthesis_outcomes": 261,
+      "sections_failed": 0,
+      "sections_total": 30,
+      "clean_synthesis": true,
+      "model_runtime_sum_s": 45.344,
+      "model_span_s": 41.212,
+      "param_llm_s": 1954.627,
+      "s_per_completed_model": 0.5038,
+      "review_mode": "auto_approved",
+      "failure_reasons": ""
+    },
+    {
+      "backend": "anthropic-opus-4-8",
+      "run_id": "cmp_fill_20261102_anthropic-opus-4-8_20260315",
+      "week": "cmp_fill_20261102_anthropic-opus-4-8_20260315",
+      "cells_attempted": 170,
+      "denominator_basis": "parameter_sets",
+      "grid_cells": 170,
+      "completed": 90,
+      "failed": 31,
+      "skipped": 49,
+      "synthesis_outcomes": 229,
+      "sections_failed": 0,
+      "sections_total": 30,
+      "clean_synthesis": true,
+      "model_runtime_sum_s": 43.339,
+      "model_span_s": 40.598,
+      "param_llm_s": 1998.602,
+      "s_per_completed_model": 0.4815,
+      "review_mode": "auto_approved",
+      "failure_reasons": ""
+    },
+    {
+      "backend": "anthropic-opus-4-8",
+      "run_id": "cmp_fill_20261102_anthropic-opus-4-8_20260322",
+      "week": "cmp_fill_20261102_anthropic-opus-4-8_20260322",
+      "cells_attempted": 170,
+      "denominator_basis": "parameter_sets",
+      "grid_cells": 170,
+      "completed": 90,
+      "failed": 29,
+      "skipped": 51,
+      "synthesis_outcomes": 236,
+      "sections_failed": 0,
+      "sections_total": 30,
+      "clean_synthesis": true,
+      "model_runtime_sum_s": 43.788,
+      "model_span_s": 40.289,
+      "param_llm_s": 1919.601,
+      "s_per_completed_model": 0.4865,
+      "review_mode": "auto_approved",
+      "failure_reasons": ""
+    },
+    {
+      "backend": "anthropic-opus-4-8",
+      "run_id": "cmp_fill_20261102_anthropic-opus-4-8_20260405",
+      "week": "cmp_fill_20261102_anthropic-opus-4-8_20260405",
+      "cells_attempted": 170,
+      "denominator_basis": "parameter_sets",
+      "grid_cells": 170,
+      "completed": 90,
+      "failed": 30,
+      "skipped": 50,
+      "synthesis_outcomes": 225,
+      "sections_failed": 0,
+      "sections_total": 30,
+      "clean_synthesis": true,
+      "model_runtime_sum_s": 46.054,
+      "model_span_s": 40.624,
+      "param_llm_s": 1978.636,
+      "s_per_completed_model": 0.5117,
+      "review_mode": "auto_approved",
+      "failure_reasons": ""
+    },
+    {
+      "backend": "anthropic-sonnet-4-6",
+      "run_id": "cmp_fill_20261102_anthropic-sonnet-4-6_20260222",
+      "week": "cmp_fill_20261102_anthropic-sonnet-4-6_20260222",
+      "cells_attempted": 170,
+      "denominator_basis": "parameter_sets",
+      "grid_cells": 170,
+      "completed": 90,
+      "failed": 26,
+      "skipped": 54,
+      "synthesis_outcomes": 508,
+      "sections_failed": 0,
+      "sections_total": 30,
+      "clean_synthesis": true,
+      "model_runtime_sum_s": 71.541,
+      "model_span_s": 49.161,
+      "param_llm_s": 3366.198,
+      "s_per_completed_model": 0.7949,
+      "review_mode": "auto_approved",
+      "failure_reasons": ""
+    },
+    {
+      "backend": "anthropic-sonnet-4-6",
+      "run_id": "cmp_fill_20261102_anthropic-sonnet-4-6_20260301",
+      "week": "cmp_fill_20261102_anthropic-sonnet-4-6_20260301",
+      "cells_attempted": 170,
+      "denominator_basis": "parameter_sets",
+      "grid_cells": 170,
+      "completed": 90,
+      "failed": 26,
+      "skipped": 54,
+      "synthesis_outcomes": 472,
+      "sections_failed": 0,
+      "sections_total": 30,
+      "clean_synthesis": true,
+      "model_runtime_sum_s": 70.745,
+      "model_span_s": 51.526,
+      "param_llm_s": 3157.472,
+      "s_per_completed_model": 0.7861,
+      "review_mode": "auto_approved",
+      "failure_reasons": ""
+    },
+    {
+      "backend": "anthropic-sonnet-4-6",
+      "run_id": "cmp_fill_20261102_anthropic-sonnet-4-6_20260308",
+      "week": "cmp_fill_20261102_anthropic-sonnet-4-6_20260308",
+      "cells_attempted": 170,
+      "denominator_basis": "parameter_sets",
+      "grid_cells": 170,
+      "completed": 90,
+      "failed": 26,
+      "skipped": 54,
+      "synthesis_outcomes": 459,
+      "sections_failed": 0,
+      "sections_total": 30,
+      "clean_synthesis": true,
+      "model_runtime_sum_s": 68.296,
+      "model_span_s": 48.622,
+      "param_llm_s": 3398.142,
+      "s_per_completed_model": 0.7588,
+      "review_mode": "auto_approved",
+      "failure_reasons": ""
+    },
+    {
+      "backend": "anthropic-sonnet-4-6",
+      "run_id": "cmp_fill_20261102_anthropic-sonnet-4-6_20260315",
+      "week": "cmp_fill_20261102_anthropic-sonnet-4-6_20260315",
+      "cells_attempted": 170,
+      "denominator_basis": "parameter_sets",
+      "grid_cells": 170,
+      "completed": 90,
+      "failed": 26,
+      "skipped": 54,
+      "synthesis_outcomes": 478,
+      "sections_failed": 0,
+      "sections_total": 30,
+      "clean_synthesis": true,
+      "model_runtime_sum_s": 62.075,
+      "model_span_s": 43.552,
+      "param_llm_s": 3171.745,
+      "s_per_completed_model": 0.6897,
+      "review_mode": "auto_approved",
+      "failure_reasons": ""
+    },
+    {
+      "backend": "anthropic-sonnet-4-6",
+      "run_id": "cmp_fill_20261102_anthropic-sonnet-4-6_20260329",
+      "week": "cmp_fill_20261102_anthropic-sonnet-4-6_20260329",
+      "cells_attempted": 170,
+      "denominator_basis": "parameter_sets",
+      "grid_cells": 170,
+      "completed": 90,
+      "failed": 26,
+      "skipped": 54,
+      "synthesis_outcomes": 477,
+      "sections_failed": 0,
+      "sections_total": 30,
+      "clean_synthesis": true,
+      "model_runtime_sum_s": 61.445,
+      "model_span_s": 42.342,
+      "param_llm_s": 3274.684,
+      "s_per_completed_model": 0.6827,
+      "review_mode": "auto_approved",
+      "failure_reasons": ""
+    },
+    {
+      "backend": "groq-gpt-oss-120b",
+      "run_id": "cmp_fill_20261102_groq-gpt-oss-120b_20260329",
+      "week": "cmp_fill_20261102_groq-gpt-oss-120b_20260329",
+      "cells_attempted": 170,
+      "denominator_basis": "parameter_sets",
+      "grid_cells": 170,
+      "completed": 90,
+      "failed": 28,
+      "skipped": 50,
+      "synthesis_outcomes": 862,
+      "sections_failed": 0,
+      "sections_total": 30,
+      "clean_synthesis": true,
+      "model_runtime_sum_s": 47.476,
+      "model_span_s": 28.579,
+      "param_llm_s": 525.233,
+      "s_per_completed_model": 0.5275,
+      "review_mode": "auto_approved",
+      "failure_reasons": ""
+    },
+    {
+      "backend": "groq-gpt-oss-120b",
+      "run_id": "cmp_fill_20261102_groq-gpt-oss-120b_20260405",
+      "week": "cmp_fill_20261102_groq-gpt-oss-120b_20260405",
+      "cells_attempted": 170,
+      "denominator_basis": "parameter_sets",
+      "grid_cells": 170,
+      "completed": 90,
+      "failed": 29,
+      "skipped": 50,
+      "synthesis_outcomes": 840,
+      "sections_failed": 0,
+      "sections_total": 30,
+      "clean_synthesis": true,
+      "model_runtime_sum_s": 42.348,
+      "model_span_s": 29.342,
+      "param_llm_s": 499.781,
+      "s_per_completed_model": 0.4705,
+      "review_mode": "auto_approved",
+      "failure_reasons": ""
+    },
+    {
+      "backend": "groq-gpt-oss-20b",
+      "run_id": "cmp_fill_20261102_groq-gpt-oss-20b_20260308",
+      "week": "cmp_fill_20261102_groq-gpt-oss-20b_20260308",
+      "cells_attempted": 170,
+      "denominator_basis": "parameter_sets",
+      "grid_cells": 170,
+      "completed": 90,
+      "failed": 27,
+      "skipped": 51,
+      "synthesis_outcomes": 659,
+      "sections_failed": 8,
+      "sections_total": 30,
+      "clean_synthesis": false,
+      "model_runtime_sum_s": 38.537,
+      "model_span_s": 26.945,
+      "param_llm_s": 343.32,
+      "s_per_completed_model": 0.4282,
+      "review_mode": "auto_approved",
+      "failure_reasons": "BadRequestError: 8"
+    }
+  ],
+  "summary": {
+    "anthropic-opus-4-8": {
+      "weeks": [
+        "cmp_fill_20261102_anthropic-opus-4-8_20260215",
+        "cmp_fill_20261102_anthropic-opus-4-8_20260301",
+        "cmp_fill_20261102_anthropic-opus-4-8_20260308",
+        "cmp_fill_20261102_anthropic-opus-4-8_20260315",
+        "cmp_fill_20261102_anthropic-opus-4-8_20260322",
+        "cmp_fill_20261102_anthropic-opus-4-8_20260405"
+      ],
+      "n_runs": 6,
+      "clean_weeks": [
+        "cmp_fill_20261102_anthropic-opus-4-8_20260215",
+        "cmp_fill_20261102_anthropic-opus-4-8_20260301",
+        "cmp_fill_20261102_anthropic-opus-4-8_20260308",
+        "cmp_fill_20261102_anthropic-opus-4-8_20260315",
+        "cmp_fill_20261102_anthropic-opus-4-8_20260322",
+        "cmp_fill_20261102_anthropic-opus-4-8_20260405"
+      ],
+      "clean_rate": 1.0,
+      "completed_per_week": [
+        90,
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "completed_mean": 90,
+      "completed_median": 90.0,
+      "model_span_s_per_week": [
+        26.878,
+        37.257,
+        41.212,
+        40.598,
+        40.289,
+        40.624
+      ],
+      "model_span_s_mean": 37.8,
+      "attempted_per_week": [
+        170,
+        170,
+        170,
+        170,
+        170,
+        170
+      ],
+      "principal_failure_reasons": []
+    },
+    "anthropic-sonnet-4-6": {
+      "weeks": [
+        "cmp_fill_20261102_anthropic-sonnet-4-6_20260222",
+        "cmp_fill_20261102_anthropic-sonnet-4-6_20260301",
+        "cmp_fill_20261102_anthropic-sonnet-4-6_20260308",
+        "cmp_fill_20261102_anthropic-sonnet-4-6_20260315",
+        "cmp_fill_20261102_anthropic-sonnet-4-6_20260329"
+      ],
+      "n_runs": 5,
+      "clean_weeks": [
+        "cmp_fill_20261102_anthropic-sonnet-4-6_20260222",
+        "cmp_fill_20261102_anthropic-sonnet-4-6_20260301",
+        "cmp_fill_20261102_anthropic-sonnet-4-6_20260308",
+        "cmp_fill_20261102_anthropic-sonnet-4-6_20260315",
+        "cmp_fill_20261102_anthropic-sonnet-4-6_20260329"
+      ],
+      "clean_rate": 1.0,
+      "completed_per_week": [
+        90,
+        90,
+        90,
+        90,
+        90
+      ],
+      "completed_mean": 90,
+      "completed_median": 90,
+      "model_span_s_per_week": [
+        49.161,
+        51.526,
+        48.622,
+        43.552,
+        42.342
+      ],
+      "model_span_s_mean": 47.0,
+      "attempted_per_week": [
+        170,
+        170,
+        170,
+        170,
+        170
+      ],
+      "principal_failure_reasons": []
+    },
+    "groq-gpt-oss-120b": {
+      "weeks": [
+        "cmp_fill_20261102_groq-gpt-oss-120b_20260329",
+        "cmp_fill_20261102_groq-gpt-oss-120b_20260405"
+      ],
+      "n_runs": 2,
+      "clean_weeks": [
+        "cmp_fill_20261102_groq-gpt-oss-120b_20260329",
+        "cmp_fill_20261102_groq-gpt-oss-120b_20260405"
+      ],
+      "clean_rate": 1.0,
+      "completed_per_week": [
+        90,
+        90
+      ],
+      "completed_mean": 90,
+      "completed_median": 90.0,
+      "model_span_s_per_week": [
+        28.579,
+        29.342
+      ],
+      "model_span_s_mean": 29.0,
+      "attempted_per_week": [
+        170,
+        170
+      ],
+      "principal_failure_reasons": []
+    },
+    "groq-gpt-oss-20b": {
+      "weeks": [
+        "cmp_fill_20261102_groq-gpt-oss-20b_20260308"
+      ],
+      "n_runs": 1,
+      "clean_weeks": [],
+      "clean_rate": 0.0,
+      "completed_per_week": [
+        90
+      ],
+      "completed_mean": 90,
+      "completed_median": 90,
+      "model_span_s_per_week": [
+        26.945
+      ],
+      "model_span_s_mean": 26.9,
+      "attempted_per_week": [
+        170
+      ],
+      "principal_failure_reasons": [
+        "BadRequestError: 8"
+      ]
+    }
+  },
+  "failed_backends": {
+    "groq-gpt-oss-20b": {
+      "weeks": [
+        "cmp_fill_20261102_groq-gpt-oss-20b_20260308"
+      ],
+      "n_runs": 1,
+      "clean_weeks": [],
+      "clean_rate": 0.0,
+      "completed_per_week": [
+        90
+      ],
+      "completed_mean": 90,
+      "completed_median": 90,
+      "model_span_s_per_week": [
+        26.945
+      ],
+      "model_span_s_mean": 26.9,
+      "attempted_per_week": [
+        170
+      ],
+      "principal_failure_reasons": [
+        "BadRequestError: 8"
+      ]
+    }
+  },
+  "assessments": [
+    {
+      "run_id": "cmp_fill_20261102_anthropic-opus-4-8_20260215",
+      "backend": {
+        "provider": "vllm",
+        "model": "meta-llama/Llama-3.1-8B-Instruct",
+        "base_url": null
+      },
+      "clean_synthesis": true,
+      "clean_synthesis_definition": "A run has a clean synthesis when (1) the Module 4 synthesis state was written, (2) every (scenario, section) LLM call completed without an unrecoverable error (context_budget_summary.sections_failed == 0), (3) no bash-layer failure was recorded for the synthesis stage, and (4) every scenario in the run has at least one completed model and at least one synthesized outcome.",
+      "criteria": {
+        "synthesis_state_present": true,
+        "sections_failed": 0,
+        "sections_total": 30,
+        "bash_failures_in_synthesis_stage": 0,
+        "scenarios_total": 5,
+        "scenarios_with_completed_model_and_outcome": 5,
+        "synthesis_results_count": 242
+      },
+      "cells": {
+        "parameter_sets": 170,
+        "parameter_sets_failed": 0,
+        "model_records": 170,
+        "completed": 90,
+        "failed": 31,
+        "skipped": 49
+      },
+      "denominators": {
+        "grid": 170,
+        "scenarios": 5,
+        "model_specs": 34,
+        "parameter_sets": 170,
+        "model_records": 170
+      },
+      "wall_clock": {
+        "stages": {
+          "parameter_extraction_llm_seconds": 1896.753,
+          "model_execution_runtime_sum_seconds": 37.995,
+          "model_execution_span_seconds": 26.878,
+          "model_tier_span_seconds[models_commodity]": 8.463,
+          "model_tier_span_seconds[models_commodity_downstream]": 1.023,
+          "model_tier_span_seconds[models_macro]": 14.15
+        },
+        "analyst_review_seconds": 0.0,
+        "review_mode": "auto_approved",
+        "seconds_per_completed_model_run": 0.4222,
+        "note": "Model-execution time is the sum of per-cell adapter runtimes; spans are wall-clock between the first start and last completion of the stage. Human review time is zero when the checkpoints were auto-approved (batch mode) and is not included in any figure."
+      },
+      "checkpoints": {
+        "auto_approve": true,
+        "scenarios_validated": true,
+        "parameters_validation_status": {
+          "approved": 170
+        },
+        "synthesis_validated": true,
+        "note": "In SLURM batch mode HORMUZ_AUTO_APPROVE=1 marks all three checkpoints approved without analyst input; the manuscript's 'never run unattended' claim applies to interactive use."
+      },
+      "failure_reasons": {
+        "synthesis_section_errors": {},
+        "bash_failures_by_stage": {},
+        "model_skip_classes": {
+          "missing_data_or_binary": 34,
+          "missing_config": 10,
+          "stub": 10,
+          "validation_failed": 6,
+          "runtime_error": 10,
+          "runtime_or_license_missing": 10
+        }
+      },
+      "backend_label": "anthropic-opus-4-8",
+      "report_dir": "data/backend_compare/cmp_fill_20261102/cmp_fill_20261102_anthropic-opus-4-8_20260215"
+    },
+    {
+      "run_id": "cmp_fill_20261102_anthropic-opus-4-8_20260301",
+      "backend": {
+        "provider": "vllm",
+        "model": "meta-llama/Llama-3.1-8B-Instruct",
+        "base_url": null
+      },
+      "clean_synthesis": true,
+      "clean_synthesis_definition": "A run has a clean synthesis when (1) the Module 4 synthesis state was written, (2) every (scenario, section) LLM call completed without an unrecoverable error (context_budget_summary.sections_failed == 0), (3) no bash-layer failure was recorded for the synthesis stage, and (4) every scenario in the run has at least one completed model and at least one synthesized outcome.",
+      "criteria": {
+        "synthesis_state_present": true,
+        "sections_failed": 0,
+        "sections_total": 30,
+        "bash_failures_in_synthesis_stage": 0,
+        "scenarios_total": 5,
+        "scenarios_with_completed_model_and_outcome": 5,
+        "synthesis_results_count": 226
+      },
+      "cells": {
+        "parameter_sets": 170,
+        "parameter_sets_failed": 0,
+        "model_records": 170,
+        "completed": 90,
+        "failed": 31,
+        "skipped": 49
+      },
+      "denominators": {
+        "grid": 170,
+        "scenarios": 5,
+        "model_specs": 34,
+        "parameter_sets": 170,
+        "model_records": 170
+      },
+      "wall_clock": {
+        "stages": {
+          "parameter_extraction_llm_seconds": 1926.612,
+          "model_execution_runtime_sum_seconds": 40.973,
+          "model_execution_span_seconds": 37.257,
+          "model_tier_span_seconds[models_commodity]": 13.427,
+          "model_tier_span_seconds[models_commodity_downstream]": 1.651,
+          "model_tier_span_seconds[models_macro]": 17.751
+        },
+        "analyst_review_seconds": 0.0,
+        "review_mode": "auto_approved",
+        "seconds_per_completed_model_run": 0.4553,
+        "note": "Model-execution time is the sum of per-cell adapter runtimes; spans are wall-clock between the first start and last completion of the stage. Human review time is zero when the checkpoints were auto-approved (batch mode) and is not included in any figure."
+      },
+      "checkpoints": {
+        "auto_approve": true,
+        "scenarios_validated": true,
+        "parameters_validation_status": {
+          "approved": 170
+        },
+        "synthesis_validated": true,
+        "note": "In SLURM batch mode HORMUZ_AUTO_APPROVE=1 marks all three checkpoints approved without analyst input; the manuscript's 'never run unattended' claim applies to interactive use."
+      },
+      "failure_reasons": {
+        "synthesis_section_errors": {},
+        "bash_failures_by_stage": {},
+        "model_skip_classes": {
+          "missing_data_or_binary": 34,
+          "missing_config": 10,
+          "stub": 10,
+          "validation_failed": 6,
+          "runtime_error": 10,
+          "runtime_or_license_missing": 10
+        }
+      },
+      "backend_label": "anthropic-opus-4-8",
+      "report_dir": "data/backend_compare/cmp_fill_20261102/cmp_fill_20261102_anthropic-opus-4-8_20260301"
+    },
+    {
+      "run_id": "cmp_fill_20261102_anthropic-opus-4-8_20260308",
+      "backend": {
+        "provider": "vllm",
+        "model": "meta-llama/Llama-3.1-8B-Instruct",
+        "base_url": null
+      },
+      "clean_synthesis": true,
+      "clean_synthesis_definition": "A run has a clean synthesis when (1) the Module 4 synthesis state was written, (2) every (scenario, section) LLM call completed without an unrecoverable error (context_budget_summary.sections_failed == 0), (3) no bash-layer failure was recorded for the synthesis stage, and (4) every scenario in the run has at least one completed model and at least one synthesized outcome.",
+      "criteria": {
+        "synthesis_state_present": true,
+        "sections_failed": 0,
+        "sections_total": 30,
+        "bash_failures_in_synthesis_stage": 0,
+        "scenarios_total": 5,
+        "scenarios_with_completed_model_and_outcome": 5,
+        "synthesis_results_count": 261
+      },
+      "cells": {
+        "parameter_sets": 170,
+        "parameter_sets_failed": 0,
+        "model_records": 170,
+        "completed": 90,
+        "failed": 30,
+        "skipped": 50
+      },
+      "denominators": {
+        "grid": 170,
+        "scenarios": 5,
+        "model_specs": 34,
+        "parameter_sets": 170,
+        "model_records": 170
+      },
+      "wall_clock": {
+        "stages": {
+          "parameter_extraction_llm_seconds": 1954.627,
+          "model_execution_runtime_sum_seconds": 45.344,
+          "model_execution_span_seconds": 41.212,
+          "model_tier_span_seconds[models_commodity]": 15.248,
+          "model_tier_span_seconds[models_commodity_downstream]": 2.181,
+          "model_tier_span_seconds[models_macro]": 18.848
+        },
+        "analyst_review_seconds": 0.0,
+        "review_mode": "auto_approved",
+        "seconds_per_completed_model_run": 0.5038,
+        "note": "Model-execution time is the sum of per-cell adapter runtimes; spans are wall-clock between the first start and last completion of the stage. Human review time is zero when the checkpoints were auto-approved (batch mode) and is not included in any figure."
+      },
+      "checkpoints": {
+        "auto_approve": true,
+        "scenarios_validated": true,
+        "parameters_validation_status": {
+          "approved": 170
+        },
+        "synthesis_validated": true,
+        "note": "In SLURM batch mode HORMUZ_AUTO_APPROVE=1 marks all three checkpoints approved without analyst input; the manuscript's 'never run unattended' claim applies to interactive use."
+      },
+      "failure_reasons": {
+        "synthesis_section_errors": {},
+        "bash_failures_by_stage": {},
+        "model_skip_classes": {
+          "missing_data_or_binary": 34,
+          "missing_config": 10,
+          "stub": 11,
+          "validation_failed": 5,
+          "runtime_error": 10,
+          "runtime_or_license_missing": 10
+        }
+      },
+      "backend_label": "anthropic-opus-4-8",
+      "report_dir": "data/backend_compare/cmp_fill_20261102/cmp_fill_20261102_anthropic-opus-4-8_20260308"
+    },
+    {
+      "run_id": "cmp_fill_20261102_anthropic-opus-4-8_20260315",
+      "backend": {
+        "provider": "vllm",
+        "model": "meta-llama/Llama-3.1-8B-Instruct",
+        "base_url": null
+      },
+      "clean_synthesis": true,
+      "clean_synthesis_definition": "A run has a clean synthesis when (1) the Module 4 synthesis state was written, (2) every (scenario, section) LLM call completed without an unrecoverable error (context_budget_summary.sections_failed == 0), (3) no bash-layer failure was recorded for the synthesis stage, and (4) every scenario in the run has at least one completed model and at least one synthesized outcome.",
+      "criteria": {
+        "synthesis_state_present": true,
+        "sections_failed": 0,
+        "sections_total": 30,
+        "bash_failures_in_synthesis_stage": 0,
+        "scenarios_total": 5,
+        "scenarios_with_completed_model_and_outcome": 5,
+        "synthesis_results_count": 229
+      },
+      "cells": {
+        "parameter_sets": 170,
+        "parameter_sets_failed": 0,
+        "model_records": 170,
+        "completed": 90,
+        "failed": 31,
+        "skipped": 49
+      },
+      "denominators": {
+        "grid": 170,
+        "scenarios": 5,
+        "model_specs": 34,
+        "parameter_sets": 170,
+        "model_records": 170
+      },
+      "wall_clock": {
+        "stages": {
+          "parameter_extraction_llm_seconds": 1998.602,
+          "model_execution_runtime_sum_seconds": 43.339,
+          "model_execution_span_seconds": 40.598,
+          "model_tier_span_seconds[models_commodity]": 15.557,
+          "model_tier_span_seconds[models_commodity_downstream]": 1.89,
+          "model_tier_span_seconds[models_macro]": 18.771
+        },
+        "analyst_review_seconds": 0.0,
+        "review_mode": "auto_approved",
+        "seconds_per_completed_model_run": 0.4815,
+        "note": "Model-execution time is the sum of per-cell adapter runtimes; spans are wall-clock between the first start and last completion of the stage. Human review time is zero when the checkpoints were auto-approved (batch mode) and is not included in any figure."
+      },
+      "checkpoints": {
+        "auto_approve": true,
+        "scenarios_validated": true,
+        "parameters_validation_status": {
+          "approved": 170
+        },
+        "synthesis_validated": true,
+        "note": "In SLURM batch mode HORMUZ_AUTO_APPROVE=1 marks all three checkpoints approved without analyst input; the manuscript's 'never run unattended' claim applies to interactive use."
+      },
+      "failure_reasons": {
+        "synthesis_section_errors": {},
+        "bash_failures_by_stage": {},
+        "model_skip_classes": {
+          "missing_data_or_binary": 34,
+          "missing_config": 10,
+          "stub": 10,
+          "validation_failed": 6,
+          "runtime_error": 10,
+          "runtime_or_license_missing": 10
+        }
+      },
+      "backend_label": "anthropic-opus-4-8",
+      "report_dir": "data/backend_compare/cmp_fill_20261102/cmp_fill_20261102_anthropic-opus-4-8_20260315"
+    },
+    {
+      "run_id": "cmp_fill_20261102_anthropic-opus-4-8_20260322",
+      "backend": {
+        "provider": "vllm",
+        "model": "meta-llama/Llama-3.1-8B-Instruct",
+        "base_url": null
+      },
+      "clean_synthesis": true,
+      "clean_synthesis_definition": "A run has a clean synthesis when (1) the Module 4 synthesis state was written, (2) every (scenario, section) LLM call completed without an unrecoverable error (context_budget_summary.sections_failed == 0), (3) no bash-layer failure was recorded for the synthesis stage, and (4) every scenario in the run has at least one completed model and at least one synthesized outcome.",
+      "criteria": {
+        "synthesis_state_present": true,
+        "sections_failed": 0,
+        "sections_total": 30,
+        "bash_failures_in_synthesis_stage": 0,
+        "scenarios_total": 5,
+        "scenarios_with_completed_model_and_outcome": 5,
+        "synthesis_results_count": 236
+      },
+      "cells": {
+        "parameter_sets": 170,
+        "parameter_sets_failed": 0,
+        "model_records": 170,
+        "completed": 90,
+        "failed": 29,
+        "skipped": 51
+      },
+      "denominators": {
+        "grid": 170,
+        "scenarios": 5,
+        "model_specs": 34,
+        "parameter_sets": 170,
+        "model_records": 170
+      },
+      "wall_clock": {
+        "stages": {
+          "parameter_extraction_llm_seconds": 1919.601,
+          "model_execution_runtime_sum_seconds": 43.788,
+          "model_execution_span_seconds": 40.289,
+          "model_tier_span_seconds[models_commodity]": 14.678,
+          "model_tier_span_seconds[models_commodity_downstream]": 1.822,
+          "model_tier_span_seconds[models_macro]": 18.685
+        },
+        "analyst_review_seconds": 0.0,
+        "review_mode": "auto_approved",
+        "seconds_per_completed_model_run": 0.4865,
+        "note": "Model-execution time is the sum of per-cell adapter runtimes; spans are wall-clock between the first start and last completion of the stage. Human review time is zero when the checkpoints were auto-approved (batch mode) and is not included in any figure."
+      },
+      "checkpoints": {
+        "auto_approve": true,
+        "scenarios_validated": true,
+        "parameters_validation_status": {
+          "approved": 170
+        },
+        "synthesis_validated": true,
+        "note": "In SLURM batch mode HORMUZ_AUTO_APPROVE=1 marks all three checkpoints approved without analyst input; the manuscript's 'never run unattended' claim applies to interactive use."
+      },
+      "failure_reasons": {
+        "synthesis_section_errors": {},
+        "bash_failures_by_stage": {},
+        "model_skip_classes": {
+          "missing_data_or_binary": 34,
+          "missing_config": 10,
+          "stub": 12,
+          "validation_failed": 4,
+          "runtime_error": 10,
+          "runtime_or_license_missing": 10
+        }
+      },
+      "backend_label": "anthropic-opus-4-8",
+      "report_dir": "data/backend_compare/cmp_fill_20261102/cmp_fill_20261102_anthropic-opus-4-8_20260322"
+    },
+    {
+      "run_id": "cmp_fill_20261102_anthropic-opus-4-8_20260405",
+      "backend": {
+        "provider": "vllm",
+        "model": "meta-llama/Llama-3.1-8B-Instruct",
+        "base_url": null
+      },
+      "clean_synthesis": true,
+      "clean_synthesis_definition": "A run has a clean synthesis when (1) the Module 4 synthesis state was written, (2) every (scenario, section) LLM call completed without an unrecoverable error (context_budget_summary.sections_failed == 0), (3) no bash-layer failure was recorded for the synthesis stage, and (4) every scenario in the run has at least one completed model and at least one synthesized outcome.",
+      "criteria": {
+        "synthesis_state_present": true,
+        "sections_failed": 0,
+        "sections_total": 30,
+        "bash_failures_in_synthesis_stage": 0,
+        "scenarios_total": 5,
+        "scenarios_with_completed_model_and_outcome": 5,
+        "synthesis_results_count": 225
+      },
+      "cells": {
+        "parameter_sets": 170,
+        "parameter_sets_failed": 0,
+        "model_records": 170,
+        "completed": 90,
+        "failed": 30,
+        "skipped": 50
+      },
+      "denominators": {
+        "grid": 170,
+        "scenarios": 5,
+        "model_specs": 34,
+        "parameter_sets": 170,
+        "model_records": 170
+      },
+      "wall_clock": {
+        "stages": {
+          "parameter_extraction_llm_seconds": 1978.636,
+          "model_execution_runtime_sum_seconds": 46.054,
+          "model_execution_span_seconds": 40.624,
+          "model_tier_span_seconds[models_commodity]": 14.562,
+          "model_tier_span_seconds[models_commodity_downstream]": 1.774,
+          "model_tier_span_seconds[models_macro]": 19.505
+        },
+        "analyst_review_seconds": 0.0,
+        "review_mode": "auto_approved",
+        "seconds_per_completed_model_run": 0.5117,
+        "note": "Model-execution time is the sum of per-cell adapter runtimes; spans are wall-clock between the first start and last completion of the stage. Human review time is zero when the checkpoints were auto-approved (batch mode) and is not included in any figure."
+      },
+      "checkpoints": {
+        "auto_approve": true,
+        "scenarios_validated": true,
+        "parameters_validation_status": {
+          "approved": 170
+        },
+        "synthesis_validated": true,
+        "note": "In SLURM batch mode HORMUZ_AUTO_APPROVE=1 marks all three checkpoints approved without analyst input; the manuscript's 'never run unattended' claim applies to interactive use."
+      },
+      "failure_reasons": {
+        "synthesis_section_errors": {},
+        "bash_failures_by_stage": {},
+        "model_skip_classes": {
+          "missing_data_or_binary": 34,
+          "missing_config": 10,
+          "stub": 11,
+          "validation_failed": 5,
+          "runtime_error": 10,
+          "runtime_or_license_missing": 10
+        }
+      },
+      "backend_label": "anthropic-opus-4-8",
+      "report_dir": "data/backend_compare/cmp_fill_20261102/cmp_fill_20261102_anthropic-opus-4-8_20260405"
+    },
+    {
+      "run_id": "cmp_fill_20261102_anthropic-sonnet-4-6_20260222",
+      "backend": {
+        "provider": "vllm",
+        "model": "meta-llama/Llama-3.1-8B-Instruct",
+        "base_url": null
+      },
+      "clean_synthesis": true,
+      "clean_synthesis_definition": "A run has a clean synthesis when (1) the Module 4 synthesis state was written, (2) every (scenario, section) LLM call completed without an unrecoverable error (context_budget_summary.sections_failed == 0), (3) no bash-layer failure was recorded for the synthesis stage, and (4) every scenario in the run has at least one completed model and at least one synthesized outcome.",
+      "criteria": {
+        "synthesis_state_present": true,
+        "sections_failed": 0,
+        "sections_total": 30,
+        "bash_failures_in_synthesis_stage": 0,
+        "scenarios_total": 5,
+        "scenarios_with_completed_model_and_outcome": 5,
+        "synthesis_results_count": 508
+      },
+      "cells": {
+        "parameter_sets": 170,
+        "parameter_sets_failed": 0,
+        "model_records": 170,
+        "completed": 90,
+        "failed": 26,
+        "skipped": 54
+      },
+      "denominators": {
+        "grid": 170,
+        "scenarios": 5,
+        "model_specs": 34,
+        "parameter_sets": 170,
+        "model_records": 170
+      },
+      "wall_clock": {
+        "stages": {
+          "parameter_extraction_llm_seconds": 3366.198,
+          "model_execution_runtime_sum_seconds": 71.541,
+          "model_execution_span_seconds": 49.161,
+          "model_tier_span_seconds[models_commodity]": 16.952,
+          "model_tier_span_seconds[models_commodity_downstream]": 2.034,
+          "model_tier_span_seconds[models_macro]": 25.665
+        },
+        "analyst_review_seconds": 0.0,
+        "review_mode": "auto_approved",
+        "seconds_per_completed_model_run": 0.7949,
+        "note": "Model-execution time is the sum of per-cell adapter runtimes; spans are wall-clock between the first start and last completion of the stage. Human review time is zero when the checkpoints were auto-approved (batch mode) and is not included in any figure."
+      },
+      "checkpoints": {
+        "auto_approve": true,
+        "scenarios_validated": true,
+        "parameters_validation_status": {
+          "approved": 170
+        },
+        "synthesis_validated": true,
+        "note": "In SLURM batch mode HORMUZ_AUTO_APPROVE=1 marks all three checkpoints approved without analyst input; the manuscript's 'never run unattended' claim applies to interactive use."
+      },
+      "failure_reasons": {
+        "synthesis_section_errors": {},
+        "bash_failures_by_stage": {},
+        "model_skip_classes": {
+          "missing_data_or_binary": 34,
+          "missing_config": 10,
+          "stub": 15,
+          "runtime_error": 10,
+          "runtime_or_license_missing": 10,
+          "validation_failed": 1
+        }
+      },
+      "backend_label": "anthropic-sonnet-4-6",
+      "report_dir": "data/backend_compare/cmp_fill_20261102/cmp_fill_20261102_anthropic-sonnet-4-6_20260222"
+    },
+    {
+      "run_id": "cmp_fill_20261102_anthropic-sonnet-4-6_20260301",
+      "backend": {
+        "provider": "vllm",
+        "model": "meta-llama/Llama-3.1-8B-Instruct",
+        "base_url": null
+      },
+      "clean_synthesis": true,
+      "clean_synthesis_definition": "A run has a clean synthesis when (1) the Module 4 synthesis state was written, (2) every (scenario, section) LLM call completed without an unrecoverable error (context_budget_summary.sections_failed == 0), (3) no bash-layer failure was recorded for the synthesis stage, and (4) every scenario in the run has at least one completed model and at least one synthesized outcome.",
+      "criteria": {
+        "synthesis_state_present": true,
+        "sections_failed": 0,
+        "sections_total": 30,
+        "bash_failures_in_synthesis_stage": 0,
+        "scenarios_total": 5,
+        "scenarios_with_completed_model_and_outcome": 5,
+        "synthesis_results_count": 472
+      },
+      "cells": {
+        "parameter_sets": 170,
+        "parameter_sets_failed": 0,
+        "model_records": 170,
+        "completed": 90,
+        "failed": 26,
+        "skipped": 54
+      },
+      "denominators": {
+        "grid": 170,
+        "scenarios": 5,
+        "model_specs": 34,
+        "parameter_sets": 170,
+        "model_records": 170
+      },
+      "wall_clock": {
+        "stages": {
+          "parameter_extraction_llm_seconds": 3157.472,
+          "model_execution_runtime_sum_seconds": 70.745,
+          "model_execution_span_seconds": 51.526,
+          "model_tier_span_seconds[models_commodity]": 17.706,
+          "model_tier_span_seconds[models_commodity_downstream]": 2.118,
+          "model_tier_span_seconds[models_macro]": 26.729
+        },
+        "analyst_review_seconds": 0.0,
+        "review_mode": "auto_approved",
+        "seconds_per_completed_model_run": 0.7861,
+        "note": "Model-execution time is the sum of per-cell adapter runtimes; spans are wall-clock between the first start and last completion of the stage. Human review time is zero when the checkpoints were auto-approved (batch mode) and is not included in any figure."
+      },
+      "checkpoints": {
+        "auto_approve": true,
+        "scenarios_validated": true,
+        "parameters_validation_status": {
+          "approved": 170
+        },
+        "synthesis_validated": true,
+        "note": "In SLURM batch mode HORMUZ_AUTO_APPROVE=1 marks all three checkpoints approved without analyst input; the manuscript's 'never run unattended' claim applies to interactive use."
+      },
+      "failure_reasons": {
+        "synthesis_section_errors": {},
+        "bash_failures_by_stage": {},
+        "model_skip_classes": {
+          "missing_data_or_binary": 34,
+          "missing_config": 10,
+          "stub": 15,
+          "runtime_error": 10,
+          "runtime_or_license_missing": 10,
+          "validation_failed": 1
+        }
+      },
+      "backend_label": "anthropic-sonnet-4-6",
+      "report_dir": "data/backend_compare/cmp_fill_20261102/cmp_fill_20261102_anthropic-sonnet-4-6_20260301"
+    },
+    {
+      "run_id": "cmp_fill_20261102_anthropic-sonnet-4-6_20260308",
+      "backend": {
+        "provider": "vllm",
+        "model": "meta-llama/Llama-3.1-8B-Instruct",
+        "base_url": null
+      },
+      "clean_synthesis": true,
+      "clean_synthesis_definition": "A run has a clean synthesis when (1) the Module 4 synthesis state was written, (2) every (scenario, section) LLM call completed without an unrecoverable error (context_budget_summary.sections_failed == 0), (3) no bash-layer failure was recorded for the synthesis stage, and (4) every scenario in the run has at least one completed model and at least one synthesized outcome.",
+      "criteria": {
+        "synthesis_state_present": true,
+        "sections_failed": 0,
+        "sections_total": 30,
+        "bash_failures_in_synthesis_stage": 0,
+        "scenarios_total": 5,
+        "scenarios_with_completed_model_and_outcome": 5,
+        "synthesis_results_count": 459
+      },
+      "cells": {
+        "parameter_sets": 170,
+        "parameter_sets_failed": 0,
+        "model_records": 170,
+        "completed": 90,
+        "failed": 26,
+        "skipped": 54
+      },
+      "denominators": {
+        "grid": 170,
+        "scenarios": 5,
+        "model_specs": 34,
+        "parameter_sets": 170,
+        "model_records": 170
+      },
+      "wall_clock": {
+        "stages": {
+          "parameter_extraction_llm_seconds": 3398.142,
+          "model_execution_runtime_sum_seconds": 68.296,
+          "model_execution_span_seconds": 48.622,
+          "model_tier_span_seconds[models_commodity]": 16.445,
+          "model_tier_span_seconds[models_commodity_downstream]": 2.125,
+          "model_tier_span_seconds[models_macro]": 25.721
+        },
+        "analyst_review_seconds": 0.0,
+        "review_mode": "auto_approved",
+        "seconds_per_completed_model_run": 0.7588,
+        "note": "Model-execution time is the sum of per-cell adapter runtimes; spans are wall-clock between the first start and last completion of the stage. Human review time is zero when the checkpoints were auto-approved (batch mode) and is not included in any figure."
+      },
+      "checkpoints": {
+        "auto_approve": true,
+        "scenarios_validated": true,
+        "parameters_validation_status": {
+          "approved": 170
+        },
+        "synthesis_validated": true,
+        "note": "In SLURM batch mode HORMUZ_AUTO_APPROVE=1 marks all three checkpoints approved without analyst input; the manuscript's 'never run unattended' claim applies to interactive use."
+      },
+      "failure_reasons": {
+        "synthesis_section_errors": {},
+        "bash_failures_by_stage": {},
+        "model_skip_classes": {
+          "missing_data_or_binary": 34,
+          "missing_config": 10,
+          "stub": 15,
+          "runtime_error": 10,
+          "runtime_or_license_missing": 10,
+          "validation_failed": 1
+        }
+      },
+      "backend_label": "anthropic-sonnet-4-6",
+      "report_dir": "data/backend_compare/cmp_fill_20261102/cmp_fill_20261102_anthropic-sonnet-4-6_20260308"
+    },
+    {
+      "run_id": "cmp_fill_20261102_anthropic-sonnet-4-6_20260315",
+      "backend": {
+        "provider": "vllm",
+        "model": "meta-llama/Llama-3.1-8B-Instruct",
+        "base_url": null
+      },
+      "clean_synthesis": true,
+      "clean_synthesis_definition": "A run has a clean synthesis when (1) the Module 4 synthesis state was written, (2) every (scenario, section) LLM call completed without an unrecoverable error (context_budget_summary.sections_failed == 0), (3) no bash-layer failure was recorded for the synthesis stage, and (4) every scenario in the run has at least one completed model and at least one synthesized outcome.",
+      "criteria": {
+        "synthesis_state_present": true,
+        "sections_failed": 0,
+        "sections_total": 30,
+        "bash_failures_in_synthesis_stage": 0,
+        "scenarios_total": 5,
+        "scenarios_with_completed_model_and_outcome": 5,
+        "synthesis_results_count": 478
+      },
+      "cells": {
+        "parameter_sets": 170,
+        "parameter_sets_failed": 0,
+        "model_records": 170,
+        "completed": 90,
+        "failed": 26,
+        "skipped": 54
+      },
+      "denominators": {
+        "grid": 170,
+        "scenarios": 5,
+        "model_specs": 34,
+        "parameter_sets": 170,
+        "model_records": 170
+      },
+      "wall_clock": {
+        "stages": {
+          "parameter_extraction_llm_seconds": 3171.745,
+          "model_execution_runtime_sum_seconds": 62.075,
+          "model_execution_span_seconds": 43.552,
+          "model_tier_span_seconds[models_commodity]": 14.43,
+          "model_tier_span_seconds[models_commodity_downstream]": 1.793,
+          "model_tier_span_seconds[models_macro]": 22.953
+        },
+        "analyst_review_seconds": 0.0,
+        "review_mode": "auto_approved",
+        "seconds_per_completed_model_run": 0.6897,
+        "note": "Model-execution time is the sum of per-cell adapter runtimes; spans are wall-clock between the first start and last completion of the stage. Human review time is zero when the checkpoints were auto-approved (batch mode) and is not included in any figure."
+      },
+      "checkpoints": {
+        "auto_approve": true,
+        "scenarios_validated": true,
+        "parameters_validation_status": {
+          "approved": 170
+        },
+        "synthesis_validated": true,
+        "note": "In SLURM batch mode HORMUZ_AUTO_APPROVE=1 marks all three checkpoints approved without analyst input; the manuscript's 'never run unattended' claim applies to interactive use."
+      },
+      "failure_reasons": {
+        "synthesis_section_errors": {},
+        "bash_failures_by_stage": {},
+        "model_skip_classes": {
+          "missing_data_or_binary": 34,
+          "missing_config": 10,
+          "stub": 15,
+          "runtime_error": 10,
+          "runtime_or_license_missing": 10,
+          "validation_failed": 1
+        }
+      },
+      "backend_label": "anthropic-sonnet-4-6",
+      "report_dir": "data/backend_compare/cmp_fill_20261102/cmp_fill_20261102_anthropic-sonnet-4-6_20260315"
+    },
+    {
+      "run_id": "cmp_fill_20261102_anthropic-sonnet-4-6_20260329",
+      "backend": {
+        "provider": "vllm",
+        "model": "meta-llama/Llama-3.1-8B-Instruct",
+        "base_url": null
+      },
+      "clean_synthesis": true,
+      "clean_synthesis_definition": "A run has a clean synthesis when (1) the Module 4 synthesis state was written, (2) every (scenario, section) LLM call completed without an unrecoverable error (context_budget_summary.sections_failed == 0), (3) no bash-layer failure was recorded for the synthesis stage, and (4) every scenario in the run has at least one completed model and at least one synthesized outcome.",
+      "criteria": {
+        "synthesis_state_present": true,
+        "sections_failed": 0,
+        "sections_total": 30,
+        "bash_failures_in_synthesis_stage": 0,
+        "scenarios_total": 5,
+        "scenarios_with_completed_model_and_outcome": 5,
+        "synthesis_results_count": 477
+      },
+      "cells": {
+        "parameter_sets": 170,
+        "parameter_sets_failed": 0,
+        "model_records": 170,
+        "completed": 90,
+        "failed": 26,
+        "skipped": 54
+      },
+      "denominators": {
+        "grid": 170,
+        "scenarios": 5,
+        "model_specs": 34,
+        "parameter_sets": 170,
+        "model_records": 170
+      },
+      "wall_clock": {
+        "stages": {
+          "parameter_extraction_llm_seconds": 3274.684,
+          "model_execution_runtime_sum_seconds": 61.445,
+          "model_execution_span_seconds": 42.342,
+          "model_tier_span_seconds[models_commodity]": 13.991,
+          "model_tier_span_seconds[models_commodity_downstream]": 1.749,
+          "model_tier_span_seconds[models_macro]": 22.398
+        },
+        "analyst_review_seconds": 0.0,
+        "review_mode": "auto_approved",
+        "seconds_per_completed_model_run": 0.6827,
+        "note": "Model-execution time is the sum of per-cell adapter runtimes; spans are wall-clock between the first start and last completion of the stage. Human review time is zero when the checkpoints were auto-approved (batch mode) and is not included in any figure."
+      },
+      "checkpoints": {
+        "auto_approve": true,
+        "scenarios_validated": true,
+        "parameters_validation_status": {
+          "approved": 170
+        },
+        "synthesis_validated": true,
+        "note": "In SLURM batch mode HORMUZ_AUTO_APPROVE=1 marks all three checkpoints approved without analyst input; the manuscript's 'never run unattended' claim applies to interactive use."
+      },
+      "failure_reasons": {
+        "synthesis_section_errors": {},
+        "bash_failures_by_stage": {},
+        "model_skip_classes": {
+          "missing_data_or_binary": 34,
+          "missing_config": 10,
+          "stub": 15,
+          "runtime_error": 10,
+          "runtime_or_license_missing": 10,
+          "validation_failed": 1
+        }
+      },
+      "backend_label": "anthropic-sonnet-4-6",
+      "report_dir": "data/backend_compare/cmp_fill_20261102/cmp_fill_20261102_anthropic-sonnet-4-6_20260329"
+    },
+    {
+      "run_id": "cmp_fill_20261102_groq-gpt-oss-120b_20260329",
+      "backend": {
+        "provider": "vllm",
+        "model": "meta-llama/Llama-3.1-8B-Instruct",
+        "base_url": null
+      },
+      "clean_synthesis": true,
+      "clean_synthesis_definition": "A run has a clean synthesis when (1) the Module 4 synthesis state was written, (2) every (scenario, section) LLM call completed without an unrecoverable error (context_budget_summary.sections_failed == 0), (3) no bash-layer failure was recorded for the synthesis stage, and (4) every scenario in the run has at least one completed model and at least one synthesized outcome.",
+      "criteria": {
+        "synthesis_state_present": true,
+        "sections_failed": 0,
+        "sections_total": 30,
+        "bash_failures_in_synthesis_stage": 0,
+        "scenarios_total": 5,
+        "scenarios_with_completed_model_and_outcome": 5,
+        "synthesis_results_count": 862
+      },
+      "cells": {
+        "parameter_sets": 170,
+        "parameter_sets_failed": 2,
+        "model_records": 168,
+        "completed": 90,
+        "failed": 28,
+        "skipped": 50
+      },
+      "denominators": {
+        "grid": 170,
+        "scenarios": 5,
+        "model_specs": 34,
+        "parameter_sets": 170,
+        "model_records": 168
+      },
+      "wall_clock": {
+        "stages": {
+          "parameter_extraction_llm_seconds": 525.233,
+          "model_execution_runtime_sum_seconds": 47.476,
+          "model_execution_span_seconds": 28.579,
+          "model_tier_span_seconds[models_commodity]": 8.62,
+          "model_tier_span_seconds[models_commodity_downstream]": 1.09,
+          "model_tier_span_seconds[models_macro]": 15.668
+        },
+        "analyst_review_seconds": 0.0,
+        "review_mode": "auto_approved",
+        "seconds_per_completed_model_run": 0.5275,
+        "note": "Model-execution time is the sum of per-cell adapter runtimes; spans are wall-clock between the first start and last completion of the stage. Human review time is zero when the checkpoints were auto-approved (batch mode) and is not included in any figure."
+      },
+      "checkpoints": {
+        "auto_approve": true,
+        "scenarios_validated": true,
+        "parameters_validation_status": {
+          "approved": 168,
+          "pending": 2
+        },
+        "synthesis_validated": true,
+        "note": "In SLURM batch mode HORMUZ_AUTO_APPROVE=1 marks all three checkpoints approved without analyst input; the manuscript's 'never run unattended' claim applies to interactive use."
+      },
+      "failure_reasons": {
+        "synthesis_section_errors": {},
+        "bash_failures_by_stage": {},
+        "model_skip_classes": {
+          "missing_data_or_binary": 33,
+          "missing_config": 10,
+          "stub": 12,
+          "validation_failed": 3,
+          "runtime_error": 10,
+          "runtime_or_license_missing": 10
+        }
+      },
+      "backend_label": "groq-gpt-oss-120b",
+      "report_dir": "data/backend_compare/cmp_fill_20261102/cmp_fill_20261102_groq-gpt-oss-120b_20260329"
+    },
+    {
+      "run_id": "cmp_fill_20261102_groq-gpt-oss-120b_20260405",
+      "backend": {
+        "provider": "vllm",
+        "model": "meta-llama/Llama-3.1-8B-Instruct",
+        "base_url": null
+      },
+      "clean_synthesis": true,
+      "clean_synthesis_definition": "A run has a clean synthesis when (1) the Module 4 synthesis state was written, (2) every (scenario, section) LLM call completed without an unrecoverable error (context_budget_summary.sections_failed == 0), (3) no bash-layer failure was recorded for the synthesis stage, and (4) every scenario in the run has at least one completed model and at least one synthesized outcome.",
+      "criteria": {
+        "synthesis_state_present": true,
+        "sections_failed": 0,
+        "sections_total": 30,
+        "bash_failures_in_synthesis_stage": 0,
+        "scenarios_total": 5,
+        "scenarios_with_completed_model_and_outcome": 5,
+        "synthesis_results_count": 840
+      },
+      "cells": {
+        "parameter_sets": 170,
+        "parameter_sets_failed": 1,
+        "model_records": 169,
+        "completed": 90,
+        "failed": 29,
+        "skipped": 50
+      },
+      "denominators": {
+        "grid": 170,
+        "scenarios": 5,
+        "model_specs": 34,
+        "parameter_sets": 170,
+        "model_records": 169
+      },
+      "wall_clock": {
+        "stages": {
+          "parameter_extraction_llm_seconds": 499.781,
+          "model_execution_runtime_sum_seconds": 42.348,
+          "model_execution_span_seconds": 29.342,
+          "model_tier_span_seconds[models_commodity]": 9.443,
+          "model_tier_span_seconds[models_commodity_downstream]": 1.18,
+          "model_tier_span_seconds[models_macro]": 15.27
+        },
+        "analyst_review_seconds": 0.0,
+        "review_mode": "auto_approved",
+        "seconds_per_completed_model_run": 0.4705,
+        "note": "Model-execution time is the sum of per-cell adapter runtimes; spans are wall-clock between the first start and last completion of the stage. Human review time is zero when the checkpoints were auto-approved (batch mode) and is not included in any figure."
+      },
+      "checkpoints": {
+        "auto_approve": true,
+        "scenarios_validated": true,
+        "parameters_validation_status": {
+          "approved": 169,
+          "pending": 1
+        },
+        "synthesis_validated": true,
+        "note": "In SLURM batch mode HORMUZ_AUTO_APPROVE=1 marks all three checkpoints approved without analyst input; the manuscript's 'never run unattended' claim applies to interactive use."
+      },
+      "failure_reasons": {
+        "synthesis_section_errors": {},
+        "bash_failures_by_stage": {},
+        "model_skip_classes": {
+          "missing_data_or_binary": 33,
+          "missing_config": 10,
+          "stub": 12,
+          "validation_failed": 4,
+          "runtime_error": 10,
+          "runtime_or_license_missing": 10
+        }
+      },
+      "backend_label": "groq-gpt-oss-120b",
+      "report_dir": "data/backend_compare/cmp_fill_20261102/cmp_fill_20261102_groq-gpt-oss-120b_20260405"
+    },
+    {
+      "run_id": "cmp_fill_20261102_groq-gpt-oss-20b_20260308",
+      "backend": {
+        "provider": "vllm",
+        "model": "meta-llama/Llama-3.1-8B-Instruct",
+        "base_url": null
+      },
+      "clean_synthesis": false,
+      "clean_synthesis_definition": "A run has a clean synthesis when (1) the Module 4 synthesis state was written, (2) every (scenario, section) LLM call completed without an unrecoverable error (context_budget_summary.sections_failed == 0), (3) no bash-layer failure was recorded for the synthesis stage, and (4) every scenario in the run has at least one completed model and at least one synthesized outcome.",
+      "criteria": {
+        "synthesis_state_present": true,
+        "sections_failed": 8,
+        "sections_total": 30,
+        "bash_failures_in_synthesis_stage": 0,
+        "scenarios_total": 5,
+        "scenarios_with_completed_model_and_outcome": 5,
+        "synthesis_results_count": 659
+      },
+      "cells": {
+        "parameter_sets": 170,
+        "parameter_sets_failed": 2,
+        "model_records": 168,
+        "completed": 90,
+        "failed": 27,
+        "skipped": 51
+      },
+      "denominators": {
+        "grid": 170,
+        "scenarios": 5,
+        "model_specs": 34,
+        "parameter_sets": 170,
+        "model_records": 168
+      },
+      "wall_clock": {
+        "stages": {
+          "parameter_extraction_llm_seconds": 343.32,
+          "model_execution_runtime_sum_seconds": 38.537,
+          "model_execution_span_seconds": 26.945,
+          "model_tier_span_seconds[models_commodity]": 8.56,
+          "model_tier_span_seconds[models_commodity_downstream]": 1.091,
+          "model_tier_span_seconds[models_macro]": 14.141
+        },
+        "analyst_review_seconds": 0.0,
+        "review_mode": "auto_approved",
+        "seconds_per_completed_model_run": 0.4282,
+        "note": "Model-execution time is the sum of per-cell adapter runtimes; spans are wall-clock between the first start and last completion of the stage. Human review time is zero when the checkpoints were auto-approved (batch mode) and is not included in any figure."
+      },
+      "checkpoints": {
+        "auto_approve": true,
+        "scenarios_validated": true,
+        "parameters_validation_status": {
+          "approved": 168,
+          "pending": 2
+        },
+        "synthesis_validated": true,
+        "note": "In SLURM batch mode HORMUZ_AUTO_APPROVE=1 marks all three checkpoints approved without analyst input; the manuscript's 'never run unattended' claim applies to interactive use."
+      },
+      "failure_reasons": {
+        "synthesis_section_errors": {
+          "BadRequestError": 8
+        },
+        "bash_failures_by_stage": {},
+        "model_skip_classes": {
+          "missing_data_or_binary": 33,
+          "stub": 14,
+          "missing_config": 9,
+          "validation_failed": 2,
+          "runtime_error": 10,
+          "runtime_or_license_missing": 10
+        }
+      },
+      "backend_label": "groq-gpt-oss-20b",
+      "report_dir": "data/backend_compare/cmp_fill_20261102/cmp_fill_20261102_groq-gpt-oss-20b_20260308"
+    }
+  ]
+}

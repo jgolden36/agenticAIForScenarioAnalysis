@@ -102,7 +102,8 @@ class ModelRegistry:
             info = adapter.implementation_info
             try:
                 path = Path(inspect.getfile(type(adapter))).resolve()
-                adapter_path = str(path.relative_to(root)) if path.is_relative_to(root) else str(path)
+                # POSIX form so inventories and README tables match across OSes.
+                adapter_path = path.relative_to(root).as_posix() if path.is_relative_to(root) else path.as_posix()
             except (TypeError, OSError):  # pragma: no cover - builtins / dynamic classes
                 adapter_path = ""
             rows.append({
@@ -123,6 +124,8 @@ class ModelRegistry:
                 "key_equations": list(info.key_equations),
                 "limitations": list(info.limitations),
                 "license_notes": info.license_notes,
+                "parameter_provenance": info.parameter_provenance.value,
+                "provenance_note": info.provenance_note,
                 "description": adapter.description,
             })
         rows.sort(key=lambda r: (r["commodity_system"], r["model_id"]))
@@ -207,6 +210,32 @@ def _build_magpie_adapter(
     return MAgPIEAdapter()
 
 
+def _build_apsim_gtap_adapter(
+    config_dir: Path | None = None,
+) -> ModelAdapter:
+    """Build APSIMGTAPAdapter from apsim_gtap.yaml and/or HORMUZ_APSIM_GTAP_* env vars.
+
+    Only the canonical ``apsim_gtap.yaml`` is read; the ``.example`` template
+    is ignored so a fresh clone does not try to start Julia/GTAP. The
+    environment variables (``HORMUZ_APSIM_GTAP_ROOT`` and friends) override
+    the YAML, as ``HORMUZ_MAM_AEO_XLSX_PATH`` does for MAM.
+    """
+    from src.models.fertilizer.apsim_gtap import APSIMGTAPAdapter, config_from_mapping
+
+    raw = None
+    if config_dir is not None:
+        raw = _load_yaml_config(config_dir / "apsim_gtap.yaml")
+    try:
+        config = config_from_mapping(raw)
+    except Exception as e:  # noqa: BLE001 — a bad config must not break the registry
+        logger.warning(f"APSIMGTAPAdapter: invalid apsim_gtap config ({e}); adapter will be skipped")
+        config = None
+    if config is not None:
+        logger.info("APSIMGTAPAdapter: loaded APSIMGTAPConfig")
+        return APSIMGTAPAdapter(config=config)
+    return APSIMGTAPAdapter()
+
+
 def _build_opencge_adapter(
     config_dir: Path | None = None,
 ) -> ModelAdapter:
@@ -234,6 +263,8 @@ def _build_opencge_adapter(
             mapping = raw.get("shock_to_productivity")
             if mapping:
                 cfg_kwargs["shock_to_productivity"] = mapping
+            if "capital_drag_scenarios" in raw:
+                cfg_kwargs["capital_drag_scenarios"] = raw["capital_drag_scenarios"]
             config = OpenCGEConfig(**cfg_kwargs)
             logger.info("OpenCGEAdapter: loaded OpenCGEConfig from opencge.yaml")
             return OpenCGEAdapter(config=config)
@@ -292,7 +323,8 @@ def _build_mam_adapter(
             cfg_kwargs = {
                 "mode": raw.get("mode", "aeo_ingestion"),
                 "aeo_year": raw.get("aeo_year", 2025),
-                "scenario_sheet_mapping": raw.get("scenario_sheet_mapping", {}),
+                "reference_year": raw.get("reference_year", 2026),
+                "scenario_sheet_mapping": raw.get("scenario_sheet_mapping") or {},
                 "eviews_main_program": raw.get("eviews_main_program", "mam_main.prg"),
                 "timeout_seconds": raw.get("timeout_seconds", 3600),
             }
@@ -627,6 +659,65 @@ def _build_temoa_adapter(
     return TEMOAAdapter()
 
 
+def _build_simrlfab_adapter(
+    config_dir: Path | None = None,
+) -> ModelAdapter:
+    """Build SimRLFabAdapter from ``simrlfab.yaml``.
+
+    Paths are resolved to absolute here: the subprocess runs with
+    ``cwd=simrlfab_repo_path``, so a relative repo path or interpreter path
+    would be resolved a second time inside that directory and break.
+    ``python_executable`` may also come from ``HORMUZ_SIMRLFAB_PYTHON``.
+    Without a usable config the bare adapter is returned and execution
+    reports the missing configuration.
+    """
+    import os
+
+    from src.models.helium.simrlfab import SimRLFabAdapter, SimRLFabConfig
+
+    if config_dir is None:
+        return SimRLFabAdapter()
+    raw = _load_yaml_config(config_dir / "simrlfab.yaml")
+    if not raw or not raw.get("simrlfab_repo_path"):
+        return SimRLFabAdapter()
+
+    repo = Path(raw["simrlfab_repo_path"]).expanduser().resolve()
+    python_exe = os.environ.get("HORMUZ_SIMRLFAB_PYTHON") or raw.get("python_executable", "python")
+    py_path = Path(python_exe).expanduser()
+    if py_path.is_absolute() or "/" in python_exe or "\\" in python_exe:
+        python_exe = str(py_path.resolve())
+
+    agent_type = str(raw.get("agent_type", "FIFO"))
+    agent_cfg = raw.get("agent_config_path")
+    agent_cfg_path = Path(agent_cfg).expanduser().resolve() if agent_cfg else None
+    if agent_cfg_path is None:
+        default_cfg = repo / "config" / ("trpo1.json" if agent_type.upper() == "TRPO" else "ppo1.json")
+        if not default_cfg.exists():
+            logger.warning(
+                "SimRLFabAdapter: %s not found; the driver needs a Tensorforce agent "
+                "config even for heuristic agents. Set agent_config_path in simrlfab.yaml.",
+                default_cfg,
+            )
+    if not repo.exists():
+        logger.warning("SimRLFabAdapter: simrlfab_repo_path does not exist: %s", repo)
+
+    kwargs: dict[str, Any] = {
+        "simrlfab_repo_path": repo,
+        "python_executable": python_exe,
+        "agent_type": agent_type,
+        "agent_config_path": agent_cfg_path,
+    }
+    for key in ("episodes", "timesteps_per_episode", "episodes_per_disruption_month",
+                "timeout_seconds", "helium_affected_machines", "neon_affected_machines"):
+        if raw.get(key) is not None:
+            kwargs[key] = raw[key]
+    if raw.get("run_dir_base"):
+        kwargs["run_dir_base"] = Path(raw["run_dir_base"]).expanduser().resolve()
+    config = SimRLFabConfig(**kwargs)
+    logger.info("SimRLFabAdapter: loaded SimRLFabConfig from simrlfab.yaml")
+    return SimRLFabAdapter(config=config)
+
+
 def _build_bornstein_krusell_rebelo_adapter(
     config_dir: Path | None = None,
 ) -> ModelAdapter:
@@ -717,6 +808,7 @@ def build_default_registry(
     config_aware = [
         _build_ggm_adapter(cfg_dir),
         _build_magpie_adapter(cfg_dir),
+        _build_apsim_gtap_adapter(cfg_dir),
         _build_nems_adapter(cfg_dir),
         _build_mam_adapter(cfg_dir),
         _build_opencge_adapter(cfg_dir),
@@ -731,6 +823,8 @@ def build_default_registry(
         _build_watergap2_adapter(cfg_dir),
         # Oil — BKR is now a real Octave + Dynare driver
         _build_bornstein_krusell_rebelo_adapter(cfg_dir),
+        # Helium — SimRLFab subprocess driver (Python 3.6 venv)
+        _build_simrlfab_adapter(cfg_dir),
         # Energy systems — OSeMOSYS, MESSAGEix, TEMOA
         _build_osemosys_adapter(cfg_dir),
         _build_messageix_adapter(cfg_dir),
@@ -745,7 +839,8 @@ def build_default_registry(
         # LNG (excluding GGM — handled above)
         EnergyFluxGasPowerAdapter(), EnergyFluxLNGProfitsAdapter(), LNGSTAdapter(),
         # Helium & Semiconductors
-        WorldHeliumModelAdapter(), ArgonneABMAdapter(), SimRLFabAdapter(),
+        # (SimRLFab handled above)
+        WorldHeliumModelAdapter(), ArgonneABMAdapter(),
         # Fertilizer & Agriculture (excluding MAgPIE — handled above)
         CAPRIAdapter(), SIMPLEGAdapter(), WorldFertilizerAdapter(),
         GTAPAdapter(), APSIMAdapter(), FuturesAdapter(),

@@ -22,8 +22,10 @@ per LLM backend, assesses every run with the shared
 
 Backend identification: ``<run_id>_scenarios.json -> config.llm.model``
 (the SLURM drivers bake the served vLLM model into the saved config).
-When a layout stores one backend per sub-directory without state files,
-pass ``--backend-map map.yaml`` with ``{"<dir name or run id>": "<backend>"}``.
+When a layout stores one backend per sub-directory without state files, or a
+driver set the backend through env vars so the saved config holds the cluster
+default, pass ``--backend-map map.yaml`` with ``{"<dir name or run id>": "<backend>"}``.
+The map takes precedence over the saved config.
 
 Usage::
 
@@ -99,12 +101,14 @@ def _find_state_dir(run_id: str, state_root: Path | None, report_dir: Path, repo
 
 
 def _backend_for(run_id: str, report_dir: Path, assessment: dict[str, Any], backend_map: dict[str, str]) -> str:
-    model = (assessment.get("backend") or {}).get("model")
-    if model:
-        return str(model)
+    # An explicit map wins: drivers that override the backend through env vars
+    # leave the cluster default in the saved config.
     for key in (report_dir.name, report_dir.parent.name, run_id):
         if key in backend_map:
             return backend_map[key]
+    model = (assessment.get("backend") or {}).get("model")
+    if model:
+        return str(model)
     return "unknown"
 
 

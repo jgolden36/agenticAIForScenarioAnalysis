@@ -113,6 +113,10 @@ record_runtime_inventory() {
     conda_v=$(_hormuz_version conda --version)
     gams_v=$(_hormuz_version gams)            # `gams` with no args prints banner
     julia_v=$(_hormuz_version julia --version)
+    # SBU has no julia module; apsim_gtap uses juliaup's install.
+    if [ "$julia_v" = "missing" ] && [ -x "$HOME/.juliaup/bin/julia" ]; then
+        julia_v="$("$HOME/.juliaup/bin/julia" --version 2>&1 | head -n 1) (juliaup)"
+    fi
     r_v=$(_hormuz_version R --version)
     java_v=$(_hormuz_version java -version)
     cuda_v=$(_hormuz_version nvcc --version)

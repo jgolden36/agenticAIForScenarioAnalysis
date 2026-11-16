@@ -85,6 +85,14 @@ class NewsArticle:
         )
         return d
 
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "NewsArticle":
+        """Inverse of `to_dict`; ignores keys this version does not define."""
+        known = {k: v for k, v in data.items() if k in cls.__dataclass_fields__}
+        when = known.get("published_at")
+        known["published_at"] = datetime.fromisoformat(when) if when else None
+        return cls(**known)
+
     def to_brief_line(self, max_chars: int = 280) -> str:
         """One-line digest used inside summariser prompts."""
         body = (self.description or self.content or "").strip()

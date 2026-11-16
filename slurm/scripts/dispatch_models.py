@@ -416,7 +416,9 @@ def _load_upstream_outputs(
     via the ``target_models`` filter, so callers don't need to scope
     the outputs to a particular upstream level.
     """
-    outputs_root = get_project_root() / "data" / "outputs"
+    from slurm.scripts.stage_utils import outputs_root as _outputs_root
+
+    outputs_root = _outputs_root(get_project_root())
     out: dict[str, list[dict]] = {}
     if not outputs_root.exists():
         logger.warning(

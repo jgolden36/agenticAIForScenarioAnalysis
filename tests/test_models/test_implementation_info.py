@@ -52,6 +52,35 @@ def test_inventory_rows_point_at_existing_adapter_files():
         assert r["mode_when_executed"] == IMPLEMENTATION_INFO[r["model_id"]].mode_when_executed.value
 
 
+def test_parameter_provenance_is_consistent_with_mode():
+    from src.common.types import ParameterProvenance as P
+
+    for model_id, info in IMPLEMENTATION_INFO.items():
+        mode = info.mode_when_executed
+        if mode in (ImplementationMode.FULL_UPSTREAM, ImplementationMode.PUBLISHED_OUTPUT_INGESTION):
+            assert info.parameter_provenance == P.UPSTREAM_MODEL, model_id
+        elif mode == ImplementationMode.ANALYTICAL_REDUCTION:
+            # A closed-form stand-in never uses the upstream model's own calibration.
+            assert info.parameter_provenance in (
+                P.OWN_MODEL_PUBLISHED, P.MIXED, P.OTHER_LITERATURE, P.MARKET_DATA_ESTIMATED
+            ), model_id
+            assert info.provenance_note, model_id
+            # Stand-in names must not claim calibration to the named model.
+            assert "-calibrated" not in info.display_name_reduced or info.parameter_provenance != P.OTHER_LITERATURE, model_id
+        elif mode == ImplementationMode.STUB:
+            assert info.parameter_provenance == P.NOT_APPLICABLE, model_id
+    assert "reduced form" not in IMPLEMENTATION_INFO["fed_oil"].display_name
+
+
+def test_implementation_label_names_the_stand_in():
+    from src.models.base import implementation_label
+
+    info = IMPLEMENTATION_INFO["poles_jrc"]
+    assert implementation_label(info, "analytical_reduction", "poles_jrc").startswith("Constant-elasticity")
+    assert implementation_label(info, "full_upstream", "poles_jrc") == info.display_name
+    assert implementation_label(None, "analytical_reduction", "x") == "x"
+
+
 def test_adapter_property_resolves_from_table():
     reg = _registry()
     assert reg.get("fed_oil").implementation_info.mode_when_executed == ImplementationMode.ANALYTICAL_REDUCTION

@@ -157,3 +157,28 @@ def test_persist_overwrites_previous_run(fake_project_root):
     assert output == {"NewCapacity": [9.9]}
     meta = json.loads((target / "metadata.json").read_text())
     assert meta["run_id"] == "run-B"
+
+
+def test_outputs_root_can_be_redirected(fake_project_root, monkeypatch):
+    """HORMUZ_OUTPUTS_ROOT keeps a supplementary run out of data/outputs/."""
+    monkeypatch.setenv("HORMUZ_OUTPUTS_ROOT", "data/outputs_supp/run-S")
+    run_model._persist_per_model_outputs(
+        "run-S", "swift_contained", "osemosys",
+        _result(ModelExecutionStatus.COMPLETED.value, with_outputs=True),
+    )
+    redirected = fake_project_root / "data" / "outputs_supp" / "run-S" / "swift_contained" / "osemosys"
+    assert (redirected / "output.json").exists()
+    assert not (fake_project_root / "data" / "outputs").exists()
+
+
+def test_dispatcher_reads_the_redirected_root(fake_project_root, monkeypatch):
+    from slurm.scripts import dispatch_models
+
+    monkeypatch.setattr(dispatch_models, "get_project_root", lambda: fake_project_root)
+    monkeypatch.setenv("HORMUZ_OUTPUTS_ROOT", "data/outputs_supp/run-S")
+    run_model._persist_per_model_outputs(
+        "run-S", "swift_contained", "lngst",
+        {**_result(ModelExecutionStatus.COMPLETED.value), "model_id": "lngst", "outputs": {"ttf_price": 24.9}},
+    )
+    loaded = dispatch_models._load_upstream_outputs("run-S")
+    assert loaded["swift_contained"][0]["outputs"]["ttf_price"] == 24.9

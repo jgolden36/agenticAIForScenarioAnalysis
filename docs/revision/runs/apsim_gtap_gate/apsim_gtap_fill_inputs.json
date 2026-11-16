@@ -1,0 +1,59 @@
+{
+  "source_run_id": "20260504_222710",
+  "fill_run_id": "gate_apsimgtap_20260504_222710",
+  "state_dir": "/home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state_may_filled",
+  "generated_at": "2026-11-08T18:25:57.929816+00:00",
+  "dry_run": false,
+  "cells": [
+    {
+      "scenario_id": "swift_contained",
+      "status": "completed",
+      "inputs": {
+        "scenario_id": "swift_contained",
+        "middle_east_fertilizer_production_loss_pct": 0.0,
+        "gulf_oil_supply_loss_mbd": 4.38,
+        "disruption_duration_months": 0.42,
+        "trade_cost_multiplier": 1.1869,
+        "coupling_elasticity": 1.0
+      },
+      "error_message": null,
+      "us_gdp_pct": 1.130536597671039e-06,
+      "gulf_gdp_pct": -0.0011854445818082482,
+      "us_maize_yield_change_pct": -1.5010482568023065e-05,
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "runtime_seconds": 162.54984958563
+    }
+  ],
+  "inputs_provenance": [
+    {
+      "scenario_id": "swift_contained",
+      "input": "middle_east_fertilizer_production_loss_pct",
+      "value": 0.0,
+      "source": "world_fertilizer.middle_east_production_loss_pct",
+      "kind": "run_parameter"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "input": "gulf_oil_supply_loss_mbd",
+      "value": 4.38,
+      "source": "poles_jrc.supply_loss_mbd",
+      "kind": "run_parameter"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "input": "disruption_duration_months",
+      "value": 0.42,
+      "source": "poles_jrc.disruption_duration_months",
+      "kind": "run_parameter"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "input": "trade_cost_multiplier",
+      "value": 1.1869,
+      "source": "aisdb.rerouting_cost_multiplier",
+      "kind": "forwarded_model_output"
+    }
+  ],
+  "fallbacks": []
+}

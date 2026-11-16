@@ -1,0 +1,414 @@
+{
+  "run_id": "20260504_222710",
+  "generated_at": "2026-11-01T19:01:42.622831+00:00",
+  "outputs_root": "/home/dagolden/agenticAIForScenarioAnalysis/data/outputs",
+  "state_dir": "/home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state",
+  "dry_run": false,
+  "grid": {
+    "scenarios": 5,
+    "models": 34
+  },
+  "totals": {
+    "stale_other_run": 71,
+    "present": 99
+  },
+  "by_scenario": {
+    "swift_contained": {
+      "stale_other_run": 17,
+      "present": 17
+    },
+    "prolonged_contained": {
+      "stale_other_run": 8,
+      "present": 26
+    },
+    "swift_escalated": {
+      "present": 32,
+      "stale_other_run": 2
+    },
+    "prolonged_escalated": {
+      "stale_other_run": 22,
+      "present": 12
+    },
+    "infrastructure_collapse": {
+      "stale_other_run": 22,
+      "present": 12
+    }
+  },
+  "existing_task_id_ranges_by_tier": {
+    "macro": {
+      "count": 60,
+      "min_task_id": 0,
+      "max_task_id": 59
+    },
+    "commodity": {
+      "count": 37,
+      "min_task_id": 60,
+      "max_task_id": 98
+    },
+    "commodity_downstream": {
+      "count": 2,
+      "min_task_id": 72,
+      "max_task_id": 94
+    }
+  },
+  "recovered_cells": [],
+  "stale_cells": [
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "weap_mena",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "sahysmod",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "watergap2",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "cwatm",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "ggm",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "lngst",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "world_helium_model",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "argonne_abm",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "simrlfab",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "capri",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "magpie",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "simple_g",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "world_fertilizer",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "apsim",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "futures",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "aisdb",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "ais_project",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "weap_mena",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "sahysmod",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "watergap2",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "cwatm",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "bornstein_krusell_rebelo",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "poles_jrc",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "argonne_abm",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "simrlfab",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "argonne_abm",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "simrlfab",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "weap_mena",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "sahysmod",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "watergap2",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "cwatm",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "bornstein_krusell_rebelo",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "poles_jrc",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "marketsim",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "energy_flux_gas_power",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "energy_flux_lng_profits",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "ggm",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "lngst",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "world_helium_model",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "argonne_abm",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "simrlfab",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "capri",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "magpie",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "simple_g",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "world_fertilizer",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "apsim",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "futures",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "aisdb",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "ais_project",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "weap_mena",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "sahysmod",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "watergap2",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "cwatm",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "bornstein_krusell_rebelo",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "poles_jrc",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "marketsim",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "energy_flux_gas_power",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "energy_flux_lng_profits",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "ggm",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "lngst",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "world_helium_model",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "argonne_abm",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "simrlfab",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "capri",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "magpie",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "simple_g",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "world_fertilizer",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "apsim",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "futures",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "aisdb",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "ais_project",
+      "found_run_id": "cmp_20260701_020011_groq-llama4-scout_20260405"
+    }
+  ],
+  "missing_cells": [],
+  "files_written": []
+}

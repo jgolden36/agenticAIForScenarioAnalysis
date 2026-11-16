@@ -12,7 +12,12 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from src.common.types import AnalyticalLevel, CommoditySystem, ImplementationMode
+from src.common.types import (
+    AnalyticalLevel,
+    CommoditySystem,
+    ImplementationMode,
+    ParameterProvenance,
+)
 
 
 class ValidationResult(BaseModel):
@@ -219,6 +224,34 @@ class ImplementationInfo(BaseModel):
     license_notes: str = Field(
         default="", description="Licensing restrictions on the upstream model."
     )
+    parameter_provenance: ParameterProvenance = Field(
+        default=ParameterProvenance.NOT_APPLICABLE,
+        description=(
+            "Whose numbers the default execution path uses (the upstream "
+            "model's own, the named model's published estimates, other "
+            "literature, or observed market data). See ParameterProvenance."
+        ),
+    )
+    provenance_note: str = Field(
+        default="",
+        description="One sentence on what comes from the named model and what does not.",
+    )
+
+
+def implementation_label(info: "ImplementationInfo | None", mode: Any, model_id: str = "") -> str:
+    """Name to print for a model cell, given the mode that actually ran.
+
+    A cell that ran the closed-form approximation is printed with
+    ``display_name_reduced`` (e.g. "POLES-calibrated constant-elasticity
+    oil-price reduction") so a reader does not mistake it for the named
+    upstream model. Falls back to ``display_name`` and then ``model_id``.
+    """
+    if info is None:
+        return model_id
+    token = mode.value if isinstance(mode, ImplementationMode) else str(mode or "")
+    if token == ImplementationMode.ANALYTICAL_REDUCTION.value and info.display_name_reduced:
+        return info.display_name_reduced
+    return info.display_name or model_id
 
 
 # Tokens that adapters already write into ``ModelOutput.metadata`` (keys

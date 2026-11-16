@@ -198,21 +198,42 @@ def implementation_marker(mode: str | None) -> str:
     return ""
 
 
+def _stand_in_name(model_id: str) -> str:
+    """``display_name_reduced`` for a model id, or "" when none is recorded."""
+    try:
+        from src.models.implementation_info import IMPLEMENTATION_INFO
+    except Exception:  # pragma: no cover - defensive import
+        return ""
+    info = IMPLEMENTATION_INFO.get(model_id)
+    return info.display_name_reduced if info is not None else ""
+
+
 def _format_outcome_bullet(
     outcome: SynthesizedOutcome, mode_by_model: dict[str, str | None] | None = None
 ) -> str:
     """Render a single SynthesizedOutcome as a Markdown bullet."""
     unit = f" {outcome.unit}" if outcome.unit else ""
     marker = ""
+    stand_in = ""
     if mode_by_model:
         # Source ids can list several models ("pycge, mpsge_jl"); mark the
         # bullet when any cited model ran as a reduction / ingestion.
         cited = [s.strip() for s in str(outcome.source_model_id).split(",")]
         markers = {implementation_marker(mode_by_model.get(c)) for c in cited}
         marker = "".join(sorted(m for m in markers if m))
+        # Name each closed-form approximation by what it is, so a reader
+        # does not take "poles_jrc" for the POLES-JRC model itself. The raw
+        # id stays in backticks for the fidelity audit.
+        names = [
+            _stand_in_name(c) for c in cited
+            if mode_by_model.get(c) == "analytical_reduction"
+        ]
+        names = [n for n in names if n]
+        if names:
+            stand_in = "; " + "; ".join(names)
     line = (
         f"- **{outcome.variable}**: {outcome.value}{unit} "
-        f"_(source: `{outcome.source_model_id}`{marker})_"
+        f"_(source: `{outcome.source_model_id}`{marker}{stand_in})_"
     )
     if outcome.narrative:
         line += f"\n  - {outcome.narrative}"
@@ -288,13 +309,16 @@ def render_scenario_markdown(
         lines.append("")
         if REDUCTION_MARKER in used_markers:
             lines.append(
-                f"- {REDUCTION_MARKER} the cited model ran as a closed-form, literature-calibrated "
-                "reduction implemented in its adapter, not as the upstream model (see the model inventory)."
+                f"- {REDUCTION_MARKER} the value comes from a calibrated closed-form approximation "
+                "implemented in the adapter (named after the id), which stands in for the upstream "
+                "model; it is not an output of the named model. The model inventory lists its "
+                "equations and whether its parameters come from the named model or other literature."
             )
         if INGESTION_MARKER in used_markers:
             lines.append(
                 f"- {INGESTION_MARKER} the cited model's values are ingested published outputs "
-                "(EIA AEO tables), not a scenario-specific solve."
+                "(EIA AEO reference case), not a scenario-specific solve; they do not respond "
+                "to the scenario's shocks."
             )
         lines.append("")
 

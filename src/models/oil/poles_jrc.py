@@ -219,6 +219,14 @@ class POLESJRCAdapter(ModelAdapter):
                 f"POLES-JRC inputs must be a dict from translate_inputs(); got {type(inputs)}"
             )
 
+        from src.models.market_calibration import active_calibration
+
+        cal = active_calibration()
+        brent0 = (
+            cal.baseline("brent", _BRENT_BASELINE_USD_PER_BBL)
+            if cal is not None else _BRENT_BASELINE_USD_PER_BBL
+        )
+
         supply_loss_mbd = float(inputs["supply_loss_mbd"])
         duration_months = float(inputs["disruption_duration_months"])
         rerouting_mult = float(inputs["rerouting_cost_multiplier"])
@@ -248,11 +256,11 @@ class POLESJRCAdapter(ModelAdapter):
         rerouting_wedge = max(0.0, rerouting_mult - 1.0) * _REROUTING_USD_PER_UNIT_MULTIPLIER
         insurance_wedge = max(0.0, insurance_pct) * _INSURANCE_USD_PER_PCT_POINT
         peak_price = (
-            _BRENT_BASELINE_USD_PER_BBL * (1.0 + equilibrium_pct / 100.0)
+            brent0 * (1.0 + equilibrium_pct / 100.0)
             + rerouting_wedge
             + insurance_wedge
         )
-        peak_change_pct = (peak_price / _BRENT_BASELINE_USD_PER_BBL - 1.0) * 100.0
+        peak_change_pct = (peak_price / brent0 - 1.0) * 100.0
 
         horizon_months = max(12, int(math.ceil(duration_months)) + 3)
         price_path: list[float] = []
@@ -261,10 +269,7 @@ class POLESJRCAdapter(ModelAdapter):
                 decay = 0.0
             else:
                 decay = max(0.0, 1.0 - month / duration_months)
-            price_t = (
-                _BRENT_BASELINE_USD_PER_BBL
-                + (peak_price - _BRENT_BASELINE_USD_PER_BBL) * decay
-            )
+            price_t = brent0 + (peak_price - brent0) * decay
             price_path.append(round(price_t, 2))
 
         rerouted_share = min(1.0, max(0.0, rerouting_mult - 1.0) / 0.5)
@@ -275,13 +280,15 @@ class POLESJRCAdapter(ModelAdapter):
             "brent_price_path_usd_per_bbl": price_path,
             "peak_price_usd_per_bbl": round(peak_price, 2),
             "peak_price_change_pct": round(peak_change_pct, 2),
-            "baseline_price_usd_per_bbl": _BRENT_BASELINE_USD_PER_BBL,
+            "baseline_price_usd_per_bbl": brent0,
             "rerouting_volume_mbd": rerouting_volume_mbd,
             "substitution_volume_mbd": substitution_volume_mbd,
             "disruption_duration_months": duration_months,
             "supply_loss_mbd": supply_loss_mbd,
             "supply_loss_pct_of_global": round(supply_loss_pct, 3),
         }
+        if cal is not None:
+            outputs["_calibration"] = cal.provenance({"brent_baseline_usd_per_bbl": brent0})
 
         return ModelOutput(
             model_id=self.model_id,

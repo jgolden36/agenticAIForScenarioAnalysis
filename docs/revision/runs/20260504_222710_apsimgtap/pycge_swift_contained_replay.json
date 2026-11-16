@@ -1,0 +1,87 @@
+{
+  "scenario": "swift_contained",
+  "report_dir": "/home/dagolden/agenticAIForScenarioAnalysis/data/20260504_222710",
+  "recorded_inputs": {
+    "shocks": {
+      "oil": 54.79,
+      "lng": 25.0,
+      "fertilizer": 0.0,
+      "helium": 0.0
+    },
+    "duration_months": 0.4166666666666667,
+    "regime": "short_run",
+    "recorded_outputs": {
+      "gdp_impact_pct": -0.157,
+      "cpi_inflation_pct": 1.3458,
+      "consumption_impact_pct": -0.6953,
+      "welfare_pct_change": -0.6953
+    }
+  },
+  "manuscript_value": -15.7,
+  "code_states": [
+    {
+      "commit": "4abd05b",
+      "sha": null,
+      "date": null,
+      "subject": null,
+      "error": "fatal: not a git repository (or any parent up to mount point /)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).",
+      "gdp_impact_pct": null,
+      "cpi_inflation_pct": null,
+      "consumption_impact_pct": null,
+      "duration_scaler": null,
+      "matches_recorded_run": null,
+      "matches_manuscript_value": null,
+      "hypothesis": null
+    },
+    {
+      "commit": "dae4dcd",
+      "sha": null,
+      "date": null,
+      "subject": null,
+      "error": "fatal: not a git repository (or any parent up to mount point /)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).",
+      "gdp_impact_pct": null,
+      "cpi_inflation_pct": null,
+      "consumption_impact_pct": null,
+      "duration_scaler": null,
+      "matches_recorded_run": null,
+      "matches_manuscript_value": null,
+      "hypothesis": null
+    },
+    {
+      "commit": "ded97cb",
+      "sha": null,
+      "date": null,
+      "subject": null,
+      "error": "fatal: not a git repository (or any parent up to mount point /)\nStopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).",
+      "gdp_impact_pct": null,
+      "cpi_inflation_pct": null,
+      "consumption_impact_pct": null,
+      "duration_scaler": null,
+      "matches_recorded_run": null,
+      "matches_manuscript_value": null,
+      "hypothesis": null
+    },
+    {
+      "commit": "working_tree",
+      "sha": null,
+      "date": null,
+      "subject": "current working tree",
+      "error": null,
+      "gdp_impact_pct": -0.157,
+      "cpi_inflation_pct": 1.3458,
+      "consumption_impact_pct": -0.6953,
+      "duration_scaler": 0.1,
+      "matches_recorded_run": true,
+      "matches_manuscript_value": false,
+      "hypothesis": {
+        "kernel_gdp_impact_pct": -0.157,
+        "manuscript_value": -15.7,
+        "ratio_manuscript_over_kernel": 100.0,
+        "kernel_value_times_100": -15.7,
+        "reproduces_manuscript_value": true,
+        "interpretation": "The manuscript's figure equals the kernel's percent output multiplied by 100: consistent with the percent value having been treated as a fraction once (e.g. a level change of 0.157 passed through the cge_modeling standardisation '(reform - base) / base * 100'), not with a different parameterisation."
+      }
+    }
+  ],
+  "conclusion": "Recorded run value: -0.157. Manuscript value: -15.7. No replayed code state produces the manuscript value directly from the recorded inputs. Code states whose output times 100 equals the manuscript value: working_tree (fraction-vs-percent rescaling hypothesis supported)."
+}

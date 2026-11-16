@@ -31,7 +31,7 @@ from src.common.types import ValidationStatus
 from src.common.wandb_logger import log_scenario_narratives, stage_run
 from src.pipeline.config import PipelineConfig
 from src.scenarios.framework import ScenarioFramework
-from src.scenarios.generator import build_scenario_generator
+from src.scenarios.generator import build_scenario_generator, require_scenario_count
 
 
 def main() -> None:
@@ -91,6 +91,7 @@ def main() -> None:
             "framework": framework,
             "num_scenarios": config.num_scenarios,
         })
+        require_scenario_count(scenario_set, config.num_scenarios)
 
         narratives = []
         for s in scenario_set.scenarios:

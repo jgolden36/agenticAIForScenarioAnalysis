@@ -88,6 +88,11 @@ def get_llm(
     return llm
 
 
+# Above roughly this completion size the Anthropic SDK refuses non-streaming
+# requests, because they could outlast its 10-minute request limit.
+_ANTHROPIC_NON_STREAMING_MAX_TOKENS = 20000
+
+
 def _create_provider(
     provider: str,
     model: str | None,
@@ -119,10 +124,33 @@ def _create_provider(
             # for non-streaming calls; LangChain defaults to a large
             # value if absent).
             anth_kwargs["max_tokens"] = cap_tokens
+            if cap_tokens > _ANTHROPIC_NON_STREAMING_MAX_TOKENS:
+                anth_kwargs["streaming"] = True
+        # Some models reject the parameter outright (claude-opus-4-8:
+        # "`temperature` is deprecated for this model").
+        if os.environ.get("PIPELINE_LLM_OMIT_TEMPERATURE", "").strip() != "1":
+            anth_kwargs["temperature"] = temperature
         return ChatAnthropic(
             model=model or "claude-sonnet-4-20250514",
+            **{**anth_kwargs, **kwargs},
+        )
+
+    elif provider == "groq":
+        from langchain_groq import ChatGroq
+
+        class _ChatGroqJsonSchema(ChatGroq):
+            # ChatGroq defaults to function_calling, which openai/gpt-oss-*
+            # rejects ("attempted to call tool 'json'").
+            def with_structured_output(self, schema=None, *, method="json_schema", **kw):
+                return super().with_structured_output(schema, method=method, **kw)
+
+        groq_kwargs: dict[str, Any] = {}
+        if cap_tokens is not None:
+            groq_kwargs["max_tokens"] = cap_tokens
+        return _ChatGroqJsonSchema(
+            model=model or "openai/gpt-oss-120b",
             temperature=temperature,
-            **anth_kwargs,
+            **groq_kwargs,
             **kwargs,
         )
 
@@ -191,7 +219,7 @@ def _create_provider(
     else:
         raise ValueError(
             f"Unsupported LLM provider: {provider!r}. "
-            f"Supported: anthropic, openai, bedrock, vllm, ollama"
+            f"Supported: anthropic, groq, openai, bedrock, vllm, ollama"
         )
 
 

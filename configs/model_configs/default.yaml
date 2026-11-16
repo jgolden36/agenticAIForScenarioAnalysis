@@ -39,3 +39,25 @@ uncertainty:
   max_failure_fraction: 0.5   # warn if more than this share of replicates raise
 
 num_scenarios: 5  # 4 matrix quadrants (A-D) + 1 prescribed tail-risk (E: infrastructure_collapse)
+
+# Observed-market calibration of the closed-form adapters
+# (src/models/market_calibration.py). Off by default so runs reproduce the
+# literature-calibrated results. When on, poles_jrc, lngst,
+# energy_flux_lng_profits and world_fertilizer use pre-crisis (Nov 2025 -
+# Jan 2026, median) World Bank Pink Sheet prices as baselines. Build the
+# file with
+#   python scripts/revision/fetch_market_data.py
+#
+# apply_half_lives is off: the AR(1) half-lives in calibration.json
+# (8-29 months, 2000-2025) measure average persistence of deviations from
+# a 3-year trend, not how fast a crisis spike decays. The observed 2026
+# urea spike (+109% in April, +2.6% by October) decayed far faster than the
+# 10.7-month estimate, consistent with the adapters' 3-5 month literature
+# values, so those stay in use. Set true to use the estimates instead.
+#
+# Environment overrides: HORMUZ_MARKET_CALIBRATION=1|0,
+# HORMUZ_MARKET_CALIBRATION_HALF_LIVES=1|0, HORMUZ_MARKET_CALIBRATION_FILE.
+market_calibration:
+  enabled: false
+  apply_half_lives: false
+  calibration_file: "data/market/calibration.json"
