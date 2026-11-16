@@ -1,25 +1,28 @@
 # MAM Configuration (EIA Macroeconomic Activity Module)
 #
-# Default mode is aeo_ingestion — reads pre-computed AEO macro tables.
-# eviews_subprocess mode requires Windows + EViews 13+ + IHS Markit data.
+# Default mode is aeo_ingestion: it reads EIA's PUBLISHED AEO reference-case
+# macro path (Table 20, "Macroeconomic Indicators"). This is a no-crisis
+# baseline; it does not respond to scenario shocks, and the adapter records
+# any shock inputs it was given under _ignored_shock_inputs.
+# eviews_subprocess mode requires Windows + EViews 13+ + S&P Global data.
 
 mode: "aeo_ingestion"
 aeo_year: 2025
+reference_year: 2026       # headline scalars (growth, CPI inflation) for the crisis year
 timeout_seconds: 3600
 
-# AEO macro tables XLSX (Tables 19/20 in AEO2025).
-# Download from https://www.eia.gov/outlooks/aeo/tables_ref.php
-# Required for aeo_ingestion mode.
-# aeo_macro_xlsx_path: "data/eia/AEO2025_Tables_19_20.xlsx"
+# AEO2025 reference-case Table 20 (public domain, EIA):
+#   https://www.eia.gov/outlooks/archive/aeo25/excel/aeotab20.xlsx
+# Do NOT use .../outlooks/aeo/excel/aeotab_19.xlsx or aeotab_20.xlsx (with an
+# underscore): those legacy URLs serve AEO2021 tables (Table 19 is CO2
+# emissions). The adapter rejects a file that is not Table 20 of aeo_year.
+# HORMUZ_MAM_AEO_XLSX_PATH, when set, takes precedence over this path.
+aeo_macro_xlsx_path: "data/eia/AEO2025_Table20_ref2025.xlsx"
 
-# Map pipeline scenario IDs to AEO worksheet names. Keys MUST match
-# the canonical Scenario enum values (src/common/types.py).
-scenario_sheet_mapping:
-  baseline:            "Reference Case"
-  swift_contained:     "High Oil Price"
-  prolonged_contained: "High Oil Price"
-  swift_escalated:     "High Oil Price"
-  prolonged_escalated: "High Oil Price"
+# The AEO Table 20 workbook has one sheet (the reference case). Side cases
+# (e.g. High Oil Price) are separate downloads and are not configured, so
+# every scenario reads the reference case.
+scenario_sheet_mapping: {}
 
 # --- EViews subprocess mode (optional, Windows-only) ------------------
 # eviews_executable: "C:/Program Files/EViews 13/EViews13.exe"

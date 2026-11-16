@@ -33,7 +33,7 @@ from typing import Any
 import yaml
 from langchain_core.language_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from src.common.logging import get_logger
 from src.news.base import NewsArticle
@@ -162,6 +162,20 @@ class WeeklyBrief(BaseModel):
         default_factory=list,
         description="Topics where coverage is thin or contradictory.",
     )
+
+    @field_validator(
+        "key_indicators", "scenario_signals", "new_actors_or_commodities", "coverage_gaps",
+        mode="before",
+    )
+    @classmethod
+    def _split_text_into_list(cls, value: Any) -> Any:
+        """Accept a list field returned as one text block (Opus 4.8, once a
+        previous brief is in the prompt). Text is kept as written, one item
+        per line."""
+        if isinstance(value, str):
+            lines = (line.strip().lstrip("-*•").strip() for line in value.splitlines())
+            return [line for line in lines if line]
+        return value
 
 
 def summarise_week(

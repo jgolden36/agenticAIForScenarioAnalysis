@@ -213,6 +213,37 @@ models:
     # the crop calendar and crop list; it's left LLM-extracted from the
     # narrative since no upstream commodity model emits one.
 
+  # ------------------------------------------------------------
+  # Energy Flux US LNG War Profits (COMMODITY_DOWNSTREAM). The workbook
+  # needs either a 12-row price schedule or TTF / JKM / Henry Hub crisis
+  # prices. The LLM extractor supplied neither on runs 20260504_222710
+  # and rev_20261102_llama8b_r2, so the model failed validation in every
+  # scenario. The hub prices are now forwarded from LNGST's post-shock
+  # hub levels (USD/MMBtu, same units as the workbook inputs). LNGST
+  # reports one post-shock level, which the adapter uses as the peak of
+  # its spike-and-decline schedule.
+  #
+  # disruption_duration_months is deliberately NOT forwarded: the
+  # workbook horizon is 12 months, and the extracted narrative duration
+  # is the right source for how long the windfall accrues.
+  # ------------------------------------------------------------
+  energy_flux_lng_profits:
+    ttf_peak_price:
+      sources:
+        - source_model: lngst
+          source_field: ttf_price
+          transform: identity
+    jkm_peak_price:
+      sources:
+        - source_model: lngst
+          source_field: jkm_price
+          transform: identity
+    hh_crisis_price:
+      sources:
+        - source_model: lngst
+          source_field: henry_hub_price
+          transform: identity
+
   # =====================================================================
   # COMMODITY tier: shipping outputs -> oil model rerouting parameters
   # =====================================================================
@@ -283,18 +314,19 @@ models:
         - source_model: poles_jrc
           source_field: peak_price_change_pct
           transform: identity
+    # LNG price shock = LNGST's TTF change against its own baseline.
+    # Until 2026-11-14 this read Energy Flux's average_ttf_netback against a
+    # fixed 10.0. A netback is a margin (price minus Henry Hub feedgas,
+    # liquefaction and freight), not a price, so the supplementary runs fed
+    # OpenCGE +15..25% in run 1 (-11% in A) and -30..-66% in run 2, while
+    # LNGST's TTF rose 51% (A) and 126% (B-E) in both.
     commodity_price_shocks__lng:
       target_param: commodity_price_shocks
       target_key: lng
       sources:
-        - source_model: energy_flux_lng_profits
-          source_field: average_ttf_netback
-          transform: level_to_pct
-          baseline: 10.0
-        - source_model: energy_flux_lng_profits
-          source_field: average_jkm_netback
-          transform: level_to_pct
-          baseline: 12.0
+        - source_model: lngst
+          source_field: ttf_price_change_pct
+          transform: identity
     commodity_price_shocks__helium:
       target_param: commodity_price_shocks
       target_key: helium
@@ -354,14 +386,14 @@ models:
           source_field: oil_price_usd
           transform: level_to_pct
           baseline: 80.0
+    # As for OpenCGE: LNGST's TTF change, not Energy Flux's netback.
     commodity_price_shocks__lng:
       target_param: commodity_price_shocks
       target_key: lng
       sources:
-        - source_model: energy_flux_lng_profits
-          source_field: average_ttf_netback
-          transform: level_to_pct
-          baseline: 10.0
+        - source_model: lngst
+          source_field: ttf_price_change_pct
+          transform: identity
     commodity_price_shocks__helium:
       target_param: commodity_price_shocks
       target_key: helium
@@ -408,18 +440,15 @@ models:
         - source_model: bornstein_krusell_rebelo
           source_field: oil_price_peak_pct_eps_u_no
           transform: identity
+    # As for OpenCGE: LNGST's TTF change, not Energy Flux's netback (and
+    # not ttf_price against a fixed 11.0, wrong under market calibration).
     commodity_price_shocks__lng:
       target_param: commodity_price_shocks
       target_key: lng
       sources:
-        - source_model: energy_flux_lng_profits
-          source_field: average_ttf_netback
-          transform: level_to_pct
-          baseline: 10.0
         - source_model: lngst
-          source_field: ttf_price
-          transform: level_to_pct
-          baseline: 11.0
+          source_field: ttf_price_change_pct
+          transform: identity
     commodity_price_shocks__helium:
       target_param: commodity_price_shocks
       target_key: helium
@@ -470,6 +499,27 @@ models:
           transform: identity
 
   # ------------------------------------------------------------
+  # APSIM-GTAP (AgResilience): rerouting cost multiplier for the tms
+  # wedge on Gulf chm/extract exports. combine: first with aisdb first
+  # (not the shipping mean used above): AIS_project returns 1.0 whenever
+  # rerouting_via_cape is extracted as false, and averaging it in halves
+  # the wedge without a flag (docs/revision/REVIEWER_RESPONSE_RESULTS.md).
+  # The Gulf production losses stay as extracted/analyst-set parameters:
+  # POLES-JRC and the World Fertilizer Model report prices, not the
+  # physical losses apsim_gtap needs.
+  # ------------------------------------------------------------
+  apsim_gtap:
+    trade_cost_multiplier:
+      combine: first
+      sources:
+        - source_model: aisdb
+          source_field: rerouting_cost_multiplier
+          transform: identity
+        - source_model: ais_project
+          source_field: rerouting_cost_multiplier
+          transform: identity
+
+  # ------------------------------------------------------------
   # MIRAGRODEP: oil shock (ffl sector) + fertilizer shock (crp sector).
   # ------------------------------------------------------------
   miragrodep:
@@ -502,22 +552,23 @@ models:
         - source_model: bornstein_krusell_rebelo
           source_field: oil_price_peak_pct_eps_u_no
           transform: identity
+    # Hub price changes from LNGST replace Energy Flux netbacks (margins,
+    # not prices; 2026-11-14). The hub choice is unchanged: TTF for
+    # natural gas, JKM then TTF for LNG. Whether US natural gas should
+    # follow Henry Hub instead is an open modelling question.
     natural_gas_price_shock_pct:
       sources:
-        - source_model: energy_flux_lng_profits
-          source_field: average_ttf_netback
-          transform: level_to_pct
-          baseline: 10.0
+        - source_model: lngst
+          source_field: ttf_price_change_pct
+          transform: identity
     lng_price_shock_pct:
       sources:
-        - source_model: energy_flux_lng_profits
-          source_field: average_jkm_netback
-          transform: level_to_pct
-          baseline: 12.0
-        - source_model: energy_flux_lng_profits
-          source_field: average_ttf_netback
-          transform: level_to_pct
-          baseline: 10.0
+        - source_model: lngst
+          source_field: jkm_price_change_pct
+          transform: identity
+        - source_model: lngst
+          source_field: ttf_price_change_pct
+          transform: identity
 
   # ------------------------------------------------------------
   # MAM (EIA Macroeconomic Activity Module): mirrors NEMS scedes
@@ -563,16 +614,13 @@ models:
         - source_model: bornstein_krusell_rebelo
           source_field: oil_price_peak_pct_eps_u_no
           transform: identity
+    # LNGST's TTF change (was Energy Flux's netback, then ttf_price
+    # against a fixed 11.0; 2026-11-14). See the NEMS note on Henry Hub.
     natural_gas_price_change_pct:
       sources:
-        - source_model: energy_flux_lng_profits
-          source_field: average_ttf_netback
-          transform: level_to_pct
-          baseline: 10.0
         - source_model: lngst
-          source_field: ttf_price
-          transform: level_to_pct
-          baseline: 11.0
+          source_field: ttf_price_change_pct
+          transform: identity
 
   # ------------------------------------------------------------
   # NREL electricity-sector model (analytical MVP). Receives the
@@ -580,13 +628,10 @@ models:
   # CO2 outputs are coherent with the LNG tier.
   # ------------------------------------------------------------
   nrel:
+    # LNGST's TTF change (was Energy Flux's netback, then ttf_price
+    # against a fixed 11.0; 2026-11-14). See the NEMS note on Henry Hub.
     natural_gas_price_change_pct:
       sources:
-        - source_model: energy_flux_lng_profits
-          source_field: average_ttf_netback
-          transform: level_to_pct
-          baseline: 10.0
         - source_model: lngst
-          source_field: ttf_price
-          transform: level_to_pct
-          baseline: 11.0
+          source_field: ttf_price_change_pct
+          transform: identity

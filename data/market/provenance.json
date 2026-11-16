@@ -1,0 +1,44 @@
+{
+  "retrieved_at": "2026-11-08T16:25:17.744291+00:00",
+  "sources": {
+    "world_bank_pink_sheet": {
+      "status": "ok",
+      "url": null,
+      "file": "C:\\Users\\bnhas\\AppData\\Local\\Temp\\claude\\a553fa5534fe3b3e\\52a8e19b-2f99-4b2f-836d-6bf6c31f81cd\\scratchpad\\market\\CMO-Historical-Data-Monthly.xlsx",
+      "sha256": "3c8d9d8dbb48342fdbf24777c39a8ce8964cc2fd0958f72f6779e6e4ad99cde2",
+      "updated_line": "Updated on November 03, 2026",
+      "series": {
+        "brent": "Crude oil, Brent",
+        "dubai": "Crude oil, Dubai",
+        "wti": "Crude oil, WTI",
+        "henry_hub": "Natural gas, US",
+        "ttf": "Natural gas, Europe",
+        "lng_japan": "Liquefied natural gas, Japan",
+        "urea": "Urea",
+        "dap": "DAP",
+        "potash": "Potassium chloride",
+        "phosphate_rock": "Phosphate rock",
+        "wheat": "Wheat, US HRW",
+        "maize": "Maize",
+        "soybeans": "Soybeans",
+        "rice": "Rice, Thai 5%"
+      },
+      "last_month": "2026-10"
+    },
+    "eia_weekly": {
+      "status": "skipped",
+      "reason": "--skip-eia"
+    },
+    "aeo2025_table20": {
+      "status": "ok",
+      "url": null,
+      "file": "data\\eia\\AEO2025_Table20_ref2025.xlsx",
+      "sha256": "bef0912ba4f9dfc9515520bffbd0ab6ce35f4eff0ae795a9d9dcdcb614e9d101"
+    }
+  },
+  "outputs": {
+    "monthly_prices_csv": "data\\market\\monthly_prices.csv",
+    "sha256": "5ad3bca4705e5feca4961bff35a755bf8db5d6d80a07480af3f80ca31a5e7d51",
+    "calibration_json": "data\\market\\calibration.json"
+  }
+}

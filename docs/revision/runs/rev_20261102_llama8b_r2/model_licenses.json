@@ -1,0 +1,419 @@
+[
+  {
+    "model_id": "messageix",
+    "commodity_system": "energy_systems",
+    "display_name": "MESSAGEix (IIASA integrated assessment / energy systems)",
+    "modes_available": [
+      "full_upstream"
+    ],
+    "platform": "message-ix + ixmp (Python + Java JDBC + GAMS)",
+    "upstream_reference": "Huppmann et al. (2019) MESSAGEix, EMS",
+    "license_notes": "Apache-2.0 (upstream); GAMS licence needed to solve.",
+    "status_label": "Real"
+  },
+  {
+    "model_id": "osemosys",
+    "commodity_system": "energy_systems",
+    "display_name": "OSeMOSYS (open-source energy systems LP)",
+    "modes_available": [
+      "full_upstream"
+    ],
+    "platform": "GNU MathProg + GLPK/CBC through the otoole CSV pipeline",
+    "upstream_reference": "Howells et al. (2011) OSeMOSYS; vendored under Models/Energy/OSeMOSYS/",
+    "license_notes": "Apache-2.0 (upstream).",
+    "status_label": "Real"
+  },
+  {
+    "model_id": "temoa",
+    "commodity_system": "energy_systems",
+    "display_name": "TEMOA (Tools for Energy Model Optimization and Analysis)",
+    "modes_available": [
+      "full_upstream"
+    ],
+    "platform": "Pyomo + CBC (or CPLEX/Gurobi) on a SQLite database, vendored clone",
+    "upstream_reference": "Hunter, Sreepathi & DeCarolis (2013) TEMOA; Models/Energy/TEMOA/",
+    "license_notes": "GPL-2.0 (upstream).",
+    "status_label": "Real"
+  },
+  {
+    "model_id": "apsim",
+    "commodity_system": "fertilizer_agriculture",
+    "display_name": "APSIM Next Generation (crop simulation)",
+    "modes_available": [
+      "analytical_reduction"
+    ],
+    "platform": "Pure Python (reduction); APSIM NG .NET CLI not run",
+    "upstream_reference": "Holzworth et al. (2018) APSIM Next Generation",
+    "license_notes": "APSIM NG is open source (non-commercial licence); the reduction is repository code.",
+    "status_label": "Real (analytical MVP)"
+  },
+  {
+    "model_id": "capri",
+    "commodity_system": "fertilizer_agriculture",
+    "display_name": "CAPRI (Common Agricultural Policy Regionalised Impact)",
+    "modes_available": [
+      "stub"
+    ],
+    "platform": "GAMS (upstream)",
+    "upstream_reference": "Britz & Witzke (eds.), CAPRI model documentation",
+    "license_notes": "CAPRI is open source (GPL) but data access is restricted.",
+    "status_label": "Stub"
+  },
+  {
+    "model_id": "futures",
+    "commodity_system": "fertilizer_agriculture",
+    "display_name": "Commodity futures forward-curve model",
+    "modes_available": [
+      "analytical_reduction"
+    ],
+    "platform": "Pure Python (reduction); no statsmodels dependency",
+    "upstream_reference": "Time-series futures models (ARIMA/VAR) on CBOT/NYMEX data; no single upstream codebase",
+    "license_notes": "Repository code.",
+    "status_label": "Real (analytical MVP)"
+  },
+  {
+    "model_id": "gtap",
+    "commodity_system": "fertilizer_agriculture",
+    "display_name": "GTAP (Global Trade Analysis Project CGE)",
+    "modes_available": [
+      "stub"
+    ],
+    "platform": "GEMPACK (RunGTAP / FlexGTAP), upstream",
+    "upstream_reference": "Hertel (ed.) (1997); GTAP 10/11 database, Purdue University",
+    "license_notes": "GTAP database is licensed by the GTAP Center.",
+    "status_label": "Stub"
+  },
+  {
+    "model_id": "magpie",
+    "commodity_system": "fertilizer_agriculture",
+    "display_name": "MAgPIE (PIK land-use and agricultural production model)",
+    "modes_available": [
+      "full_upstream"
+    ],
+    "platform": "R orchestration (Rscript start.R + bridge script) + GAMS/CONOPT",
+    "upstream_reference": "Dietrich et al. (2019) MAgPIE 4, GMD; vendored under Models/Fertilizer/magpie-master/",
+    "license_notes": "Upstream AGPL-3.0.",
+    "status_label": "Real (config-aware)"
+  },
+  {
+    "model_id": "simple_g",
+    "commodity_system": "fertilizer_agriculture",
+    "display_name": "SIMPLE-G (global gridded agricultural CGE, Purdue)",
+    "modes_available": [
+      "stub"
+    ],
+    "platform": "GAMS (upstream)",
+    "upstream_reference": "Baldos & Hertel, SIMPLE-G model documentation (Purdue/GTAP)",
+    "license_notes": "Available from the GTAP Center.",
+    "status_label": "Stub"
+  },
+  {
+    "model_id": "world_fertilizer",
+    "commodity_system": "fertilizer_agriculture",
+    "display_name": "World Fertilizer Model (global N/P/K market equilibrium)",
+    "modes_available": [
+      "analytical_reduction",
+      "full_upstream"
+    ],
+    "platform": "Pure Python (reduction) / GAMS via GAMSAdapter (full)",
+    "upstream_reference": "World Fertilizer Model (GAMS market-equilibrium model; .gms file supplied by the analyst)",
+    "license_notes": "Repository code; GAMS path needs a GAMS licence.",
+    "status_label": "Real (analytical MVP) + config-aware full path"
+  },
+  {
+    "model_id": "argonne_abm",
+    "commodity_system": "helium_semiconductors",
+    "display_name": "Argonne Helium Agent-Based Model (AnyLogic)",
+    "modes_available": [
+      "analytical_reduction",
+      "full_upstream"
+    ],
+    "platform": "Pure Python (20 stochastic replications) / exported AnyLogic JAR via subprocess (full)",
+    "upstream_reference": "Argonne National Laboratory helium market ABM (AnyLogic), technical report 2022",
+    "license_notes": "AnyLogic Professional required for the full model; the reduction is repository code.",
+    "status_label": "Real (analytical MVP) + config-aware full path"
+  },
+  {
+    "model_id": "simrlfab",
+    "commodity_system": "helium_semiconductors",
+    "display_name": "SimRLFab (SimPy + Tensorforce semiconductor fab simulator)",
+    "modes_available": [
+      "full_upstream"
+    ],
+    "platform": "Python 3.6 virtual environment subprocess driving the vendored SimRLFab repository",
+    "upstream_reference": "Kuhnle, SimRLFab (github.com/AndreasKuhnle/SimRLFab), vendored under Models/Helium Market_ Semiconductors/",
+    "license_notes": "Upstream MIT licence.",
+    "status_label": "Real (config-aware)"
+  },
+  {
+    "model_id": "world_helium_model",
+    "commodity_system": "helium_semiconductors",
+    "display_name": "World Helium Model (IFP Energies Nouvelles)",
+    "modes_available": [
+      "analytical_reduction"
+    ],
+    "platform": "Pure Python (reduction); IFP EN model not available",
+    "upstream_reference": "IFP Energies Nouvelles, World Helium Model (Massol & Rifaat 2018 describe the market framework)",
+    "license_notes": "Upstream model proprietary to IFP EN; the reduction is repository code.",
+    "status_label": "Real (analytical MVP)"
+  },
+  {
+    "model_id": "energy_flux_gas_power",
+    "commodity_system": "lng",
+    "display_name": "Energy Flux US Gas Power Build-Out Constraint Model v1.0",
+    "modes_available": [
+      "full_upstream"
+    ],
+    "platform": "Pure-Python re-implementation of the Excel workbook (default) or xlwings against the workbook",
+    "upstream_reference": "Energy Flux (2025), US Gas Power Build-Out Constraint Model v1.0 (proprietary workbook, vendored under Models/LNG/)",
+    "license_notes": "Proprietary Energy Flux workbook (restricted); the Python re-implementation reproduces its formulas.",
+    "status_label": "Real"
+  },
+  {
+    "model_id": "energy_flux_lng_profits",
+    "commodity_system": "lng",
+    "display_name": "Energy Flux US LNG War Profits Model v1.0",
+    "modes_available": [
+      "full_upstream"
+    ],
+    "platform": "Pure-Python re-implementation of the Excel workbook (default) or xlwings against the workbook",
+    "upstream_reference": "Energy Flux (2025), US LNG War Profits Model v1.0 (proprietary workbook, vendored under Models/LNG/)",
+    "license_notes": "Proprietary Energy Flux workbook (restricted).",
+    "status_label": "Real"
+  },
+  {
+    "model_id": "ggm",
+    "commodity_system": "lng",
+    "display_name": "Global Gas Model v3.0 (NTNU / DIW Berlin)",
+    "modes_available": [
+      "full_upstream"
+    ],
+    "platform": "GAMS + CPLEX (QCP) via subprocess on a copied model tree",
+    "upstream_reference": "Egging & Holz, Global Gas Model (open-source v3.0, May 2019), vendored under Models/LNG/GGM-20190509-open-source-final/",
+    "license_notes": "MIT licence (upstream).",
+    "status_label": "Real (config-aware)"
+  },
+  {
+    "model_id": "lngst",
+    "commodity_system": "lng",
+    "display_name": "LNG Spreadsheet Tool (LNGST)",
+    "modes_available": [
+      "analytical_reduction",
+      "full_upstream"
+    ],
+    "platform": "Pure Python (reduction) / Excel workbook via openpyxl or xlwings (full)",
+    "upstream_reference": "LNGST Excel workbook (scenario-level LNG trade tool)",
+    "license_notes": "Workbook availability depends on its owner; the reduction is repository code.",
+    "status_label": "Real (analytical MVP) + config-aware full path"
+  },
+  {
+    "model_id": "mam",
+    "commodity_system": "macroeconomic",
+    "display_name": "MAM (EIA Macroeconomic Activity Module, AEO2025)",
+    "modes_available": [
+      "published_output_ingestion",
+      "full_upstream"
+    ],
+    "platform": "aeo_ingestion (AEO2025 Tables 19/20 XLSX) / eviews_subprocess (EViews 13+ on Windows)",
+    "upstream_reference": "US EIA, Macroeconomic Activity Module documentation, AEO2025 (Models/General Equilibrium/EIA/MAM_AEO2025.pdf)",
+    "license_notes": "EIA publications are public domain; EViews is commercial.",
+    "status_label": "Real (published-output ingestion) + optional full path"
+  },
+  {
+    "model_id": "miragrodep",
+    "commodity_system": "macroeconomic",
+    "display_name": "MIRAGRODEP (multi-region recursive-dynamic agricultural CGE)",
+    "modes_available": [
+      "full_upstream"
+    ],
+    "platform": "GAMS + CONOPT/PATH via subprocess (calib, MSD, REF, Simul phases)",
+    "upstream_reference": "Laborde, Robichaud & Tokgoz, MIRAGRODEP v0.1 (IFPRI/AGRODEP), vendored under Models/General Equilibrium/MIRAGRODEP_v0-1/",
+    "license_notes": "AGRODEP licence (academic use).",
+    "status_label": "Real"
+  },
+  {
+    "model_id": "mpsge_jl",
+    "commodity_system": "macroeconomic",
+    "display_name": "MPSGE.jl / GTAP long-run CGE",
+    "modes_available": [
+      "analytical_reduction",
+      "full_upstream"
+    ],
+    "platform": "Pure Python (reduction) / Julia MPSGE.jl + JuMP via juliacall or subprocess (full)",
+    "upstream_reference": "MPSGE.jl (julia-mpsge) with a GTAP v10+ database",
+    "license_notes": "MPSGE.jl is MIT; GTAP database licensed; the reduction is repository code.",
+    "status_label": "Real (analytical MVP) + config-aware full path"
+  },
+  {
+    "model_id": "nems",
+    "commodity_system": "macroeconomic",
+    "display_name": "NEMS (EIA National Energy Modeling System, AEO2025)",
+    "modes_available": [
+      "published_output_ingestion",
+      "full_upstream"
+    ],
+    "platform": "output_ingestion (reads a completed NEMS run directory) / subprocess (cycle.py) / remote (SLURM)",
+    "upstream_reference": "US EIA, NEMS (AEO2025) source vendored under Models/LNG/NEMS-main/",
+    "license_notes": "NEMS is public domain (EIA); AIMMS/GAMS/Intel Fortran licences needed to solve.",
+    "status_label": "Real (published-output ingestion) + optional full path"
+  },
+  {
+    "model_id": "nrel",
+    "commodity_system": "macroeconomic",
+    "display_name": "NREL electricity-sector baseline (ReEDS / Cambium)",
+    "modes_available": [
+      "analytical_reduction"
+    ],
+    "platform": "Pure Python (reduction); ReEDS/Cambium not run",
+    "upstream_reference": "NREL ReEDS 2023 / Cambium 2023 documentation",
+    "license_notes": "ReEDS/Cambium are open source (NREL); the reduction is repository code.",
+    "status_label": "Real (analytical MVP)"
+  },
+  {
+    "model_id": "opencge",
+    "commodity_system": "macroeconomic",
+    "display_name": "OpenCGE (PSL OG-Core / OG-USA overlapping-generations CGE)",
+    "modes_available": [
+      "full_upstream"
+    ],
+    "platform": "Python ogcore/ogusa + dask",
+    "upstream_reference": "DeBacker & Evans, OG-Core (github.com/PSLmodels/OG-Core)",
+    "license_notes": "CC0 (OG-Core).",
+    "status_label": "Real"
+  },
+  {
+    "model_id": "pycge",
+    "commodity_system": "macroeconomic",
+    "display_name": "PyCGE (cge_modeling SAM-based CGE)",
+    "modes_available": [
+      "analytical_reduction",
+      "full_upstream"
+    ],
+    "platform": "Pure Python macro kernel (reduction) / cge_modeling package when its API matches (full)",
+    "upstream_reference": "Grabowski, cge_modeling (github.com/jessegrabowski/cge_modeling), pre-alpha",
+    "license_notes": "cge_modeling is MIT; the reduction is repository code.",
+    "status_label": "Real (analytical MVP) + config-aware full path"
+  },
+  {
+    "model_id": "bornstein_krusell_rebelo",
+    "commodity_system": "oil",
+    "display_name": "Bornstein-Krusell-Rebelo World Equilibrium Model of the Oil Market",
+    "modes_available": [
+      "full_upstream"
+    ],
+    "platform": "GNU Octave + Dynare driving the vendored MATLAB/Dynare replication files",
+    "upstream_reference": "Bornstein, Krusell & Rebelo, 'A World Equilibrium Model of the Oil Market' (replication package vendored under Models/Oil/WorldEquilibriumOilModel/)",
+    "license_notes": "Replication package licence (academic use).",
+    "status_label": "Real"
+  },
+  {
+    "model_id": "fed_oil",
+    "commodity_system": "oil",
+    "display_name": "Baumeister-Hamilton oil-shock SVAR (2019 AER), reduced form",
+    "modes_available": [
+      "analytical_reduction"
+    ],
+    "platform": "Pure Python (reduction); upstream MATLAB/R SVAR code not run",
+    "upstream_reference": "Baumeister & Hamilton (2019), 'Structural Interpretation of Vector Autoregressions with Incomplete Identification', AER 109(5). Not a Federal Reserve model; the 'Fed workhorse' label in earlier drafts refers to the framework's use in Fed policy analysis.",
+    "license_notes": "Repository code; upstream replication files are the authors'.",
+    "status_label": "Real (analytical MVP)"
+  },
+  {
+    "model_id": "marketsim",
+    "commodity_system": "oil",
+    "display_name": "MarketSim (BOEM consumer-surplus and energy-substitution model)",
+    "modes_available": [
+      "analytical_reduction"
+    ],
+    "platform": "Pure Python (reduction); BOEM Excel/VBA codebase not available",
+    "upstream_reference": "Bureau of Ocean Energy Management, MarketSim model documentation",
+    "license_notes": "BOEM MarketSim is a US government model; the reduction is repository code.",
+    "status_label": "Real (analytical MVP)"
+  },
+  {
+    "model_id": "poles_jrc",
+    "commodity_system": "oil",
+    "display_name": "POLES-JRC (JRC Prospective Outlook on Long-term Energy Systems)",
+    "modes_available": [
+      "analytical_reduction"
+    ],
+    "platform": "Pure Python (reduction); JRC distribution not available",
+    "upstream_reference": "European Commission JRC, POLES-JRC model documentation (2018)",
+    "license_notes": "POLES-JRC is proprietary to the JRC; the reduction is repository code.",
+    "status_label": "Real (analytical MVP)"
+  },
+  {
+    "model_id": "ais_project",
+    "commodity_system": "shipping",
+    "display_name": "AIS_project / aisstream (transit time and fleet utilisation)",
+    "modes_available": [
+      "analytical_reduction"
+    ],
+    "platform": "Pure Python (reduction); aisstream WebSocket feed not wired",
+    "upstream_reference": "aisstream.io (vendored README under Models/Shipping/aisstream-main/)",
+    "license_notes": "Repository code.",
+    "status_label": "Real (analytical MVP)"
+  },
+  {
+    "model_id": "aisdb",
+    "commodity_system": "shipping",
+    "display_name": "AISdb (AIS vessel-track database and rerouting calibration)",
+    "modes_available": [
+      "analytical_reduction"
+    ],
+    "platform": "Pure Python (reduction); AISdb PostgreSQL/SQLite backend not wired",
+    "upstream_reference": "AISdb (aisdb.meridian.cs.dal.ca)",
+    "license_notes": "AISdb is open source; the reduction is repository code.",
+    "status_label": "Real (analytical MVP)"
+  },
+  {
+    "model_id": "cwatm",
+    "commodity_system": "water",
+    "display_name": "CWatM (IIASA Community Water Model)",
+    "modes_available": [
+      "analytical_reduction",
+      "full_upstream"
+    ],
+    "platform": "Python subprocess (run_cwatm.py + NetCDF forcing) for the full model / pure Python reduction",
+    "upstream_reference": "Burek et al. (2020) CWatM v1.04, GMD",
+    "license_notes": "CWatM is GPL-3.0.",
+    "status_label": "Real (analytical MVP) + config-aware full path"
+  },
+  {
+    "model_id": "sahysmod",
+    "commodity_system": "water",
+    "display_name": "SahysMod (ILRI spatial agro-hydro-salinity model)",
+    "modes_available": [
+      "full_upstream"
+    ],
+    "platform": "Native Windows console executable (Models/Water/SahysMod/SahysMod.exe) via subprocess",
+    "upstream_reference": "Oosterbaan et al., SahysMod (ILRI/Alterra), bundled binary and input decks",
+    "license_notes": "ILRI distribution; see Models/Water/SahysMod.",
+    "status_label": "Real (config-aware)"
+  },
+  {
+    "model_id": "watergap2",
+    "commodity_system": "water",
+    "display_name": "WaterGAP2 (global gridded hydrology, Goethe University Frankfurt)",
+    "modes_available": [
+      "stub"
+    ],
+    "platform": "C++ binary (compile from vendored sources) or HTTP API",
+    "upstream_reference": "M\u00fcller Schmied et al. (2021) WaterGAP v2.2d, GMD",
+    "license_notes": "WaterGAP2 sources under their upstream licence (see Models/Water/WaterGAP2-v2.2d).",
+    "status_label": "Config-aware stub"
+  },
+  {
+    "model_id": "weap_mena",
+    "commodity_system": "water",
+    "display_name": "WEAP-MENA (SEI Water Evaluation And Planning, Persian Gulf configuration)",
+    "modes_available": [
+      "analytical_reduction",
+      "full_upstream"
+    ],
+    "platform": "Windows COM automation of SEI WEAP (full) / pure Python (reduction)",
+    "upstream_reference": "Stockholm Environment Institute, WEAP (weap21.org); WEAP-MENA regional study file",
+    "license_notes": "WEAP is licensed by SEI (free for academic and developing-country use); the reduction is repository code.",
+    "status_label": "Real (analytical MVP) + config-aware full path"
+  }
+]

@@ -1,0 +1,4320 @@
+{
+  "generated_at": "2026-11-08T20:07:01.314115+00:00",
+  "spec": {
+    "n": 100,
+    "seed": 20261010,
+    "low": 0.5,
+    "high": 1.5,
+    "inputs": "docs/revision/runs/20260504_222710_apsimgtap/apsim_gtap_fill_inputs.json"
+  },
+  "n_complete_draws": 100,
+  "failures": [],
+  "gates": [
+    {
+      "case_id": "point|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "point|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "point|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "point|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "point|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "9|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "9|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "9|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "9|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "9|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "19|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "19|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "19|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "19|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "19|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "29|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "29|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "29|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "29|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "29|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "39|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "39|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "39|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "39|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "39|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "49|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "49|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "49|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "49|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "49|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "59|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "59|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "59|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "59|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "59|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "69|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "69|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "69|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "69|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "69|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "79|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "79|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "79|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "79|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "79|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "89|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "89|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "89|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "89|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "89|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "99|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "99|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "99|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "99|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "99|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "0|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "0|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "0|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "0|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "0|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "10|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "10|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "10|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "10|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "10|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "20|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "20|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "20|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "20|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "20|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "30|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "30|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "30|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "30|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "30|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "40|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "40|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "40|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "40|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "40|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "50|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "50|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "50|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "50|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "50|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "60|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "60|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "60|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "60|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "60|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "70|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "70|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "70|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "70|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "70|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "80|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 2.886579864025407e-13,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "80|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 2.886579864025407e-13,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "80|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 2.886579864025407e-13,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "80|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 2.886579864025407e-13,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "80|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 2.886579864025407e-13,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "90|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "90|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "90|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "90|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "90|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "1|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "1|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "1|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "1|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "1|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "11|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "11|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "11|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "11|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "11|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "21|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "21|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "21|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "21|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "21|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "31|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "31|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "31|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "31|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "31|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "41|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "41|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "41|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "41|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "41|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "51|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "51|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "51|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "51|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "51|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "61|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "61|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "61|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "61|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "61|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "71|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "71|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "71|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "71|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "71|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "81|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "81|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "81|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "81|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "81|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "91|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "91|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "91|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "91|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "91|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "2|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "2|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "2|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "2|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "2|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "12|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "12|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "12|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "12|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "12|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "22|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "22|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "22|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "22|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "22|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "32|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "32|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "32|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "32|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "32|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "42|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "42|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "42|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "42|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "42|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "52|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "52|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "52|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "52|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "52|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "62|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "62|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "62|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "62|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "62|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "72|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "72|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "72|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "72|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "72|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "82|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "82|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "82|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "82|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "82|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "92|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "92|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "92|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "92|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "92|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "3|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "3|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "3|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "3|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "3|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "13|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "13|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "13|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "13|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "13|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "23|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "23|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "23|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "23|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "23|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "33|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "33|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "33|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "33|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "33|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "43|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "43|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "43|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "43|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "43|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "53|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "53|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "53|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "53|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "53|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "63|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "63|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "63|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "63|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "63|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "73|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "73|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "73|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "73|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "73|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "83|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "83|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "83|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "83|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "83|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "93|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "93|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "93|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "93|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "93|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "4|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "4|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "4|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "4|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "4|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "14|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "14|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "14|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "14|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "14|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "24|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "24|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "24|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "24|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "24|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "34|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "34|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "34|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "34|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "34|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "44|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "44|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "44|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "44|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "44|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "54|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 2.9976021664879227e-13,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "54|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 2.9976021664879227e-13,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "54|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 2.9976021664879227e-13,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "54|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 2.9976021664879227e-13,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "54|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 2.9976021664879227e-13,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "64|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "64|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "64|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "64|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "64|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "74|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "74|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "74|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "74|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "74|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "84|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "84|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "84|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "84|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "84|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "94|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "94|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "94|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "94|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "94|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "5|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "5|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "5|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "5|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "5|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "15|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "15|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "15|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "15|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "15|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "25|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "25|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "25|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "25|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "25|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "35|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "35|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "35|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "35|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "35|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "45|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "45|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "45|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "45|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "45|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "55|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "55|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "55|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "55|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "55|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "65|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "65|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "65|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "65|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "65|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "75|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "75|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "75|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "75|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "75|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "85|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "85|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "85|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "85|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "85|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "95|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 4.440892098500626e-13,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "95|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 4.440892098500626e-13,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "95|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 4.440892098500626e-13,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "95|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 4.440892098500626e-13,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "95|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 4.440892098500626e-13,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "6|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "6|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "6|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "6|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "6|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "16|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "16|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "16|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "16|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "16|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "26|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "26|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "26|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "26|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "26|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "36|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "36|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "36|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "36|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "36|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "46|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "46|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "46|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "46|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "46|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "56|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "56|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "56|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "56|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "56|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "66|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "66|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "66|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "66|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "66|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "76|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 3.885780586188048e-13,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "76|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 3.885780586188048e-13,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "76|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 3.885780586188048e-13,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "76|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 3.885780586188048e-13,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "76|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 3.885780586188048e-13,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "86|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "86|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "86|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "86|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "86|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "96|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "96|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "96|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "96|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "96|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "7|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "7|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "7|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "7|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "7|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "17|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "17|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "17|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "17|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "17|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "27|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "27|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "27|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "27|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "27|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "37|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "37|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "37|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "37|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "37|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "47|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "47|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "47|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "47|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "47|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "57|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "57|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "57|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "57|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "57|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "67|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "67|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "67|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "67|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "67|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "77|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "77|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "77|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "77|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "77|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "87|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "87|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "87|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "87|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "87|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "97|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "97|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "97|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "97|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "97|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "8|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "8|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "8|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "8|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "8|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "18|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "18|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "18|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "18|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "18|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "28|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "28|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "28|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "28|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "28|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "38|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "38|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "38|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "38|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "38|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "48|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "48|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "48|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "48|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "48|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "58|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "58|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "58|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "58|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "58|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "68|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "68|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "68|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "68|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "68|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "78|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "78|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "78|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "78|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "78|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "88|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "88|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "88|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "88|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "88|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "98|infrastructure_collapse",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "98|prolonged_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "98|prolonged_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "98|swift_contained",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    },
+    {
+      "case_id": "98|swift_escalated",
+      "converged": true,
+      "zero_shock_residual_gdp_pct": 0.0,
+      "zero_shock_gate_passed": true
+    }
+  ],
+  "gate_failures": [],
+  "scenarios": [
+    "infrastructure_collapse",
+    "prolonged_contained",
+    "prolonged_escalated",
+    "swift_contained",
+    "swift_escalated"
+  ],
+  "point": {
+    "infrastructure_collapse": {
+      "us_gdp_pct": -0.0001594509866920113,
+      "gulf_gdp_pct": -0.3845108237618411,
+      "us_maize_yield_change_pct": 2.2515723863136827e-05,
+      "us_gro_price_pct": 0.05790229537994129,
+      "us_chm_consumption_pct": -0.07526073317520865
+    },
+    "prolonged_contained": {
+      "us_gdp_pct": 0.0001236948674154803,
+      "gulf_gdp_pct": -0.2622476315968014,
+      "us_maize_yield_change_pct": 2.2515723863136827e-05,
+      "us_gro_price_pct": 0.03694820031538981,
+      "us_chm_consumption_pct": -0.0509842010851691
+    },
+    "prolonged_escalated": {
+      "us_gdp_pct": -0.0001598219236287335,
+      "gulf_gdp_pct": -0.38522832505540894,
+      "us_maize_yield_change_pct": 2.2515723863136827e-05,
+      "us_gro_price_pct": 0.05795294197048495,
+      "us_chm_consumption_pct": -0.07526236898869332
+    },
+    "swift_contained": {
+      "us_gdp_pct": 1.130536597671039e-06,
+      "gulf_gdp_pct": -0.0011854445818082482,
+      "us_maize_yield_change_pct": -1.5010482568023065e-05,
+      "us_gro_price_pct": 0.0002844532005497058,
+      "us_chm_consumption_pct": -0.00030867072274842755
+    },
+    "swift_escalated": {
+      "us_gdp_pct": 0.0001236948674154803,
+      "gulf_gdp_pct": -0.2622476315968014,
+      "us_maize_yield_change_pct": 2.2515723863136827e-05,
+      "us_gro_price_pct": 0.03694820031538981,
+      "us_chm_consumption_pct": -0.0509842010851691
+    }
+  },
+  "bands": [
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_id": "infrastructure_collapse",
+      "point": -0.3845108237618411,
+      "p05": -0.5716817854475592,
+      "p50": -0.38641342579643356,
+      "p95": -0.2641757762405056,
+      "n": 100
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_id": "prolonged_contained",
+      "point": -0.2622476315968014,
+      "p05": -0.3568872117694766,
+      "p50": -0.2642423499939761,
+      "p95": -0.19526700570237035,
+      "n": 100
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_id": "prolonged_escalated",
+      "point": -0.38522832505540894,
+      "p05": -0.5723985741416965,
+      "p50": -0.38713105807542947,
+      "p95": -0.26489329878742696,
+      "n": 100
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_id": "swift_contained",
+      "point": -0.0011854445818082482,
+      "p05": -0.0013993547811497198,
+      "p50": -0.0011878314020385972,
+      "p95": -0.0009804118784867422,
+      "n": 100
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_id": "swift_escalated",
+      "point": -0.2622476315968014,
+      "p05": -0.3568872117694766,
+      "p50": -0.2642423499939761,
+      "p95": -0.19526700570237035,
+      "n": 100
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_id": "infrastructure_collapse",
+      "point": -0.07526073317520865,
+      "p05": -0.10137819900605749,
+      "p50": -0.07518099276034307,
+      "p95": -0.0573802408484142,
+      "n": 100
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_id": "prolonged_contained",
+      "point": -0.0509842010851691,
+      "p05": -0.06214812379093437,
+      "p50": -0.05097069514022334,
+      "p95": -0.042133006598438216,
+      "n": 100
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_id": "prolonged_escalated",
+      "point": -0.07526236898869332,
+      "p05": -0.10137962797287847,
+      "p50": -0.07518263069961617,
+      "p95": -0.05738198700917019,
+      "n": 100
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_id": "swift_contained",
+      "point": -0.00030867072274842755,
+      "p05": -0.0003271855573011573,
+      "p50": -0.0003084581935375308,
+      "p95": -0.00029050433670352316,
+      "n": 100
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_id": "swift_escalated",
+      "point": -0.0509842010851691,
+      "p05": -0.06214812379093437,
+      "p50": -0.05097069514022334,
+      "p95": -0.042133006598438216,
+      "n": 100
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_id": "infrastructure_collapse",
+      "point": -0.0001594509866920113,
+      "p05": -0.0004584933165624472,
+      "p50": -0.00013480929378917317,
+      "p95": 4.397941849032526e-05,
+      "n": 100
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_id": "prolonged_contained",
+      "point": 0.0001236948674154803,
+      "p05": -9.681460223176508e-05,
+      "p50": 0.00012071829534887613,
+      "p95": 0.00027321206037100865,
+      "n": 100
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_id": "prolonged_escalated",
+      "point": -0.0001598219236287335,
+      "p05": -0.0004588503214902895,
+      "p50": -0.00013516082678632912,
+      "p95": 4.360118398882838e-05,
+      "n": 100
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_id": "swift_contained",
+      "point": 1.130536597671039e-06,
+      "p05": -7.675965368880711e-07,
+      "p50": 1.2133563931371327e-06,
+      "p95": 2.7825107873358235e-06,
+      "n": 100
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_id": "swift_escalated",
+      "point": 0.0001236948674154803,
+      "p05": -9.681460223176508e-05,
+      "p50": 0.00012071829534887613,
+      "p95": 0.00027321206037100865,
+      "n": 100
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_id": "infrastructure_collapse",
+      "point": 0.05790229537994129,
+      "p05": 0.04450027692324943,
+      "p50": 0.05846445859440941,
+      "p95": 0.06521441514710347,
+      "n": 100
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_id": "prolonged_contained",
+      "point": 0.03694820031538981,
+      "p05": 0.026594184451693703,
+      "p50": 0.03738603507824623,
+      "p95": 0.04471683944879068,
+      "n": 100
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_id": "prolonged_escalated",
+      "point": 0.05795294197048495,
+      "p05": 0.04455019409434824,
+      "p50": 0.05851513731158775,
+      "p95": 0.06526579845224978,
+      "n": 100
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_id": "swift_contained",
+      "point": 0.0002844532005497058,
+      "p05": 0.00021119890442067302,
+      "p50": 0.000287699288670229,
+      "p95": 0.0003499903163073359,
+      "n": 100
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_id": "swift_escalated",
+      "point": 0.03694820031538981,
+      "p05": 0.026594184451693703,
+      "p50": 0.03738603507824623,
+      "p95": 0.04471683944879068,
+      "n": 100
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_id": "infrastructure_collapse",
+      "point": 2.2515723863136827e-05,
+      "p05": 2.2515723863136827e-05,
+      "p50": 3.002096513604613e-05,
+      "p95": 5.253668899918296e-05,
+      "n": 100
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_id": "prolonged_contained",
+      "point": 2.2515723863136827e-05,
+      "p05": 7.505241295113763e-06,
+      "p50": 2.2515723863136827e-05,
+      "p95": 3.002096513604613e-05,
+      "n": 100
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_id": "prolonged_escalated",
+      "point": 2.2515723863136827e-05,
+      "p05": 2.2515723863136827e-05,
+      "p50": 3.002096513604613e-05,
+      "p95": 5.253668899918296e-05,
+      "n": 100
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_id": "swift_contained",
+      "point": -1.5010482568023065e-05,
+      "p05": -1.5010482568023065e-05,
+      "p50": -1.5010482568023065e-05,
+      "p95": -1.5010482568023065e-05,
+      "n": 100
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_id": "swift_escalated",
+      "point": 2.2515723863136827e-05,
+      "p05": 7.505241295113763e-06,
+      "p50": 2.2515723863136827e-05,
+      "p95": 3.002096513604613e-05,
+      "n": 100
+    }
+  ],
+  "first_order": [
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_id": "infrastructure_collapse",
+      "knob": "esubm_chm",
+      "S1": 0.8848786848972274
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_id": "infrastructure_collapse",
+      "knob": "esubd_chm",
+      "S1": 0.2807038624860943
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_id": "infrastructure_collapse",
+      "knob": "esubm_gro",
+      "S1": 0.0751770904848952
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_id": "infrastructure_collapse",
+      "knob": "esubd_gro",
+      "S1": 0.07590026726198804
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_id": "prolonged_contained",
+      "knob": "esubm_chm",
+      "S1": 0.9259666008609148
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_id": "prolonged_contained",
+      "knob": "esubd_chm",
+      "S1": 0.24130133145450225
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_id": "prolonged_contained",
+      "knob": "esubm_gro",
+      "S1": 0.06568094759738893
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_id": "prolonged_contained",
+      "knob": "esubd_gro",
+      "S1": 0.08075084866749813
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_id": "prolonged_escalated",
+      "knob": "esubm_chm",
+      "S1": 0.8848803496884481
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_id": "prolonged_escalated",
+      "knob": "esubd_chm",
+      "S1": 0.2807022827305432
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_id": "prolonged_escalated",
+      "knob": "esubm_gro",
+      "S1": 0.07517677310293092
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_id": "prolonged_escalated",
+      "knob": "esubd_gro",
+      "S1": 0.07590042083565837
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_id": "swift_contained",
+      "knob": "esubm_chm",
+      "S1": 0.9897532674293033
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_id": "swift_contained",
+      "knob": "esubd_chm",
+      "S1": 0.17668086108146194
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_id": "swift_contained",
+      "knob": "esubm_gro",
+      "S1": 0.044149280620601306
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_id": "swift_contained",
+      "knob": "esubd_gro",
+      "S1": 0.09232012596683939
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_id": "swift_escalated",
+      "knob": "esubm_chm",
+      "S1": 0.9259666008609148
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_id": "swift_escalated",
+      "knob": "esubd_chm",
+      "S1": 0.24130133145450225
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_id": "swift_escalated",
+      "knob": "esubm_gro",
+      "S1": 0.06568094759738893
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_id": "swift_escalated",
+      "knob": "esubd_gro",
+      "S1": 0.08075084866749813
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_id": "infrastructure_collapse",
+      "knob": "esubm_chm",
+      "S1": 0.9893058165868074
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_id": "infrastructure_collapse",
+      "knob": "esubd_chm",
+      "S1": 0.1739318280099591
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_id": "infrastructure_collapse",
+      "knob": "esubm_gro",
+      "S1": 0.04664349469332442
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_id": "infrastructure_collapse",
+      "knob": "esubd_gro",
+      "S1": 0.09140138514475338
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_id": "prolonged_contained",
+      "knob": "esubm_chm",
+      "S1": 0.9893111166014674
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_id": "prolonged_contained",
+      "knob": "esubd_chm",
+      "S1": 0.17449112009136555
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_id": "prolonged_contained",
+      "knob": "esubm_gro",
+      "S1": 0.0443752673117156
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_id": "prolonged_contained",
+      "knob": "esubd_gro",
+      "S1": 0.092688274423809
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_id": "prolonged_escalated",
+      "knob": "esubm_chm",
+      "S1": 0.9893058157951847
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_id": "prolonged_escalated",
+      "knob": "esubd_chm",
+      "S1": 0.17393223961201357
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_id": "prolonged_escalated",
+      "knob": "esubm_gro",
+      "S1": 0.04664354234661287
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_id": "prolonged_escalated",
+      "knob": "esubd_gro",
+      "S1": 0.09140153219436752
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_id": "swift_contained",
+      "knob": "esubm_chm",
+      "S1": 0.9438802624749809
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_id": "swift_contained",
+      "knob": "esubd_chm",
+      "S1": 0.20728657245423712
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_id": "swift_contained",
+      "knob": "esubm_gro",
+      "S1": 0.03774074752010904
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_id": "swift_contained",
+      "knob": "esubd_gro",
+      "S1": 0.09884088256286083
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_id": "swift_escalated",
+      "knob": "esubm_chm",
+      "S1": 0.9893111166014674
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_id": "swift_escalated",
+      "knob": "esubd_chm",
+      "S1": 0.17449112009136555
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_id": "swift_escalated",
+      "knob": "esubm_gro",
+      "S1": 0.0443752673117156
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_id": "swift_escalated",
+      "knob": "esubd_gro",
+      "S1": 0.092688274423809
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_id": "infrastructure_collapse",
+      "knob": "esubm_chm",
+      "S1": 0.5866821816150172
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_id": "infrastructure_collapse",
+      "knob": "esubd_chm",
+      "S1": 0.49537697205575987
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_id": "infrastructure_collapse",
+      "knob": "esubm_gro",
+      "S1": 0.06298615279913872
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_id": "infrastructure_collapse",
+      "knob": "esubd_gro",
+      "S1": 0.09772325288410029
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_id": "prolonged_contained",
+      "knob": "esubm_chm",
+      "S1": 0.6821023521475932
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_id": "prolonged_contained",
+      "knob": "esubd_chm",
+      "S1": 0.41782219424548916
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_id": "prolonged_contained",
+      "knob": "esubm_gro",
+      "S1": 0.05614808259368067
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_id": "prolonged_contained",
+      "knob": "esubd_gro",
+      "S1": 0.09940203963373598
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_id": "prolonged_escalated",
+      "knob": "esubm_chm",
+      "S1": 0.5866326756181314
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_id": "prolonged_escalated",
+      "knob": "esubd_chm",
+      "S1": 0.4954269549315487
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_id": "prolonged_escalated",
+      "knob": "esubm_gro",
+      "S1": 0.06299303058809877
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_id": "prolonged_escalated",
+      "knob": "esubd_gro",
+      "S1": 0.09772383079688196
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_id": "swift_contained",
+      "knob": "esubm_chm",
+      "S1": 0.8443001390668169
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_id": "swift_contained",
+      "knob": "esubd_chm",
+      "S1": 0.2879699807947188
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_id": "swift_contained",
+      "knob": "esubm_gro",
+      "S1": 0.0422856633064119
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_id": "swift_contained",
+      "knob": "esubd_gro",
+      "S1": 0.10038402040892912
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_id": "swift_escalated",
+      "knob": "esubm_chm",
+      "S1": 0.6821023521475932
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_id": "swift_escalated",
+      "knob": "esubd_chm",
+      "S1": 0.41782219424548916
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_id": "swift_escalated",
+      "knob": "esubm_gro",
+      "S1": 0.05614808259368067
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_id": "swift_escalated",
+      "knob": "esubd_gro",
+      "S1": 0.09940203963373598
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_id": "infrastructure_collapse",
+      "knob": "esubm_chm",
+      "S1": 0.8944437208484131
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_id": "infrastructure_collapse",
+      "knob": "esubd_chm",
+      "S1": 0.2342652768597038
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_id": "infrastructure_collapse",
+      "knob": "esubm_gro",
+      "S1": 0.04126246078930522
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_id": "infrastructure_collapse",
+      "knob": "esubd_gro",
+      "S1": 0.0960894827725012
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_id": "prolonged_contained",
+      "knob": "esubm_chm",
+      "S1": 0.9276767676759377
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_id": "prolonged_contained",
+      "knob": "esubd_chm",
+      "S1": 0.21768351153470675
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_id": "prolonged_contained",
+      "knob": "esubm_gro",
+      "S1": 0.04101960313129916
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_id": "prolonged_contained",
+      "knob": "esubd_gro",
+      "S1": 0.0975506509179346
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_id": "prolonged_escalated",
+      "knob": "esubm_chm",
+      "S1": 0.894444060442245
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_id": "prolonged_escalated",
+      "knob": "esubd_chm",
+      "S1": 0.23419312454500407
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_id": "prolonged_escalated",
+      "knob": "esubm_gro",
+      "S1": 0.041254848134122585
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_id": "prolonged_escalated",
+      "knob": "esubd_gro",
+      "S1": 0.09606928455272878
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_id": "swift_contained",
+      "knob": "esubm_chm",
+      "S1": 0.8643290353961719
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_id": "swift_contained",
+      "knob": "esubd_chm",
+      "S1": 0.27438749803847634
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_id": "swift_contained",
+      "knob": "esubm_gro",
+      "S1": 0.04087937636916851
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_id": "swift_contained",
+      "knob": "esubd_gro",
+      "S1": 0.10478189989239296
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_id": "swift_escalated",
+      "knob": "esubm_chm",
+      "S1": 0.9276767676759377
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_id": "swift_escalated",
+      "knob": "esubd_chm",
+      "S1": 0.21768351153470675
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_id": "swift_escalated",
+      "knob": "esubm_gro",
+      "S1": 0.04101960313129916
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_id": "swift_escalated",
+      "knob": "esubd_gro",
+      "S1": 0.0975506509179346
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_id": "infrastructure_collapse",
+      "knob": "esubm_chm",
+      "S1": 0.606273305481369
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_id": "infrastructure_collapse",
+      "knob": "esubd_chm",
+      "S1": 0.2026760254389089
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_id": "infrastructure_collapse",
+      "knob": "esubm_gro",
+      "S1": 0.11384075454661341
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_id": "infrastructure_collapse",
+      "knob": "esubd_gro",
+      "S1": 0.10945382763343374
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_id": "prolonged_contained",
+      "knob": "esubm_chm",
+      "S1": 0.19455401441722533
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_id": "prolonged_contained",
+      "knob": "esubd_chm",
+      "S1": 0.2047334266292994
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_id": "prolonged_contained",
+      "knob": "esubm_gro",
+      "S1": 0.11566357046255661
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_id": "prolonged_contained",
+      "knob": "esubd_gro",
+      "S1": 0.04440768542225033
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_id": "prolonged_escalated",
+      "knob": "esubm_chm",
+      "S1": 0.6246780998015481
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_id": "prolonged_escalated",
+      "knob": "esubd_chm",
+      "S1": 0.155662703386064
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_id": "prolonged_escalated",
+      "knob": "esubm_gro",
+      "S1": 0.10306284585235168
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_id": "prolonged_escalated",
+      "knob": "esubd_gro",
+      "S1": 0.08881705114463626
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_id": "swift_contained",
+      "knob": "esubm_chm",
+      "S1": 0.37499999999999994
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_id": "swift_contained",
+      "knob": "esubd_chm",
+      "S1": 0.21875
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_id": "swift_contained",
+      "knob": "esubm_gro",
+      "S1": 0.0625
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_id": "swift_contained",
+      "knob": "esubd_gro",
+      "S1": 0.11458333333333331
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_id": "swift_escalated",
+      "knob": "esubm_chm",
+      "S1": 0.19455401441722533
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_id": "swift_escalated",
+      "knob": "esubd_chm",
+      "S1": 0.2047334266292994
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_id": "swift_escalated",
+      "knob": "esubm_gro",
+      "S1": 0.11566357046255661
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_id": "swift_escalated",
+      "knob": "esubd_gro",
+      "S1": 0.04440768542225033
+    }
+  ],
+  "ordering": [
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_a": "infrastructure_collapse",
+      "scenario_b": "prolonged_contained",
+      "point_order": "infrastructure_collapse < prolonged_contained",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_a": "infrastructure_collapse",
+      "scenario_b": "prolonged_escalated",
+      "point_order": "infrastructure_collapse > prolonged_escalated",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_a": "infrastructure_collapse",
+      "scenario_b": "swift_contained",
+      "point_order": "infrastructure_collapse < swift_contained",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_a": "infrastructure_collapse",
+      "scenario_b": "swift_escalated",
+      "point_order": "infrastructure_collapse < swift_escalated",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_a": "prolonged_contained",
+      "scenario_b": "prolonged_escalated",
+      "point_order": "prolonged_contained > prolonged_escalated",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_a": "prolonged_contained",
+      "scenario_b": "swift_contained",
+      "point_order": "prolonged_contained < swift_contained",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_a": "prolonged_contained",
+      "scenario_b": "swift_escalated",
+      "point_order": "prolonged_contained = swift_escalated (tie)",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_a": "prolonged_escalated",
+      "scenario_b": "swift_contained",
+      "point_order": "prolonged_escalated < swift_contained",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_a": "prolonged_escalated",
+      "scenario_b": "swift_escalated",
+      "point_order": "prolonged_escalated < swift_escalated",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "gulf_gdp_pct",
+      "scenario_a": "swift_contained",
+      "scenario_b": "swift_escalated",
+      "point_order": "swift_contained > swift_escalated",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_a": "infrastructure_collapse",
+      "scenario_b": "prolonged_contained",
+      "point_order": "infrastructure_collapse < prolonged_contained",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_a": "infrastructure_collapse",
+      "scenario_b": "prolonged_escalated",
+      "point_order": "infrastructure_collapse > prolonged_escalated",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_a": "infrastructure_collapse",
+      "scenario_b": "swift_contained",
+      "point_order": "infrastructure_collapse < swift_contained",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_a": "infrastructure_collapse",
+      "scenario_b": "swift_escalated",
+      "point_order": "infrastructure_collapse < swift_escalated",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_a": "prolonged_contained",
+      "scenario_b": "prolonged_escalated",
+      "point_order": "prolonged_contained > prolonged_escalated",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_a": "prolonged_contained",
+      "scenario_b": "swift_contained",
+      "point_order": "prolonged_contained < swift_contained",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_a": "prolonged_contained",
+      "scenario_b": "swift_escalated",
+      "point_order": "prolonged_contained = swift_escalated (tie)",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_a": "prolonged_escalated",
+      "scenario_b": "swift_contained",
+      "point_order": "prolonged_escalated < swift_contained",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_a": "prolonged_escalated",
+      "scenario_b": "swift_escalated",
+      "point_order": "prolonged_escalated < swift_escalated",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_chm_consumption_pct",
+      "scenario_a": "swift_contained",
+      "scenario_b": "swift_escalated",
+      "point_order": "swift_contained > swift_escalated",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_a": "infrastructure_collapse",
+      "scenario_b": "prolonged_contained",
+      "point_order": "infrastructure_collapse < prolonged_contained",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_a": "infrastructure_collapse",
+      "scenario_b": "prolonged_escalated",
+      "point_order": "infrastructure_collapse > prolonged_escalated",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_a": "infrastructure_collapse",
+      "scenario_b": "swift_contained",
+      "point_order": "infrastructure_collapse < swift_contained",
+      "share_kept": 0.91,
+      "n": 100
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_a": "infrastructure_collapse",
+      "scenario_b": "swift_escalated",
+      "point_order": "infrastructure_collapse < swift_escalated",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_a": "prolonged_contained",
+      "scenario_b": "prolonged_escalated",
+      "point_order": "prolonged_contained > prolonged_escalated",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_a": "prolonged_contained",
+      "scenario_b": "swift_contained",
+      "point_order": "prolonged_contained > swift_contained",
+      "share_kept": 0.84,
+      "n": 100
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_a": "prolonged_contained",
+      "scenario_b": "swift_escalated",
+      "point_order": "prolonged_contained = swift_escalated (tie)",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_a": "prolonged_escalated",
+      "scenario_b": "swift_contained",
+      "point_order": "prolonged_escalated < swift_contained",
+      "share_kept": 0.91,
+      "n": 100
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_a": "prolonged_escalated",
+      "scenario_b": "swift_escalated",
+      "point_order": "prolonged_escalated < swift_escalated",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_gdp_pct",
+      "scenario_a": "swift_contained",
+      "scenario_b": "swift_escalated",
+      "point_order": "swift_contained < swift_escalated",
+      "share_kept": 0.84,
+      "n": 100
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_a": "infrastructure_collapse",
+      "scenario_b": "prolonged_contained",
+      "point_order": "infrastructure_collapse > prolonged_contained",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_a": "infrastructure_collapse",
+      "scenario_b": "prolonged_escalated",
+      "point_order": "infrastructure_collapse < prolonged_escalated",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_a": "infrastructure_collapse",
+      "scenario_b": "swift_contained",
+      "point_order": "infrastructure_collapse > swift_contained",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_a": "infrastructure_collapse",
+      "scenario_b": "swift_escalated",
+      "point_order": "infrastructure_collapse > swift_escalated",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_a": "prolonged_contained",
+      "scenario_b": "prolonged_escalated",
+      "point_order": "prolonged_contained < prolonged_escalated",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_a": "prolonged_contained",
+      "scenario_b": "swift_contained",
+      "point_order": "prolonged_contained > swift_contained",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_a": "prolonged_contained",
+      "scenario_b": "swift_escalated",
+      "point_order": "prolonged_contained = swift_escalated (tie)",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_a": "prolonged_escalated",
+      "scenario_b": "swift_contained",
+      "point_order": "prolonged_escalated > swift_contained",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_a": "prolonged_escalated",
+      "scenario_b": "swift_escalated",
+      "point_order": "prolonged_escalated > swift_escalated",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_gro_price_pct",
+      "scenario_a": "swift_contained",
+      "scenario_b": "swift_escalated",
+      "point_order": "swift_contained < swift_escalated",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_a": "infrastructure_collapse",
+      "scenario_b": "prolonged_contained",
+      "point_order": "infrastructure_collapse = prolonged_contained (tie)",
+      "share_kept": 0.14,
+      "n": 100
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_a": "infrastructure_collapse",
+      "scenario_b": "prolonged_escalated",
+      "point_order": "infrastructure_collapse = prolonged_escalated (tie)",
+      "share_kept": 0.87,
+      "n": 100
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_a": "infrastructure_collapse",
+      "scenario_b": "swift_contained",
+      "point_order": "infrastructure_collapse > swift_contained",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_a": "infrastructure_collapse",
+      "scenario_b": "swift_escalated",
+      "point_order": "infrastructure_collapse = swift_escalated (tie)",
+      "share_kept": 0.14,
+      "n": 100
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_a": "prolonged_contained",
+      "scenario_b": "prolonged_escalated",
+      "point_order": "prolonged_contained = prolonged_escalated (tie)",
+      "share_kept": 0.13,
+      "n": 100
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_a": "prolonged_contained",
+      "scenario_b": "swift_contained",
+      "point_order": "prolonged_contained > swift_contained",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_a": "prolonged_contained",
+      "scenario_b": "swift_escalated",
+      "point_order": "prolonged_contained = swift_escalated (tie)",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_a": "prolonged_escalated",
+      "scenario_b": "swift_contained",
+      "point_order": "prolonged_escalated > swift_contained",
+      "share_kept": 1.0,
+      "n": 100
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_a": "prolonged_escalated",
+      "scenario_b": "swift_escalated",
+      "point_order": "prolonged_escalated = swift_escalated (tie)",
+      "share_kept": 0.13,
+      "n": 100
+    },
+    {
+      "variable": "us_maize_yield_change_pct",
+      "scenario_a": "swift_contained",
+      "scenario_b": "swift_escalated",
+      "point_order": "swift_contained < swift_escalated",
+      "share_kept": 1.0,
+      "n": 100
+    }
+  ]
+}

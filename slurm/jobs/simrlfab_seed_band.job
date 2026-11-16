@@ -1,0 +1,44 @@
+#!/bin/bash
+# ==================================================================
+# SimRLFab seed band for a finished run (scripts/revision/simrlfab_seed_band.py).
+#
+# Re-runs each SimRLFab cell's recorded inputs, plus a paired no-shortfall
+# control, over a list of seeds (SimRLFab hardcodes SEED=10). Reads state
+# records only; writes docs/revision/runs/<run_id>/simrlfab_seed_band.*.
+# CPU only, but TensorFlow needs AVX, so it cannot run on the login node.
+#
+#   sbatch --exclude=orion,tesla1,tesla2,h100 \
+#       --export=ALL,HORMUZ_RUN_ID=supp_full_20260504_222710 slurm/jobs/simrlfab_seed_band.job
+#
+# Env: HORMUZ_RUN_ID (required), HORMUZ_BAND_SEEDS (10-19), HORMUZ_CONDA_ENV (hormuz)
+# ==================================================================
+#SBATCH --job-name=hormuz-simrlfab-band
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=2
+#SBATCH --mem=8G
+#SBATCH --time=04:00:00
+#SBATCH --output=slurm/logs/simrlfab_seed_band-%j.out
+#SBATCH --error=slurm/logs/simrlfab_seed_band-%j.err
+
+set -uo pipefail
+PROJECT_ROOT="${SLURM_SUBMIT_DIR:-$(pwd)}"
+cd "$PROJECT_ROOT"
+: "${HORMUZ_RUN_ID:?set HORMUZ_RUN_ID}"
+SEEDS="${HORMUZ_BAND_SEEDS:-10-19}"
+
+for _c in "${HOME}/miniconda3" "${HOME}/anaconda3"; do
+    if [[ -f "${_c}/etc/profile.d/conda.sh" ]]; then
+        source "${_c}/etc/profile.d/conda.sh"
+        break
+    fi
+done
+conda activate "${HORMUZ_CONDA_ENV:-hormuz}" || { echo "[band] cannot activate conda env"; exit 1; }
+export CUDA_VISIBLE_DEVICES=""
+
+echo "[band] run=${HORMUZ_RUN_ID} seeds=${SEEDS} node=$(hostname) started $(date -u +%FT%TZ)"
+python scripts/revision/simrlfab_seed_band.py --run-id "$HORMUZ_RUN_ID" --seeds "$SEEDS" \
+    --out-dir "docs/revision/runs/${HORMUZ_RUN_ID}"
+rc=$?
+echo "[band] exit=${rc} finished $(date -u +%FT%TZ)"
+exit "$rc"

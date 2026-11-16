@@ -1,0 +1,154 @@
+{
+  "run_id": "20260504_222710",
+  "scenario_id": "swift_escalated",
+  "outcome_variable": "oil_price_change_pct",
+  "source_model_id": "fed_oil",
+  "synthesized_value": 58.25,
+  "narrative_summary": "The oil price is expected to increase by 58.25% due to the disruption in the Strait of Hormuz.",
+  "synthesis_outcomes": [
+    {
+      "time_horizon": "short_run",
+      "outcome_scope": "macro",
+      "value": "58.25",
+      "source_model_id": "fed_oil",
+      "narrative_summary": "The oil price is expected to increase by 58.25% due to the disruption in the Strait of Hormuz."
+    }
+  ],
+  "model_status": "completed",
+  "implementation_mode": null,
+  "model_outputs": {
+    "shock_type": "supply",
+    "oil_price_change_pct": 58.25,
+    "disruption_duration_quarters": 1.0,
+    "fed_funds_rate_baseline": 2.5,
+    "peak_gdp_impact_pct": -0.6553,
+    "peak_cpi_impact_pp": 1.165,
+    "peak_ffr_impact_pp": 0.5825,
+    "peak_unemployment_impact_pp": 0.3277,
+    "gdp_irf_pct_quarterly": [
+      -0.6553,
+      -0.557,
+      -0.4735,
+      -0.4024,
+      -0.3421,
+      -0.2908,
+      -0.2472,
+      -0.2101
+    ],
+    "cpi_irf_pp_quarterly": [
+      1.165,
+      0.8738,
+      0.6553,
+      0.4915,
+      0.3686,
+      0.2765,
+      0.2073,
+      0.1555
+    ],
+    "fed_funds_rate_irf_pp_quarterly": [
+      0.5825,
+      0.3786,
+      0.2315,
+      0.1264,
+      0.0523,
+      0.001,
+      -0.0337,
+      -0.0562
+    ],
+    "fed_funds_rate_path_pct_quarterly": [
+      3.0825,
+      2.8786,
+      2.7315,
+      2.6264,
+      2.5523,
+      2.501,
+      2.4663,
+      2.4438
+    ],
+    "unemployment_irf_pp_quarterly": [
+      0.3277,
+      0.2785,
+      0.2367,
+      0.2012,
+      0.171,
+      0.1454,
+      0.1236,
+      0.105
+    ],
+    "fevd_oil_share": 0.35,
+    "zlb_binding": false,
+    "horizon_quarters": 8,
+    "_upstream_overrides": [
+      {
+        "name": "oil_price_change_pct",
+        "target_key": null,
+        "llm_value": 25.0,
+        "computed_value": 58.25,
+        "source_model_id": "poles_jrc",
+        "source_field": "peak_price_change_pct",
+        "transform": "identity",
+        "deviation_pct": 79.87987987987988
+      }
+    ]
+  },
+  "model_runtime_seconds": 0.00020621530711650848,
+  "upstream_overrides": [
+    {
+      "name": "oil_price_change_pct",
+      "target_key": null,
+      "llm_value": 25.0,
+      "computed_value": 58.25,
+      "source_model_id": "poles_jrc",
+      "source_field": "peak_price_change_pct",
+      "transform": "identity",
+      "deviation_pct": 79.87987987987988,
+      "flagged": true,
+      "threshold_pct": 50.0,
+      "source_ran_in_run": true
+    }
+  ],
+  "model_inputs": {
+    "oil_price_change_pct": 25.0,
+    "shock_type": "supply",
+    "disruption_duration_quarters": 1.0,
+    "fed_funds_rate_baseline": 2.5
+  },
+  "parameter_confidence": {
+    "oil_price_change_pct": "high",
+    "shock_type": "high",
+    "disruption_duration_quarters": "low",
+    "fed_funds_rate_baseline": "low"
+  },
+  "parameter_units": {
+    "oil_price_change_pct": "%",
+    "shock_type": "",
+    "disruption_duration_quarters": "quarters",
+    "fed_funds_rate_baseline": "%"
+  },
+  "parameter_notes": {
+    "oil_price_change_pct": "Directly stated in the narrative as 25% of global oil supply disruption",
+    "shock_type": "Directly stated in the narrative as a supply shock due to the Strait of Hormuz closure",
+    "disruption_duration_quarters": "The narrative does not explicitly state the duration in quarters, but the closure lasted for 4 months. Assuming a typical quarter is approximately 3 months, the disruption duration is approximately 1 quarter. This is a best-effort domain-knowledge default.",
+    "fed_funds_rate_baseline": "The narrative does not explicitly state the baseline federal funds rate. Assuming a typical baseline rate is around 2.5% based on historical data. This is a best-effort domain-knowledge default."
+  },
+  "parameter_validation_status": "approved",
+  "scenario_label": "Swift Escalated Conflict",
+  "scenario_narrative_excerpt": "February 2026: The Strait of Hormuz is closed due to a military escalation between Iran and a US/Israel coalition. The closure disrupts approximately 21% of global oil supply and 25% of global LNG trade. Qatar, the world's largest LNG exporter, is effectively blockaded. The disruption also threatens Persian Gulf desalination plants serving tens of millions of people and approximately 30% of global helium supply.\n\nFebruary 20, 2026: The US and Israel launch a series of airstrikes against Iranian ",
+  "relevant_assumptions": {
+    "closure_duration": "120 days",
+    "oil_supply_disruption": "0.21",
+    "lng_trade_disruption": "0.25"
+  },
+  "narrative_sentences": {
+    "oil_price_change_pct": [
+      "The closure disrupts approximately 21% of global oil supply and 25% of global LNG trade.",
+      "February 25, 2026: The conflict escalates, with both sides suffering significant losses."
+    ]
+  },
+  "chain_links": {
+    "narrative": true,
+    "parameters": true,
+    "model_run": true,
+    "synthesis": true
+  }
+}

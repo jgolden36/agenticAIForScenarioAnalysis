@@ -4,7 +4,8 @@
 One command for the rebuttal: builds the coverage ledger, run-specific
 model inventory, synthesis fidelity audit, anchor-only comparison,
 checkpoint report, coverage facts, pycge replay, effort metrics, software
-versions, model licenses, the deterministic analyst baseline (optional,
+versions, model licenses, the robustness checks (zero-shock ladder,
+elasticity Latin hypercube, open loop vs fixed point), the deterministic analyst baseline (optional,
 ``--baseline``) and its comparison with the LLM run.
 
 Each step calls the generator's ``main()`` in-process; a failing step is
@@ -34,6 +35,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 STEP_NAMES: tuple[str, ...] = (
     "coverage_ledger", "model_inventory", "fidelity_audit", "anchor_comparison", "checkpoint_report",
     "coverage_facts", "pycge_replay", "effort_metrics", "software_versions", "model_licenses",
+    "zero_shock_ladder", "elasticity_lhs", "open_loop_gap",
     "deterministic_baseline", "compare_runs", "baseline_coverage_ledger", "copy_baseline_summary",
 )
 
@@ -122,6 +124,18 @@ def main(argv: list[str] | None = None) -> int:
         versions_args += ["--runtime-dir", args.runtime_dir]
     _step("software_versions", lambda: versions_main(versions_args))
     _step("model_licenses", lambda: licenses_main(["--out-dir", str(out)]))
+
+    # Robustness checks ported from the AgResilience suite (E0 / E9 / E3);
+    # analyst-baseline inputs, no LLM. apsim_gtap joins when its config exists.
+    from scripts.revision.zero_shock_ladder import main as ladder_main
+    from scripts.revision.elasticity_lhs import main as lhs_main
+    from scripts.revision.open_loop_gap import main as open_loop_main
+
+    robustness = out / "robustness"
+    _step("zero_shock_ladder", lambda: ladder_main(["--out-dir", str(robustness)]))
+    _step("elasticity_lhs", lambda: lhs_main(["--out-dir", str(robustness)]))
+    _step("open_loop_gap", lambda: open_loop_main(["--out-dir", str(robustness), "--state-dir", str(state_dir),
+                                                   "--run-id", args.run_id]))
 
     if args.baseline:
         from slurm.scripts.run_deterministic_baseline import main as baseline_main

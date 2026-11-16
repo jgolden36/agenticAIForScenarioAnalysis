@@ -1,0 +1,242 @@
+scenario_id,model_id,status,implementation_mode,manifest_name,resource_class,node,slurm_job_id,task_id,runtime_seconds,started_at,completed_at,error_message
+swift_contained,ggm,skipped,,models_baseline,cpu,local,local,0,,2026-11-08T19:58:28.145948+00:00,2026-11-08T19:58:28.150288+00:00,"Model not yet implemented: GGMAdapter.execute() requires a GGMConfig. Prerequisites:
+  1. GAMS installation with CPLEX solver license
+  2. gamsapi Python package (pip install gamsapi[transfer])
+  3. GGM model directory with data/SET-Nav/*.xlsx files
+  4. GGMConfig(gams_system_dir=..., model_dir=...)
+"
+swift_contained,magpie,skipped,,models_baseline,cpu,local,local,1,,2026-11-08T19:58:28.146837+00:00,2026-11-08T19:58:28.150398+00:00,"Model not yet implemented: MAgPIE source tree not found. Pass magpie_root to the adapter constructor or set the MAGPIE_ROOT environment variable. Tried: none of Models/Fertilizer/magpie-master/magpie-master, Models/Fertilizer/magpie-master, Models/Fertilizer/magpie"
+swift_contained,lngst,completed,analytical_reduction,models_baseline,cpu,local,local,10,0.014914,2026-11-08T19:58:28.155481+00:00,2026-11-08T19:58:28.170395+00:00,
+swift_escalated,osemosys,skipped,,models_baseline,cpu,local,local,100,,2026-11-08T20:05:04.111473+00:00,2026-11-08T20:05:04.113058+00:00,Model not yet implemented: OSeMOSYS baseline_data_dir not found: data/osemosys/baseline. Provide a baseline dataset (CSV-per-parameter layout).
+swift_escalated,messageix,failed,,models_baseline,cpu,local,local,101,,2026-11-08T20:05:04.113450+00:00,2026-11-08T20:05:04.114251+00:00,JVMNotFoundException: No JVM shared library file (libjvm.so) found. Try setting up the JAVA_HOME environment variable properly.
+swift_escalated,temoa,skipped,,models_baseline,cpu,local,local,102,,2026-11-08T20:05:04.114402+00:00,2026-11-08T20:05:04.115742+00:00,Model not yet implemented: TEMOA baseline DB not found: Models/Energy/TEMOA/data_files/utopia.sqlite. Vendor a baseline SQLite (e.g. utopia.sqlite) under Models/Energy/TEMOA/data_files/ or override TEMOAConfig.baseline_db_path.
+swift_escalated,gtap,skipped,,models_baseline,cpu,local,local,103,,2026-11-08T20:05:04.115875+00:00,2026-11-08T20:05:04.116643+00:00,"Model not yet implemented: GTAPAdapter.execute is not yet implemented. Real integration requires: (1) a licensed GTAP database (version 10+, from the GTAP Center at Purdue University), (2) a GTAP model software installation (RunGTAP or FlexGTAP), (3) writing shock and closure files specifying oil price, fertilizer cost, and trade-route disruption shocks, (4) invoking the GTAP executable via subprocess, and (5) parsing the HAR/SOL solution file for welfare (EV by region), bilateral trade flows, and producer/consumer price changes by sector."
+swift_escalated,mpsge_jl,completed,analytical_reduction,models_baseline,cpu,local,local,104,0.000948,2026-11-08T20:05:04.116767+00:00,2026-11-08T20:05:04.117715+00:00,
+prolonged_escalated,ggm,skipped,,models_baseline,cpu,local,local,105,,2026-11-08T20:07:30.271737+00:00,2026-11-08T20:07:30.279014+00:00,"Model not yet implemented: GGMAdapter.execute() requires a GGMConfig. Prerequisites:
+  1. GAMS installation with CPLEX solver license
+  2. gamsapi Python package (pip install gamsapi[transfer])
+  3. GGM model directory with data/SET-Nav/*.xlsx files
+  4. GGMConfig(gams_system_dir=..., model_dir=...)
+"
+prolonged_escalated,magpie,skipped,,models_baseline,cpu,local,local,106,,2026-11-08T20:07:30.272101+00:00,2026-11-08T20:07:30.279715+00:00,"Model not yet implemented: MAgPIE source tree not found. Pass magpie_root to the adapter constructor or set the MAGPIE_ROOT environment variable. Tried: none of Models/Fertilizer/magpie-master/magpie-master, Models/Fertilizer/magpie-master, Models/Fertilizer/magpie"
+prolonged_escalated,sahysmod,failed,,models_baseline,cpu,local,local,107,,2026-11-08T20:07:30.273321+00:00,2026-11-08T20:07:30.325770+00:00,FileNotFoundError: [Errno 2] No such file or directory: 'Models/Water/SahysMod/SahysMod.exe'
+prolonged_escalated,cwatm,completed,analytical_reduction,models_baseline,cpu,local,local,108,0.004939,2026-11-08T20:07:30.276031+00:00,2026-11-08T20:07:30.280970+00:00,
+prolonged_escalated,weap_mena,completed,analytical_reduction,models_baseline,cpu,local,local,109,0.003843,2026-11-08T20:07:30.280136+00:00,2026-11-08T20:07:30.283979+00:00,
+swift_contained,world_helium_model,completed,analytical_reduction,models_baseline,cpu,local,local,11,0.00557,2026-11-08T19:58:28.163150+00:00,2026-11-08T19:58:28.168720+00:00,
+prolonged_escalated,watergap2,skipped,,models_baseline,cpu,local,local,110,,2026-11-08T20:07:30.280457+00:00,2026-11-08T20:07:30.284118+00:00,"Model not yet implemented: WaterGAP2Adapter.execute() requires a WaterGAP2Config. To integrate WaterGAP2:
+  1. Build the binary from the C++ sources at Models/Water/WaterGAP2-v2.2d/HydrologyFrankfurt-WaterGAP2-65f306b/source/ via CMake, OR obtain access to the Frankfurt WaterGAP2 web service.
+  2. Stage global climate forcing NetCDFs (precipitation, temperature) under forcing_data_path.
+  3. Configure the adapter via configs/model_configs/watergap2.yaml.
+  4. Implement either subprocess invocation of the compiled binary or a REST client against the web service inside this method.
+  5. Build a NetCDF damage mask from 'affected_grid_cells' and 'infrastructure_damage_index' and pass it to WaterGAP2.
+  6. Parse gridded NetCDF outputs in parse_outputs."
+prolonged_escalated,bornstein_krusell_rebelo,failed,,models_baseline,cpu,local,local,111,,2026-11-08T20:07:30.281093+00:00,2026-11-08T20:07:30.286435+00:00,FileNotFoundError: Dynare .mod file not found: Models/Oil/WorldEquilibriumOilModel/Replication Files/Section 5/supply_shocks_to_non_opec/dynare_codes/World_Economy_Cartel_nonopec_shocks.mod. Verify the section/mod_file configuration.
+prolonged_escalated,poles_jrc,completed,analytical_reduction,models_baseline,cpu,local,local,112,0.009787,2026-11-08T20:07:30.285333+00:00,2026-11-08T20:07:30.295120+00:00,
+prolonged_escalated,marketsim,completed,analytical_reduction,models_baseline,cpu,local,local,113,0.00758,2026-11-08T20:07:30.285677+00:00,2026-11-08T20:07:30.293257+00:00,
+prolonged_escalated,energy_flux_gas_power,completed,full_upstream,models_baseline,cpu,local,local,114,0.007503,2026-11-08T20:07:30.287447+00:00,2026-11-08T20:07:30.294950+00:00,
+prolonged_escalated,lngst,completed,analytical_reduction,models_baseline,cpu,local,local,115,0.011027,2026-11-08T20:07:30.293405+00:00,2026-11-08T20:07:30.304432+00:00,
+prolonged_escalated,world_helium_model,completed,analytical_reduction,models_baseline,cpu,local,local,116,0.007548,2026-11-08T20:07:30.295236+00:00,2026-11-08T20:07:30.302784+00:00,
+prolonged_escalated,capri,skipped,,models_baseline,cpu,local,local,117,,2026-11-08T20:07:30.295568+00:00,2026-11-08T20:07:30.302955+00:00,"Model not yet implemented: CAPRIAdapter.execute is not yet implemented. Real integration requires: (1) a GAMS installation with the CAPRI model repository, (2) writing scenario shock files to the CAPRI scenario directory, (3) invoking the CAPRI GAMS entry point via subprocess, and (4) parsing the CAPRI results database (GDX or CSV output)."
+prolonged_escalated,simple_g,skipped,,models_baseline,cpu,local,local,118,,2026-11-08T20:07:30.303740+00:00,2026-11-08T20:07:30.305672+00:00,"Model not yet implemented: SIMPLEGAdapter.execute is not yet implemented. Real integration requires: (1) a GAMS installation with the SIMPLE-G model, (2) writing scenario shock parameters to a GAMS-compatible input file, (3) invoking the SIMPLE-G GAMS entry point via subprocess, and (4) parsing output GDX or CSV files for agricultural price, trade, and welfare results by region."
+prolonged_escalated,world_fertilizer,completed,analytical_reduction,models_baseline,cpu,local,local,119,0.031044,2026-11-08T20:07:30.304096+00:00,2026-11-08T20:07:30.335140+00:00,
+swift_contained,capri,skipped,,models_baseline,cpu,local,local,12,,2026-11-08T19:58:28.163258+00:00,2026-11-08T19:58:28.168748+00:00,"Model not yet implemented: CAPRIAdapter.execute is not yet implemented. Real integration requires: (1) a GAMS installation with the CAPRI model repository, (2) writing scenario shock files to the CAPRI scenario directory, (3) invoking the CAPRI GAMS entry point via subprocess, and (4) parsing the CAPRI results database (GDX or CSV output)."
+prolonged_escalated,futures,completed,analytical_reduction,models_baseline,cpu,local,local,120,0.030179,2026-11-08T20:07:30.304559+00:00,2026-11-08T20:07:30.334738+00:00,
+prolonged_escalated,aisdb,completed,analytical_reduction,models_baseline,cpu,local,local,121,0.000963,2026-11-08T20:07:30.306380+00:00,2026-11-08T20:07:30.307343+00:00,
+prolonged_escalated,ais_project,completed,analytical_reduction,models_baseline,cpu,local,local,122,0.000985,2026-11-08T20:07:30.307452+00:00,2026-11-08T20:07:30.308437+00:00,
+prolonged_escalated,simrlfab,completed,full_upstream,models_baseline,cpu,local,local,123,46.394568,2026-11-08T20:07:30.337364+00:00,2026-11-08T20:08:16.731932+00:00,
+prolonged_escalated,energy_flux_lng_profits,completed,full_upstream,models_baseline,cpu,local,local,124,0.015966,2026-11-08T20:07:30.337727+00:00,2026-11-08T20:07:30.353693+00:00,
+prolonged_escalated,argonne_abm,completed,analytical_reduction,models_baseline,cpu,local,local,125,0.00426,2026-11-08T20:07:30.349611+00:00,2026-11-08T20:07:30.353871+00:00,
+prolonged_escalated,apsim,completed,analytical_reduction,models_baseline,cpu,local,local,126,0.004278,2026-11-08T20:07:30.349806+00:00,2026-11-08T20:07:30.354084+00:00,
+prolonged_escalated,nems,skipped,,models_baseline,cpu,local,local,127,,2026-11-08T20:08:16.732910+00:00,2026-11-08T20:08:16.734424+00:00,"Model not yet implemented: NEMS output directory not found: data/nems_outputs/Hormuz_ScenarioD
+Run NEMS externally and place outputs at this path, or update NEMSConfig.scenario_dir_mapping."
+prolonged_escalated,mam,completed,published_output_ingestion,models_baseline,cpu,local,local,128,0.025927,2026-11-08T20:08:16.733082+00:00,2026-11-08T20:08:16.759009+00:00,
+prolonged_escalated,fed_oil,completed,analytical_reduction,models_baseline,cpu,local,local,129,0.002225,2026-11-08T20:08:16.734055+00:00,2026-11-08T20:08:16.736280+00:00,
+swift_contained,simple_g,skipped,,models_baseline,cpu,local,local,13,,2026-11-08T19:58:28.170117+00:00,2026-11-08T19:58:28.170760+00:00,"Model not yet implemented: SIMPLEGAdapter.execute is not yet implemented. Real integration requires: (1) a GAMS installation with the SIMPLE-G model, (2) writing scenario shock parameters to a GAMS-compatible input file, (3) invoking the SIMPLE-G GAMS entry point via subprocess, and (4) parsing output GDX or CSV files for agricultural price, trade, and welfare results by region."
+prolonged_escalated,nrel,completed,analytical_reduction,models_baseline,cpu,local,local,130,0.002167,2026-11-08T20:08:16.734176+00:00,2026-11-08T20:08:16.736343+00:00,
+prolonged_escalated,apsim_gtap,completed,full_upstream,models_baseline,cpu,local,local,131,160.402585,2026-11-08T20:08:16.760621+00:00,2026-11-08T20:10:57.163206+00:00,
+prolonged_escalated,opencge,failed,,models_baseline,cpu,local,local,132,,2026-11-08T20:08:16.760819+00:00,2026-11-08T20:08:16.799570+00:00,RuntimeError: Cluster failed to start: RM has detected an NVML/RM version mismatch.
+prolonged_escalated,pycge,completed,analytical_reduction,models_baseline,cpu,local,local,133,0.021685,2026-11-08T20:08:16.760986+00:00,2026-11-08T20:08:16.782671+00:00,
+prolonged_escalated,miragrodep,skipped,,models_baseline,cpu,local,local,134,,2026-11-08T20:08:16.761765+00:00,2026-11-08T20:08:16.771703+00:00,"Model not yet implemented: MIRAGRODEP requires the 'gams' executable on PATH (GAMS + a CONOPT/PATH licence). Install GAMS and ensure 'gams' is on PATH, or set MIRAGRODEPConfig.gams_executable to its absolute path."
+prolonged_escalated,osemosys,skipped,,models_baseline,cpu,local,local,135,,2026-11-08T20:08:16.771920+00:00,2026-11-08T20:08:16.772993+00:00,Model not yet implemented: OSeMOSYS baseline_data_dir not found: data/osemosys/baseline. Provide a baseline dataset (CSV-per-parameter layout).
+prolonged_escalated,messageix,failed,,models_baseline,cpu,local,local,136,,2026-11-08T20:08:16.773147+00:00,2026-11-08T20:08:16.774174+00:00,JVMNotFoundException: No JVM shared library file (libjvm.so) found. Try setting up the JAVA_HOME environment variable properly.
+prolonged_escalated,temoa,skipped,,models_baseline,cpu,local,local,137,,2026-11-08T20:08:16.774319+00:00,2026-11-08T20:08:16.775781+00:00,Model not yet implemented: TEMOA baseline DB not found: Models/Energy/TEMOA/data_files/utopia.sqlite. Vendor a baseline SQLite (e.g. utopia.sqlite) under Models/Energy/TEMOA/data_files/ or override TEMOAConfig.baseline_db_path.
+prolonged_escalated,gtap,skipped,,models_baseline,cpu,local,local,138,,2026-11-08T20:08:16.775921+00:00,2026-11-08T20:08:16.776661+00:00,"Model not yet implemented: GTAPAdapter.execute is not yet implemented. Real integration requires: (1) a licensed GTAP database (version 10+, from the GTAP Center at Purdue University), (2) a GTAP model software installation (RunGTAP or FlexGTAP), (3) writing shock and closure files specifying oil price, fertilizer cost, and trade-route disruption shocks, (4) invoking the GTAP executable via subprocess, and (5) parsing the HAR/SOL solution file for welfare (EV by region), bilateral trade flows, and producer/consumer price changes by sector."
+prolonged_escalated,mpsge_jl,completed,analytical_reduction,models_baseline,cpu,local,local,139,0.000738,2026-11-08T20:08:16.776781+00:00,2026-11-08T20:08:16.777519+00:00,
+swift_contained,world_fertilizer,completed,analytical_reduction,models_baseline,cpu,local,local,14,0.007608,2026-11-08T19:58:28.170239+00:00,2026-11-08T19:58:28.177847+00:00,
+infrastructure_collapse,ggm,skipped,,models_baseline,cpu,local,local,140,,2026-11-08T20:10:57.294435+00:00,2026-11-08T20:10:57.299965+00:00,"Model not yet implemented: GGMAdapter.execute() requires a GGMConfig. Prerequisites:
+  1. GAMS installation with CPLEX solver license
+  2. gamsapi Python package (pip install gamsapi[transfer])
+  3. GGM model directory with data/SET-Nav/*.xlsx files
+  4. GGMConfig(gams_system_dir=..., model_dir=...)
+"
+infrastructure_collapse,magpie,skipped,,models_baseline,cpu,local,local,141,,2026-11-08T20:10:57.294763+00:00,2026-11-08T20:10:57.300313+00:00,"Model not yet implemented: MAgPIE source tree not found. Pass magpie_root to the adapter constructor or set the MAGPIE_ROOT environment variable. Tried: none of Models/Fertilizer/magpie-master/magpie-master, Models/Fertilizer/magpie-master, Models/Fertilizer/magpie"
+infrastructure_collapse,sahysmod,failed,,models_baseline,cpu,local,local,142,,2026-11-08T20:10:57.296030+00:00,2026-11-08T20:10:57.328415+00:00,FileNotFoundError: [Errno 2] No such file or directory: 'Models/Water/SahysMod/SahysMod.exe'
+infrastructure_collapse,cwatm,completed,analytical_reduction,models_baseline,cpu,local,local,143,0.002762,2026-11-08T20:10:57.299242+00:00,2026-11-08T20:10:57.302004+00:00,
+infrastructure_collapse,weap_mena,completed,analytical_reduction,models_baseline,cpu,local,local,144,0.001508,2026-11-08T20:10:57.300586+00:00,2026-11-08T20:10:57.302094+00:00,
+infrastructure_collapse,watergap2,skipped,,models_baseline,cpu,local,local,145,,2026-11-08T20:10:57.300810+00:00,2026-11-08T20:10:57.302160+00:00,"Model not yet implemented: WaterGAP2Adapter.execute() requires a WaterGAP2Config. To integrate WaterGAP2:
+  1. Build the binary from the C++ sources at Models/Water/WaterGAP2-v2.2d/HydrologyFrankfurt-WaterGAP2-65f306b/source/ via CMake, OR obtain access to the Frankfurt WaterGAP2 web service.
+  2. Stage global climate forcing NetCDFs (precipitation, temperature) under forcing_data_path.
+  3. Configure the adapter via configs/model_configs/watergap2.yaml.
+  4. Implement either subprocess invocation of the compiled binary or a REST client against the web service inside this method.
+  5. Build a NetCDF damage mask from 'affected_grid_cells' and 'infrastructure_damage_index' and pass it to WaterGAP2.
+  6. Parse gridded NetCDF outputs in parse_outputs."
+infrastructure_collapse,bornstein_krusell_rebelo,failed,,models_baseline,cpu,local,local,146,,2026-11-08T20:10:57.302630+00:00,2026-11-08T20:10:57.305764+00:00,FileNotFoundError: Dynare .mod file not found: Models/Oil/WorldEquilibriumOilModel/Replication Files/Section 5/supply_shocks_to_non_opec/dynare_codes/World_Economy_Cartel_nonopec_shocks.mod. Verify the section/mod_file configuration.
+infrastructure_collapse,poles_jrc,completed,analytical_reduction,models_baseline,cpu,local,local,147,0.009606,2026-11-08T20:10:57.304785+00:00,2026-11-08T20:10:57.314391+00:00,
+infrastructure_collapse,marketsim,completed,analytical_reduction,models_baseline,cpu,local,local,148,0.000768,2026-11-08T20:10:57.304923+00:00,2026-11-08T20:10:57.305691+00:00,
+infrastructure_collapse,energy_flux_gas_power,completed,full_upstream,models_baseline,cpu,local,local,149,0.008274,2026-11-08T20:10:57.306034+00:00,2026-11-08T20:10:57.314308+00:00,
+swift_contained,futures,completed,analytical_reduction,models_baseline,cpu,local,local,15,0.011621,2026-11-08T19:58:28.170431+00:00,2026-11-08T19:58:28.182052+00:00,
+infrastructure_collapse,lngst,completed,analytical_reduction,models_baseline,cpu,local,local,150,0.015211,2026-11-08T20:10:57.306180+00:00,2026-11-08T20:10:57.321391+00:00,
+infrastructure_collapse,world_helium_model,completed,analytical_reduction,models_baseline,cpu,local,local,151,0.006295,2026-11-08T20:10:57.314446+00:00,2026-11-08T20:10:57.320741+00:00,
+infrastructure_collapse,capri,skipped,,models_baseline,cpu,local,local,152,,2026-11-08T20:10:57.314596+00:00,2026-11-08T20:10:57.320809+00:00,"Model not yet implemented: CAPRIAdapter.execute is not yet implemented. Real integration requires: (1) a GAMS installation with the CAPRI model repository, (2) writing scenario shock files to the CAPRI scenario directory, (3) invoking the CAPRI GAMS entry point via subprocess, and (4) parsing the CAPRI results database (GDX or CSV output)."
+infrastructure_collapse,simple_g,skipped,,models_baseline,cpu,local,local,153,,2026-11-08T20:10:57.321095+00:00,2026-11-08T20:10:57.321724+00:00,"Model not yet implemented: SIMPLEGAdapter.execute is not yet implemented. Real integration requires: (1) a GAMS installation with the SIMPLE-G model, (2) writing scenario shock parameters to a GAMS-compatible input file, (3) invoking the SIMPLE-G GAMS entry point via subprocess, and (4) parsing output GDX or CSV files for agricultural price, trade, and welfare results by region."
+infrastructure_collapse,world_fertilizer,completed,analytical_reduction,models_baseline,cpu,local,local,154,0.016489,2026-11-08T20:10:57.321252+00:00,2026-11-08T20:10:57.337741+00:00,
+infrastructure_collapse,futures,completed,analytical_reduction,models_baseline,cpu,local,local,155,0.016224,2026-11-08T20:10:57.321434+00:00,2026-11-08T20:10:57.337658+00:00,
+infrastructure_collapse,aisdb,completed,analytical_reduction,models_baseline,cpu,local,local,156,0.006008,2026-11-08T20:10:57.322054+00:00,2026-11-08T20:10:57.328062+00:00,
+infrastructure_collapse,ais_project,completed,analytical_reduction,models_baseline,cpu,local,local,157,0.009525,2026-11-08T20:10:57.328182+00:00,2026-11-08T20:10:57.337707+00:00,
+infrastructure_collapse,simrlfab,completed,full_upstream,models_baseline,cpu,local,local,158,121.169042,2026-11-08T20:10:57.339431+00:00,2026-11-08T20:12:58.508473+00:00,
+infrastructure_collapse,energy_flux_lng_profits,completed,full_upstream,models_baseline,cpu,local,local,159,0.017338,2026-11-08T20:10:57.339662+00:00,2026-11-08T20:10:57.357000+00:00,
+swift_contained,aisdb,completed,analytical_reduction,models_baseline,cpu,local,local,16,0.006587,2026-11-08T19:58:28.170908+00:00,2026-11-08T19:58:28.177495+00:00,
+infrastructure_collapse,argonne_abm,completed,analytical_reduction,models_baseline,cpu,local,local,160,0.003419,2026-11-08T20:10:57.353708+00:00,2026-11-08T20:10:57.357127+00:00,
+infrastructure_collapse,apsim,completed,analytical_reduction,models_baseline,cpu,local,local,161,0.003211,2026-11-08T20:10:57.353990+00:00,2026-11-08T20:10:57.357201+00:00,
+infrastructure_collapse,nems,failed,,models_baseline,cpu,local,local,162,,2026-11-08T20:12:58.510173+00:00,2026-11-08T20:12:58.510226+00:00,"Input validation failed: scenario_id 'infrastructure_collapse' not in NEMS output mapping. Available: baseline, prolonged_contained, prolonged_escalated, swift_contained, swift_escalated"
+infrastructure_collapse,mam,completed,published_output_ingestion,models_baseline,cpu,local,local,163,0.050373,2026-11-08T20:12:58.510250+00:00,2026-11-08T20:12:58.560623+00:00,
+infrastructure_collapse,fed_oil,completed,analytical_reduction,models_baseline,cpu,local,local,164,0.001502,2026-11-08T20:12:58.511528+00:00,2026-11-08T20:12:58.513030+00:00,
+infrastructure_collapse,nrel,completed,analytical_reduction,models_baseline,cpu,local,local,165,0.001463,2026-11-08T20:12:58.511663+00:00,2026-11-08T20:12:58.513126+00:00,
+infrastructure_collapse,apsim_gtap,failed,,models_baseline,cpu,local,local,166,,2026-11-08T20:12:58.563679+00:00,2026-11-08T20:36:53.100983+00:00,"RuntimeError: apsim_gtap subprocess failed (rc=1): rn fixed_point.gtap_solve(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File ""/home/dagolden/Agresiliency/results/full_suite/workspace/src/experiments/fixed_point.py"", line 54, in gtap_solve
+    resp.raise_for_status()
+  File ""/home/dagolden/miniconda3/envs/agres/lib/python3.11/site-packages/requests/models.py"", line 1167, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 500 Server Error: Internal Server Error for url: http://127.0.0.1:47339/
+"
+infrastructure_collapse,opencge,failed,,models_baseline,cpu,local,local,167,,2026-11-08T20:12:58.564015+00:00,2026-11-08T20:12:58.601030+00:00,RuntimeError: Cluster failed to start: RM has detected an NVML/RM version mismatch.
+infrastructure_collapse,pycge,completed,analytical_reduction,models_baseline,cpu,local,local,168,0.023243,2026-11-08T20:12:58.564289+00:00,2026-11-08T20:12:58.587532+00:00,
+infrastructure_collapse,miragrodep,skipped,,models_baseline,cpu,local,local,169,,2026-11-08T20:12:58.565376+00:00,2026-11-08T20:12:58.574170+00:00,"Model not yet implemented: MIRAGRODEP requires the 'gams' executable on PATH (GAMS + a CONOPT/PATH licence). Install GAMS and ensure 'gams' is on PATH, or set MIRAGRODEPConfig.gams_executable to its absolute path."
+swift_contained,ais_project,completed,analytical_reduction,models_baseline,cpu,local,local,17,0.00035,2026-11-08T19:58:28.177709+00:00,2026-11-08T19:58:28.178059+00:00,
+infrastructure_collapse,osemosys,skipped,,models_baseline,cpu,local,local,170,,2026-11-08T20:12:58.574765+00:00,2026-11-08T20:12:58.576392+00:00,Model not yet implemented: OSeMOSYS baseline_data_dir not found: data/osemosys/baseline. Provide a baseline dataset (CSV-per-parameter layout).
+infrastructure_collapse,messageix,failed,,models_baseline,cpu,local,local,171,,2026-11-08T20:12:58.576614+00:00,2026-11-08T20:12:58.578536+00:00,JVMNotFoundException: No JVM shared library file (libjvm.so) found. Try setting up the JAVA_HOME environment variable properly.
+infrastructure_collapse,temoa,skipped,,models_baseline,cpu,local,local,172,,2026-11-08T20:12:58.578942+00:00,2026-11-08T20:12:58.580371+00:00,Model not yet implemented: TEMOA baseline DB not found: Models/Energy/TEMOA/data_files/utopia.sqlite. Vendor a baseline SQLite (e.g. utopia.sqlite) under Models/Energy/TEMOA/data_files/ or override TEMOAConfig.baseline_db_path.
+infrastructure_collapse,gtap,skipped,,models_baseline,cpu,local,local,173,,2026-11-08T20:12:58.580721+00:00,2026-11-08T20:12:58.581609+00:00,"Model not yet implemented: GTAPAdapter.execute is not yet implemented. Real integration requires: (1) a licensed GTAP database (version 10+, from the GTAP Center at Purdue University), (2) a GTAP model software installation (RunGTAP or FlexGTAP), (3) writing shock and closure files specifying oil price, fertilizer cost, and trade-route disruption shocks, (4) invoking the GTAP executable via subprocess, and (5) parsing the HAR/SOL solution file for welfare (EV by region), bilateral trade flows, and producer/consumer price changes by sector."
+infrastructure_collapse,mpsge_jl,completed,analytical_reduction,models_baseline,cpu,local,local,174,0.001717,2026-11-08T20:12:58.581885+00:00,2026-11-08T20:12:58.583602+00:00,
+swift_contained,simrlfab,completed,full_upstream,models_baseline,cpu,local,local,18,35.515183,2026-11-08T19:58:28.183154+00:00,2026-11-08T19:59:03.698337+00:00,
+swift_contained,energy_flux_lng_profits,completed,full_upstream,models_baseline,cpu,local,local,19,0.006335,2026-11-08T19:58:28.183280+00:00,2026-11-08T19:58:28.189615+00:00,
+swift_contained,sahysmod,failed,,models_baseline,cpu,local,local,2,,2026-11-08T19:58:28.147371+00:00,2026-11-08T19:58:28.177551+00:00,FileNotFoundError: [Errno 2] No such file or directory: 'Models/Water/SahysMod/SahysMod.exe'
+swift_contained,argonne_abm,completed,analytical_reduction,models_baseline,cpu,local,local,20,0.002014,2026-11-08T19:58:28.187698+00:00,2026-11-08T19:58:28.189712+00:00,
+swift_contained,apsim,completed,analytical_reduction,models_baseline,cpu,local,local,21,0.002018,2026-11-08T19:58:28.187770+00:00,2026-11-08T19:58:28.189788+00:00,
+swift_contained,nems,skipped,,models_baseline,cpu,local,local,22,,2026-11-08T19:59:03.699458+00:00,2026-11-08T19:59:03.701095+00:00,"Model not yet implemented: NEMS output directory not found: data/nems_outputs/Hormuz_ScenarioA
+Run NEMS externally and place outputs at this path, or update NEMSConfig.scenario_dir_mapping."
+swift_contained,mam,completed,published_output_ingestion,models_baseline,cpu,local,local,23,0.58515,2026-11-08T19:59:03.699611+00:00,2026-11-08T19:59:04.284761+00:00,
+swift_contained,fed_oil,completed,analytical_reduction,models_baseline,cpu,local,local,24,0.001734,2026-11-08T19:59:03.700781+00:00,2026-11-08T19:59:03.702515+00:00,
+swift_contained,nrel,completed,analytical_reduction,models_baseline,cpu,local,local,25,0.00173,2026-11-08T19:59:03.700889+00:00,2026-11-08T19:59:03.702619+00:00,
+swift_contained,apsim_gtap,completed,full_upstream,models_baseline,cpu,local,local,26,139.770299,2026-11-08T19:59:04.287204+00:00,2026-11-08T20:01:24.057503+00:00,
+swift_contained,opencge,failed,,models_baseline,cpu,local,local,27,,2026-11-08T19:59:04.287468+00:00,2026-11-08T19:59:06.073068+00:00,RuntimeError: Cluster failed to start: RM has detected an NVML/RM version mismatch.
+swift_contained,pycge,completed,analytical_reduction,models_baseline,cpu,local,local,28,0.858662,2026-11-08T19:59:04.287685+00:00,2026-11-08T19:59:05.146347+00:00,
+swift_contained,miragrodep,skipped,,models_baseline,cpu,local,local,29,,2026-11-08T19:59:04.289932+00:00,2026-11-08T19:59:04.297910+00:00,"Model not yet implemented: MIRAGRODEP requires the 'gams' executable on PATH (GAMS + a CONOPT/PATH licence). Install GAMS and ensure 'gams' is on PATH, or set MIRAGRODEPConfig.gams_executable to its absolute path."
+swift_contained,cwatm,completed,analytical_reduction,models_baseline,cpu,local,local,3,0.000823,2026-11-08T19:58:28.149687+00:00,2026-11-08T19:58:28.150510+00:00,
+swift_contained,osemosys,skipped,,models_baseline,cpu,local,local,30,,2026-11-08T19:59:04.298187+00:00,2026-11-08T19:59:04.299827+00:00,Model not yet implemented: OSeMOSYS baseline_data_dir not found: data/osemosys/baseline. Provide a baseline dataset (CSV-per-parameter layout).
+swift_contained,messageix,failed,,models_baseline,cpu,local,local,31,,2026-11-08T19:59:04.300045+00:00,2026-11-08T19:59:05.721860+00:00,JVMNotFoundException: No JVM shared library file (libjvm.so) found. Try setting up the JAVA_HOME environment variable properly.
+swift_contained,temoa,skipped,,models_baseline,cpu,local,local,32,,2026-11-08T19:59:05.146452+00:00,2026-11-08T19:59:05.722412+00:00,Model not yet implemented: TEMOA baseline DB not found: Models/Energy/TEMOA/data_files/utopia.sqlite. Vendor a baseline SQLite (e.g. utopia.sqlite) under Models/Energy/TEMOA/data_files/ or override TEMOAConfig.baseline_db_path.
+swift_contained,gtap,skipped,,models_baseline,cpu,local,local,33,,2026-11-08T19:59:05.722208+00:00,2026-11-08T19:59:05.723571+00:00,"Model not yet implemented: GTAPAdapter.execute is not yet implemented. Real integration requires: (1) a licensed GTAP database (version 10+, from the GTAP Center at Purdue University), (2) a GTAP model software installation (RunGTAP or FlexGTAP), (3) writing shock and closure files specifying oil price, fertilizer cost, and trade-route disruption shocks, (4) invoking the GTAP executable via subprocess, and (5) parsing the HAR/SOL solution file for welfare (EV by region), bilateral trade flows, and producer/consumer price changes by sector."
+swift_contained,mpsge_jl,completed,analytical_reduction,models_baseline,cpu,local,local,34,0.000935,2026-11-08T19:59:05.722756+00:00,2026-11-08T19:59:05.723691+00:00,
+prolonged_contained,ggm,skipped,,models_baseline,cpu,local,local,35,,2026-11-08T20:01:24.151190+00:00,2026-11-08T20:01:24.154195+00:00,"Model not yet implemented: GGMAdapter.execute() requires a GGMConfig. Prerequisites:
+  1. GAMS installation with CPLEX solver license
+  2. gamsapi Python package (pip install gamsapi[transfer])
+  3. GGM model directory with data/SET-Nav/*.xlsx files
+  4. GGMConfig(gams_system_dir=..., model_dir=...)
+"
+prolonged_contained,magpie,skipped,,models_baseline,cpu,local,local,36,,2026-11-08T20:01:24.151357+00:00,2026-11-08T20:01:24.154314+00:00,"Model not yet implemented: MAgPIE source tree not found. Pass magpie_root to the adapter constructor or set the MAGPIE_ROOT environment variable. Tried: none of Models/Fertilizer/magpie-master/magpie-master, Models/Fertilizer/magpie-master, Models/Fertilizer/magpie"
+prolonged_contained,sahysmod,failed,,models_baseline,cpu,local,local,37,,2026-11-08T20:01:24.152197+00:00,2026-11-08T20:01:24.171663+00:00,FileNotFoundError: [Errno 2] No such file or directory: 'Models/Water/SahysMod/SahysMod.exe'
+prolonged_contained,cwatm,completed,analytical_reduction,models_baseline,cpu,local,local,38,0.001484,2026-11-08T20:01:24.153946+00:00,2026-11-08T20:01:24.155430+00:00,
+prolonged_contained,weap_mena,completed,analytical_reduction,models_baseline,cpu,local,local,39,0.001076,2026-11-08T20:01:24.154413+00:00,2026-11-08T20:01:24.155489+00:00,
+swift_contained,weap_mena,completed,analytical_reduction,models_baseline,cpu,local,local,4,0.003686,2026-11-08T19:58:28.150574+00:00,2026-11-08T19:58:28.154260+00:00,
+prolonged_contained,watergap2,skipped,,models_baseline,cpu,local,local,40,,2026-11-08T20:01:24.154508+00:00,2026-11-08T20:01:24.157386+00:00,"Model not yet implemented: WaterGAP2Adapter.execute() requires a WaterGAP2Config. To integrate WaterGAP2:
+  1. Build the binary from the C++ sources at Models/Water/WaterGAP2-v2.2d/HydrologyFrankfurt-WaterGAP2-65f306b/source/ via CMake, OR obtain access to the Frankfurt WaterGAP2 web service.
+  2. Stage global climate forcing NetCDFs (precipitation, temperature) under forcing_data_path.
+  3. Configure the adapter via configs/model_configs/watergap2.yaml.
+  4. Implement either subprocess invocation of the compiled binary or a REST client against the web service inside this method.
+  5. Build a NetCDF damage mask from 'affected_grid_cells' and 'infrastructure_damage_index' and pass it to WaterGAP2.
+  6. Parse gridded NetCDF outputs in parse_outputs."
+prolonged_contained,bornstein_krusell_rebelo,failed,,models_baseline,cpu,local,local,41,,2026-11-08T20:01:24.155546+00:00,2026-11-08T20:01:24.158285+00:00,FileNotFoundError: Dynare .mod file not found: Models/Oil/WorldEquilibriumOilModel/Replication Files/Section 5/supply_shocks_to_non_opec/dynare_codes/World_Economy_Cartel_nonopec_shocks.mod. Verify the section/mod_file configuration.
+prolonged_contained,poles_jrc,completed,analytical_reduction,models_baseline,cpu,local,local,42,0.007707,2026-11-08T20:01:24.157248+00:00,2026-11-08T20:01:24.164955+00:00,
+prolonged_contained,marketsim,completed,analytical_reduction,models_baseline,cpu,local,local,43,0.000726,2026-11-08T20:01:24.157500+00:00,2026-11-08T20:01:24.158226+00:00,
+prolonged_contained,energy_flux_gas_power,completed,full_upstream,models_baseline,cpu,local,local,44,0.006087,2026-11-08T20:01:24.158531+00:00,2026-11-08T20:01:24.164618+00:00,
+prolonged_contained,lngst,completed,analytical_reduction,models_baseline,cpu,local,local,45,0.013756,2026-11-08T20:01:24.158671+00:00,2026-11-08T20:01:24.172427+00:00,
+prolonged_contained,world_helium_model,completed,analytical_reduction,models_baseline,cpu,local,local,46,0.006673,2026-11-08T20:01:24.164664+00:00,2026-11-08T20:01:24.171337+00:00,
+prolonged_contained,capri,skipped,,models_baseline,cpu,local,local,47,,2026-11-08T20:01:24.164994+00:00,2026-11-08T20:01:24.171410+00:00,"Model not yet implemented: CAPRIAdapter.execute is not yet implemented. Real integration requires: (1) a GAMS installation with the CAPRI model repository, (2) writing scenario shock files to the CAPRI scenario directory, (3) invoking the CAPRI GAMS entry point via subprocess, and (4) parsing the CAPRI results database (GDX or CSV output)."
+prolonged_contained,simple_g,skipped,,models_baseline,cpu,local,local,48,,2026-11-08T20:01:24.171894+00:00,2026-11-08T20:01:24.183937+00:00,"Model not yet implemented: SIMPLEGAdapter.execute is not yet implemented. Real integration requires: (1) a GAMS installation with the SIMPLE-G model, (2) writing scenario shock parameters to a GAMS-compatible input file, (3) invoking the SIMPLE-G GAMS entry point via subprocess, and (4) parsing output GDX or CSV files for agricultural price, trade, and welfare results by region."
+prolonged_contained,world_fertilizer,completed,analytical_reduction,models_baseline,cpu,local,local,49,0.023718,2026-11-08T20:01:24.172114+00:00,2026-11-08T20:01:24.195832+00:00,
+swift_contained,watergap2,skipped,,models_baseline,cpu,local,local,5,,2026-11-08T19:58:28.150686+00:00,2026-11-08T19:58:28.154307+00:00,"Model not yet implemented: WaterGAP2Adapter.execute() requires a WaterGAP2Config. To integrate WaterGAP2:
+  1. Build the binary from the C++ sources at Models/Water/WaterGAP2-v2.2d/HydrologyFrankfurt-WaterGAP2-65f306b/source/ via CMake, OR obtain access to the Frankfurt WaterGAP2 web service.
+  2. Stage global climate forcing NetCDFs (precipitation, temperature) under forcing_data_path.
+  3. Configure the adapter via configs/model_configs/watergap2.yaml.
+  4. Implement either subprocess invocation of the compiled binary or a REST client against the web service inside this method.
+  5. Build a NetCDF damage mask from 'affected_grid_cells' and 'infrastructure_damage_index' and pass it to WaterGAP2.
+  6. Parse gridded NetCDF outputs in parse_outputs."
+prolonged_contained,futures,completed,analytical_reduction,models_baseline,cpu,local,local,50,0.024732,2026-11-08T20:01:24.172254+00:00,2026-11-08T20:01:24.196986+00:00,
+prolonged_contained,aisdb,completed,analytical_reduction,models_baseline,cpu,local,local,51,0.011753,2026-11-08T20:01:24.172516+00:00,2026-11-08T20:01:24.184269+00:00,
+prolonged_contained,ais_project,completed,analytical_reduction,models_baseline,cpu,local,local,52,0.011586,2026-11-08T20:01:24.184373+00:00,2026-11-08T20:01:24.195959+00:00,
+prolonged_contained,simrlfab,completed,full_upstream,models_baseline,cpu,local,local,53,41.409055,2026-11-08T20:01:24.199075+00:00,2026-11-08T20:02:05.608130+00:00,
+prolonged_contained,energy_flux_lng_profits,completed,full_upstream,models_baseline,cpu,local,local,54,0.015335,2026-11-08T20:01:24.199388+00:00,2026-11-08T20:01:24.214723+00:00,
+prolonged_contained,argonne_abm,completed,analytical_reduction,models_baseline,cpu,local,local,55,0.002454,2026-11-08T20:01:24.212360+00:00,2026-11-08T20:01:24.214814+00:00,
+prolonged_contained,apsim,completed,analytical_reduction,models_baseline,cpu,local,local,56,0.002356,2026-11-08T20:01:24.212536+00:00,2026-11-08T20:01:24.214892+00:00,
+prolonged_contained,nems,skipped,,models_baseline,cpu,local,local,57,,2026-11-08T20:02:05.609005+00:00,2026-11-08T20:02:05.610337+00:00,"Model not yet implemented: NEMS output directory not found: data/nems_outputs/Hormuz_ScenarioB
+Run NEMS externally and place outputs at this path, or update NEMSConfig.scenario_dir_mapping."
+prolonged_contained,mam,completed,published_output_ingestion,models_baseline,cpu,local,local,58,0.049627,2026-11-08T20:02:05.609197+00:00,2026-11-08T20:02:05.658824+00:00,
+prolonged_contained,fed_oil,completed,analytical_reduction,models_baseline,cpu,local,local,59,0.001605,2026-11-08T20:02:05.610019+00:00,2026-11-08T20:02:05.611624+00:00,
+swift_contained,bornstein_krusell_rebelo,failed,,models_baseline,cpu,local,local,6,,2026-11-08T19:58:28.151305+00:00,2026-11-08T19:58:28.155161+00:00,FileNotFoundError: Dynare .mod file not found: Models/Oil/WorldEquilibriumOilModel/Replication Files/Section 5/supply_shocks_to_non_opec/dynare_codes/World_Economy_Cartel_nonopec_shocks.mod. Verify the section/mod_file configuration.
+prolonged_contained,nrel,completed,analytical_reduction,models_baseline,cpu,local,local,60,0.001576,2026-11-08T20:02:05.610101+00:00,2026-11-08T20:02:05.611677+00:00,
+prolonged_contained,apsim_gtap,completed,full_upstream,models_baseline,cpu,local,local,61,148.788177,2026-11-08T20:02:05.661989+00:00,2026-11-08T20:04:34.450166+00:00,
+prolonged_contained,opencge,failed,,models_baseline,cpu,local,local,62,,2026-11-08T20:02:05.662410+00:00,2026-11-08T20:02:05.703829+00:00,RuntimeError: Cluster failed to start: RM has detected an NVML/RM version mismatch.
+prolonged_contained,pycge,completed,analytical_reduction,models_baseline,cpu,local,local,63,0.023713,2026-11-08T20:02:05.662950+00:00,2026-11-08T20:02:05.686663+00:00,
+prolonged_contained,miragrodep,skipped,,models_baseline,cpu,local,local,64,,2026-11-08T20:02:05.664184+00:00,2026-11-08T20:02:05.674964+00:00,"Model not yet implemented: MIRAGRODEP requires the 'gams' executable on PATH (GAMS + a CONOPT/PATH licence). Install GAMS and ensure 'gams' is on PATH, or set MIRAGRODEPConfig.gams_executable to its absolute path."
+prolonged_contained,osemosys,skipped,,models_baseline,cpu,local,local,65,,2026-11-08T20:02:05.675967+00:00,2026-11-08T20:02:05.677494+00:00,Model not yet implemented: OSeMOSYS baseline_data_dir not found: data/osemosys/baseline. Provide a baseline dataset (CSV-per-parameter layout).
+prolonged_contained,messageix,failed,,models_baseline,cpu,local,local,66,,2026-11-08T20:02:05.677838+00:00,2026-11-08T20:02:05.679920+00:00,JVMNotFoundException: No JVM shared library file (libjvm.so) found. Try setting up the JAVA_HOME environment variable properly.
+prolonged_contained,temoa,skipped,,models_baseline,cpu,local,local,67,,2026-11-08T20:02:05.680195+00:00,2026-11-08T20:02:05.681138+00:00,Model not yet implemented: TEMOA baseline DB not found: Models/Energy/TEMOA/data_files/utopia.sqlite. Vendor a baseline SQLite (e.g. utopia.sqlite) under Models/Energy/TEMOA/data_files/ or override TEMOAConfig.baseline_db_path.
+prolonged_contained,gtap,skipped,,models_baseline,cpu,local,local,68,,2026-11-08T20:02:05.681431+00:00,2026-11-08T20:02:05.682544+00:00,"Model not yet implemented: GTAPAdapter.execute is not yet implemented. Real integration requires: (1) a licensed GTAP database (version 10+, from the GTAP Center at Purdue University), (2) a GTAP model software installation (RunGTAP or FlexGTAP), (3) writing shock and closure files specifying oil price, fertilizer cost, and trade-route disruption shocks, (4) invoking the GTAP executable via subprocess, and (5) parsing the HAR/SOL solution file for welfare (EV by region), bilateral trade flows, and producer/consumer price changes by sector."
+prolonged_contained,mpsge_jl,completed,analytical_reduction,models_baseline,cpu,local,local,69,0.001112,2026-11-08T20:02:05.682745+00:00,2026-11-08T20:02:05.683857+00:00,
+swift_contained,poles_jrc,completed,analytical_reduction,models_baseline,cpu,local,local,7,0.008685,2026-11-08T19:58:28.154426+00:00,2026-11-08T19:58:28.163111+00:00,
+swift_escalated,ggm,skipped,,models_baseline,cpu,local,local,70,,2026-11-08T20:04:34.580374+00:00,2026-11-08T20:04:34.585024+00:00,"Model not yet implemented: GGMAdapter.execute() requires a GGMConfig. Prerequisites:
+  1. GAMS installation with CPLEX solver license
+  2. gamsapi Python package (pip install gamsapi[transfer])
+  3. GGM model directory with data/SET-Nav/*.xlsx files
+  4. GGMConfig(gams_system_dir=..., model_dir=...)
+"
+swift_escalated,magpie,skipped,,models_baseline,cpu,local,local,71,,2026-11-08T20:04:34.580673+00:00,2026-11-08T20:04:34.585304+00:00,"Model not yet implemented: MAgPIE source tree not found. Pass magpie_root to the adapter constructor or set the MAGPIE_ROOT environment variable. Tried: none of Models/Fertilizer/magpie-master/magpie-master, Models/Fertilizer/magpie-master, Models/Fertilizer/magpie"
+swift_escalated,sahysmod,failed,,models_baseline,cpu,local,local,72,,2026-11-08T20:04:34.581871+00:00,2026-11-08T20:04:34.623132+00:00,FileNotFoundError: [Errno 2] No such file or directory: 'Models/Water/SahysMod/SahysMod.exe'
+swift_escalated,cwatm,completed,analytical_reduction,models_baseline,cpu,local,local,73,0.002734,2026-11-08T20:04:34.584452+00:00,2026-11-08T20:04:34.587186+00:00,
+swift_escalated,weap_mena,completed,analytical_reduction,models_baseline,cpu,local,local,74,0.001768,2026-11-08T20:04:34.585542+00:00,2026-11-08T20:04:34.587310+00:00,
+swift_escalated,watergap2,skipped,,models_baseline,cpu,local,local,75,,2026-11-08T20:04:34.585765+00:00,2026-11-08T20:04:34.587406+00:00,"Model not yet implemented: WaterGAP2Adapter.execute() requires a WaterGAP2Config. To integrate WaterGAP2:
+  1. Build the binary from the C++ sources at Models/Water/WaterGAP2-v2.2d/HydrologyFrankfurt-WaterGAP2-65f306b/source/ via CMake, OR obtain access to the Frankfurt WaterGAP2 web service.
+  2. Stage global climate forcing NetCDFs (precipitation, temperature) under forcing_data_path.
+  3. Configure the adapter via configs/model_configs/watergap2.yaml.
+  4. Implement either subprocess invocation of the compiled binary or a REST client against the web service inside this method.
+  5. Build a NetCDF damage mask from 'affected_grid_cells' and 'infrastructure_damage_index' and pass it to WaterGAP2.
+  6. Parse gridded NetCDF outputs in parse_outputs."
+swift_escalated,bornstein_krusell_rebelo,failed,,models_baseline,cpu,local,local,76,,2026-11-08T20:04:34.587697+00:00,2026-11-08T20:04:34.591164+00:00,FileNotFoundError: Dynare .mod file not found: Models/Oil/WorldEquilibriumOilModel/Replication Files/Section 5/supply_shocks_to_non_opec/dynare_codes/World_Economy_Cartel_nonopec_shocks.mod. Verify the section/mod_file configuration.
+swift_escalated,poles_jrc,completed,analytical_reduction,models_baseline,cpu,local,local,77,0.014368,2026-11-08T20:04:34.589976+00:00,2026-11-08T20:04:34.604344+00:00,
+swift_escalated,marketsim,completed,analytical_reduction,models_baseline,cpu,local,local,78,0.001282,2026-11-08T20:04:34.590217+00:00,2026-11-08T20:04:34.591499+00:00,
+swift_escalated,energy_flux_gas_power,completed,full_upstream,models_baseline,cpu,local,local,79,0.012634,2026-11-08T20:04:34.591586+00:00,2026-11-08T20:04:34.604220+00:00,
+swift_contained,marketsim,completed,analytical_reduction,models_baseline,cpu,local,local,8,0.000774,2026-11-08T19:58:28.154550+00:00,2026-11-08T19:58:28.155324+00:00,
+swift_escalated,lngst,completed,analytical_reduction,models_baseline,cpu,local,local,80,0.013129,2026-11-08T20:04:34.591809+00:00,2026-11-08T20:04:34.604938+00:00,
+swift_escalated,world_helium_model,completed,analytical_reduction,models_baseline,cpu,local,local,81,0.001087,2026-11-08T20:04:34.604449+00:00,2026-11-08T20:04:34.605536+00:00,
+swift_escalated,capri,skipped,,models_baseline,cpu,local,local,82,,2026-11-08T20:04:34.604678+00:00,2026-11-08T20:04:34.605576+00:00,"Model not yet implemented: CAPRIAdapter.execute is not yet implemented. Real integration requires: (1) a GAMS installation with the CAPRI model repository, (2) writing scenario shock files to the CAPRI scenario directory, (3) invoking the CAPRI GAMS entry point via subprocess, and (4) parsing the CAPRI results database (GDX or CSV output)."
+swift_escalated,simple_g,skipped,,models_baseline,cpu,local,local,83,,2026-11-08T20:04:34.605012+00:00,2026-11-08T20:04:34.605694+00:00,"Model not yet implemented: SIMPLEGAdapter.execute is not yet implemented. Real integration requires: (1) a GAMS installation with the SIMPLE-G model, (2) writing scenario shock parameters to a GAMS-compatible input file, (3) invoking the SIMPLE-G GAMS entry point via subprocess, and (4) parsing output GDX or CSV files for agricultural price, trade, and welfare results by region."
+swift_escalated,world_fertilizer,completed,analytical_reduction,models_baseline,cpu,local,local,84,0.030985,2026-11-08T20:04:34.605845+00:00,2026-11-08T20:04:34.636830+00:00,
+swift_escalated,futures,completed,analytical_reduction,models_baseline,cpu,local,local,85,0.027834,2026-11-08T20:04:34.606076+00:00,2026-11-08T20:04:34.633910+00:00,
+swift_escalated,aisdb,completed,analytical_reduction,models_baseline,cpu,local,local,86,0.016812,2026-11-08T20:04:34.606232+00:00,2026-11-08T20:04:34.623044+00:00,
+swift_escalated,ais_project,completed,analytical_reduction,models_baseline,cpu,local,local,87,0.003463,2026-11-08T20:04:34.633286+00:00,2026-11-08T20:04:34.636749+00:00,
+swift_escalated,simrlfab,completed,full_upstream,models_baseline,cpu,local,local,88,29.410319,2026-11-08T20:04:34.638975+00:00,2026-11-08T20:05:04.049294+00:00,
+swift_escalated,energy_flux_lng_profits,completed,full_upstream,models_baseline,cpu,local,local,89,0.014867,2026-11-08T20:04:34.639285+00:00,2026-11-08T20:04:34.654152+00:00,
+swift_contained,energy_flux_gas_power,completed,full_upstream,models_baseline,cpu,local,local,9,0.00769,2026-11-08T19:58:28.155364+00:00,2026-11-08T19:58:28.163054+00:00,
+swift_escalated,argonne_abm,completed,analytical_reduction,models_baseline,cpu,local,local,90,0.002847,2026-11-08T20:04:34.651399+00:00,2026-11-08T20:04:34.654246+00:00,
+swift_escalated,apsim,completed,analytical_reduction,models_baseline,cpu,local,local,91,0.002744,2026-11-08T20:04:34.651568+00:00,2026-11-08T20:04:34.654312+00:00,
+swift_escalated,nems,skipped,,models_baseline,cpu,local,local,92,,2026-11-08T20:05:04.050236+00:00,2026-11-08T20:05:04.051502+00:00,"Model not yet implemented: NEMS output directory not found: data/nems_outputs/Hormuz_ScenarioC
+Run NEMS externally and place outputs at this path, or update NEMSConfig.scenario_dir_mapping."
+swift_escalated,mam,completed,published_output_ingestion,models_baseline,cpu,local,local,93,0.047056,2026-11-08T20:05:04.050399+00:00,2026-11-08T20:05:04.097455+00:00,
+swift_escalated,fed_oil,completed,analytical_reduction,models_baseline,cpu,local,local,94,0.00135,2026-11-08T20:05:04.051171+00:00,2026-11-08T20:05:04.052521+00:00,
+swift_escalated,nrel,completed,analytical_reduction,models_baseline,cpu,local,local,95,0.001325,2026-11-08T20:05:04.051256+00:00,2026-11-08T20:05:04.052581+00:00,
+swift_escalated,apsim_gtap,completed,full_upstream,models_baseline,cpu,local,local,96,146.04226,2026-11-08T20:05:04.100607+00:00,2026-11-08T20:07:30.142867+00:00,
+swift_escalated,opencge,failed,,models_baseline,cpu,local,local,97,,2026-11-08T20:05:04.100960+00:00,2026-11-08T20:05:04.137770+00:00,RuntimeError: Cluster failed to start: RM has detected an NVML/RM version mismatch.
+swift_escalated,pycge,completed,analytical_reduction,models_baseline,cpu,local,local,98,0.020532,2026-11-08T20:05:04.101284+00:00,2026-11-08T20:05:04.121816+00:00,
+swift_escalated,miragrodep,skipped,,models_baseline,cpu,local,local,99,,2026-11-08T20:05:04.102624+00:00,2026-11-08T20:05:04.111164+00:00,"Model not yet implemented: MIRAGRODEP requires the 'gams' executable on PATH (GAMS + a CONOPT/PATH licence). Install GAMS and ensure 'gams' is on PATH, or set MIRAGRODEPConfig.gams_executable to its absolute path."

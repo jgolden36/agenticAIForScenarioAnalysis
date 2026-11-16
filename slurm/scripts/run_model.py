@@ -66,8 +66,10 @@ def _load_uncertainty_config() -> UncertaintyConfig:
 
 
 def _outputs_dir() -> Path:
-    """Resolve data/outputs/ from the project root, creating it lazily."""
-    d = get_project_root() / "data" / "outputs"
+    """Resolve the per-model output tree (data/outputs/ or $HORMUZ_OUTPUTS_ROOT)."""
+    from slurm.scripts.stage_utils import outputs_root
+
+    d = outputs_root(get_project_root())
     d.mkdir(parents=True, exist_ok=True)
     return d
 

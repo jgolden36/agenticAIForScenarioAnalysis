@@ -1,0 +1,87 @@
+# Shock-carrying inputs and their neutral (no-crisis) values, per model.
+#
+# Used by scripts/revision/zero_shock_ladder.py (port of the AgResilience E0
+# zero-shock check and linearity ladder):
+#   * zero shock: every listed field is set to its neutral value; every
+#     change-type headline output must then be ~0.
+#   * dose ladder: each numeric field becomes neutral + f x (value - neutral)
+#     for f in `factors`; booleans take the shock value for f > 0 and the
+#     neutral value at f = 0; strings are set to `neutral` only at f = 0.
+#     A dict-valued field is scaled key by key against a neutral of 0 (or
+#     the given per-key neutral).
+#
+# Durations, baselines and calibration inputs (fed_funds_rate_baseline,
+# substitute_energy_availability, co2 price, ...) are not shocks and stay at
+# their analyst-baseline value.
+#
+# `factors` (optional, per model) replaces the global dose list.
+# `outputs` (optional) replaces the HEADLINE_KEYS outputs checked for a model.
+#
+# `clip` keeps a scaled value inside the adapter's valid range (a 1.6x dose of
+# an 85% loss would otherwise exceed 100%); clipped doses are marked in the
+# ladder output.
+
+factors: [0.0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.6]
+zero_tolerance_abs: 1.0e-4
+
+models:
+  # ------------------------------------------------------------------ oil
+  poles_jrc:
+    fields: {supply_loss_mbd: 0.0, rerouting_cost_multiplier: 1.0, insurance_premium_increase_pct: 0.0}
+    clip: {supply_loss_mbd: [0.0, 20.0]}
+  marketsim:
+    fields: {oil_price_shock_pct: 0.0, natural_gas_price_change_pct: 0.0}
+  fed_oil:
+    fields: {oil_price_change_pct: 0.0}
+  # ------------------------------------------------------------------ LNG
+  lngst:
+    fields: {qatar_export_reduction_pct: 0.0, uae_export_reduction_pct: 0.0, spot_price_multiplier: 1.0}
+    clip: {qatar_export_reduction_pct: [0.0, 100.0], uae_export_reduction_pct: [0.0, 100.0]}
+  # --------------------------------------------------------------- helium
+  world_helium_model:
+    fields: {qatar_helium_supply_loss_pct: 0.0}
+    clip: {qatar_helium_supply_loss_pct: [0.0, 100.0]}
+  argonne_abm:
+    fields: {supply_shock_pct: 0.0}
+    # The analytical path reports *_mean/*_std fields; HEADLINE_KEYS in
+    # src/synthesis/templated.py lists price_change_pct, which it never emits.
+    outputs: [equilibrium_price_change_pct_mean, unmet_demand_pct_mean, critical_application_failure_rate_mean]
+    clip: {supply_shock_pct: [0.0, 100.0]}
+  # ----------------------------------------------------------- fertilizer
+  world_fertilizer:
+    fields: {natural_gas_price_change_pct: 0.0, middle_east_production_loss_pct: 0.0}
+    clip: {middle_east_production_loss_pct: [0.0, 100.0]}
+  apsim:
+    fields: {fertilizer_application_reduction_pct: 0.0, irrigation_water_reduction_pct: 0.0}
+    clip: {fertilizer_application_reduction_pct: [0.0, 95.0], irrigation_water_reduction_pct: [0.0, 95.0]}
+  futures:
+    fields: {initial_price_shock_pct: 0.0}
+  apsim_gtap:
+    # Each dose is a coupled GTAP fixed point (minutes per solve on the
+    # cluster), so a shorter ladder; skipped where apsim_gtap.yaml is absent.
+    factors: [0.0, 0.5, 1.0, 1.6]
+    fields: {middle_east_fertilizer_production_loss_pct: 0.0, gulf_oil_supply_loss_mbd: 0.0, trade_cost_multiplier: 1.0}
+    clip: {middle_east_fertilizer_production_loss_pct: [0.0, 100.0], gulf_oil_supply_loss_mbd: [0.0, 30.0]}
+  # ------------------------------------------------------------- shipping
+  aisdb:
+    fields: {strait_closure_flag: false}
+  ais_project:
+    fields: {strait_closure_flag: false, rerouting_via_cape: false, fleet_size_change_pct: 0.0}
+  # ---------------------------------------------------------------- water
+  cwatm:
+    fields: {water_demand_change_pct: 0.0, supply_infrastructure_status: intact}
+  weap_mena:
+    # population_affected_millions is an exposure input, not a shock: 0 is a
+    # sentinel for "use the World Bank population totals".
+    fields: {desalination_capacity_loss_pct: 0.0}
+    clip: {desalination_capacity_loss_pct: [0.0, 100.0]}
+  # ---------------------------------------------------------------- macro
+  nrel:
+    fields: {natural_gas_price_change_pct: 0.0, electricity_demand_change_pct: 0.0}
+  pycge:
+    fields: {oil_price_shock_pct: 0.0, commodity_price_shocks: 0.0}
+  mpsge_jl:
+    fields:
+      oil_price_shock_pct: 0.0
+      commodity_price_shocks: 0.0
+      trade_disruption_spec: {trade_cost_multiplier: 1.0, affected_regions: null}

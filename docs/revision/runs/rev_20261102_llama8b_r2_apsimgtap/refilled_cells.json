@@ -1,0 +1,48 @@
+{
+  "run_id": "rev_20261102_llama8b_r2",
+  "fill_run_id": "fill_apsimgtap_rev_20261102_llama8b_r2",
+  "added": [
+    {
+      "scenario": "infrastructure_collapse",
+      "model": "apsim_gtap",
+      "status": "completed",
+      "implementation_mode": "full_upstream"
+    },
+    {
+      "scenario": "prolonged_contained",
+      "model": "apsim_gtap",
+      "status": "completed",
+      "implementation_mode": "full_upstream"
+    },
+    {
+      "scenario": "prolonged_escalated",
+      "model": "apsim_gtap",
+      "status": "completed",
+      "implementation_mode": "full_upstream"
+    },
+    {
+      "scenario": "swift_contained",
+      "model": "apsim_gtap",
+      "status": "completed",
+      "implementation_mode": "full_upstream"
+    },
+    {
+      "scenario": "swift_escalated",
+      "model": "apsim_gtap",
+      "status": "completed",
+      "implementation_mode": "full_upstream"
+    }
+  ],
+  "added_by_status": {
+    "completed": 5
+  },
+  "reproducibility": [],
+  "status_changes": [],
+  "override_check": {
+    "counts": {
+      "not_checked_source_not_completed": 68,
+      "not_checked_transform": 20
+    },
+    "mismatches": []
+  }
+}

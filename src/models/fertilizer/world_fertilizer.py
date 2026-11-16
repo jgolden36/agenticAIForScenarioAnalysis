@@ -260,9 +260,20 @@ class WorldFertilizerAdapter(GAMSAdapter):
 
         # AR(1) decay forward path. For each commodity, P(t) =
         # baseline * (1 + shock/100 * exp(-t * ln(2) / half_life)).
+        from src.models.market_calibration import active_calibration
+
+        cal = active_calibration()
+        # Pink Sheet series for each fertilizer (MOP = potassium chloride).
+        series_of = {"urea": "urea", "dap": "dap", "mop": "potash"}
+        halflives = dict(_FERT_HALFLIFE_MONTHS)
+        if cal is not None:
+            halflives = {
+                c: cal.half_life(series_of[c], hl) for c, hl in _FERT_HALFLIFE_MONTHS.items()
+            }
+
         horizon_months = max(12, int(round(duration_months)) + 6)
         forward_curves: dict[str, list[float]] = {}
-        for commodity, halflife in _FERT_HALFLIFE_MONTHS.items():
+        for commodity, halflife in halflives.items():
             shock = {
                 "urea": nitrogen_pct,
                 "dap": phosphate_pct,
@@ -302,6 +313,19 @@ class WorldFertilizerAdapter(GAMSAdapter):
             "trade_flows": trade_flows,
             "fertilizer_index_weights": dict(_FERT_INDEX_WEIGHTS),
         }
+        if cal is not None:
+            # Observed pre-crisis prices turn the percentage impulses into
+            # USD/t levels; the percentages themselves are unchanged.
+            pct = {"urea": nitrogen_pct, "dap": phosphate_pct, "mop": potash_pct}
+            base = {c: cal.baselines.get(series_of[c]) for c in pct}
+            outputs["baseline_price_usd_per_t"] = {c: v for c, v in base.items() if v is not None}
+            outputs["peak_price_usd_per_t"] = {
+                c: round(v * (1.0 + pct[c] / 100.0), 2) for c, v in base.items() if v is not None
+            }
+            outputs["_calibration"] = cal.provenance({
+                "baseline_price_usd_per_t": outputs["baseline_price_usd_per_t"],
+                "half_lives_months": halflives,
+            })
 
         return ModelOutput(
             model_id=self.model_id,
@@ -318,7 +342,7 @@ class WorldFertilizerAdapter(GAMSAdapter):
                 ),
                 "ng_passthrough_to_nitrogen": _NG_PASSTHROUGH_TO_NITROGEN,
                 "me_loss_passthrough_to_nitrogen": _ME_LOSS_PASSTHROUGH_TO_NITROGEN,
-                "fert_halflife_months": dict(_FERT_HALFLIFE_MONTHS),
+                "fert_halflife_months": halflives,
                 "note": (
                     "Analytical MVP path. Provide a GAMSConfig in "
                     "configs/model_configs/world_fertilizer.yaml to run "

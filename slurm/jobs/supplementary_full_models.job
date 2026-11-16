@@ -1,0 +1,335 @@
+#!/bin/bash
+# ==================================================================
+# Hormuz pipeline: supplementary "full models" run (CPU, no LLM).
+#
+# Re-executes, from the parameters the LLM extracted in an earlier run
+# (default 20260504_222710), only the models fixed in November 2026 plus
+# every upstream model their forwarding rules read from:
+#
+#   targets    opencge (OG-Core), energy_flux_lng_profits, simrlfab, mam
+#   upstream   lngst, poles_jrc, world_helium_model, world_fertilizer,
+#              cwatm, weap_mena, aisdb, ais_project, futures
+#
+# The source run's state and outputs are never written:
+#   * state:   data/pipeline_state/<run_id>_*           (new run id)
+#   * outputs: data/outputs_supp/<run_id>/<scenario>/<model>/  (HORMUZ_OUTPUTS_ROOT)
+#   * reports: data/reports/<run_id>/csv/                (export --no-llm)
+#   * docs:    docs/revision/runs/<run_id>/              (ledger, inventory, observed comparison)
+#
+# Two runs are intended, one after the other (never concurrently):
+#
+#   # 1. Literature constants, so only the model fixes differ from May:
+#   sbatch --exclude=orion,tesla1,tesla2,h100 slurm/jobs/supplementary_full_models.job
+#
+#   # 2. Observed-market baselines (needs data/market/calibration.json; build it on the
+#   #    login node first: python scripts/revision/fetch_market_data.py):
+#   sbatch --exclude=orion,tesla1,tesla2,h100 --export=ALL,HORMUZ_MARKET_CALIBRATION=1 \
+#       slurm/jobs/supplementary_full_models.job
+#
+# Toggles
+#   HORMUZ_SUPP_SOURCE_RUN_ID (20260504_222710)
+#   HORMUZ_SUPP_SOURCE_STATE_DIR (data/pipeline_state)   where <source>_params_*.json live
+#   HORMUZ_RUN_ID (supp_full_<source> or supp_full_mkt_<source>)
+#   HORMUZ_SUPP_TARGETS (opencge,energy_flux_lng_profits,simrlfab,mam)
+#   HORMUZ_SUPP_OVERWRITE (0)       1 = replace an earlier attempt's params for this run id
+#   HORMUZ_MARKET_CALIBRATION (0), HORMUZ_MARKET_CALIBRATION_HALF_LIVES (config default: 0)
+#   HORMUZ_SIMRLFAB_PYTHON (from simrlfab.yaml: ~/envs/simrlfab36/bin/python)
+#   HORMUZ_SUPP_COMPARE_REPORT_DIR (data/20260504_222710)  May report for the observed comparison
+#   HORMUZ_CONDA_ENV (hormuz)
+#   HORMUZ_SUPP_STAGE (all | cell | post)
+#   HORMUZ_SUPP_MACRO_FANOUT (0)    1 = run the non-OpenCGE macro cells here, submit the
+#                                   OpenCGE cells as a parallel array (needs the shared
+#                                   OG-Core baseline cached) plus post-processing, exit
+#   HORMUZ_EXCLUDE (orion,tesla1,tesla2,h100)  nodes the fan-out submissions avoid
+# ==================================================================
+#SBATCH --job-name=hormuz-supp
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=12G
+# Measured peak RSS ~2 GB for the serial job (89206) and for each OpenCGE
+# reform cell (89353/89362/91908); 64 GB requests sat pending on shared nodes.
+#SBATCH --time=24:00:00
+#SBATCH --output=slurm/logs/supplementary_full_models-%j.out
+#SBATCH --error=slurm/logs/supplementary_full_models-%j.err
+#SBATCH --mail-type=END,FAIL
+
+set -uo pipefail
+
+if command -v stdbuf >/dev/null 2>&1; then
+    if [[ -z "${HORMUZ_STDBUF_REEXEC:-}" ]]; then
+        export HORMUZ_STDBUF_REEXEC=1
+        exec stdbuf -oL -eL "$0" "$@"
+    fi
+fi
+
+PROJECT_ROOT="${SLURM_SUBMIT_DIR:-$(pwd)}"
+cd "$PROJECT_ROOT"
+export HORMUZ_PROJECT_ROOT="$PROJECT_ROOT"
+
+HORMUZ_SUPP_SOURCE_RUN_ID="${HORMUZ_SUPP_SOURCE_RUN_ID:-20260504_222710}"
+HORMUZ_SUPP_SOURCE_STATE_DIR="${HORMUZ_SUPP_SOURCE_STATE_DIR:-${PROJECT_ROOT}/data/pipeline_state}"
+HORMUZ_SUPP_TARGETS="${HORMUZ_SUPP_TARGETS:-opencge,energy_flux_lng_profits,simrlfab,mam}"
+export HORMUZ_MARKET_CALIBRATION="${HORMUZ_MARKET_CALIBRATION:-0}"
+if [[ "$HORMUZ_MARKET_CALIBRATION" == "1" ]]; then
+    export HORMUZ_RUN_ID="${HORMUZ_RUN_ID:-supp_full_mkt_${HORMUZ_SUPP_SOURCE_RUN_ID}}"
+else
+    export HORMUZ_RUN_ID="${HORMUZ_RUN_ID:-supp_full_${HORMUZ_SUPP_SOURCE_RUN_ID}}"
+fi
+if [[ "$HORMUZ_RUN_ID" == "$HORMUZ_SUPP_SOURCE_RUN_ID" ]]; then
+    echo "[fatal] HORMUZ_RUN_ID must differ from the source run id"; exit 1
+fi
+
+# Keep this run's per-model outputs out of the shared data/outputs/ tree.
+export HORMUZ_OUTPUTS_ROOT="${PROJECT_ROOT}/data/outputs_supp/${HORMUZ_RUN_ID}"
+RUN_LOG_DIR="${PROJECT_ROOT}/slurm/logs/${HORMUZ_RUN_ID}"
+mkdir -p "$RUN_LOG_DIR" "$HORMUZ_OUTPUTS_ROOT"
+export HORMUZ_LOG_DIR="$RUN_LOG_DIR"
+DOCS_OUT="${PROJECT_ROOT}/docs/revision/runs/${HORMUZ_RUN_ID}"
+REPORT_DIR="${PROJECT_ROOT}/data/reports/${HORMUZ_RUN_ID}"
+mkdir -p "$DOCS_OUT"
+
+# shellcheck source=./_common.sh
+source "${PROJECT_ROOT}/slurm/jobs/_common.sh"
+STAGE_PREFIX="supplementary_full_models"
+
+export HORMUZ_CONDA_ENV="${HORMUZ_CONDA_ENV:-hormuz}"
+export HORMUZ_AUTO_APPROVE=1
+export WANDB_MODE="${WANDB_MODE:-disabled}"
+export CUDA_VISIBLE_DEVICES=""
+
+echo "================================================================"
+echo "  Hormuz supplementary full-model run"
+echo "  Job ID:        ${SLURM_JOB_ID:-local}   Node: $(hostname)"
+echo "  Run ID:        ${HORMUZ_RUN_ID}   (source ${HORMUZ_SUPP_SOURCE_RUN_ID})"
+echo "  Targets:       ${HORMUZ_SUPP_TARGETS}"
+echo "  Market calib.: ${HORMUZ_MARKET_CALIBRATION}"
+echo "  Outputs root:  ${HORMUZ_OUTPUTS_ROOT}"
+echo "  Started at:    $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+echo "================================================================"
+
+# ------------------------------------------------------------------
+# Environment (the hormuz env; no auto-build).
+# ------------------------------------------------------------------
+_hormuz_mod() {
+    if command -v module >/dev/null 2>&1; then
+        timeout --preserve-status 60s bash -c "module $* </dev/null" 2>/dev/null
+        return $?
+    fi
+    return 127
+}
+_hormuz_mod purge || true
+_hormuz_mod load anaconda3 || _hormuz_mod load anaconda || echo "[module] anaconda not available; relying on PATH"
+# Compute nodes have no conda on PATH; use the user's install, as the
+# Althea driver does ($HOME/miniconda3, then $HOME/anaconda3).
+if ! command -v conda >/dev/null 2>&1; then
+    for _c in "${HOME}/miniconda3" "${HOME}/anaconda3"; do
+        if [[ -x "${_c}/bin/conda" ]]; then
+            export CONDA_EXE="${_c}/bin/conda"
+            export PATH="${_c}/bin:${PATH}"
+            break
+        fi
+    done
+fi
+if ! hormuz_activate_conda "${HORMUZ_CONDA_ENV}"; then
+    record_bash_failure "${STAGE_PREFIX}_setup" 1 "hormuz_activate_conda failed for '${HORMUZ_CONDA_ENV}'"
+    echo "[setup] ERROR: could not activate conda env '${HORMUZ_CONDA_ENV}'."
+    exit 1
+fi
+echo "[setup] python: $(python --version 2>&1) at $(command -v python)"
+python -c "import ogcore, dask.distributed; print('[setup] ogcore', ogcore.__version__)" \
+    || echo "[setup] WARNING: ogcore / dask not importable; OpenCGE will fail."
+record_runtime_inventory "${STAGE_PREFIX}_setup"
+
+# ------------------------------------------------------------------
+# Inputs: AEO2025 Table 20 for MAM, market calibration, SimRLFab env.
+# ------------------------------------------------------------------
+AEO_FILE="${PROJECT_ROOT}/data/eia/AEO2025_Table20_ref2025.xlsx"
+if [[ ! -f "$AEO_FILE" ]]; then
+    mkdir -p "$(dirname "$AEO_FILE")"
+    echo "[inputs] downloading AEO2025 Table 20 -> ${AEO_FILE}"
+    curl -fL --max-time 60 -o "$AEO_FILE" \
+        "https://www.eia.gov/outlooks/archive/aeo25/excel/aeotab20.xlsx" >/dev/null 2>&1 \
+        || { echo "[inputs] WARNING: AEO download failed; MAM will be skipped."; rm -f "$AEO_FILE"; }
+fi
+# Overrides any stale HORMUZ_MAM_AEO_XLSX_PATH inherited from the submit shell.
+if [[ -f "$AEO_FILE" ]]; then
+    export HORMUZ_MAM_AEO_XLSX_PATH="$AEO_FILE"
+else
+    unset HORMUZ_MAM_AEO_XLSX_PATH
+fi
+
+if [[ "$HORMUZ_MARKET_CALIBRATION" == "1" && ! -f "${PROJECT_ROOT}/data/market/calibration.json" ]]; then
+    echo "[fatal] HORMUZ_MARKET_CALIBRATION=1 but data/market/calibration.json is missing."
+    echo "        Build it on the login node: python scripts/revision/fetch_market_data.py"
+    exit 1
+fi
+
+SIMRLFAB_PY="${HORMUZ_SIMRLFAB_PYTHON:-${HOME}/envs/simrlfab36/bin/python}"
+if [[ -x "$SIMRLFAB_PY" ]]; then
+    echo "[inputs] SimRLFab interpreter: $("$SIMRLFAB_PY" --version 2>&1) at ${SIMRLFAB_PY}"
+else
+    echo "[inputs] WARNING: no SimRLFab interpreter at ${SIMRLFAB_PY}; SimRLFab cells will fail."
+fi
+
+# ------------------------------------------------------------------
+# Stage selection.
+#   all  (default) seed parameters, run every tier serially, post-process.
+#   cell run one task of an existing manifest: HORMUZ_MANIFEST_NAME plus
+#        SLURM_ARRAY_TASK_ID (submit as --array=<task indices>). Used to run
+#        the OpenCGE reform cells in parallel once the shared baseline is
+#        cached; HORMUZ_OPENCGE_REQUIRE_BASELINE=1 stops a cell from
+#        re-solving that baseline.
+#   post export + ledger + inventory + observed comparison only.
+# ------------------------------------------------------------------
+HORMUZ_SUPP_STAGE="${HORMUZ_SUPP_STAGE:-all}"
+case "$HORMUZ_SUPP_STAGE" in
+    all|post) ;;
+    cell)
+        : "${HORMUZ_MANIFEST_NAME:?cell mode needs HORMUZ_MANIFEST_NAME (e.g. models_macro)}"
+        : "${SLURM_ARRAY_TASK_ID:?cell mode needs SLURM_ARRAY_TASK_ID (submit with --array)}"
+        export HORMUZ_OPENCGE_REQUIRE_BASELINE=1
+        echo "[cell] ${HORMUZ_MANIFEST_NAME} task ${SLURM_ARRAY_TASK_ID}"
+        safe_python "${STAGE_PREFIX}_03_cell_${HORMUZ_MANIFEST_NAME#models_}" 1 -- python slurm/scripts/run_model.py
+        rc=$?
+        echo "[cell] exit=${rc} finished $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+        exit "$rc"
+        ;;
+    *) echo "[fatal] unknown HORMUZ_SUPP_STAGE=${HORMUZ_SUPP_STAGE}"; exit 1 ;;
+esac
+
+if [[ "$HORMUZ_SUPP_STAGE" == "all" ]]; then
+# ------------------------------------------------------------------
+# 00. Seed the run with the source run's parameters (subset).
+# ------------------------------------------------------------------
+echo ""
+echo "════════════ 00: Seed parameters from ${HORMUZ_SUPP_SOURCE_RUN_ID} ════════════"
+prep_args=( --source-run-id "$HORMUZ_SUPP_SOURCE_RUN_ID" --run-id "$HORMUZ_RUN_ID"
+            --source-state-dir "$HORMUZ_SUPP_SOURCE_STATE_DIR"
+            --state-dir "${PROJECT_ROOT}/data/pipeline_state"
+            --targets "$HORMUZ_SUPP_TARGETS" )
+[[ "${HORMUZ_SUPP_OVERWRITE:-0}" == "1" ]] && prep_args+=( --overwrite )
+safe_python "${STAGE_PREFIX}_00_prepare" 0 -- python scripts/revision/prepare_supplementary_run.py "${prep_args[@]}"
+rc=$?
+if [[ $rc -ne 0 ]]; then
+    echo "[fatal] parameter seeding failed (exit=$rc)"; exit "$rc"
+fi
+cp "${PROJECT_ROOT}/data/pipeline_state/${HORMUZ_RUN_ID}_supplementary_manifest.json" "$DOCS_OUT/" 2>/dev/null || true
+
+# ------------------------------------------------------------------
+# Serial manifest loop (same as the Althea driver).
+# ------------------------------------------------------------------
+run_manifest_loop() {
+    local stage="$1" script="$2" count_file="$3"
+    if [[ ! -f "$count_file" ]]; then
+        record_bash_failure "$stage" 1 "Manifest count file not found: $count_file"
+        return 1
+    fi
+    local n i
+    n="$(tr -d '[:space:]' < "$count_file")"
+    if [[ -z "$n" || "$n" -le 0 ]]; then
+        echo "[$stage] manifest is empty; nothing to do."; return 0
+    fi
+    echo "[$stage] ${n} task(s)"
+    for (( i=0; i<n; i++ )); do
+        export SLURM_ARRAY_TASK_ID="$i"
+        echo "─── [$stage] task ${i}/${n} ───"
+        safe_python "$stage" 1 -- python "$script" || echo "[$stage] task $i failed; continuing."
+    done
+    unset SLURM_ARRAY_TASK_ID
+}
+
+MANIFESTS="${PROJECT_ROOT}/data/pipeline_state/manifests"
+for tier in commodity commodity_downstream macro; do
+    echo ""
+    echo "════════════ Stage 3 (${tier}) ════════════"
+    safe_python "${STAGE_PREFIX}_dispatch_${tier}" 0 -- \
+        python slurm/scripts/dispatch_models.py models --tier "$tier" --run-id "${HORMUZ_RUN_ID}"
+    rc=$?
+    if [[ $rc -ne 0 ]]; then
+        echo "[fatal] ${tier} dispatch failed (exit=$rc)"; exit "$rc"
+    fi
+    export HORMUZ_MANIFEST_NAME="models_${tier}"
+    if [[ "$tier" == macro && "${HORMUZ_SUPP_MACRO_FANOUT:-0}" == 1 ]]; then
+        # OpenCGE reform solves take ~7-14 h each, so five in series overrun
+        # the 24 h limit. Run the other macro cells here, submit the OpenCGE
+        # cells as a parallel array (cell mode; the shared baseline must
+        # already be cached) and the post-processing after them, then exit.
+        mf="${MANIFESTS}/${HORMUZ_RUN_ID}_models_macro.json"
+        read -r ogc_tasks other_tasks < <(python3 - "$mf" <<'PYEOF'
+import json, sys
+m = json.load(open(sys.argv[1]))
+o = [str(i) for i, e in enumerate(m) if e.get("model_id") == "opencge"]
+r = [str(i) for i, e in enumerate(m) if e.get("model_id") != "opencge"]
+print(",".join(o) or "-", ",".join(r) or "-")
+PYEOF
+)
+        if [[ -z "${ogc_tasks:-}" || -z "${other_tasks:-}" ]]; then
+            record_bash_failure "${STAGE_PREFIX}_03_macro_fanout" 1 "Could not read macro manifest ${mf}"
+            echo "[fatal] could not read ${mf}"; exit 1
+        fi
+        echo "[fanout] OpenCGE tasks: ${ogc_tasks}; other macro tasks: ${other_tasks}"
+        if [[ "$other_tasks" != "-" ]]; then
+            for i in ${other_tasks//,/ }; do
+                export SLURM_ARRAY_TASK_ID="$i"
+                echo "─── [${STAGE_PREFIX}_03_macro] task ${i} ───"
+                safe_python "${STAGE_PREFIX}_03_macro" 1 -- python slurm/scripts/run_model.py \
+                    || echo "[${STAGE_PREFIX}_03_macro] task $i failed; continuing."
+            done
+            unset SLURM_ARRAY_TASK_ID
+        fi
+        if [[ "$ogc_tasks" != "-" ]]; then
+            unset HORMUZ_STDBUF_REEXEC  # let the child jobs line-buffer too
+            ex="${HORMUZ_EXCLUDE:-orion,tesla1,tesla2,h100}"
+            jo="$(sbatch --parsable --exclude="$ex" --array="$ogc_tasks" --job-name=hormuz-supp-ogc \
+                  --export=ALL,HORMUZ_SUPP_STAGE=cell,HORMUZ_MANIFEST_NAME=models_macro \
+                  slurm/jobs/supplementary_full_models.job)" \
+                || { echo "[fatal] could not submit the OpenCGE array"; exit 1; }
+            jp="$(sbatch --parsable --exclude="$ex" --dependency="afterany:${jo}" --cpus-per-task=2 --mem=16G \
+                  --time=02:00:00 --job-name=hormuz-supp-post --export=ALL,HORMUZ_SUPP_STAGE=post \
+                  slurm/jobs/supplementary_full_models.job)" \
+                || { echo "[fatal] could not submit post-processing"; exit 1; }
+            mkdir -p "${PROJECT_ROOT}/slurm/logs/${HORMUZ_RUN_ID}"
+            echo "${jo} ${jp}" > "${PROJECT_ROOT}/slurm/logs/${HORMUZ_RUN_ID}/fanout_jobs.txt"
+            echo "[fanout] OpenCGE array ${jo} (tasks ${ogc_tasks}); post-processing ${jp} after it. Exiting."
+            exit 0
+        fi
+    else
+        run_manifest_loop "${STAGE_PREFIX}_03_${tier}" "slurm/scripts/run_model.py" \
+            "${MANIFESTS}/${HORMUZ_RUN_ID}_models_${tier}_count.txt"
+    fi
+    unset HORMUZ_MANIFEST_NAME
+done
+fi  # HORMUZ_SUPP_STAGE == all
+
+# ------------------------------------------------------------------
+# Export (no LLM) and revision tables for this run.
+# ------------------------------------------------------------------
+echo ""
+echo "════════════ Export + ledger + inventory ════════════"
+safe_python "${STAGE_PREFIX}_05_export" 1 -- \
+    python slurm/scripts/export_results.py --run-id "$HORMUZ_RUN_ID" --no-llm --no-exec-summary
+safe_python "${STAGE_PREFIX}_07_ledger" 1 -- \
+    python slurm/scripts/build_coverage_ledger.py --run-id "$HORMUZ_RUN_ID" \
+        --outputs-root "$HORMUZ_OUTPUTS_ROOT" --docs-dir "$DOCS_OUT"
+safe_python "${STAGE_PREFIX}_07_inventory" 1 -- \
+    python slurm/scripts/build_model_inventory.py --run-id "$HORMUZ_RUN_ID" \
+        --outputs-root "$HORMUZ_OUTPUTS_ROOT" --out-dir "$DOCS_OUT"
+obs_args=( --run "supp=${REPORT_DIR}" --out-dir "$DOCS_OUT" )
+COMPARE_DIR="${HORMUZ_SUPP_COMPARE_REPORT_DIR:-${PROJECT_ROOT}/data/20260504_222710}"
+[[ -f "${COMPARE_DIR}/csv/quantitative_results.csv" ]] && obs_args=( --run "may=${COMPARE_DIR}" "${obs_args[@]}" )
+if [[ -f "${PROJECT_ROOT}/data/market/monthly_prices.csv" ]]; then
+    safe_python "${STAGE_PREFIX}_07_observed" 1 -- python scripts/revision/observed_vs_scenario.py "${obs_args[@]}"
+else
+    echo "[observed] data/market/monthly_prices.csv missing; skipping the observed comparison."
+fi
+
+echo ""
+echo "================================================================"
+echo "  Supplementary run complete: ${HORMUZ_RUN_ID}"
+echo "  Finished at:  $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+echo "  Status CSV:   ${REPORT_DIR}/csv/model_status.csv"
+echo "  Docs:         ${DOCS_OUT}"
+echo "  Outputs:      ${HORMUZ_OUTPUTS_ROOT}"
+echo "================================================================"
+exit 0

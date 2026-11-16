@@ -35,6 +35,7 @@ Vocabulary for ``status_label``:
 from __future__ import annotations
 
 from src.common.types import ImplementationMode as M
+from src.common.types import ParameterProvenance as P
 from src.models.base import ImplementationInfo
 
 _KERNEL_SOURCES = [
@@ -374,6 +375,33 @@ IMPLEMENTATION_INFO: dict[str, ImplementationInfo] = {
         limitations=["No soil, climate or management detail; crop coefficients are literature-level, not site-calibrated"],
         license_notes="APSIM NG is open source (non-commercial licence); the reduction is repository code.",
     ),
+    "apsim_gtap": ImplementationInfo(
+        display_name="APSIM-GTAP (AgResilience GTAPv7 + APSIM maize emulator, fixed point)",
+        status_label="Real (config-aware)",
+        mode_when_executed=M.FULL_UPSTREAM,
+        modes_available=[M.FULL_UPSTREAM],
+        requires_config=True,
+        platform="Julia GTAPv7 (GlobalTradeAnalysisProjectModelV7, JuMP/Ipopt) + Python/PyTorch APSIM emulator, driven by a subprocess in the AgResilience env",
+        upstream_reference="AgResilience project, branch experiments-and-slurm-setup: src/tools/gtap_server.jl, src/tools/get_apsim.py, src/experiments/fixed_point.py; GTAP database (src/tools/Data/gsdf*.har, GTAP Center); Holzworth et al. (2018) APSIM",
+        calibration_sources=[
+            "GTAP database aggregated to 18 regions x 8 sectors, re-calibrated levels model (calibration id shock-repair-v2; zero-shock residual <= 1e-4%)",
+            "APSIM maize emulator: MLP trained on 800k APSIM runs, held-out R^2 = 0.997, RMSE 0.083 t/ha (AgResilience E7)",
+            "wasia baseline liquids output 28 mb/d and freight share 0.08 of import value (analyst-set, configs/model_configs/apsim_gtap.yaml)",
+        ],
+        key_equations=[
+            "gamma_qintva[chm, wasia] *= 1 - s x fert_loss; gamma_qintva[extract, wasia] *= 1 - s x oil_loss_mbd / 28; s = min(duration/12, 1)",
+            "tms[c, wasia, r] *= 1 + s x (trade_cost_multiplier - 1) x freight_share, c in {chm, extract}, r != wasia",
+            "N = N0 x (1 + eps x dC_chm,US / 100); yield ratio = emulator(N) / emulator(N0); gamma_qintva[gro, usa] = yield ratio; iterate to |d ratio| <= 1e-8",
+        ],
+        limitations=[
+            "Crop side is an emulator of APSIM maize at one Iowa site, not APSIM itself; other crops and regions get no yield feedback",
+            "Annual comparative statics: a disruption shorter than a year is scaled by duration/12",
+            "Fertilizer loss is applied to the whole West Asia chemicals sector (GTAP chm aggregates fertilizer with other chemicals); the oil loss to the whole extraction sector",
+            "Rerouting enters as an import-tariff-equivalent tms wedge, not as a transport-margin shock",
+            "No welfare (EV) output; GDP, prices, production, consumption and imports only",
+        ],
+        license_notes="AgResilience code is project code; the GTAP database is licensed by the GTAP Center (Purdue) and is not redistributed; APSIM is under the APSIM non-commercial licence.",
+    ),
     "futures": ImplementationInfo(
         display_name="Commodity futures forward-curve model",
         display_name_reduced="Futures-calibrated AR(1) mean-reversion reduction",
@@ -494,7 +522,7 @@ IMPLEMENTATION_INFO: dict[str, ImplementationInfo] = {
         requires_config=False,
         platform="Python ogcore/ogusa + dask",
         upstream_reference="DeBacker & Evans, OG-Core (github.com/PSLmodels/OG-Core)",
-        calibration_sources=["OG-Core default calibration; commodity shocks mapped to productivity Z and delta_tau_annual via configs/model_configs/opencge.yaml"],
+        calibration_sources=["OG-Core default calibration; commodity shocks mapped to a duration-weighted productivity Z path and (infrastructure_collapse only) an economic-depreciation delta_annual drag via configs/model_configs/opencge.yaml"],
         key_equations=["Upstream OLG equilibrium; adapter reports steady-state and transition-path deltas and attaches a kernel regional context table"],
         limitations=["Failed on the 2026-05-04 run with an ogcore parameter-validation error (Z / delta_tau_annual list shapes); OG-USA needs Python 3.12"],
         license_notes="CC0 (OG-Core).",
@@ -567,3 +595,131 @@ IMPLEMENTATION_INFO: dict[str, ImplementationInfo] = {
         license_notes="GPL-2.0 (upstream).",
     ),
 }
+
+
+# ---------------------------------------------------------------------------
+# Parameter provenance and stand-in names
+# ---------------------------------------------------------------------------
+#
+# Applied to the entries above. ``display_name_reduced`` names each
+# closed-form approximation by its mechanism and the model slot it fills,
+# so it is never read as the named upstream model. Provenance follows the
+# calibration sources listed in each entry: "mixed" means the named
+# model's own published numbers adjust a response whose core comes from
+# other literature; "other_literature" means none of the parameters come
+# from the named model.
+
+_UP = P.UPSTREAM_MODEL
+_NA = P.NOT_APPLICABLE
+
+_PROVENANCE: dict[str, tuple[P, str, str | None]] = {
+    # model_id: (provenance, note, display_name_reduced or None to keep)
+    # --- full upstream / ingestion: the model's own calibration
+    "sahysmod": (_UP, "Upstream input deck and model equations.", None),
+    "bornstein_krusell_rebelo": (_UP, "Upstream replication-package calibration solved by Dynare.", None),
+    "energy_flux_gas_power": (_UP, "Workbook formulas and inputs re-implemented in Python.", None),
+    "energy_flux_lng_profits": (_UP, "Workbook formulas and inputs re-implemented in Python; hub prices forwarded from LNGST.", None),
+    "ggm": (_UP, "Upstream SET-Nav data and equilibrium model.", None),
+    "simrlfab": (_UP, "Upstream discrete-event simulator; gas shortfall mapped to machine breakdown rates by the adapter.", None),
+    "magpie": (_UP, "Upstream MAgPIE input data and optimisation.", None),
+    "apsim_gtap": (_UP, "Re-calibrated GTAPv7 database and an APSIM-trained maize emulator, iterated to a fixed point.", None),
+    "opencge": (_UP, "OG-Core default calibration; commodity shocks mapped to productivity and depreciation by configured coefficients.", None),
+    "miragrodep": (_UP, "Upstream GTAP-based calibration.", None),
+    "osemosys": (_UP, "Upstream LP with an analyst-supplied dataset.", None),
+    "messageix": (_UP, "Upstream MIP with an ixmp baseline scenario.", None),
+    "temoa": (_UP, "Upstream LP with a SQLite baseline database.", None),
+    "nems": (_UP, "EIA's published AEO2025 NEMS outputs.", None),
+    "mam": (_UP, "EIA's published AEO2025 reference-case macro path (Table 20); does not respond to scenario shocks.", None),
+    # --- closed-form approximations
+    "fed_oil": (P.MIXED,
+                "Shock-type multipliers and FEVD shares from Baumeister & Hamilton (2019, Table 3); the GDP and CPI peaks come from the generic macro kernel and the IRF decay from Kilian (2009).",
+                "Baumeister-Hamilton-calibrated oil-shock response approximation"),
+    "world_helium_model": (P.MIXED,
+                           "Demand elasticity from Massol & Rifaat (2018), the paper describing the IFP market framework; Qatar share from USGS; equilibrium is a one-line constant-elasticity formula.",
+                           "Constant-elasticity helium-market approximation (World Helium Model slot)"),
+    "argonne_abm": (P.MIXED,
+                    "Replication noise from the Argonne technical report; core response uses the Massol & Rifaat elasticity; no agents.",
+                    "Stochastic-replication helium approximation (Argonne ABM slot)"),
+    "nrel": (P.MIXED,
+             "Capacity factors from NREL Cambium 2023; dispatch-shift coefficients are heuristics; macro outputs come from the generic kernel.",
+             "Merit-order dispatch approximation (NREL ReEDS/Cambium slot)"),
+    "cwatm": (P.MIXED,
+              "One CWatM sensitivity figure (destroyed infrastructure = 50% discharge shortfall); infrastructure-status multipliers are set by hand.",
+              "Scarcity-index water approximation (CWatM slot)"),
+    "poles_jrc": (P.OTHER_LITERATURE,
+                  "Elasticities from Hamilton (2009) and Baumeister & Peersman (2013); no POLES parameters.",
+                  "Constant-elasticity oil-price approximation (POLES-JRC slot)"),
+    "marketsim": (P.OTHER_LITERATURE,
+                  "EIA quantities and Hamilton (2009) / Auffhammer & Rubin (2018) elasticities; no MarketSim parameters.",
+                  "Triangle-rule consumer-surplus approximation (MarketSim slot)"),
+    "lngst": (P.OTHER_LITERATURE,
+              "QatarEnergy / ADNOC volumes and IEA elasticities; no LNGST workbook parameters.",
+              "Export-loss hub-price approximation (LNGST slot)"),
+    "world_fertilizer": (P.OTHER_LITERATURE,
+                         "Yara, FAO and Baffes (2007) pass-throughs; no World Fertilizer Model parameters.",
+                         "Feedstock pass-through fertilizer-price approximation (World Fertilizer Model slot)"),
+    "apsim": (P.OTHER_LITERATURE,
+              "FAO (1979) water-yield and Sinclair & Park (1993) nitrogen-response curves; no APSIM parameters.",
+              "Mitscherlich / FAO yield-response approximation (APSIM slot)"),
+    "futures": (P.OTHER_LITERATURE,
+                "Half-lives from post-shock decay episodes; there is no single named upstream model. Becomes market-data-estimated when market calibration with half-lives is enabled.",
+                "AR(1) mean-reversion forward-curve model"),
+    "aisdb": (P.OTHER_LITERATURE,
+              "EIA, UNCTAD, Clarksons and Lloyd's List figures; no AIS vessel data.",
+              "Cape-of-Good-Hope detour approximation (AISdb slot)"),
+    "ais_project": (P.OTHER_LITERATURE,
+                    "BDTI, EIA and UNCTAD figures; no AIS stream data.",
+                    "Voyage-time approximation (AIS_project slot)"),
+    "weap_mena": (P.OTHER_LITERATURE,
+                  "UN-Water, AGCC and World Bank figures; no WEAP-MENA study parameters.",
+                  "Desalination-dependence water approximation (WEAP-MENA slot)"),
+    "mpsge_jl": (P.OTHER_LITERATURE,
+                 "Generic macro kernel plus IMF terms-of-trade and Anderson-van Wincoop elasticities; no GTAP data.",
+                 "Long-run macro-kernel approximation (MPSGE.jl / GTAP slot)"),
+    "pycge": (P.OTHER_LITERATURE,
+              "Generic macro kernel (Hamilton, Kilian, Blanchard-Gali and others); no SAM.",
+              "Macro-kernel approximation (PyCGE slot)"),
+    # --- stubs
+    "watergap2": (_NA, "No execute path.", None),
+    "capri": (_NA, "No execute path.", None),
+    "simple_g": (_NA, "No execute path.", None),
+    "gtap": (_NA, "No execute path.", None),
+}
+
+for _mid, (_prov, _note, _reduced) in _PROVENANCE.items():
+    _update: dict = {"parameter_provenance": _prov, "provenance_note": _note}
+    if _reduced is not None:
+        _update["display_name_reduced"] = _reduced
+    IMPLEMENTATION_INFO[_mid] = IMPLEMENTATION_INFO[_mid].model_copy(update=_update)
+
+# fed_oil's upstream model is a structural VAR; "reduced form" in its name
+# was a misnomer for a calibrated approximation.
+IMPLEMENTATION_INFO["fed_oil"] = IMPLEMENTATION_INFO["fed_oil"].model_copy(
+    update={"display_name": "Baumeister-Hamilton oil-shock SVAR (2019 AER)"}
+)
+
+# Status text that changed in the November 2026 revision.
+_LIMITS_UPDATE: dict[str, list[str]] = {
+    "bornstein_krusell_rebelo": [
+        "Requires Octave 7.1+ (jsonencode) and Dynare, the replication .mod files and calibration_parameters.mat (produced by GMM_main.m); not run on the cluster (no Octave/Dynare, .mod path mismatch)",
+    ],
+    "simrlfab": [
+        "Needs a Python 3.6 environment with simpy 4.0 / tensorforce 0.5.4 (configs/model_configs/simrlfab.yaml or HORMUZ_SIMRLFAB_PYTHON); before November 2026 the registry never passed it a config, so every run failed",
+    ],
+    "opencge": [
+        "Before November 2026 every run failed OG-Core validation (flat Z list; scalar delta_tau_annual); fixed to a 2-D Z path and an economic-depreciation (delta_annual) drag",
+        "Single-country (US) OLG model; commodity shocks enter only through configured productivity and depreciation coefficients; OG-USA calibration needs Python 3.12",
+        "Annual model: the productivity shock is weighted by the share of each year the disruption lasts (before 2026-11-13 a sub-year disruption was applied as a full shock year). The depreciation drag is a single permanent rate in OG-Core, so it is applied only under infrastructure_collapse (capital_drag_scenarios in opencge.yaml)",
+    ],
+    "mam": [
+        "Ingestion mode reports EIA's published reference case and does not respond to the scenario shock vector",
+        "Before November 2026 the cluster ingested AEO2021 Table 19 (CO2 emissions) from a legacy URL, so MAM cells marked completed contained no macro data",
+    ],
+    "energy_flux_lng_profits": [
+        "Needs TTF / JKM / Henry Hub crisis prices; the extractor never supplied them, so they are forwarded from LNGST (since November 2026); a peak below the workbook spot start is clamped and recorded",
+    ],
+}
+for _mid, _lims in _LIMITS_UPDATE.items():
+    IMPLEMENTATION_INFO[_mid] = IMPLEMENTATION_INFO[_mid].model_copy(update={"limitations": _lims})
+
+del _mid, _prov, _note, _reduced, _update, _lims

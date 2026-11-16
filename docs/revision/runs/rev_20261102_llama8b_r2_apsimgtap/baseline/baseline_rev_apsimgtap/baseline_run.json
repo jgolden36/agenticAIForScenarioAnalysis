@@ -1,0 +1,40 @@
+{
+  "run_id": "baseline_rev_apsimgtap",
+  "baseline": {
+    "path": "/home/dagolden/agenticAIForScenarioAnalysis/configs/baselines/hormuz_2026_analyst.yaml",
+    "baseline_id": "hormuz_2026_analyst",
+    "version": 1,
+    "authored": "2026-10"
+  },
+  "synthesis_method": "templated",
+  "upstream_forwarding": true,
+  "llm_calls": 0,
+  "scenarios": [
+    "swift_contained",
+    "prolonged_contained",
+    "swift_escalated",
+    "prolonged_escalated",
+    "infrastructure_collapse"
+  ],
+  "cells": {
+    "parameter_sets": 175,
+    "model_records": 175,
+    "completed": 104,
+    "skipped": 49,
+    "failed": 22
+  },
+  "outcomes": 1390,
+  "consistency_flags": 32,
+  "clean_synthesis": true,
+  "fidelity_strict_match_rate": 1.0,
+  "stage_seconds": {
+    "scenario_generation_seconds": 0.0038,
+    "parameter_extraction_seconds": 0.4044,
+    "model_execution_seconds": 2305.0861,
+    "synthesis_seconds": 0.6673,
+    "export_seconds": 2.391
+  },
+  "export_return_code": 0,
+  "state_dir": "/home/dagolden/agenticAIForScenarioAnalysis/data/pipeline_state",
+  "report_dir": "/home/dagolden/agenticAIForScenarioAnalysis/data/reports/baseline_rev_apsimgtap"
+}

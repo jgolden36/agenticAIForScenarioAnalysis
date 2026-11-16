@@ -12,9 +12,12 @@ import scripts.revision.checkpoint_report as checkpoint_mod
 import scripts.revision.compare_runs as compare_mod
 import scripts.revision.coverage_facts as facts_mod
 import scripts.revision.effort_metrics as effort_mod
+import scripts.revision.elasticity_lhs as lhs_mod
 import scripts.revision.model_licenses as licenses_mod
+import scripts.revision.open_loop_gap as open_loop_mod
 import scripts.revision.replay_pycge_scenario_a as replay_mod
 import scripts.revision.software_versions as versions_mod
+import scripts.revision.zero_shock_ladder as ladder_mod
 import slurm.scripts.build_coverage_ledger as ledger_mod
 import slurm.scripts.build_model_inventory as inventory_mod
 import slurm.scripts.run_deterministic_baseline as baseline_mod
@@ -26,6 +29,7 @@ MODULES = {
     "anchor_comparison": anchor_mod, "checkpoint_report": checkpoint_mod, "coverage_facts": facts_mod,
     "pycge_replay": replay_mod, "effort_metrics": effort_mod, "software_versions": versions_mod,
     "model_licenses": licenses_mod, "deterministic_baseline": baseline_mod, "compare_runs": compare_mod,
+    "zero_shock_ladder": ladder_mod, "elasticity_lhs": lhs_mod, "open_loop_gap": open_loop_mod,
 }
 
 

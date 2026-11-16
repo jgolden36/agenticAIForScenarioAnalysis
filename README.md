@@ -102,87 +102,90 @@ The tables between the markers below are generated from `src/models/implementati
 <!-- inventory:start -->
 ### Water
 
-| Model | Adapter | Status | Notes |
-|---|---|---|---|
-| CWatM (IIASA Community Water Model) | `src/models/water/cwatm.py` | Real (analytical MVP) + config-aware full path | Python subprocess (run_cwatm.py + NetCDF forcing) for the full model / pure Python reduction. Reduction has no spatial grid, routing or groundwater; responds only through supply_infrastructure_status and demand change |
-| SahysMod (ILRI spatial agro-hydro-salinity model) | `src/models/water/sahysmod.py` | Real (config-aware) | Native Windows console executable (Models/Water/SahysMod/SahysMod.exe) via subprocess. Requires the Windows binary (or Wine) and a baseline .inp deck; no analytical fallback |
-| WaterGAP2 (global gridded hydrology, Goethe University Frankfurt) | `src/models/water/watergap2.py` | Config-aware stub | C++ binary (compile from vendored sources) or HTTP API. No compiled binary or climate forcing data vendored; execute() raises NotImplementedError |
-| WEAP-MENA (SEI Water Evaluation And Planning, Persian Gulf configuration) | `src/models/water/weap.py` | Real (analytical MVP) + config-aware full path | Windows COM automation of SEI WEAP (full) / pure Python (reduction). No hydrological routing, allocation priorities or storage; country-level dependence weights only |
+| Model | Adapter | Status | Parameters | Notes |
+|---|---|---|---|---|
+| CWatM (IIASA Community Water Model) | `src/models/water/cwatm.py` | Real (analytical MVP) + config-aware full path | Mixed (named model + other literature) | Python subprocess (run_cwatm.py + NetCDF forcing) for the full model / pure Python reduction. Reduction has no spatial grid, routing or groundwater; responds only through supply_infrastructure_status and demand change |
+| SahysMod (ILRI spatial agro-hydro-salinity model) | `src/models/water/sahysmod.py` | Real (config-aware) | Model's own | Native Windows console executable (Models/Water/SahysMod/SahysMod.exe) via subprocess. Requires the Windows binary (or Wine) and a baseline .inp deck; no analytical fallback |
+| WaterGAP2 (global gridded hydrology, Goethe University Frankfurt) | `src/models/water/watergap2.py` | Config-aware stub | - | C++ binary (compile from vendored sources) or HTTP API. No compiled binary or climate forcing data vendored; execute() raises NotImplementedError |
+| WEAP-MENA (SEI Water Evaluation And Planning, Persian Gulf configuration) | `src/models/water/weap.py` | Real (analytical MVP) + config-aware full path | Other literature | Windows COM automation of SEI WEAP (full) / pure Python (reduction). No hydrological routing, allocation priorities or storage; country-level dependence weights only |
 
 ### Oil
 
-| Model | Adapter | Status | Notes |
-|---|---|---|---|
-| Bornstein-Krusell-Rebelo World Equilibrium Model of the Oil Market | `src/models/oil/bornstein_krusell_rebelo.py` | Real | GNU Octave + Dynare driving the vendored MATLAB/Dynare replication files. Requires Octave 6+ and Dynare 4.6+ and the replication .mod files; failed on the 2026-05-04 cluster run with a missing .mod path |
-| Baumeister-Hamilton oil-shock SVAR (2019 AER), reduced form | `src/models/oil/fed_oil.py` | Real (analytical MVP) | Pure Python (reduction); upstream MATLAB/R SVAR code not run. Not an estimated SVAR: IRFs are geometric decays of kernel peaks with fixed multipliers, so CPI/FFR and GDP/unemployment ratios are identities, not independent results |
-| MarketSim (BOEM consumer-surplus and energy-substitution model) | `src/models/oil/marketsim.py` | Real (analytical MVP) | Pure Python (reduction); BOEM Excel/VBA codebase not available. US-only, two carriers, no regional detail; heuristic 60% producer-capture split |
-| POLES-JRC (JRC Prospective Outlook on Long-term Energy Systems) | `src/models/oil/poles_jrc.py` | Real (analytical MVP) | Pure Python (reduction); JRC distribution not available. No regional energy balances, fuel substitution across carriers, or inventory dynamics; single global Brent price |
+| Model | Adapter | Status | Parameters | Notes |
+|---|---|---|---|---|
+| Bornstein-Krusell-Rebelo World Equilibrium Model of the Oil Market | `src/models/oil/bornstein_krusell_rebelo.py` | Real | Model's own | GNU Octave + Dynare driving the vendored MATLAB/Dynare replication files. Requires Octave 7.1+ (jsonencode) and Dynare, the replication .mod files and calibration_parameters.mat (produced by GMM_main.m); not run on the cluster (no Octave/Dynare, .mod path mismatch) |
+| Baumeister-Hamilton oil-shock SVAR (2019 AER) | `src/models/oil/fed_oil.py` | Real (analytical MVP) | Mixed (named model + other literature) | Pure Python (reduction); upstream MATLAB/R SVAR code not run. Not an estimated SVAR: IRFs are geometric decays of kernel peaks with fixed multipliers, so CPI/FFR and GDP/unemployment ratios are identities, not independent results |
+| MarketSim (BOEM consumer-surplus and energy-substitution model) | `src/models/oil/marketsim.py` | Real (analytical MVP) | Other literature | Pure Python (reduction); BOEM Excel/VBA codebase not available. US-only, two carriers, no regional detail; heuristic 60% producer-capture split |
+| POLES-JRC (JRC Prospective Outlook on Long-term Energy Systems) | `src/models/oil/poles_jrc.py` | Real (analytical MVP) | Other literature | Pure Python (reduction); JRC distribution not available. No regional energy balances, fuel substitution across carriers, or inventory dynamics; single global Brent price |
 
 ### LNG
 
-| Model | Adapter | Status | Notes |
-|---|---|---|---|
-| Energy Flux US Gas Power Build-Out Constraint Model v1.0 | `src/models/lng/energy_flux_gas_power.py` | Real | Pure-Python re-implementation of the Excel workbook (default) or xlwings against the workbook. US-only engineering model with no price response; crisis enters only through the build-scenario and LNG inputs |
-| Energy Flux US LNG War Profits Model v1.0 | `src/models/lng/energy_flux_lng_profits.py` | Real | Pure-Python re-implementation of the Excel workbook (default) or xlwings against the workbook. Requires a 12-row price schedule or TTF/JKM/HH peak prices; failed input validation on the 2026-05-04 run because the extractor supplied neither |
-| Global Gas Model v3.0 (NTNU / DIW Berlin) | `src/models/lng/ggm.py` | Real (config-aware) | GAMS + CPLEX (QCP) via subprocess on a copied model tree. Needs GAMS + CPLEX licence and gamsapi; skipped on the cluster for lack of a GGMConfig / GAMS |
-| LNG Spreadsheet Tool (LNGST) | `src/models/lng/lngst.py` | Real (analytical MVP) + config-aware full path | Pure Python (reduction) / Excel workbook via openpyxl or xlwings (full). No trade re-allocation matrix or regional supply gaps in the reduction; single elasticity for all buyers |
+| Model | Adapter | Status | Parameters | Notes |
+|---|---|---|---|---|
+| Energy Flux US Gas Power Build-Out Constraint Model v1.0 | `src/models/lng/energy_flux_gas_power.py` | Real | Model's own | Pure-Python re-implementation of the Excel workbook (default) or xlwings against the workbook. US-only engineering model with no price response; crisis enters only through the build-scenario and LNG inputs |
+| Energy Flux US LNG War Profits Model v1.0 | `src/models/lng/energy_flux_lng_profits.py` | Real | Model's own | Pure-Python re-implementation of the Excel workbook (default) or xlwings against the workbook. Needs TTF / JKM / Henry Hub crisis prices; the extractor never supplied them, so they are forwarded from LNGST (since November 2026); a peak below the workbook spot start is clamped and recorded |
+| Global Gas Model v3.0 (NTNU / DIW Berlin) | `src/models/lng/ggm.py` | Real (config-aware) | Model's own | GAMS + CPLEX (QCP) via subprocess on a copied model tree. Needs GAMS + CPLEX licence and gamsapi; skipped on the cluster for lack of a GGMConfig / GAMS |
+| LNG Spreadsheet Tool (LNGST) | `src/models/lng/lngst.py` | Real (analytical MVP) + config-aware full path | Other literature | Pure Python (reduction) / Excel workbook via openpyxl or xlwings (full). No trade re-allocation matrix or regional supply gaps in the reduction; single elasticity for all buyers |
 
 ### Helium & Semiconductors
 
-| Model | Adapter | Status | Notes |
-|---|---|---|---|
-| Argonne Helium Agent-Based Model (AnyLogic) | `src/models/helium/argonne_abm.py` | Real (analytical MVP) + config-aware full path | Pure Python (20 stochastic replications) / exported AnyLogic JAR via subprocess (full). No agent heterogeneity, hoarding or contract dynamics; noise is parametric, not emergent |
-| SimRLFab (SimPy + Tensorforce semiconductor fab simulator) | `src/models/helium/simrlfab.py` | Real (config-aware) | Python 3.6 virtual environment subprocess driving the vendored SimRLFab repository. Needs the Python 3.6 venv with pinned SimPy/Tensorforce; failed validation on early 2026 runs for out-of-range fab_utilization_baseline |
-| World Helium Model (IFP Energies Nouvelles) | `src/models/helium/world_helium_model.py` | Real (analytical MVP) | Pure Python (reduction); IFP EN model not available. No storage, liquefaction or regional trade; effective_supply_gap_pct is zero whenever reserve release covers the Qatar loss |
+| Model | Adapter | Status | Parameters | Notes |
+|---|---|---|---|---|
+| Argonne Helium Agent-Based Model (AnyLogic) | `src/models/helium/argonne_abm.py` | Real (analytical MVP) + config-aware full path | Mixed (named model + other literature) | Pure Python (20 stochastic replications) / exported AnyLogic JAR via subprocess (full). No agent heterogeneity, hoarding or contract dynamics; noise is parametric, not emergent |
+| SimRLFab (SimPy + Tensorforce semiconductor fab simulator) | `src/models/helium/simrlfab.py` | Real (config-aware) | Model's own | Python 3.6 virtual environment subprocess driving the vendored SimRLFab repository. Needs a Python 3.6 environment with simpy 4.0 / tensorforce 0.5.4 (configs/model_configs/simrlfab.yaml or HORMUZ_SIMRLFAB_PYTHON); before November 2026 the registry never passed it a config, so every run failed |
+| World Helium Model (IFP Energies Nouvelles) | `src/models/helium/world_helium_model.py` | Real (analytical MVP) | Mixed (named model + other literature) | Pure Python (reduction); IFP EN model not available. No storage, liquefaction or regional trade; effective_supply_gap_pct is zero whenever reserve release covers the Qatar loss |
 
 ### Fertilizer & Agriculture
 
-| Model | Adapter | Status | Notes |
-|---|---|---|---|
-| APSIM Next Generation (crop simulation) | `src/models/fertilizer/apsim.py` | Real (analytical MVP) | Pure Python (reduction); APSIM NG .NET CLI not run. No soil, climate or management detail; crop coefficients are literature-level, not site-calibrated |
-| CAPRI (Common Agricultural Policy Regionalised Impact) | `src/models/fertilizer/capri.py` | Stub | GAMS (upstream). No execute path; requires the CAPRI GAMS repository and CAPREG database |
-| Commodity futures forward-curve model | `src/models/fertilizer/futures.py` | Real (analytical MVP) | Pure Python (reduction); no statsmodels dependency. Deterministic decay from a single initial shock; no term structure, volatility or regime switching |
-| GTAP (Global Trade Analysis Project CGE) | `src/models/fertilizer/gtap.py` | Stub | GEMPACK (RunGTAP / FlexGTAP), upstream. No execute path; requires a licensed GTAP database and GEMPACK |
-| MAgPIE (PIK land-use and agricultural production model) | `src/models/fertilizer/magpie.py` | Real (config-aware) | R orchestration (Rscript start.R + bridge script) + GAMS/CONOPT. Needs R >= 4.3, GAMS >= 50 with CONOPT and the MAgPIE input data; skipped on the cluster (source tree not found) |
-| SIMPLE-G (global gridded agricultural CGE, Purdue) | `src/models/fertilizer/simple_g.py` | Stub | GAMS (upstream). No execute path; requires the SIMPLE-G GAMS code and base data |
-| World Fertilizer Model (global N/P/K market equilibrium) | `src/models/fertilizer/world_fertilizer.py` | Real (analytical MVP) + config-aware full path | Pure Python (reduction) / GAMS via GAMSAdapter (full). No supply response, inventories or regional trade matrix; trade-flow diversion is a heuristic (8% per 10% ME loss) |
+| Model | Adapter | Status | Parameters | Notes |
+|---|---|---|---|---|
+| APSIM Next Generation (crop simulation) | `src/models/fertilizer/apsim.py` | Real (analytical MVP) | Other literature | Pure Python (reduction); APSIM NG .NET CLI not run. No soil, climate or management detail; crop coefficients are literature-level, not site-calibrated |
+| APSIM-GTAP (AgResilience GTAPv7 + APSIM maize emulator, fixed point) | `src/models/fertilizer/apsim_gtap.py` | Real (config-aware) | Model's own | Julia GTAPv7 (GlobalTradeAnalysisProjectModelV7, JuMP/Ipopt) + Python/PyTorch APSIM emulator, driven by a subprocess in the AgResilience env. Crop side is an emulator of APSIM maize at one Iowa site, not APSIM itself; other crops and regions get no yield feedback |
+| CAPRI (Common Agricultural Policy Regionalised Impact) | `src/models/fertilizer/capri.py` | Stub | - | GAMS (upstream). No execute path; requires the CAPRI GAMS repository and CAPREG database |
+| Commodity futures forward-curve model | `src/models/fertilizer/futures.py` | Real (analytical MVP) | Other literature | Pure Python (reduction); no statsmodels dependency. Deterministic decay from a single initial shock; no term structure, volatility or regime switching |
+| GTAP (Global Trade Analysis Project CGE) | `src/models/fertilizer/gtap.py` | Stub | - | GEMPACK (RunGTAP / FlexGTAP), upstream. No execute path; requires a licensed GTAP database and GEMPACK |
+| MAgPIE (PIK land-use and agricultural production model) | `src/models/fertilizer/magpie.py` | Real (config-aware) | Model's own | R orchestration (Rscript start.R + bridge script) + GAMS/CONOPT. Needs R >= 4.3, GAMS >= 50 with CONOPT and the MAgPIE input data; skipped on the cluster (source tree not found) |
+| SIMPLE-G (global gridded agricultural CGE, Purdue) | `src/models/fertilizer/simple_g.py` | Stub | - | GAMS (upstream). No execute path; requires the SIMPLE-G GAMS code and base data |
+| World Fertilizer Model (global N/P/K market equilibrium) | `src/models/fertilizer/world_fertilizer.py` | Real (analytical MVP) + config-aware full path | Other literature | Pure Python (reduction) / GAMS via GAMSAdapter (full). No supply response, inventories or regional trade matrix; trade-flow diversion is a heuristic (8% per 10% ME loss) |
 
 ### Shipping
 
-| Model | Adapter | Status | Notes |
-|---|---|---|---|
-| AIS_project / aisstream (transit time and fleet utilisation) | `src/models/shipping/ais_project.py` | Real (analytical MVP) | Pure Python (reduction); aisstream WebSocket feed not wired. Single detour geometry and fleet-average round trip; no vessel-type breakdown |
-| AISdb (AIS vessel-track database and rerouting calibration) | `src/models/shipping/aisdb.py` | Real (analytical MVP) | Pure Python (reduction); AISdb PostgreSQL/SQLite backend not wired. No vessel tracks, port congestion or canal capacity; worst-case route is assumed |
+| Model | Adapter | Status | Parameters | Notes |
+|---|---|---|---|---|
+| AIS_project / aisstream (transit time and fleet utilisation) | `src/models/shipping/ais_project.py` | Real (analytical MVP) | Other literature | Pure Python (reduction); aisstream WebSocket feed not wired. Single detour geometry and fleet-average round trip; no vessel-type breakdown |
+| AISdb (AIS vessel-track database and rerouting calibration) | `src/models/shipping/aisdb.py` | Real (analytical MVP) | Other literature | Pure Python (reduction); AISdb PostgreSQL/SQLite backend not wired. No vessel tracks, port congestion or canal capacity; worst-case route is assumed |
 
 ### Macroeconomic / General Equilibrium
 
-| Model | Adapter | Status | Notes |
-|---|---|---|---|
-| MAM (EIA Macroeconomic Activity Module, AEO2025) | `src/models/macro/mam.py` | Real (published-output ingestion) + optional full path | aeo_ingestion (AEO2025 Tables 19/20 XLSX) / eviews_subprocess (EViews 13+ on Windows). In ingestion mode the output does not respond to the scenario shock vector (two outcomes per scenario on the 2026-05-04 run) |
-| MIRAGRODEP (multi-region recursive-dynamic agricultural CGE) | `src/models/macro/miragrodep.py` | Real | GAMS + CONOPT/PATH via subprocess (calib, MSD, REF, Simul phases). Needs GAMS with a CONOPT/PATH licence; skipped on the cluster (no gams executable) |
-| MPSGE.jl / GTAP long-run CGE | `src/models/macro/mpsge_jl.py` | Real (analytical MVP) + config-aware full path | Pure Python (reduction) / Julia MPSGE.jl + JuMP via juliacall or subprocess (full). Headline gdp_impact_pct is the OECD/US-calibrated reference economy of the kernel, not a world aggregate; gdp_impact_pct_world_weighted is the PPP-share-weighted mean of the regional rows |
-| NEMS (EIA National Energy Modeling System, AEO2025) | `src/models/macro/nems.py` | Real (published-output ingestion) + optional full path | output_ingestion (reads a completed NEMS run directory) / subprocess (cycle.py) / remote (SLURM). Ingestion needs a pre-computed run directory per scenario; the infrastructure_collapse scenario had no mapping on the 2026-05-04 run (validation failed) |
-| NREL electricity-sector baseline (ReEDS / Cambium) | `src/models/macro/nrel.py` | Real (analytical MVP) | Pure Python (reduction); ReEDS/Cambium not run. No capacity expansion, transmission or regional detail; macro outputs are kernel-derived, not an electricity-sector result |
-| OpenCGE (PSL OG-Core / OG-USA overlapping-generations CGE) | `src/models/macro/opencge.py` | Real | Python ogcore/ogusa + dask. Failed on the 2026-05-04 run with an ogcore parameter-validation error (Z / delta_tau_annual list shapes); OG-USA needs Python 3.12 |
-| PyCGE (cge_modeling SAM-based CGE) | `src/models/macro/pycge.py` | Real (analytical MVP) + config-aware full path | Pure Python macro kernel (reduction) / cge_modeling package when its API matches (full). Headline gdp_impact_pct is the OECD/US-calibrated reference economy of the kernel, not a world aggregate; gdp_impact_pct_world_weighted is the PPP-share-weighted mean of the regional rows |
+| Model | Adapter | Status | Parameters | Notes |
+|---|---|---|---|---|
+| MAM (EIA Macroeconomic Activity Module, AEO2025) | `src/models/macro/mam.py` | Real (published-output ingestion) + optional full path | Model's own | aeo_ingestion (AEO2025 Tables 19/20 XLSX) / eviews_subprocess (EViews 13+ on Windows). Ingestion mode reports EIA's published reference case and does not respond to the scenario shock vector |
+| MIRAGRODEP (multi-region recursive-dynamic agricultural CGE) | `src/models/macro/miragrodep.py` | Real | Model's own | GAMS + CONOPT/PATH via subprocess (calib, MSD, REF, Simul phases). Needs GAMS with a CONOPT/PATH licence; skipped on the cluster (no gams executable) |
+| MPSGE.jl / GTAP long-run CGE | `src/models/macro/mpsge_jl.py` | Real (analytical MVP) + config-aware full path | Other literature | Pure Python (reduction) / Julia MPSGE.jl + JuMP via juliacall or subprocess (full). Headline gdp_impact_pct is the OECD/US-calibrated reference economy of the kernel, not a world aggregate; gdp_impact_pct_world_weighted is the PPP-share-weighted mean of the regional rows |
+| NEMS (EIA National Energy Modeling System, AEO2025) | `src/models/macro/nems.py` | Real (published-output ingestion) + optional full path | Model's own | output_ingestion (reads a completed NEMS run directory) / subprocess (cycle.py) / remote (SLURM). Ingestion needs a pre-computed run directory per scenario; the infrastructure_collapse scenario had no mapping on the 2026-05-04 run (validation failed) |
+| NREL electricity-sector baseline (ReEDS / Cambium) | `src/models/macro/nrel.py` | Real (analytical MVP) | Mixed (named model + other literature) | Pure Python (reduction); ReEDS/Cambium not run. No capacity expansion, transmission or regional detail; macro outputs are kernel-derived, not an electricity-sector result |
+| OpenCGE (PSL OG-Core / OG-USA overlapping-generations CGE) | `src/models/macro/opencge.py` | Real | Model's own | Python ogcore/ogusa + dask. Before November 2026 every run failed OG-Core validation (flat Z list; scalar delta_tau_annual); fixed to a 2-D Z path and an economic-depreciation (delta_annual) drag |
+| PyCGE (cge_modeling SAM-based CGE) | `src/models/macro/pycge.py` | Real (analytical MVP) + config-aware full path | Other literature | Pure Python macro kernel (reduction) / cge_modeling package when its API matches (full). Headline gdp_impact_pct is the OECD/US-calibrated reference economy of the kernel, not a world aggregate; gdp_impact_pct_world_weighted is the PPP-share-weighted mean of the regional rows |
 
 ### Energy systems (long-run)
 
-| Model | Adapter | Status | Notes |
-|---|---|---|---|
-| MESSAGEix (IIASA integrated assessment / energy systems) | `src/models/energy/messageix.py` | Real | message-ix + ixmp (Python + Java JDBC + GAMS). Failed on the cluster: no Java runtime for the ixmp JDBC backend |
-| OSeMOSYS (open-source energy systems LP) | `src/models/energy/osemosys.py` | Real | GNU MathProg + GLPK/CBC through the otoole CSV pipeline. Skipped on the cluster: no baseline dataset under data/osemosys/baseline |
-| TEMOA (Tools for Energy Model Optimization and Analysis) | `src/models/energy/temoa.py` | Real | Pyomo + CBC (or CPLEX/Gurobi) on a SQLite database, vendored clone. Skipped on the cluster: baseline database not vendored |
+| Model | Adapter | Status | Parameters | Notes |
+|---|---|---|---|---|
+| MESSAGEix (IIASA integrated assessment / energy systems) | `src/models/energy/messageix.py` | Real | Model's own | message-ix + ixmp (Python + Java JDBC + GAMS). Failed on the cluster: no Java runtime for the ixmp JDBC backend |
+| OSeMOSYS (open-source energy systems LP) | `src/models/energy/osemosys.py` | Real | Model's own | GNU MathProg + GLPK/CBC through the otoole CSV pipeline. Skipped on the cluster: no baseline dataset under data/osemosys/baseline |
+| TEMOA (Tools for Energy Model Optimization and Analysis) | `src/models/energy/temoa.py` | Real | Model's own | Pyomo + CBC (or CPLEX/Gurobi) on a SQLite database, vendored clone. Skipped on the cluster: baseline database not vendored |
 
 ### Summary
 
 - **Real (analytical MVP) (9):** `ais_project`, `aisdb`, `apsim`, `fed_oil`, `futures`, `marketsim`, `nrel`, `poles_jrc`, `world_helium_model`
 - **Real (8):** `bornstein_krusell_rebelo`, `energy_flux_gas_power`, `energy_flux_lng_profits`, `messageix`, `miragrodep`, `opencge`, `osemosys`, `temoa`
 - **Real (analytical MVP) + config-aware full path (7):** `argonne_abm`, `cwatm`, `lngst`, `mpsge_jl`, `pycge`, `weap_mena`, `world_fertilizer`
-- **Real (config-aware) (4):** `ggm`, `magpie`, `sahysmod`, `simrlfab`
+- **Real (config-aware) (5):** `apsim_gtap`, `ggm`, `magpie`, `sahysmod`, `simrlfab`
 - **Stub (3):** `capri`, `gtap`, `simple_g`
 - **Real (published-output ingestion) + optional full path (2):** `mam`, `nems`
 - **Config-aware stub (1):** `watergap2`
+
+*Parameters* says whose numbers the default path uses. "Model's own" covers full runs and published-output ingestion. "Mixed" and "Other literature" mark closed-form approximations: the first uses some of the named model's published estimates, the second none, so its results are not outputs of the named model. Run-specific inventories print each approximation under its own name (e.g. "Constant-elasticity oil-price approximation (POLES-JRC slot)").
 
 Stubs do not break the pipeline: the executor catches `NotImplementedError`, marks the run as `SKIPPED`, and continues with the remaining models. The coverage ledger (`slurm/scripts/build_coverage_ledger.py`) records why every (scenario, model) cell did or did not contribute, and the run-specific inventory (`slurm/scripts/build_model_inventory.py --run-id ...`) records which implementation mode each completed cell used.
 <!-- inventory:end -->

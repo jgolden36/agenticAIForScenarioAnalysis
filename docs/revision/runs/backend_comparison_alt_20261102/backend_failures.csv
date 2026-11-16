@@ -1,0 +1,15 @@
+tag,week,stage,error_class,error
+groq-qwen3.6-27b,20260215,scenarios,scenario_count_short,ValueError: Scenario generation returned 4 of 5 scenarios; the reply may have been truncated at the output-token cap (PIPELINE_LLM_MAX_COMPLETION_TOKENS).
+groq-qwen3.6-27b,20260222,scenarios,scenario_count_short,ValueError: Scenario generation returned 4 of 5 scenarios; the reply may have been truncated at the output-token cap (PIPELINE_LLM_MAX_COMPLETION_TOKENS).
+groq-qwen3.6-27b,20260301,scenarios,scenario_count_short,ValueError: Scenario generation returned 4 of 5 scenarios; the reply may have been truncated at the output-token cap (PIPELINE_LLM_MAX_COMPLETION_TOKENS).
+groq-qwen3.6-27b,20260308,scenarios,scenario_count_short,ValueError: Scenario generation returned 4 of 5 scenarios; the reply may have been truncated at the output-token cap (PIPELINE_LLM_MAX_COMPLETION_TOKENS).
+groq-qwen3.6-27b,20260315,scenarios,scenario_count_short,ValueError: Scenario generation returned 4 of 5 scenarios; the reply may have been truncated at the output-token cap (PIPELINE_LLM_MAX_COMPLETION_TOKENS).
+groq-qwen3.6-27b,20260329,scenarios,scenario_count_short,ValueError: Scenario generation returned 4 of 5 scenarios; the reply may have been truncated at the output-token cap (PIPELINE_LLM_MAX_COMPLETION_TOKENS).
+groq-qwen3.6-27b,20260405,scenarios,scenario_schema_validation,"langchain_core.exceptions.OutputParserException: Failed to parse ScenarioSet from completion [{""crisis_description"": ""In February 2026, the Strait of Hormuz — the world's most critical oil and LNG chokepoint — is closed to commercial shipping following a military escalation between Iran and a US/Isr"
+anthropic-haiku-4-5,20260222,brief,brief_schema_validation,pydantic_core._pydantic_core.ValidationError: 1 validation error for WeeklyBrief: observed_indicators
+anthropic-haiku-4-5,20260301,brief,brief_schema_validation,pydantic_core._pydantic_core.ValidationError: 1 validation error for WeeklyBrief: observed_indicators
+anthropic-haiku-4-5,20260308,brief,brief_schema_validation,pydantic_core._pydantic_core.ValidationError: 1 validation error for WeeklyBrief: observed_indicators
+anthropic-haiku-4-5,20260315,brief,brief_schema_validation,pydantic_core._pydantic_core.ValidationError: 1 validation error for WeeklyBrief: observed_indicators
+anthropic-haiku-4-5,20260322,brief,brief_schema_validation,pydantic_core._pydantic_core.ValidationError: 1 validation error for WeeklyBrief: observed_indicators
+anthropic-haiku-4-5,20260329,brief,brief_schema_validation,pydantic_core._pydantic_core.ValidationError: 1 validation error for WeeklyBrief: observed_indicators
+anthropic-haiku-4-5,20260405,brief,brief_schema_validation,pydantic_core._pydantic_core.ValidationError: 1 validation error for WeeklyBrief: observed_indicators

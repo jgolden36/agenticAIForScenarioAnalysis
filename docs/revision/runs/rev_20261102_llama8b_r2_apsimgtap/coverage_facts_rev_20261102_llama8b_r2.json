@@ -1,0 +1,1314 @@
+{
+  "run_id": "rev_20261102_llama8b_r2",
+  "cells": 175,
+  "models": [
+    {
+      "model_id": "world_helium_model",
+      "completed": [
+        "swift_contained",
+        "prolonged_contained",
+        "swift_escalated",
+        "prolonged_escalated",
+        "infrastructure_collapse"
+      ],
+      "skipped": [],
+      "failed": [],
+      "no_record": [],
+      "implementation_modes": [
+        "analytical_reduction"
+      ],
+      "detail": {
+        "swift_contained": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        },
+        "prolonged_contained": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        },
+        "swift_escalated": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        },
+        "prolonged_escalated": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        },
+        "infrastructure_collapse": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        }
+      },
+      "statement": "`world_helium_model` completed in ABCDE (analytical_reduction)."
+    },
+    {
+      "model_id": "argonne_abm",
+      "completed": [
+        "swift_contained",
+        "prolonged_contained",
+        "swift_escalated",
+        "prolonged_escalated",
+        "infrastructure_collapse"
+      ],
+      "skipped": [],
+      "failed": [],
+      "no_record": [],
+      "implementation_modes": [
+        "analytical_reduction"
+      ],
+      "detail": {
+        "swift_contained": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "world_helium_model",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "world_helium_model",
+              "ran_this_run": true
+            }
+          ],
+          "error_message": ""
+        },
+        "prolonged_contained": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "world_helium_model",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "world_helium_model",
+              "ran_this_run": true
+            }
+          ],
+          "error_message": ""
+        },
+        "swift_escalated": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "world_helium_model",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "world_helium_model",
+              "ran_this_run": true
+            }
+          ],
+          "error_message": ""
+        },
+        "prolonged_escalated": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "world_helium_model",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "world_helium_model",
+              "ran_this_run": true
+            }
+          ],
+          "error_message": ""
+        },
+        "infrastructure_collapse": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "world_helium_model",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "world_helium_model",
+              "ran_this_run": true
+            }
+          ],
+          "error_message": ""
+        }
+      },
+      "statement": "`argonne_abm` completed in ABCDE (analytical_reduction)."
+    },
+    {
+      "model_id": "simrlfab",
+      "completed": [],
+      "skipped": [],
+      "failed": [
+        "swift_contained",
+        "prolonged_contained",
+        "swift_escalated",
+        "prolonged_escalated",
+        "infrastructure_collapse"
+      ],
+      "no_record": [],
+      "implementation_modes": [],
+      "detail": {
+        "swift_contained": {
+          "exec_status": "failed",
+          "skip_class": "runtime_error",
+          "implementation_mode": null,
+          "upstream_sources": [],
+          "error_message": "ValueError: SimRLFabAdapter.translate_inputs_to_dict requires a SimRLFabConfig. Initialize the adapter with one before calling translate_inputs / execute."
+        },
+        "prolonged_contained": {
+          "exec_status": "failed",
+          "skip_class": "runtime_error",
+          "implementation_mode": null,
+          "upstream_sources": [],
+          "error_message": "ValueError: SimRLFabAdapter.translate_inputs_to_dict requires a SimRLFabConfig. Initialize the adapter with one before calling translate_inputs / execute."
+        },
+        "swift_escalated": {
+          "exec_status": "failed",
+          "skip_class": "runtime_error",
+          "implementation_mode": null,
+          "upstream_sources": [],
+          "error_message": "ValueError: SimRLFabAdapter.translate_inputs_to_dict requires a SimRLFabConfig. Initialize the adapter with one before calling translate_inputs / execute."
+        },
+        "prolonged_escalated": {
+          "exec_status": "failed",
+          "skip_class": "runtime_error",
+          "implementation_mode": null,
+          "upstream_sources": [],
+          "error_message": "ValueError: SimRLFabAdapter.translate_inputs_to_dict requires a SimRLFabConfig. Initialize the adapter with one before calling translate_inputs / execute."
+        },
+        "infrastructure_collapse": {
+          "exec_status": "failed",
+          "skip_class": "runtime_error",
+          "implementation_mode": null,
+          "upstream_sources": [],
+          "error_message": "ValueError: SimRLFabAdapter.translate_inputs_to_dict requires a SimRLFabConfig. Initialize the adapter with one before calling translate_inputs / execute."
+        }
+      },
+      "statement": "`simrlfab` completed in -; failed in ABCDE."
+    },
+    {
+      "model_id": "world_fertilizer",
+      "completed": [
+        "swift_contained",
+        "prolonged_contained",
+        "swift_escalated",
+        "prolonged_escalated",
+        "infrastructure_collapse"
+      ],
+      "skipped": [],
+      "failed": [],
+      "no_record": [],
+      "implementation_modes": [
+        "analytical_reduction"
+      ],
+      "detail": {
+        "swift_contained": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        },
+        "prolonged_contained": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        },
+        "swift_escalated": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        },
+        "prolonged_escalated": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        },
+        "infrastructure_collapse": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        }
+      },
+      "statement": "`world_fertilizer` completed in ABCDE (analytical_reduction)."
+    },
+    {
+      "model_id": "apsim",
+      "completed": [
+        "swift_contained",
+        "prolonged_contained",
+        "swift_escalated",
+        "prolonged_escalated",
+        "infrastructure_collapse"
+      ],
+      "skipped": [],
+      "failed": [],
+      "no_record": [],
+      "implementation_modes": [
+        "analytical_reduction"
+      ],
+      "detail": {
+        "swift_contained": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "world_fertilizer",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "cwatm",
+              "ran_this_run": true
+            }
+          ],
+          "error_message": ""
+        },
+        "prolonged_contained": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "world_fertilizer",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "cwatm",
+              "ran_this_run": true
+            }
+          ],
+          "error_message": ""
+        },
+        "swift_escalated": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "world_fertilizer",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "cwatm",
+              "ran_this_run": true
+            }
+          ],
+          "error_message": ""
+        },
+        "prolonged_escalated": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "world_fertilizer",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "cwatm",
+              "ran_this_run": true
+            }
+          ],
+          "error_message": ""
+        },
+        "infrastructure_collapse": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "world_fertilizer",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "cwatm",
+              "ran_this_run": true
+            }
+          ],
+          "error_message": ""
+        }
+      },
+      "statement": "`apsim` completed in ABCDE (analytical_reduction)."
+    },
+    {
+      "model_id": "cwatm",
+      "completed": [
+        "swift_contained",
+        "prolonged_contained",
+        "swift_escalated",
+        "prolonged_escalated",
+        "infrastructure_collapse"
+      ],
+      "skipped": [],
+      "failed": [],
+      "no_record": [],
+      "implementation_modes": [
+        "analytical_reduction"
+      ],
+      "detail": {
+        "swift_contained": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        },
+        "prolonged_contained": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        },
+        "swift_escalated": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        },
+        "prolonged_escalated": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        },
+        "infrastructure_collapse": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        }
+      },
+      "statement": "`cwatm` completed in ABCDE (analytical_reduction)."
+    },
+    {
+      "model_id": "weap_mena",
+      "completed": [
+        "swift_contained",
+        "prolonged_contained",
+        "swift_escalated",
+        "prolonged_escalated",
+        "infrastructure_collapse"
+      ],
+      "skipped": [],
+      "failed": [],
+      "no_record": [],
+      "implementation_modes": [
+        "analytical_reduction"
+      ],
+      "detail": {
+        "swift_contained": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        },
+        "prolonged_contained": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        },
+        "swift_escalated": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        },
+        "prolonged_escalated": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        },
+        "infrastructure_collapse": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        }
+      },
+      "statement": "`weap_mena` completed in ABCDE (analytical_reduction)."
+    },
+    {
+      "model_id": "sahysmod",
+      "completed": [],
+      "skipped": [],
+      "failed": [
+        "swift_contained",
+        "prolonged_contained",
+        "swift_escalated",
+        "prolonged_escalated",
+        "infrastructure_collapse"
+      ],
+      "no_record": [],
+      "implementation_modes": [],
+      "detail": {
+        "swift_contained": {
+          "exec_status": "failed",
+          "skip_class": "missing_data_or_binary",
+          "implementation_mode": null,
+          "upstream_sources": [],
+          "error_message": "FileNotFoundError: [Errno 2] No such file or directory: 'Models/Water/SahysMod/SahysMod.exe'"
+        },
+        "prolonged_contained": {
+          "exec_status": "failed",
+          "skip_class": "missing_data_or_binary",
+          "implementation_mode": null,
+          "upstream_sources": [],
+          "error_message": "FileNotFoundError: [Errno 2] No such file or directory: 'Models/Water/SahysMod/SahysMod.exe'"
+        },
+        "swift_escalated": {
+          "exec_status": "failed",
+          "skip_class": "missing_data_or_binary",
+          "implementation_mode": null,
+          "upstream_sources": [],
+          "error_message": "FileNotFoundError: [Errno 2] No such file or directory: 'Models/Water/SahysMod/SahysMod.exe'"
+        },
+        "prolonged_escalated": {
+          "exec_status": "failed",
+          "skip_class": "missing_data_or_binary",
+          "implementation_mode": null,
+          "upstream_sources": [],
+          "error_message": "FileNotFoundError: [Errno 2] No such file or directory: 'Models/Water/SahysMod/SahysMod.exe'"
+        },
+        "infrastructure_collapse": {
+          "exec_status": "failed",
+          "skip_class": "missing_data_or_binary",
+          "implementation_mode": null,
+          "upstream_sources": [],
+          "error_message": "FileNotFoundError: [Errno 2] No such file or directory: 'Models/Water/SahysMod/SahysMod.exe'"
+        }
+      },
+      "statement": "`sahysmod` completed in -; failed in ABCDE."
+    },
+    {
+      "model_id": "lngst",
+      "completed": [
+        "swift_contained",
+        "prolonged_contained",
+        "swift_escalated",
+        "prolonged_escalated",
+        "infrastructure_collapse"
+      ],
+      "skipped": [],
+      "failed": [],
+      "no_record": [],
+      "implementation_modes": [
+        "analytical_reduction"
+      ],
+      "detail": {
+        "swift_contained": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        },
+        "prolonged_contained": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        },
+        "swift_escalated": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        },
+        "prolonged_escalated": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        },
+        "infrastructure_collapse": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        }
+      },
+      "statement": "`lngst` completed in ABCDE (analytical_reduction)."
+    },
+    {
+      "model_id": "energy_flux_lng_profits",
+      "completed": [],
+      "skipped": [],
+      "failed": [
+        "swift_contained",
+        "prolonged_contained",
+        "swift_escalated",
+        "prolonged_escalated",
+        "infrastructure_collapse"
+      ],
+      "no_record": [],
+      "implementation_modes": [],
+      "detail": {
+        "swift_contained": {
+          "exec_status": "failed",
+          "skip_class": "validation_failed",
+          "implementation_mode": null,
+          "upstream_sources": [],
+          "error_message": "Validation failed: Provide either 'price_schedule' (12 rows) or all of 'ttf_peak_price', 'jkm_peak_price', 'hh_crisis_price'."
+        },
+        "prolonged_contained": {
+          "exec_status": "failed",
+          "skip_class": "validation_failed",
+          "implementation_mode": null,
+          "upstream_sources": [],
+          "error_message": "Validation failed: Provide either 'price_schedule' (12 rows) or all of 'ttf_peak_price', 'jkm_peak_price', 'hh_crisis_price'."
+        },
+        "swift_escalated": {
+          "exec_status": "failed",
+          "skip_class": "validation_failed",
+          "implementation_mode": null,
+          "upstream_sources": [],
+          "error_message": "Validation failed: Provide either 'price_schedule' (12 rows) or all of 'ttf_peak_price', 'jkm_peak_price', 'hh_crisis_price'."
+        },
+        "prolonged_escalated": {
+          "exec_status": "failed",
+          "skip_class": "validation_failed",
+          "implementation_mode": null,
+          "upstream_sources": [],
+          "error_message": "Validation failed: Provide either 'price_schedule' (12 rows) or all of 'ttf_peak_price', 'jkm_peak_price', 'hh_crisis_price'."
+        },
+        "infrastructure_collapse": {
+          "exec_status": "failed",
+          "skip_class": "validation_failed",
+          "implementation_mode": null,
+          "upstream_sources": [],
+          "error_message": "Validation failed: Provide either 'price_schedule' (12 rows) or all of 'ttf_peak_price', 'jkm_peak_price', 'hh_crisis_price'."
+        }
+      },
+      "statement": "`energy_flux_lng_profits` completed in -; failed in ABCDE."
+    },
+    {
+      "model_id": "nems",
+      "completed": [],
+      "skipped": [
+        "swift_contained",
+        "prolonged_contained",
+        "swift_escalated",
+        "prolonged_escalated"
+      ],
+      "failed": [
+        "infrastructure_collapse"
+      ],
+      "no_record": [],
+      "implementation_modes": [],
+      "detail": {
+        "swift_contained": {
+          "exec_status": "skipped",
+          "skip_class": "missing_data_or_binary",
+          "implementation_mode": null,
+          "upstream_sources": [],
+          "error_message": "Not yet implemented: NEMS output directory not found: data/nems_outputs/Hormuz_ScenarioA\nRun NEMS externally and place outputs at this path, or update NEMSConfi"
+        },
+        "prolonged_contained": {
+          "exec_status": "skipped",
+          "skip_class": "missing_data_or_binary",
+          "implementation_mode": null,
+          "upstream_sources": [],
+          "error_message": "Not yet implemented: NEMS output directory not found: data/nems_outputs/Hormuz_ScenarioB\nRun NEMS externally and place outputs at this path, or update NEMSConfi"
+        },
+        "swift_escalated": {
+          "exec_status": "skipped",
+          "skip_class": "missing_data_or_binary",
+          "implementation_mode": null,
+          "upstream_sources": [],
+          "error_message": "Not yet implemented: NEMS output directory not found: data/nems_outputs/Hormuz_ScenarioC\nRun NEMS externally and place outputs at this path, or update NEMSConfi"
+        },
+        "prolonged_escalated": {
+          "exec_status": "skipped",
+          "skip_class": "missing_data_or_binary",
+          "implementation_mode": null,
+          "upstream_sources": [],
+          "error_message": "Not yet implemented: NEMS output directory not found: data/nems_outputs/Hormuz_ScenarioD\nRun NEMS externally and place outputs at this path, or update NEMSConfi"
+        },
+        "infrastructure_collapse": {
+          "exec_status": "failed",
+          "skip_class": "validation_failed",
+          "implementation_mode": null,
+          "upstream_sources": [],
+          "error_message": "Validation failed: scenario_id 'infrastructure_collapse' not in NEMS output mapping. Available: baseline, prolonged_contained, prolonged_escalated, swift_contai"
+        }
+      },
+      "statement": "`nems` completed in -; skipped in ABCD; failed in E."
+    },
+    {
+      "model_id": "mam",
+      "completed": [],
+      "skipped": [
+        "swift_contained",
+        "prolonged_contained",
+        "swift_escalated",
+        "prolonged_escalated",
+        "infrastructure_collapse"
+      ],
+      "failed": [],
+      "no_record": [],
+      "implementation_modes": [],
+      "detail": {
+        "swift_contained": {
+          "exec_status": "skipped",
+          "skip_class": "missing_data_or_binary",
+          "implementation_mode": null,
+          "upstream_sources": [],
+          "error_message": "Not yet implemented: MAM aeo_ingestion mode requires MAMConfig.aeo_macro_xlsx_path to point at an existing AEO macro tables XLSX. Vendor AEO2025_Tables_19_20.xl"
+        },
+        "prolonged_contained": {
+          "exec_status": "skipped",
+          "skip_class": "missing_data_or_binary",
+          "implementation_mode": null,
+          "upstream_sources": [],
+          "error_message": "Not yet implemented: MAM aeo_ingestion mode requires MAMConfig.aeo_macro_xlsx_path to point at an existing AEO macro tables XLSX. Vendor AEO2025_Tables_19_20.xl"
+        },
+        "swift_escalated": {
+          "exec_status": "skipped",
+          "skip_class": "missing_data_or_binary",
+          "implementation_mode": null,
+          "upstream_sources": [],
+          "error_message": "Not yet implemented: MAM aeo_ingestion mode requires MAMConfig.aeo_macro_xlsx_path to point at an existing AEO macro tables XLSX. Vendor AEO2025_Tables_19_20.xl"
+        },
+        "prolonged_escalated": {
+          "exec_status": "skipped",
+          "skip_class": "missing_data_or_binary",
+          "implementation_mode": null,
+          "upstream_sources": [],
+          "error_message": "Not yet implemented: MAM aeo_ingestion mode requires MAMConfig.aeo_macro_xlsx_path to point at an existing AEO macro tables XLSX. Vendor AEO2025_Tables_19_20.xl"
+        },
+        "infrastructure_collapse": {
+          "exec_status": "skipped",
+          "skip_class": "missing_data_or_binary",
+          "implementation_mode": null,
+          "upstream_sources": [],
+          "error_message": "Not yet implemented: MAM aeo_ingestion mode requires MAMConfig.aeo_macro_xlsx_path to point at an existing AEO macro tables XLSX. Vendor AEO2025_Tables_19_20.xl"
+        }
+      },
+      "statement": "`mam` completed in -; skipped in ABCDE."
+    },
+    {
+      "model_id": "poles_jrc",
+      "completed": [
+        "swift_contained",
+        "prolonged_contained",
+        "swift_escalated",
+        "prolonged_escalated",
+        "infrastructure_collapse"
+      ],
+      "skipped": [],
+      "failed": [],
+      "no_record": [],
+      "implementation_modes": [
+        "analytical_reduction"
+      ],
+      "detail": {
+        "swift_contained": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        },
+        "prolonged_contained": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        },
+        "swift_escalated": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        },
+        "prolonged_escalated": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        },
+        "infrastructure_collapse": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [],
+          "error_message": ""
+        }
+      },
+      "statement": "`poles_jrc` completed in ABCDE (analytical_reduction)."
+    },
+    {
+      "model_id": "fed_oil",
+      "completed": [
+        "swift_contained",
+        "prolonged_contained",
+        "swift_escalated",
+        "prolonged_escalated",
+        "infrastructure_collapse"
+      ],
+      "skipped": [],
+      "failed": [],
+      "no_record": [],
+      "implementation_modes": [
+        "analytical_reduction"
+      ],
+      "detail": {
+        "swift_contained": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "poles_jrc",
+              "ran_this_run": true
+            }
+          ],
+          "error_message": ""
+        },
+        "prolonged_contained": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "poles_jrc",
+              "ran_this_run": true
+            }
+          ],
+          "error_message": ""
+        },
+        "swift_escalated": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "poles_jrc",
+              "ran_this_run": true
+            }
+          ],
+          "error_message": ""
+        },
+        "prolonged_escalated": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "poles_jrc",
+              "ran_this_run": true
+            }
+          ],
+          "error_message": ""
+        },
+        "infrastructure_collapse": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "poles_jrc",
+              "ran_this_run": true
+            }
+          ],
+          "error_message": ""
+        }
+      },
+      "statement": "`fed_oil` completed in ABCDE (analytical_reduction)."
+    },
+    {
+      "model_id": "pycge",
+      "completed": [
+        "swift_contained",
+        "prolonged_contained",
+        "swift_escalated",
+        "prolonged_escalated",
+        "infrastructure_collapse"
+      ],
+      "skipped": [],
+      "failed": [],
+      "no_record": [],
+      "implementation_modes": [
+        "analytical_reduction"
+      ],
+      "detail": {
+        "swift_contained": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "poles_jrc",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "world_helium_model",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "world_fertilizer",
+              "ran_this_run": true
+            }
+          ],
+          "error_message": ""
+        },
+        "prolonged_contained": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "poles_jrc",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "world_helium_model",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "world_fertilizer",
+              "ran_this_run": true
+            }
+          ],
+          "error_message": ""
+        },
+        "swift_escalated": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "poles_jrc",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "world_helium_model",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "world_fertilizer",
+              "ran_this_run": true
+            }
+          ],
+          "error_message": ""
+        },
+        "prolonged_escalated": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "poles_jrc",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "world_helium_model",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "world_fertilizer",
+              "ran_this_run": true
+            }
+          ],
+          "error_message": ""
+        },
+        "infrastructure_collapse": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "poles_jrc",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "world_helium_model",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "world_fertilizer",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "cwatm",
+              "ran_this_run": true
+            }
+          ],
+          "error_message": ""
+        }
+      },
+      "statement": "`pycge` completed in ABCDE (analytical_reduction)."
+    },
+    {
+      "model_id": "mpsge_jl",
+      "completed": [
+        "swift_contained",
+        "prolonged_contained",
+        "swift_escalated",
+        "prolonged_escalated",
+        "infrastructure_collapse"
+      ],
+      "skipped": [],
+      "failed": [],
+      "no_record": [],
+      "implementation_modes": [
+        "analytical_reduction"
+      ],
+      "detail": {
+        "swift_contained": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "poles_jrc",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "lngst",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "world_helium_model",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "world_fertilizer",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "aisdb+ais_project",
+              "ran_this_run": false
+            }
+          ],
+          "error_message": ""
+        },
+        "prolonged_contained": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "poles_jrc",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "lngst",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "world_helium_model",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "world_fertilizer",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "aisdb+ais_project",
+              "ran_this_run": false
+            }
+          ],
+          "error_message": ""
+        },
+        "swift_escalated": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "poles_jrc",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "lngst",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "world_helium_model",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "world_fertilizer",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "aisdb+ais_project",
+              "ran_this_run": false
+            }
+          ],
+          "error_message": ""
+        },
+        "prolonged_escalated": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "poles_jrc",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "lngst",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "world_helium_model",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "world_fertilizer",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "aisdb+ais_project",
+              "ran_this_run": false
+            }
+          ],
+          "error_message": ""
+        },
+        "infrastructure_collapse": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "poles_jrc",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "lngst",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "world_helium_model",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "world_fertilizer",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "cwatm",
+              "ran_this_run": true
+            },
+            {
+              "model_id": "aisdb+ais_project",
+              "ran_this_run": false
+            }
+          ],
+          "error_message": ""
+        }
+      },
+      "statement": "`mpsge_jl` completed in ABCDE (analytical_reduction)."
+    },
+    {
+      "model_id": "nrel",
+      "completed": [
+        "swift_contained",
+        "prolonged_contained",
+        "swift_escalated",
+        "prolonged_escalated",
+        "infrastructure_collapse"
+      ],
+      "skipped": [],
+      "failed": [],
+      "no_record": [],
+      "implementation_modes": [
+        "analytical_reduction"
+      ],
+      "detail": {
+        "swift_contained": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "lngst",
+              "ran_this_run": true
+            }
+          ],
+          "error_message": ""
+        },
+        "prolonged_contained": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "lngst",
+              "ran_this_run": true
+            }
+          ],
+          "error_message": ""
+        },
+        "swift_escalated": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "lngst",
+              "ran_this_run": true
+            }
+          ],
+          "error_message": ""
+        },
+        "prolonged_escalated": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "lngst",
+              "ran_this_run": true
+            }
+          ],
+          "error_message": ""
+        },
+        "infrastructure_collapse": {
+          "exec_status": "completed",
+          "skip_class": "completed",
+          "implementation_mode": "analytical_reduction",
+          "upstream_sources": [
+            {
+              "model_id": "lngst",
+              "ran_this_run": true
+            }
+          ],
+          "error_message": ""
+        }
+      },
+      "statement": "`nrel` completed in ABCDE (analytical_reduction)."
+    }
+  ],
+  "water_linkage": {
+    "scenario": "infrastructure_collapse",
+    "water_model_status": {
+      "cwatm": "completed",
+      "weap_mena": "completed",
+      "sahysmod": "failed"
+    },
+    "macro_cge_status": {
+      "pycge": "completed",
+      "mpsge_jl": "completed",
+      "opencge": "failed"
+    },
+    "macro_cge_upstream_sources": {
+      "pycge": [
+        {
+          "model_id": "poles_jrc",
+          "ran_this_run": true
+        },
+        {
+          "model_id": "world_helium_model",
+          "ran_this_run": true
+        },
+        {
+          "model_id": "world_fertilizer",
+          "ran_this_run": true
+        },
+        {
+          "model_id": "cwatm",
+          "ran_this_run": true
+        }
+      ],
+      "mpsge_jl": [
+        {
+          "model_id": "poles_jrc",
+          "ran_this_run": true
+        },
+        {
+          "model_id": "lngst",
+          "ran_this_run": true
+        },
+        {
+          "model_id": "world_helium_model",
+          "ran_this_run": true
+        },
+        {
+          "model_id": "world_fertilizer",
+          "ran_this_run": true
+        },
+        {
+          "model_id": "cwatm",
+          "ran_this_run": true
+        },
+        {
+          "model_id": "aisdb+ais_project",
+          "ran_this_run": false
+        }
+      ],
+      "opencge": []
+    },
+    "macro_cge_upstream_evidence": {
+      "mpsge_jl": "full",
+      "opencge": "full",
+      "pycge": "full"
+    },
+    "macro_cge_water_fed": {
+      "pycge": true,
+      "mpsge_jl": true,
+      "opencge": false
+    },
+    "macro_cge_water_fed_unconfirmed": {
+      "pycge": false,
+      "mpsge_jl": false,
+      "opencge": false
+    },
+    "statement": "Under the infrastructure-collapse scenario the macro CGEs that list a water model among their upstream sources are: pycge, mpsge_jl; their water shock was model-computed."
+  },
+  "linkage_statements": {
+    "helium": "The helium linkage (world_helium_model -> argonne_abm / simrlfab / macro) was model-computed in scenarios ABCDE.",
+    "fertilizer": "The fertilizer linkage (world_fertilizer -> apsim / macro) was model-computed in scenarios ABCDE."
+  },
+  "caveat": "Every cell in this ledger carries an execution record."
+}

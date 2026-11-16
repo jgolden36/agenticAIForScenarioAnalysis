@@ -117,6 +117,9 @@ class SimRLFabConfig(BaseModel):
     episodes_per_disruption_month: float = Field(default=10.0, gt=0.0)
     timeout_seconds: int = Field(default=7200, ge=60)
     run_dir_base: Path | None = None
+    # SimRLFab hardcodes SEED=10 (initialize_env.define_production_parameters);
+    # its numpy streams use SEED + episode. None keeps the upstream seed.
+    seed: int | None = None
 
     def to_subprocess_config(self) -> SubprocessConfig:
         """Build the underlying SubprocessConfig used by SubprocessAdapter.
@@ -481,6 +484,7 @@ SimRLFab-master/SimRLFab-master/requirements.txt"
             "timesteps_per_episode": cfg.timesteps_per_episode,
             "agent_type": cfg.agent_type.upper(),
             "agent_config_path": agent_config_path,
+            "seed": cfg.seed,
             "simrlfab_overrides": {
                 "machine_mtbf_overrides": {str(k): v for k, v in mtbf_overrides.items()},
                 "machine_mtol_overrides": {str(k): v for k, v in mtol_overrides.items()},
@@ -559,6 +563,28 @@ SimRLFab-master/SimRLFab-master/requirements.txt"
         ):
             if isinstance(kpis, dict) and key in kpis:
                 outputs[key] = kpis[key]
+
+        if any(k in outputs for k in ("machines_working", "finished_orders")):
+            outputs["_kpi_source"] = "driver_kpis"
+        # When the driver returns no KPI dict, derive the same headline KPIs
+        # from <timestamp>_episode_log.txt (one row per episode): means over
+        # episodes, under SimRLFab's own names so both paths give one schema.
+        elif episode_log:
+            rows = [r for r in episode_log if isinstance(r, dict)]
+
+            def _mean(key: str) -> float | None:
+                vals = [float(r[key]) for r in rows
+                        if isinstance(r.get(key), (int, float)) and not isinstance(r.get(key), bool)]
+                return round(sum(vals) / len(vals), 6) if vals else None
+
+            for k in ("machines_working", "machines_idle", "machines_broken", "transp_idle",
+                      "finished_orders", "processed_orders", "order_waiting_time", "alpha", "inventory"):
+                v = _mean(k)
+                if v is not None:
+                    outputs[k] = v
+            outputs["_kpi_source"] = "episode_log_mean"
+        if episode_log:
+            outputs["n_episodes"] = len(episode_log)
 
         diagnostics: dict[str, Any] = {}
         if error_message:

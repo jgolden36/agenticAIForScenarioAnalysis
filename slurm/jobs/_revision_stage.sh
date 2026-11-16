@@ -44,6 +44,8 @@
 #     HORMUZ_REPORT_DIR (<root>/data/reports/<run_id>)
 #     HORMUZ_REVISION_OUT_DIR (<root>/docs/revision/runs/<run_id>)
 #     HORMUZ_REVISION_SKIP ()               comma list forwarded to build_all.py --skip
+#     HORMUZ_REVISION_STATE_DIR (<root>/data/pipeline_state)
+#                                           e.g. a merged copy such as data/pipeline_state_may_apsimgtap
 #     HORMUZ_PIP_FREEZE_FILE (${HORMUZ_LOG_DIR}/pip_freeze.txt)
 #     HORMUZ_BACKEND_REPORTS_ROOT / HORMUZ_BACKEND_STATE_ROOT (unset)
 #                                           when set, also run backend_comparison.py
@@ -218,15 +220,17 @@ hormuz_stage_revision() {
     : "${HORMUZ_REPORT_DIR:=${root}/data/reports/${run_id}}"
     : "${HORMUZ_REVISION_OUT_DIR:=${root}/docs/revision/runs/${run_id}}"
     : "${HORMUZ_REVISION_SKIP:=}"
+    : "${HORMUZ_REVISION_STATE_DIR:=${root}/data/pipeline_state}"
     : "${HORMUZ_PIP_FREEZE_FILE:=${log_dir}/pip_freeze.txt}"
     export HORMUZ_RUN_BASELINE HORMUZ_BASELINE_FILE HORMUZ_BASELINE_RUN_ID HORMUZ_BASELINE_OUTPUT_ROOT
-    export HORMUZ_REPORT_DIR HORMUZ_REVISION_OUT_DIR HORMUZ_REVISION_SKIP HORMUZ_PIP_FREEZE_FILE
+    export HORMUZ_REPORT_DIR HORMUZ_REVISION_OUT_DIR HORMUZ_REVISION_SKIP HORMUZ_PIP_FREEZE_FILE HORMUZ_REVISION_STATE_DIR
 
     echo ""
     echo "════════════ Stage 7: Revision Artefacts ════════════"
     echo "[revision] run id:       ${run_id}"
     echo "[revision] report dir:   ${HORMUZ_REPORT_DIR}"
     echo "[revision] out dir:      ${HORMUZ_REVISION_OUT_DIR}"
+    echo "[revision] state dir:    ${HORMUZ_REVISION_STATE_DIR}"
     echo "[revision] runtime dir:  ${log_dir}"
     echo "[revision] baseline:     ${HORMUZ_RUN_BASELINE} (run id ${HORMUZ_BASELINE_RUN_ID}, output root ${HORMUZ_BASELINE_OUTPUT_ROOT})"
     if [[ -n "$HORMUZ_REVISION_SKIP" ]]; then
@@ -242,7 +246,7 @@ hormuz_stage_revision() {
     local args=(
         --run-id "$run_id"
         --report-dir "$HORMUZ_REPORT_DIR"
-        --state-dir "${root}/data/pipeline_state"
+        --state-dir "$HORMUZ_REVISION_STATE_DIR"
         --out-dir "$HORMUZ_REVISION_OUT_DIR"
         --runtime-dir "$log_dir"
     )

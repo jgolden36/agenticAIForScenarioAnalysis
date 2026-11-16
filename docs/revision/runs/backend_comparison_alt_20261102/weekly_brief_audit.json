@@ -1,0 +1,35 @@
+{
+  "summary": [
+    {
+      "backend": "anthropic-haiku-4-5",
+      "tokens": 22,
+      "matched": 22,
+      "substantive": 15,
+      "substantive_matched": 15,
+      "briefs": 1,
+      "match_rate": 1.0,
+      "substantive_match_rate": 1.0
+    },
+    {
+      "backend": "groq-qwen3.6-27b",
+      "tokens": 462,
+      "matched": 450,
+      "substantive": 248,
+      "substantive_matched": 236,
+      "briefs": 8,
+      "match_rate": 0.974,
+      "substantive_match_rate": 0.9516
+    },
+    {
+      "backend": "groq-qwen3.8-27b",
+      "tokens": 31,
+      "matched": 31,
+      "substantive": 12,
+      "substantive_matched": 12,
+      "briefs": 8,
+      "match_rate": 1.0,
+      "substantive_match_rate": 1.0
+    }
+  ],
+  "weeks_without_articles": []
+}
