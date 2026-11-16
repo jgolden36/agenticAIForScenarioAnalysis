@@ -20,8 +20,9 @@ authors:
   - family-names: Indelicato
   - family-names: Varshney
   - family-names: Thornsbury
-version: 0.1.0
-date-released: "2026-10-27"
+version: 0.2.0
+date-released: "2026-11-16"
+license: MIT
 repository-code: "https://github.com/jgolden36/agenticAIForScenarioAnalysis"
 keywords:
   - agentic AI

@@ -4,7 +4,7 @@ A LangGraph-based agentic AI orchestration framework for multi-model, multi-scen
 
 This repository implements the framework described in *"Agentic AI Modeling for Rapid Analysis of Chokepoint Crises Along Strategic and Economic Dimensions: A Case Study of the Closure of the Strait of Hormuz"* (Golden, Indelicato, Varshney, & Thornsbury). It coordinates ~30 heterogeneous domain models — written in Python, Julia, GAMS, R, AnyLogic, Octave, EViews, Fortran, and Excel — through a structured Schwartz-style scenario analysis with mandatory human-in-the-loop checkpoints.
 
-> **Status (April 2026):** The orchestration layer is feature-complete. ~14 of ~30 model adapters have real execution paths wired to vendored or external model code; an additional 4 (POLES-JRC, World Helium Model, Futures, CWatM analytical fallback) ship a closed-form analytical-MVP execution path so every commodity system except SHIPPING has at least one runnable model on the cluster MVP; the remaining ~12 are typed stubs awaiting upstream integration. See [Model implementation status](#model-implementation-status) below.
+> **Status (November 2026, release 0.2.0):** The orchestration layer is feature-complete. The repository registers 35 domain-model adapters: 13 run the full upstream model when its code, data or licence is available, 2 ingest published model output, 16 run closed-form analytical reductions calibrated to the literature, and 4 are typed stubs. Every commodity system has at least one runnable model. See [Model implementation status](#model-implementation-status) below for the per-model record.
 
 ---
 
@@ -91,7 +91,7 @@ The same merge logic is invoked from all three runtimes: the local LangGraph orc
 
 ## Model implementation status
 
-The CLAUDE.md inventory lists ~30 domain models. Each has a typed adapter, a Pydantic input/output schema, and is registered in `build_default_registry()` (`src/models/registry.py`). Adapters fall into three buckets:
+The inventory below lists 35 domain models. Each has a typed adapter, a Pydantic input/output schema, and is registered in `build_default_registry()` (`src/models/registry.py`). Adapters fall into three buckets:
 
 - **Real execution path wired** — adapter calls the vendored or external model code and returns model outputs end-to-end. Some additionally accept a YAML config to point at the real binary/data; those run as functional pure-Python implementations or stubs in its absence.
 - **Config-aware stub** — full `validate_inputs` / `translate_inputs` / `parse_outputs` plus a real `execute` path that activates when a YAML config is provided. Without config, raises `NotImplementedError` with a precise list of the prerequisites (binary, data, license).
@@ -211,12 +211,10 @@ After the SLURM driver bootstrap completes (`slurm/jobs/stonybrook_ai_cluster.jo
 
 ```
 agenticAIForScenarioAnalysis/
-├── CLAUDE.md                      # Design specification (canonical)
 ├── README.md                      # This file
+├── LICENSE                        # MIT
+├── CITATION.cff, .zenodo.json     # Software citation metadata
 ├── pyproject.toml                 # Dependencies (with optional extras per platform)
-├── field_guide_model_integration_v2.md
-├── model_integration_plan.md
-├── LangChainNextSteps.md
 │
 ├── src/
 │   ├── pipeline/                  # LangGraph orchestrator (graph.py + state.py + config.py)
@@ -250,19 +248,20 @@ agenticAIForScenarioAnalysis/
 │   └── model_configs/             # Per-adapter YAML; pick this dir up via
 │                                  # build_default_registry("configs/model_configs")
 │
-├── Models/                        # Vendored / cloned external model code
-│   ├── Oil/WorldEquilibriumOilModel/
-│   ├── LNG/GGM-20190509-open-source-final/
-│   ├── LNG/NEMS-main/
-│   ├── Fertilizer/magpie-master/
-│   ├── Helium Market_ Semiconductors/SimRLFab-master/
-│   ├── Shipping/aisstream-main/
-│   ├── General Equilibrium/MIRAGRODEP_v0-1/
-│   ├── General Equilibrium/EIA/   # MAM AEO2025 PDF
-│   └── Energy/                    # OSeMOSYS, MESSAGEix, TEMOA (clone with submodules)
+├── Model/GGM-20190509-open-source-final/  # Global Gas Model 3.0 (MIT), vendored
+│                                  # Other upstream models (BKR replication files, NEMS,
+│                                  # MAgPIE, SimRLFab, MIRAGRODEP, OSeMOSYS, MESSAGEix,
+│                                  # TEMOA, ...) are not redistributed; each adapter's
+│                                  # config YAML says where it expects them (Models/...)
 │
+├── scripts/revision/              # Audit and robustness analyses for the revision
+├── slurm/                         # Cluster job drivers and stage scripts
+├── docs/revision/                 # Model inventory, model licences, software versions
 ├── tests/
-└── data/                          # Inputs, outputs, reports (gitignored for large files)
+└── data/
+    ├── 20260504_222710/           # Report of the run analysed in the manuscript
+    ├── eia/                       # AEO2025 Table 20 (MAM ingestion)
+    └── market/                    # World Bank Pink Sheet prices (market calibration)
 ```
 
 ---
@@ -291,7 +290,7 @@ pip install -e ".[news]"         # requests (NewsData.io / GNews / NewsAPI / EIA
 pip install -e ".[dev]"          # pytest, pytest-asyncio
 ```
 
-Non-Python prerequisites (GAMS, Octave + Dynare, GLPK/CBC, R, Java/JDK, Excel, AnyLogic Pro) are documented per-model in the linked READMEs (e.g., `Models/Energy/README.md`).
+Non-Python prerequisites (GAMS, Octave + Dynare, GLPK/CBC, R, Java/JDK, Excel, AnyLogic Pro) are listed per model in `docs/revision/model_inventory.md` and `docs/revision/model_licenses.md`, and each adapter's `configs/model_configs/*.yaml` names the binary, data and solver it expects.
 
 ---
 
@@ -335,13 +334,13 @@ The Stony Brook drivers (`slurm/jobs/stonybrook_ai_cluster.job` and `slurm/jobs/
 Both stages are also runnable standalone against any historical run id:
 
 ```bash
-python slurm/scripts/export_results.py    --run-id 20260423_125906
-python slurm/scripts/visualize_results.py --run-id 20260423_125906
+python slurm/scripts/export_results.py    --run-id <run_id>
+python slurm/scripts/visualize_results.py --run-id <run_id>
 ```
 
 ### Revision and audit tooling
 
-The October 2026 revision added a set of audit scripts that read a run's saved state (`data/pipeline_state/<run_id>_*.json`) or, when only the Stage 5 export is available, its report directory (`--from-report-dir`). Their outputs are checked in under `docs/revision/` so the manuscript can cite them; `python scripts/revision/build_all.py --run-id <id> --report-dir <dir> [--baseline configs/baselines/hormuz_2026_analyst.yaml]` regenerates all of them.
+The October 2026 revision added a set of audit scripts that read a run's saved state (`data/pipeline_state/<run_id>_*.json`) or, when only the Stage 5 export is available, its report directory (`--from-report-dir`). They write to `docs/revision/` (this release includes only the model inventory, model licence and software version tables; the per-run audit outputs are regenerated by the scripts); `python scripts/revision/build_all.py --run-id <id> --report-dir <dir> [--baseline configs/baselines/hormuz_2026_analyst.yaml]` regenerates all of them.
 
 | Script | What it produces |
 |---|---|
@@ -533,16 +532,15 @@ Three YAML directories drive a run:
 
 ## Further reading
 
-- **`CLAUDE.md`** — full design specification (Algorithm 1, module contracts, design constraints).
-- **`field_guide_model_integration_v2.md`** — practical reference for each execution environment (Julia, GAMS, Excel, AnyLogic, R, generic subprocess) with current 2026 API details.
-- **`model_integration_plan.md`** — historical sequencing notes for `Models/` ↔ `src/models/` integration.
-- **`LangChainNextSteps.md`** — LangGraph 1.x patterns (state, supervisors, HITL, fan-out) referenced by the orchestrator.
-- **`Models/Energy/README.md`** — cloning, solver, and baseline-data instructions for the energy-systems trio.
+- **The manuscript** — design of the framework (Algorithm 1, module contracts, design constraints).
+- **`docs/revision/model_inventory.md`** — per-model implementation mode, platform, calibration sources, key equations and limitations.
+- **`docs/revision/model_licenses.md`** — licence and upstream reference for each domain model.
+- **`docs/revision/software_versions.md`** — Python package and solver versions.
 
 ---
 
 ## License & citation
 
-This is a research codebase. If you use it in academic work, please cite the underlying paper (Golden, Indelicato, Varshney, & Thornsbury, *Agentic AI Modeling for Rapid Analysis of Chokepoint Crises ...*) and respect the licenses of each vendored model under `Models/` (NEMS: public domain, GGM: MIT, MAgPIE: AGPL-3.0, OSeMOSYS / MESSAGEix / TEMOA: see upstream repositories, etc.).
+This is a research codebase. If you use it in academic work, please cite the underlying paper (Golden, Indelicato, Varshney, & Thornsbury, *Agentic AI Modeling for Rapid Analysis of Chokepoint Crises ...*) and respect the licenses of each upstream model (GGM, vendored under `Model/`: MIT; NEMS: public domain; MAgPIE: AGPL-3.0; OSeMOSYS / MESSAGEix / TEMOA: see upstream repositories, etc.). The repository code is released under the MIT License (`LICENSE`).
 
 Citation metadata lives in `CITATION.cff` and `.zenodo.json` (software record for the Zenodo release); the per-model license table is generated into `docs/revision/model_licenses.md` by `scripts/revision/model_licenses.py`.

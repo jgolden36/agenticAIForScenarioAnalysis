@@ -23,7 +23,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 REPO_LICENSE_NOTE = (
     "Repository code (adapters, reductions, orchestration) is released under the license stated in the "
-    "repository's LICENSE file; vendored upstream models under `Models/` keep their own licenses as listed below."
+    "repository's LICENSE file; the vendored Global Gas Model under `Model/` and upstream models obtained separately "
+    "keep their own licenses as listed below."
 )
 
 

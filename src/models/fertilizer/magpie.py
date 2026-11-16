@@ -414,7 +414,7 @@ class MAgPIEAdapter(RAdapter):
                 "  4. Bridge R script at src/models/fertilizer/magpie_bridge.R\n"
                 "  5. RConfig with r_script_path pointing to that bridge\n"
                 "  6. magpie_root (constructor arg) or MAGPIE_ROOT env var\n"
-                "See field_guide_model_integration_v2.md for detailed steps."
+                "See configs/model_configs/magpie.yaml and docs/revision/model_inventory.md."
             )
 
         bridge_script = Path(self._config.r_script_path)

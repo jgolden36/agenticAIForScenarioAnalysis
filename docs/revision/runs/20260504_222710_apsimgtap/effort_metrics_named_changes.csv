@@ -1,3 +1,0 @@
-change,description,commit,date,subject,files_in_commit,lines_added,lines_removed,bundled,person_hours
-infrastructure_collapse_scenario,"Prescribed tail-risk scenario E added outside the 2x2 matrix (enum, framework YAML, water forwarding rule).",,,,0,0,0,,
-apsim_fertilizer_food_bridge,FERTILIZER to FOOD linkage: APSIM moved to COMMODITY_DOWNSTREAM and fed from world_fertilizer / cwatm.,,,,0,0,0,,

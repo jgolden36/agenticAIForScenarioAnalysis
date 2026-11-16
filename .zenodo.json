@@ -18,7 +18,9 @@
     "computable general equilibrium"
   ],
   "access_right": "open",
-  "version": "0.1.0",
+  "license": "MIT",
+  "publication_date": "2026-11-16",
+  "version": "0.2.0",
   "language": "eng",
-  "notes": "Companion software for the manuscript 'Agentic AI Modeling for Rapid Analysis of Chokepoint Crises Along Strategic and Economic Dimensions: A Case Study of the Closure of the Strait of Hormuz' (Communications Engineering, manuscript 28847ff1). Vendored upstream models under Models/ keep their own licenses; see docs/revision/model_licenses.md."
+  "notes": "Companion software for the manuscript 'Agentic AI Modeling for Rapid Analysis of Chokepoint Crises Along Strategic and Economic Dimensions: A Case Study of the Closure of the Strait of Hormuz' (Communications Engineering, manuscript 28847ff1). Repository code is MIT-licensed. The vendored Global Gas Model under Model/ (MIT) and upstream models obtained separately keep their own licenses; see docs/revision/model_licenses.md."
 }

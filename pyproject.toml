@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hormuz-pipeline"
-version = "0.1.0"
+version = "0.2.0"
 description = "Agentic AI orchestration framework for multi-model crisis scenario analysis"
 requires-python = ">=3.11"
 dependencies = [
@@ -135,15 +135,6 @@ news = [
     # (NewsData.io, GNews, NewsAPI.org/.ai, EIA Open Data) talk plain
     # HTTPS, so `requests` is the only hard dependency.
     "requests>=2.31",
-]
-game = [
-    # The economic war game adjudicator (src/game/api.py): a small HTTP
-    # service the EconomicWarGames server calls once per crisis round.
-    # Runs the analytical-MVP adapters directly, no LLM. See
-    # docs/game/ADJUDICATOR.md.
-    "fastapi>=0.115",
-    "uvicorn>=0.23",
-    "httpx>=0.24",
 ]
 llm-providers = [
     # Optional cloud LLM providers. langchain-openai is already a

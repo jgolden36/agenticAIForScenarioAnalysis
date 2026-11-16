@@ -20,7 +20,7 @@ the models genuinely relevant to that ``(time_horizon, outcome_scope)``
 pair, which is much smaller than the union of all models.
 
 The defaults below match the routing intuition documented in
-``CLAUDE.md`` (Outcome Variables section). Operators can override any
+the manuscript (outcome variables). Operators can override any
 section's rule by dropping a ``configs/synthesis_sectioning.yaml``
 file with shape::
 
@@ -37,7 +37,7 @@ file with shape::
 When a YAML override is present it *replaces* the in-code defaults
 for the matching section (so partial overrides should re-state the
 levels they want). Sections not listed in the YAML keep the in-code
-defaults. This satisfies the CLAUDE.md "configuration over
+defaults. This satisfies the "configuration over
 hardcoding" constraint without forcing every install to ship a YAML.
 """
 

@@ -1,6 +1,6 @@
 # Model licenses and upstream references
 
-Repository code (adapters, reductions, orchestration) is released under the license stated in the repository's LICENSE file; vendored upstream models under `Models/` keep their own licenses as listed below.
+Repository code (adapters, reductions, orchestration) is released under the license stated in the repository's LICENSE file; the vendored Global Gas Model under `Model/` and upstream models obtained separately keep their own licenses as listed below.
 
 | model | system | display name | modes available | platform | upstream reference | license notes |
 |---|---|---|---|---|---|---|

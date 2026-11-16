@@ -261,7 +261,7 @@ models:
   # the OIL adapter consumes them -- typically when the executor's
   # within-level scheduling places SHIPPING earlier, or when the
   # adapter is reclassified to COMMODITY_DOWNSTREAM (a future YAML
-  # tweak documented under "intra-tier dependencies" in CLAUDE.md).
+  # tweak; see the "Algorithm 1, step 11" section of README.md).
   # ---------------------------------------------------------------------
   poles_jrc:
     rerouting_cost_multiplier:
@@ -503,7 +503,7 @@ models:
   # wedge on Gulf chm/extract exports. combine: first with aisdb first
   # (not the shipping mean used above): AIS_project returns 1.0 whenever
   # rerouting_via_cape is extracted as false, and averaging it in halves
-  # the wedge without a flag (docs/revision/REVIEWER_RESPONSE_RESULTS.md).
+  # the wedge without a flag.
   # The Gulf production losses stay as extracted/analyst-set parameters:
   # POLES-JRC and the World Fertilizer Model report prices, not the
   # physical losses apsim_gtap needs.
