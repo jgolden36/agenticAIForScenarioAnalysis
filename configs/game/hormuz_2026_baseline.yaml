@@ -12,7 +12,7 @@
 # bump `as_of` and `version`, and note the change in `revision_log`.
 
 baseline_id: hormuz_2026_game
-version: 1
+version: 2
 as_of: "2026-11-08"
 description: >
   Pre-crisis structure of Strait of Hormuz energy flows, the bypass and stock buffers available
@@ -22,6 +22,10 @@ description: >
 
 revision_log:
   - {version: 1, as_of: "2026-11-08", note: "First frozen snapshot for the classroom MVP."}
+  - {version: 2, as_of: "2026-11-08", revised: "2026-11-22",
+     note: "Designer recalibration only (the game's K1 pass): designer_parameters.legitimacy_weights.shortage 1.5 to 0.4.
+            No sourced figure was re-read, so as_of, the date of the data snapshot, stays 2026-11-08; revised is the day
+            the designer value changed."}
 
 sources:
   eia_wotc: "EIA, World Oil Transit Chokepoints (June 2025 update)"
@@ -35,6 +39,7 @@ sources:
   platts: "S&P Global Platts, Dated Brent record 7 April 2026"
   ier_reuters: "Institute for Energy Research citing Reuters on Saudi East-West ramp and UAE pipeline"
   design_report: "Designing a Supply-Chain Economic War Game for the Classroom (Nov 2026), Hormuz subgame spec"
+  game_k1: "Economic War Games stage K1 (2026-11-22): a designer pass on the Hormuz legitimacy weights against the opening shortfall; the weights it did not change are the design report's"
   pipeline_baseline: "configs/baselines/hormuz_2026_analyst.yaml (analyst-authored pipeline parameters)"
 
 pre_crisis:
@@ -126,7 +131,8 @@ designer_parameters:
   mine_strike_probability_per_unit_density: {value: 0.08, unit: probability, source: design_report, status: designer}
   okun_coefficient: {value: 0.5, unit: pp unemployment per pct GDP gap, source: design_report, status: designer}
   energy_cpi_passthrough: {value: 0.08, unit: pct CPI per pct energy price, source: design_report, status: designer}
-  legitimacy_weights: {value: {inflation: 0.6, shortage: 1.5, fiscal: 0.2, rally: 0.3}, unit: points per unit, source: design_report, status: designer}
+  legitimacy_weights: {value: {inflation: 0.6, shortage: 0.4, fiscal: 0.2, rally: 0.3}, unit: points per unit, source: game_k1, status: designer,
+                       note: "inflation, fiscal and rally are the design report's. shortage was 1.5 there: a week with no orders took 37 points off a seat short a quarter of its oil and toppled three governments in round one. At 0.4 an idle table loses none before round three. A designer value, to be calibrated further in playtests."}
   legitimacy_collapse_threshold: {value: 30.0, unit: index 0 to 100, source: design_report, status: designer}
   round_seconds: {value: 480, unit: seconds, source: design_report, status: designer}
   max_orders_per_round: {value: 3, unit: count, source: design_report, status: designer}
