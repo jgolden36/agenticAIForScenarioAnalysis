@@ -1,0 +1,314 @@
+{
+  "retrieved_at": "2026-11-08T16:25:17.744291+00:00",
+  "source": "World Bank Pink Sheet (Updated on November 03, 2026)",
+  "pre_crisis_window": [
+    "2025-11",
+    "2026-01"
+  ],
+  "half_life_window": [
+    "2000-01",
+    "2025-12"
+  ],
+  "baselines": {
+    "brent": {
+      "value": 63.6,
+      "statistic": "median of monthly averages",
+      "mean": 64.3667,
+      "unit": "USD/bbl",
+      "months": [
+        "2025-11",
+        "2025-12",
+        "2026-01"
+      ]
+    },
+    "dap": {
+      "value": 627.5,
+      "statistic": "median of monthly averages",
+      "mean": 651.6667,
+      "unit": "USD/mt",
+      "months": [
+        "2025-11",
+        "2025-12",
+        "2026-01"
+      ]
+    },
+    "dubai": {
+      "value": 63.8,
+      "statistic": "median of monthly averages",
+      "mean": 63.2333,
+      "unit": "USD/bbl",
+      "months": [
+        "2025-11",
+        "2025-12",
+        "2026-01"
+      ]
+    },
+    "henry_hub": {
+      "value": 4.25,
+      "statistic": "median of monthly averages",
+      "mean": 5.2067,
+      "unit": "USD/MMBtu",
+      "months": [
+        "2025-11",
+        "2025-12",
+        "2026-01"
+      ]
+    },
+    "lng_japan": {
+      "value": 11.32,
+      "statistic": "median of monthly averages",
+      "mean": 11.32,
+      "unit": "USD/MMBtu",
+      "months": [
+        "2025-11",
+        "2025-12",
+        "2026-01"
+      ]
+    },
+    "maize": {
+      "value": 204.5,
+      "statistic": "median of monthly averages",
+      "mean": 204.0667,
+      "unit": "USD/mt",
+      "months": [
+        "2025-11",
+        "2025-12",
+        "2026-01"
+      ]
+    },
+    "phosphate_rock": {
+      "value": 152.5,
+      "statistic": "median of monthly averages",
+      "mean": 152.5,
+      "unit": "USD/mt",
+      "months": [
+        "2025-11",
+        "2025-12",
+        "2026-01"
+      ]
+    },
+    "potash": {
+      "value": 358.3,
+      "statistic": "median of monthly averages",
+      "mean": 359.3667,
+      "unit": "USD/mt",
+      "months": [
+        "2025-11",
+        "2025-12",
+        "2026-01"
+      ]
+    },
+    "rice": {
+      "value": 408.0,
+      "statistic": "median of monthly averages",
+      "mean": 400.0,
+      "unit": "USD/mt",
+      "months": [
+        "2025-11",
+        "2025-12",
+        "2026-01"
+      ]
+    },
+    "soybeans": {
+      "value": 440.0,
+      "statistic": "median of monthly averages",
+      "mean": 437.0,
+      "unit": "USD/mt",
+      "months": [
+        "2025-11",
+        "2025-12",
+        "2026-01"
+      ]
+    },
+    "ttf": {
+      "value": 10.42,
+      "statistic": "median of monthly averages",
+      "mean": 10.5533,
+      "unit": "USD/MMBtu",
+      "months": [
+        "2025-11",
+        "2025-12",
+        "2026-01"
+      ]
+    },
+    "urea": {
+      "value": 409.3,
+      "statistic": "median of monthly averages",
+      "mean": 405.7333,
+      "unit": "USD/mt",
+      "months": [
+        "2025-11",
+        "2025-12",
+        "2026-01"
+      ]
+    },
+    "wheat": {
+      "value": 245.9,
+      "statistic": "median of monthly averages",
+      "mean": 246.2,
+      "unit": "USD/mt",
+      "months": [
+        "2025-11",
+        "2025-12",
+        "2026-01"
+      ]
+    },
+    "wti": {
+      "value": 59.6,
+      "statistic": "median of monthly averages",
+      "mean": 59.2667,
+      "unit": "USD/bbl",
+      "months": [
+        "2025-11",
+        "2025-12",
+        "2026-01"
+      ]
+    }
+  },
+  "half_lives": {
+    "brent": {
+      "method": "OLS AR(1), no intercept, on ln(P) minus trailing 36-month mean of ln(P)",
+      "start": "2000-01",
+      "end": "2025-12",
+      "n": 311,
+      "rho": 0.956045,
+      "rho_se": 0.016183,
+      "half_life_months": 15.4203,
+      "half_life_se_months": 5.8067
+    },
+    "dap": {
+      "method": "OLS AR(1), no intercept, on ln(P) minus trailing 36-month mean of ln(P)",
+      "start": "2000-01",
+      "end": "2025-12",
+      "n": 311,
+      "rho": 0.969036,
+      "rho_se": 0.01387,
+      "half_life_months": 22.0375,
+      "half_life_se_months": 10.0284
+    },
+    "dubai": {
+      "method": "OLS AR(1), no intercept, on ln(P) minus trailing 36-month mean of ln(P)",
+      "start": "2000-01",
+      "end": "2025-12",
+      "n": 311,
+      "rho": 0.958474,
+      "rho_se": 0.015819,
+      "half_life_months": 16.3429,
+      "half_life_se_months": 6.3597
+    },
+    "henry_hub": {
+      "method": "OLS AR(1), no intercept, on ln(P) minus trailing 36-month mean of ln(P)",
+      "start": "2000-01",
+      "end": "2025-12",
+      "n": 311,
+      "rho": 0.918241,
+      "rho_se": 0.022824,
+      "half_life_months": 8.1264,
+      "half_life_se_months": 2.3681
+    },
+    "lng_japan": {
+      "method": "OLS AR(1), no intercept, on ln(P) minus trailing 36-month mean of ln(P)",
+      "start": "2000-01",
+      "end": "2025-12",
+      "n": 311,
+      "rho": 0.976543,
+      "rho_se": 0.012077,
+      "half_life_months": 29.2018,
+      "half_life_se_months": 15.2148
+    },
+    "maize": {
+      "method": "OLS AR(1), no intercept, on ln(P) minus trailing 36-month mean of ln(P)",
+      "start": "2000-01",
+      "end": "2025-12",
+      "n": 311,
+      "rho": 0.967697,
+      "rho_se": 0.014281,
+      "half_life_months": 21.1094,
+      "half_life_se_months": 9.4872
+    },
+    "phosphate_rock": {
+      "method": "OLS AR(1), no intercept, on ln(P) minus trailing 36-month mean of ln(P)",
+      "start": "2000-01",
+      "end": "2025-12",
+      "n": 311,
+      "rho": 0.971171,
+      "rho_se": 0.013584,
+      "half_life_months": 23.6952,
+      "half_life_se_months": 11.3296
+    },
+    "potash": {
+      "method": "OLS AR(1), no intercept, on ln(P) minus trailing 36-month mean of ln(P)",
+      "start": "2000-01",
+      "end": "2025-12",
+      "n": 311,
+      "rho": 0.971776,
+      "rho_se": 0.013405,
+      "half_life_months": 24.2103,
+      "half_life_se_months": 11.6648
+    },
+    "rice": {
+      "method": "OLS AR(1), no intercept, on ln(P) minus trailing 36-month mean of ln(P)",
+      "start": "2000-01",
+      "end": "2025-12",
+      "n": 311,
+      "rho": 0.966564,
+      "rho_se": 0.014631,
+      "half_life_months": 20.3819,
+      "half_life_se_months": 9.0721
+    },
+    "soybeans": {
+      "method": "OLS AR(1), no intercept, on ln(P) minus trailing 36-month mean of ln(P)",
+      "start": "2000-01",
+      "end": "2025-12",
+      "n": 311,
+      "rho": 0.966041,
+      "rho_se": 0.014572,
+      "half_life_months": 20.0628,
+      "half_life_se_months": 8.7594
+    },
+    "ttf": {
+      "method": "OLS AR(1), no intercept, on ln(P) minus trailing 36-month mean of ln(P)",
+      "start": "2000-01",
+      "end": "2025-12",
+      "n": 311,
+      "rho": 0.974811,
+      "rho_se": 0.012599,
+      "half_life_months": 27.1699,
+      "half_life_se_months": 13.7642
+    },
+    "urea": {
+      "method": "OLS AR(1), no intercept, on ln(P) minus trailing 36-month mean of ln(P)",
+      "start": "2000-01",
+      "end": "2025-12",
+      "n": 311,
+      "rho": 0.937203,
+      "rho_se": 0.019794,
+      "half_life_months": 10.6877,
+      "half_life_se_months": 3.4805
+    },
+    "wheat": {
+      "method": "OLS AR(1), no intercept, on ln(P) minus trailing 36-month mean of ln(P)",
+      "start": "2000-01",
+      "end": "2025-12",
+      "n": 311,
+      "rho": 0.965534,
+      "rho_se": 0.014672,
+      "half_life_months": 19.7625,
+      "half_life_se_months": 8.5619
+    },
+    "wti": {
+      "method": "OLS AR(1), no intercept, on ln(P) minus trailing 36-month mean of ln(P)",
+      "start": "2000-01",
+      "end": "2025-12",
+      "n": 311,
+      "rho": 0.946542,
+      "rho_se": 0.017927,
+      "half_life_months": 12.6164,
+      "half_life_se_months": 4.3493
+    }
+  },
+  "notes": [
+    "Baselines are medians of the monthly averages over the pre-crisis window (robust to one weather month, e.g. Henry Hub in January 2026); the mean is kept for reference.",
+    "JKM spot is not public; 'lng_japan' (World Bank, Japan LNG import price) is used as the JKM proxy and is a contract-weighted price, slower to move than spot."
+  ]
+}

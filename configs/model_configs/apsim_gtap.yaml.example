@@ -1,0 +1,49 @@
+# APSIM-GTAP (AgResilience) adapter configuration.
+#
+# Copy to apsim_gtap.yaml (cluster only) to activate the real execute path.
+# Without apsim_gtap.yaml (and without HORMUZ_APSIM_GTAP_ROOT) the adapter
+# raises NotImplementedError and the executor records the cell as SKIPPED.
+#
+# Required:
+#   agres_root          AgResilience checkout, branch experiments-and-slurm-setup
+#                       (must contain src/tools/gtap_server.jl and
+#                       src/tools/saved_artifacts/ with the emulator checkpoint)
+#
+# Environment overrides (take precedence over this file):
+#   HORMUZ_APSIM_GTAP_ROOT, HORMUZ_APSIM_GTAP_PYTHON, HORMUZ_APSIM_GTAP_JULIA,
+#   HORMUZ_APSIM_GTAP_CALIB_FILE, HORMUZ_APSIM_GTAP_CACHE_DIR
+
+# Use the full-suite workspace: it holds the October 2026 code (fixed_point.py,
+# set_parameters! re-calibration) with Project.toml/Manifest.toml; the
+# top-level ~/Agresiliency checkout is older (July 2026) and lacks both.
+agres_root: ~/Agresiliency/results/full_suite/workspace
+# Python of the agres conda env (torch, requests, termcolor).
+python_executable: ~/miniconda3/envs/agres/bin/python
+# SBU has no julia module; juliaup installs to ~/.juliaup/bin.
+julia_executable: ~/.juliaup/bin/julia
+# Repaired calibration (zero-shock residual <= 1e-4%); the cache namespace
+# must match it.
+gtap_calib_file: ~/Agresiliency/results/shock_repair/calibration/calibrated_mc2.jld
+calib_id: shock-repair-v2
+# GTAP solves are cached under <cache_dir>/gtap keyed by request + calib_id,
+# so reruns and robustness sweeps reuse earlier solves.
+cache_dir: ~/Agresiliency/results/hormuz/cache
+
+# Coupling constants (analyst-set; documented in implementation_info).
+# Pre-crisis liquids production of the GTAP West Asia composite (Saudi
+# Arabia, Iraq, UAE, Iran, Kuwait, Qatar, Oman, Bahrain, ...), mb/d.
+# Verify against EIA International Energy Statistics before citing.
+wasia_baseline_oil_mbd: 28.0
+# Freight share of the landed value of Gulf chemicals/extraction imports;
+# scales the rerouting multiplier into a tms wedge.
+freight_share_of_import_value: 0.08
+# Fraction of the fertilizer production loss applied to the whole wasia
+# chemicals sector (GTAP chm also holds non-fertilizer chemicals).
+chm_fertilizer_weight: 1.0
+apply_trade_wedge: true
+
+timeout_seconds: 7200
+# Ipopt settings for gtap_server.jl default to the shock-repair values
+# (GTAP_LOG_NEWTON=1, limited-memory, monotone, mu_init 1e-12, 2000 iter);
+# override with a server_env: mapping.
+server_startup_timeout_s: 1800

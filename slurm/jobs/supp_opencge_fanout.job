@@ -1,0 +1,156 @@
+#!/bin/bash
+# ==================================================================
+# Hand-off for a supplementary run whose OpenCGE reform cells are too slow
+# to solve serially: wait until the serial job has cached the shared OG-Core
+# baseline (stamp + TPI pickle newer than the job start), cancel the serial
+# job, archive its in-progress cell, then submit the remaining macro cells as
+# parallel arrays (supplementary_full_models.job, HORMUZ_SUPP_STAGE=cell)
+# and the post-processing (HORMUZ_SUPP_STAGE=post) after them.
+#
+#   sbatch --exclude=orion,tesla1,tesla2,h100 --export=ALL,\
+#     HORMUZ_RUN_ID=supp_full_20260504_222710,HORMUZ_SERIAL_JOB=89206,\
+#     HORMUZ_OPENCGE_TASKS=1:3:5:7:9,HORMUZ_OTHER_TASKS=2:4:6:8 \
+#     slurm/jobs/supp_opencge_fanout.job
+#
+# Task lists are colon-separated: sbatch --export splits on commas, so
+# "HORMUZ_OPENCGE_TASKS=1,3,5" would arrive as "1" (job 89287 did that).
+# ==================================================================
+#SBATCH --job-name=hormuz-supp-fanout
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=1G
+#SBATCH --time=10:00:00
+#SBATCH --output=slurm/logs/supp_opencge_fanout-%j.out
+#SBATCH --error=slurm/logs/supp_opencge_fanout-%j.err
+
+set -uo pipefail
+PROJECT_ROOT="${SLURM_SUBMIT_DIR:-$(pwd)}"
+cd "$PROJECT_ROOT"
+: "${HORMUZ_RUN_ID:?}" "${HORMUZ_SERIAL_JOB:?}" "${HORMUZ_OPENCGE_TASKS:?}"
+OCG_TASKS="${HORMUZ_OPENCGE_TASKS//:/,}"
+OTHER_TASKS="${HORMUZ_OTHER_TASKS:-}"
+OTHER_TASKS="${OTHER_TASKS//:/,}"
+EXCLUDE="${HORMUZ_EXCLUDE:-orion,tesla1,tesla2,h100}"
+BASE="${HORMUZ_OPENCGE_BASELINE_DIR:-data/opencge/baseline}"
+STAMP="${BASE}/pipeline_baseline_settings.json"
+TPI="${BASE}/TPI/TPI_vars.pkl"
+ARCH="slurm/logs/${HORMUZ_RUN_ID}/serial_job_${HORMUZ_SERIAL_JOB}_cancelled"
+log() { echo "[fanout $(date -u +%FT%TZ)] $*"; }
+
+# sacct cannot reach the accounting database from compute nodes; squeue can.
+job_state() { squeue -h -j "$HORMUZ_SERIAL_JOB" -o %T 2>/dev/null | head -n1 | tr -d ' '; }
+start_str="$(squeue -h -j "$HORMUZ_SERIAL_JOB" -o %S 2>/dev/null | head -n1 | tr -d ' ')"
+if [[ -z "$start_str" || "$start_str" == N/A ]]; then
+    log "serial job ${HORMUZ_SERIAL_JOB} is not running; nothing to hand off."
+    exit 1
+fi
+start_epoch="$(date -u -d "$start_str" +%s)"
+log "serial job ${HORMUZ_SERIAL_JOB} started ${start_str} (epoch ${start_epoch}); waiting for ${STAMP} and a fresh ${TPI}"
+
+while true; do
+    state="$(job_state)"
+    if [[ -f "$STAMP" && -f "$TPI" ]] \
+        && (( $(stat -c %Y "$STAMP") >= start_epoch )) \
+        && (( $(stat -c %Y "$TPI") >= start_epoch )); then
+        log "baseline cached: stamp $(date -u -d @"$(stat -c %Y "$STAMP")" +%FT%TZ), TPI $(date -u -d @"$(stat -c %Y "$TPI")" +%FT%TZ)"
+        cat "$STAMP"; echo
+        break
+    fi
+    if [[ "$state" != RUNNING && "$state" != PENDING ]]; then
+        log "serial job is '${state:-gone}' before the baseline was cached; nothing submitted."
+        exit 1
+    fi
+    sleep 120
+done
+
+# Let the stamp's writer move on to the reform before cancelling.
+sleep 30
+
+# The steady state on disk must be the one this transition path was solved
+# from: OG-Core fills the path's tail with the SS it read at the start, so
+# the last values must equal SS_vars.pkl. (Revision job 89217 re-solved and
+# overwrote SS_vars.pkl at 23:59 on 2026-11-08 while 89206 was in TPI.)
+for _c in "${HOME}/miniconda3" "${HOME}/anaconda3"; do
+    [[ -f "${_c}/etc/profile.d/conda.sh" ]] && { source "${_c}/etc/profile.d/conda.sh"; break; }
+done
+conda activate "${HORMUZ_CONDA_ENV:-hormuz}"
+if ! python - "$BASE" <<'EOF'
+import pickle, sys
+import numpy as np
+base = sys.argv[1]
+ss = pickle.load(open(f"{base}/SS/SS_vars.pkl", "rb"))
+tpi = pickle.load(open(f"{base}/TPI/TPI_vars.pkl", "rb"))
+def ssv(k):
+    for kk in (k, k + "ss", k + "_ss"):
+        if kk in ss:
+            return float(np.asarray(ss[kk]).ravel()[0])
+    return None
+bad, n = [], 0
+for k in ("Y", "K", "C", "w", "r"):
+    s = ssv(k)
+    if s is None or k not in tpi:
+        print(f"[check] {k}: missing (ss={s is not None}, tpi={k in tpi})")
+        continue
+    t = float(np.asarray(tpi[k]).ravel()[-1])
+    rel = abs(t - s) / max(abs(s), 1e-12)
+    n += 1
+    print(f"[check] {k}: TPI tail {t:.10g}  SS on disk {s:.10g}  rel diff {rel:.2e}")
+    if rel > 1e-6:
+        bad.append(k)
+print(f"[check] compared {n}, mismatched {bad}")
+sys.exit(1 if bad or n < 3 else 0)
+EOF
+then
+    log "TPI tail does not match SS_vars.pkl on disk; NOT cancelling ${HORMUZ_SERIAL_JOB} and NOT fanning out."
+    exit 2
+fi
+log "baseline SS on disk matches the transition path"
+log "cancelling serial job ${HORMUZ_SERIAL_JOB}"
+scancel "$HORMUZ_SERIAL_JOB"
+for _ in $(seq 1 30); do
+    state="$(job_state)"
+    [[ -n "$state" ]] || break
+    sleep 10
+done
+log "serial job state after scancel: '${state:-gone}'"
+if [[ -n "$state" ]]; then
+    log "serial job still listed after 5 minutes; NOT fanning out (two solvers would share the reform dir)."
+    exit 3
+fi
+rm -f "${BASE}/BASELINE_SOLVE_IN_PROGRESS.json"
+
+mkdir -p "$ARCH"
+shopt -s nullglob
+for f in data/pipeline_state/${HORMUZ_RUN_ID}_*bash_failure_${HORMUZ_SERIAL_JOB}-*.json; do
+    mv "$f" "$ARCH/" && log "archived $f"
+done
+IFS=, read -r -a otasks <<< "$OCG_TASKS"
+for t in "${otasks[@]}"; do
+    scen="$(python3 -c "import json,sys;print(json.load(open('data/pipeline_state/manifests/${HORMUZ_RUN_ID}_models_macro.json'))[int(sys.argv[1])]['scenario_id'])" "$t")"
+    for d in "data/opencge/reform/${HORMUZ_RUN_ID}/${scen}" "data/outputs_supp/${HORMUZ_RUN_ID}/${scen}/opencge"; do
+        if [[ -e "$d" && ! -f "data/pipeline_state/${HORMUZ_RUN_ID}_model_macro_${t}.json" ]]; then
+            mkdir -p "$ARCH/partial/$(dirname "$d")"
+            mv "$d" "$ARCH/partial/$d" && log "archived partial $d"
+        fi
+    done
+done
+
+common="ALL,HORMUZ_RUN_ID=${HORMUZ_RUN_ID},HORMUZ_SUPP_STAGE=cell,HORMUZ_MANIFEST_NAME=models_macro"
+[[ -n "${HORMUZ_MARKET_CALIBRATION:-}" ]] && common="${common},HORMUZ_MARKET_CALIBRATION=${HORMUZ_MARKET_CALIBRATION}"
+jo="$(sbatch --parsable --exclude="$EXCLUDE" --array="$OCG_TASKS" --job-name=hormuz-supp-ogc \
+      --export="$common" slurm/jobs/supplementary_full_models.job)"
+log "submitted OpenCGE cells ${OCG_TASKS} as array ${jo}"
+deps="$jo"
+if [[ -n "$OTHER_TASKS" ]]; then
+    jm="$(sbatch --parsable --exclude="$EXCLUDE" --array="$OTHER_TASKS" --cpus-per-task=1 --mem=4G --time=01:00:00 \
+          --job-name=hormuz-supp-cell --export="$common" slurm/jobs/supplementary_full_models.job)"
+    log "submitted other cells ${OTHER_TASKS} as array ${jm}"
+    deps="${deps}:${jm}"
+fi
+post_env="ALL,HORMUZ_RUN_ID=${HORMUZ_RUN_ID},HORMUZ_SUPP_STAGE=post"
+[[ -n "${HORMUZ_MARKET_CALIBRATION:-}" ]] && post_env="${post_env},HORMUZ_MARKET_CALIBRATION=${HORMUZ_MARKET_CALIBRATION}"
+jp="$(sbatch --parsable --exclude="$EXCLUDE" --dependency="afterany:${deps}" --cpus-per-task=2 --mem=16G --time=02:00:00 \
+      --job-name=hormuz-supp-post --export="$post_env" slurm/jobs/supplementary_full_models.job)"
+log "submitted post-processing ${jp} after ${deps}"
+echo "${jo} ${jm:-} ${jp}" > "slurm/logs/${HORMUZ_RUN_ID}/fanout_jobs.txt"

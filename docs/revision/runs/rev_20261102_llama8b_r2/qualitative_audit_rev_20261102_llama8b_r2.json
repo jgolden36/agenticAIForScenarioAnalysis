@@ -1,0 +1,3869 @@
+{
+  "run_id": "rev_20261102_llama8b_r2",
+  "counts": {
+    "exact": 427,
+    "unmatched": 42,
+    "multiplier_to_pct": 15,
+    "x100": 42,
+    "sign_dropped": 25
+  },
+  "rows": [
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "ais_project",
+      "token": "7",
+      "relation": "exact",
+      "sentence": "The model indicates that the Strait of Hormuz remains closed for 7 months, with no rerouting of ships via the Cape of Good Hope."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "ais_project",
+      "token": "21",
+      "relation": "unmatched",
+      "sentence": "However, the scenario's assumptions drive a significant disruption to the global oil and LNG trade, with the Strait of Hormuz closure affecting approximately 21% of global oil supply and 25% of global LNG trade."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "ais_project",
+      "token": "25",
+      "relation": "unmatched",
+      "sentence": "However, the scenario's assumptions drive a significant disruption to the global oil and LNG trade, with the Strait of Hormuz closure affecting approximately 21% of global oil supply and 25% of global LNG trade."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "aisdb",
+      "token": "9.5",
+      "relation": "exact",
+      "sentence": "This prolonged closure leads to a substantial increase in transit days for vessels taking the Cape of Good Hope route, with an additional 9.5 days required to complete the journey."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "aisdb",
+      "token": "31.15",
+      "relation": "exact",
+      "sentence": "The model output implies a substantial impact on the global shipping industry, with a 31.15% effective fleet capacity loss."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "aisdb",
+      "token": "35.19",
+      "relation": "exact",
+      "sentence": "This is driven by a drop in fleet utilization, with LNG carriers experiencing a 35.19% drop and tankers experiencing a 29.69% drop."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "aisdb",
+      "token": "29.69",
+      "relation": "exact",
+      "sentence": "This is driven by a drop in fleet utilization, with LNG carriers experiencing a 35.19% drop and tankers experiencing a 29.69% drop."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "aisdb",
+      "token": "1.1869",
+      "relation": "exact",
+      "sentence": "The rerouting of vessels to alternative routes, such as the Cape of Good Hope, is likely to be costly, with a rerouting cost multiplier of 1.1869."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "aisdb",
+      "token": "200",
+      "relation": "exact",
+      "sentence": "Additionally, the model suggests that war risk insurance premiums will increase by 200% due to the heightened risk of vessel attacks and piracy."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "apsim",
+      "token": "10.61",
+      "relation": "exact",
+      "sentence": "The model predicts a 10.61% reduction in fertilizer application and a 9.09% reduction in irrigation water usage."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "apsim",
+      "token": "9.09",
+      "relation": "exact",
+      "sentence": "The model predicts a 10.61% reduction in fertilizer application and a 9.09% reduction in irrigation water usage."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "apsim",
+      "token": "-21.24",
+      "relation": "exact",
+      "sentence": "These reductions are likely to have a substantial impact on crop yields, with the model estimating a mean yield change of -21.24% across all crops."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "apsim",
+      "token": "-23.37",
+      "relation": "exact",
+      "sentence": "The yield reductions are particularly pronounced for maize, with a predicted loss of -23.37%, followed by wheat at -20.13% and rice at -20.22%."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "apsim",
+      "token": "-20.13",
+      "relation": "exact",
+      "sentence": "The yield reductions are particularly pronounced for maize, with a predicted loss of -23.37%, followed by wheat at -20.13% and rice at -20.22%."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "apsim",
+      "token": "-20.22",
+      "relation": "exact",
+      "sentence": "The yield reductions are particularly pronounced for maize, with a predicted loss of -23.37%, followed by wheat at -20.13% and rice at -20.22%."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "apsim",
+      "token": "67.2",
+      "relation": "multiplier_to_pct",
+      "sentence": "The model also suggests that nitrogen (N) limitations will be a major constraint, with 67.2% of wheat yields, 51.4% of rice yields, and 62.3% of maize yields being N-limited."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "apsim",
+      "token": "51.4",
+      "relation": "multiplier_to_pct",
+      "sentence": "The model also suggests that nitrogen (N) limitations will be a major constraint, with 67.2% of wheat yields, 51.4% of rice yields, and 62.3% of maize yields being N-limited."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "apsim",
+      "token": "62.3",
+      "relation": "multiplier_to_pct",
+      "sentence": "The model also suggests that nitrogen (N) limitations will be a major constraint, with 67.2% of wheat yields, 51.4% of rice yields, and 62.3% of maize yields being N-limited."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "argonne_abm",
+      "token": "9",
+      "relation": "x100",
+      "sentence": "The model predicts a 9% effective supply shock, with a 5-month disruption duration."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "argonne_abm",
+      "token": "5",
+      "relation": "exact",
+      "sentence": "The model predicts a 9% effective supply shock, with a 5-month disruption duration."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "argonne_abm",
+      "token": "19",
+      "relation": "x100",
+      "sentence": "The model also estimates a 19% equilibrium price change, indicating a substantial increase in helium prices."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "argonne_abm",
+      "token": "0.6",
+      "relation": "x100",
+      "sentence": "This could lead to unmet demand, with an estimated 0.6% of demand going unmet."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "argonne_abm",
+      "token": "0.4",
+      "relation": "x100",
+      "sentence": "The model further predicts a critical application failure rate of 0.4%, which could have significant consequences for industries that rely on helium."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "cwatm",
+      "token": "9.09",
+      "relation": "exact",
+      "sentence": "The model predicts that 9.09% of unmet demand will occur, suggesting that a substantial portion of the world's population will face water shortages."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "cwatm",
+      "token": "45.45",
+      "relation": "exact",
+      "sentence": "The cumulative water deficit over 45.45 months is a further indication of the severity of the disruption, suggesting that the effects of the infrastructure collapse will be felt for an extended period."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "fed_oil",
+      "token": "48.36",
+      "relation": "exact",
+      "sentence": "The oil price is expected to surge by 48.36% in response to the Strait of Hormuz closure, which would have a profound impact on the global economy."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "fed_oil",
+      "token": "1.54",
+      "relation": "exact",
+      "sentence": "The model also projects a substantial economic impact, with the global GDP expected to decline by 1.54% at its peak."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "fed_oil",
+      "token": "2.06",
+      "relation": "exact",
+      "sentence": "This decline is likely to be accompanied by a rise in inflation, with the Consumer Price Index (CPI) increasing by 2.06% at its peak."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "fed_oil",
+      "token": "1.03",
+      "relation": "exact",
+      "sentence": "The Federal Funds Rate (FFR) is also expected to rise, by 1.03% at its peak, as the central bank responds to the inflationary pressures."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "futures",
+      "token": "24",
+      "relation": "exact",
+      "sentence": "The forward price curves indicate that prices will rise steadily over the next 24 months, with Oil prices reaching a peak of 1.21 times the initial price and LNG prices also reaching 1.21 times the initial price."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "futures",
+      "token": "1.21",
+      "relation": "exact",
+      "sentence": "The forward price curves indicate that prices will rise steadily over the next 24 months, with Oil prices reaching a peak of 1.21 times the initial price and LNG prices also reaching 1.21 times the initial price."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "futures",
+      "token": "1.21",
+      "relation": "exact",
+      "sentence": "The forward price curves indicate that prices will rise steadily over the next 24 months, with Oil prices reaching a peak of 1.21 times the initial price and LNG prices also reaching 1.21 times the initial price."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "futures",
+      "token": "20",
+      "relation": "unmatched",
+      "sentence": "This represents a substantial increase in prices, with Oil prices potentially rising by over 20% and LNG prices also rising by over 20%."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "futures",
+      "token": "20",
+      "relation": "unmatched",
+      "sentence": "This represents a substantial increase in prices, with Oil prices potentially rising by over 20% and LNG prices also rising by over 20%."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "futures",
+      "token": "17",
+      "relation": "exact",
+      "sentence": "The time to normalization for both Oil and LNG is estimated to be 17 months, indicating that prices are expected to remain elevated for a significant period."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "lngst",
+      "token": "100",
+      "relation": "exact",
+      "sentence": "The model predicts a complete shutdown of Qatar's LNG exports, a 100% reduction in its export capacity, which is a significant contributor to global LNG trade."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "lngst",
+      "token": "0",
+      "relation": "exact",
+      "sentence": "This reduction, combined with a 0% reduction in UAE's LNG exports, suggests that the Middle East, particularly Qatar, is disproportionately affected by the Strait of Hormuz closure."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "lngst",
+      "token": "50.926",
+      "relation": "exact",
+      "sentence": "The model also forecasts a substantial increase in LNG prices, with the implied price impulse reaching 50.926%."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "lngst",
+      "token": "5.188",
+      "relation": "exact",
+      "sentence": "The model's predicted Henry Hub price of $5.188 and TTF price of $24.903 further support this conclusion, indicating a substantial increase in LNG prices across different regions."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "lngst",
+      "token": "24.903",
+      "relation": "exact",
+      "sentence": "The model's predicted Henry Hub price of $5.188 and TTF price of $24.903 further support this conclusion, indicating a substantial increase in LNG prices across different regions."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "marketsim",
+      "token": "50",
+      "relation": "exact",
+      "sentence": "The model predicts a 50% price shock in oil, indicating a significant increase in the cost of oil."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "marketsim",
+      "token": "35.195",
+      "relation": "exact",
+      "sentence": "This is likely to have a substantial impact on the oil industry, with a producer surplus change of $35.195 billion in oil."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "marketsim",
+      "token": "58.659",
+      "relation": "exact",
+      "sentence": "The consumer surplus loss in oil is estimated to be $58.659 billion, indicating that households and businesses will bear the brunt of the price increase."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "marketsim",
+      "token": "5",
+      "relation": "exact",
+      "sentence": "The disruption is expected to last for 5 months, with the Strait of Hormuz formally reopening in September 2026."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "marketsim",
+      "token": "30",
+      "relation": "exact",
+      "sentence": "The model also predicts a 30% price change in natural gas, with a consumer surplus loss of $7.396 billion."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "marketsim",
+      "token": "7.396",
+      "relation": "exact",
+      "sentence": "The model also predicts a 30% price change in natural gas, with a consumer surplus loss of $7.396 billion."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "marketsim",
+      "token": "26.422",
+      "relation": "sign_dropped",
+      "sentence": "The net welfare impact of the scenario is estimated to be -$26.422 billion, indicating a significant overall loss in economic welfare."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "marketsim",
+      "token": "40.474",
+      "relation": "exact",
+      "sentence": "However, the sectoral breakdown of consumer surplus loss suggests that the transport sector is likely to be hit hardest, with a loss of $40.474 billion in oil."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "marketsim",
+      "token": "13.491",
+      "relation": "exact",
+      "sentence": "The industrial sector is also expected to experience significant losses, with a loss of $13.491 billion in oil and $2.367 billion in gas."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "marketsim",
+      "token": "2.367",
+      "relation": "exact",
+      "sentence": "The industrial sector is also expected to experience significant losses, with a loss of $13.491 billion in oil and $2.367 billion in gas."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "marketsim",
+      "token": "2.346",
+      "relation": "exact",
+      "sentence": "In contrast, the residential sector is expected to experience relatively smaller losses, with a loss of $2.346 billion in oil and $1.183 billion in gas."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "marketsim",
+      "token": "1.183",
+      "relation": "exact",
+      "sentence": "In contrast, the residential sector is expected to experience relatively smaller losses, with a loss of $2.346 billion in oil and $1.183 billion in gas."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "mpsge_jl",
+      "token": "48.36",
+      "relation": "exact",
+      "sentence": "The oil price shock is estimated to be around 48.36%, indicating a substantial increase in the cost of oil."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "mpsge_jl",
+      "token": "9.345",
+      "relation": "multiplier_to_pct",
+      "sentence": "The trade cost multiplier is projected to increase by 9.345%, suggesting that trade disruptions will lead to higher costs for importing and exporting goods."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "mpsge_jl",
+      "token": "126.39",
+      "relation": "exact",
+      "sentence": "The model also predicts significant price shocks for other commodities, including LNG (126.39%), fertilizer (30.32%), helium (0.3%), and water (9.09%)."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "mpsge_jl",
+      "token": "30.32",
+      "relation": "exact",
+      "sentence": "The model also predicts significant price shocks for other commodities, including LNG (126.39%), fertilizer (30.32%), helium (0.3%), and water (9.09%)."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "mpsge_jl",
+      "token": "0.3",
+      "relation": "exact",
+      "sentence": "The model also predicts significant price shocks for other commodities, including LNG (126.39%), fertilizer (30.32%), helium (0.3%), and water (9.09%)."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "mpsge_jl",
+      "token": "9.09",
+      "relation": "exact",
+      "sentence": "The model also predicts significant price shocks for other commodities, including LNG (126.39%), fertilizer (30.32%), helium (0.3%), and water (9.09%)."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "mpsge_jl",
+      "token": "2.69",
+      "relation": "exact",
+      "sentence": "The MENA_GCC region is expected to experience a GDP impact of 2.69%, indicating that it may actually benefit from the scenario, possibly due to increased demand for its oil and gas exports."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "mpsge_jl",
+      "token": "-2.07",
+      "relation": "exact",
+      "sentence": "In contrast, the IND region is projected to experience a GDP impact of -2.07%, making it one of the hardest-hit regions."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "mpsge_jl",
+      "token": "-2.11",
+      "relation": "exact",
+      "sentence": "The EU and ROW regions are also expected to experience significant economic disruption, with GDP impacts of -2.11% and -1.01%, respectively."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "mpsge_jl",
+      "token": "-1.01",
+      "relation": "exact",
+      "sentence": "The EU and ROW regions are also expected to experience significant economic disruption, with GDP impacts of -2.11% and -1.01%, respectively."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "nrel",
+      "token": "126.39",
+      "relation": "exact",
+      "sentence": "The model predicts a 126.39% increase in natural gas prices, a 56.88% increase in retail electricity prices, and a 1.32% increase in CO2 emissions."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "nrel",
+      "token": "56.88",
+      "relation": "exact",
+      "sentence": "The model predicts a 126.39% increase in natural gas prices, a 56.88% increase in retail electricity prices, and a 1.32% increase in CO2 emissions."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "nrel",
+      "token": "1.32",
+      "relation": "exact",
+      "sentence": "The model predicts a 126.39% increase in natural gas prices, a 56.88% increase in retail electricity prices, and a 1.32% increase in CO2 emissions."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "nrel",
+      "token": "0.52",
+      "relation": "sign_dropped",
+      "sentence": "These price shocks are likely to have a substantial impact on the global economy, with a predicted 0.52% decline in GDP and a 1.30% increase in inflation."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "nrel",
+      "token": "1.30",
+      "relation": "exact",
+      "sentence": "These price shocks are likely to have a substantial impact on the global economy, with a predicted 0.52% decline in GDP and a 1.30% increase in inflation."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "nrel",
+      "token": "8.85",
+      "relation": "sign_dropped",
+      "sentence": "The model also suggests a shift in the global energy mix, with a decrease in natural gas generation capacity utilization by 8.85% and an increase in coal capacity utilization by 15.17%."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "nrel",
+      "token": "15.17",
+      "relation": "exact",
+      "sentence": "The model also suggests a shift in the global energy mix, with a decrease in natural gas generation capacity utilization by 8.85% and an increase in coal capacity utilization by 15.17%."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "nrel",
+      "token": "12.64",
+      "relation": "exact",
+      "sentence": "The model predicts a significant increase in renewable energy dispatch, with a 12.64% gain in renewables dispatch, which may be driven by the increased demand for alternative energy sources."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "poles_jrc",
+      "token": "118.69",
+      "relation": "exact",
+      "sentence": "The peak price of Brent crude oil reaches $118.69 per barrel, a 48.36% increase from the baseline price."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "poles_jrc",
+      "token": "48.36",
+      "relation": "exact",
+      "sentence": "The peak price of Brent crude oil reaches $118.69 per barrel, a 48.36% increase from the baseline price."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "poles_jrc",
+      "token": "4.2",
+      "relation": "exact",
+      "sentence": "The model estimates that the supply loss due to the disruption is approximately 4.2 million barrels per day (mbd), which accounts for 4.118% of the global oil supply."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "poles_jrc",
+      "token": "4.118",
+      "relation": "exact",
+      "sentence": "The model estimates that the supply loss due to the disruption is approximately 4.2 million barrels per day (mbd), which accounts for 4.118% of the global oil supply."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "poles_jrc",
+      "token": "21",
+      "relation": "unmatched",
+      "sentence": "This is a relatively modest supply loss compared to the 21% of global oil supply and 25% of global LNG trade that is disrupted by the closure of the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "poles_jrc",
+      "token": "25",
+      "relation": "unmatched",
+      "sentence": "This is a relatively modest supply loss compared to the 21% of global oil supply and 25% of global LNG trade that is disrupted by the closure of the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "poles_jrc",
+      "token": "4.2",
+      "relation": "exact",
+      "sentence": "However, the rerouting and substitution volumes of 4.2 mbd and 0.84 mbd, respectively, suggest that some oil is still being transported and consumed during the disruption, albeit at a higher cost."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "poles_jrc",
+      "token": "0.84",
+      "relation": "exact",
+      "sentence": "However, the rerouting and substitution volumes of 4.2 mbd and 0.84 mbd, respectively, suggest that some oil is still being transported and consumed during the disruption, albeit at a higher cost."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "poles_jrc",
+      "token": "7",
+      "relation": "exact",
+      "sentence": "It is also worth noting that the model's output is sparse, with the disruption duration being estimated at 7 months, and the price path being relatively flat after the peak price is reached."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "pycge",
+      "token": "-0.8636",
+      "relation": "exact",
+      "sentence": "The model output suggests that the global GDP impact would be around -0.8636%, with a corresponding drop in GDP growth rate."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "pycge",
+      "token": "1.7945",
+      "relation": "exact",
+      "sentence": "The inflation rate is expected to increase by 1.7945%, driven primarily by the disruption in oil and LNG supplies."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "pycge",
+      "token": "2.6286",
+      "relation": "exact",
+      "sentence": "The MENA_GCC region, which includes countries such as Saudi Arabia and the UAE, is expected to experience a GDP impact of 2.6286%, driven by the disruption in oil exports."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "pycge",
+      "token": "-1.7661",
+      "relation": "exact",
+      "sentence": "In contrast, the Indian economy is expected to be hit hardest, with a GDP impact of -1.7661%."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "pycge",
+      "token": "-1.4341",
+      "relation": "exact",
+      "sentence": "The SSA region, which includes countries in sub-Saharan Africa, is also expected to experience a significant impact, with a GDP impact of -1.4341%."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "pycge",
+      "token": "0.4212",
+      "relation": "exact",
+      "sentence": "The energy sector is expected to experience a positive impact of 0.4212%, driven by the increase in oil prices."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "pycge",
+      "token": "-0.6885",
+      "relation": "exact",
+      "sentence": "In contrast, the services sector is expected to experience a negative impact of -0.6885%."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "pycge",
+      "token": "-0.103",
+      "relation": "exact",
+      "sentence": "The agriculture sector is expected to experience a relatively minor impact of -0.103%."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "weap_mena",
+      "token": "30",
+      "relation": "exact",
+      "sentence": "The model outputs suggest that approximately 30% of global desalination capacity is lost, with a corresponding effective loss of 30% of global desalination capacity."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "weap_mena",
+      "token": "30",
+      "relation": "exact",
+      "sentence": "The model outputs suggest that approximately 30% of global desalination capacity is lost, with a corresponding effective loss of 30% of global desalination capacity."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "weap_mena",
+      "token": "18",
+      "relation": "exact",
+      "sentence": "The affected countries, Qatar, Saudi Arabia, and the UAE, are expected to experience unmet demand for water, with Qatar facing the highest unmet demand at 18%, followed by the UAE at 12.6%, and Saudi Arabia at 6%."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "weap_mena",
+      "token": "12.6",
+      "relation": "exact",
+      "sentence": "The affected countries, Qatar, Saudi Arabia, and the UAE, are expected to experience unmet demand for water, with Qatar facing the highest unmet demand at 18%, followed by the UAE at 12.6%, and Saudi Arabia at 6%."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "weap_mena",
+      "token": "6",
+      "relation": "exact",
+      "sentence": "The affected countries, Qatar, Saudi Arabia, and the UAE, are expected to experience unmet demand for water, with Qatar facing the highest unmet demand at 18%, followed by the UAE at 12.6%, and Saudi Arabia at 6%."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "weap_mena",
+      "token": "20",
+      "relation": "exact",
+      "sentence": "The cumulative water deficit over 20 weeks is substantial, at 265.52%."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "weap_mena",
+      "token": "265.52",
+      "relation": "exact",
+      "sentence": "The cumulative water deficit over 20 weeks is substantial, at 265.52%."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "weap_mena",
+      "token": "100",
+      "relation": "exact",
+      "sentence": "The population affected by this shortage is estimated to be around 100 million people."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "world_fertilizer",
+      "token": "50",
+      "relation": "exact",
+      "sentence": "The model predicts a 50% increase in natural gas prices, which is a critical input for fertilizer production."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "world_fertilizer",
+      "token": "63.5",
+      "relation": "exact",
+      "sentence": "This, in turn, leads to a 63.5% increase in urea prices, a 3.175% increase in DAP (diammonium phosphate) and MOP (muriate of potash) prices, and a 30.321% increase in the overall fertilizer price index."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "world_fertilizer",
+      "token": "3.175",
+      "relation": "exact",
+      "sentence": "This, in turn, leads to a 63.5% increase in urea prices, a 3.175% increase in DAP (diammonium phosphate) and MOP (muriate of potash) prices, and a 30.321% increase in the overall fertilizer price index."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "world_fertilizer",
+      "token": "30.321",
+      "relation": "exact",
+      "sentence": "This, in turn, leads to a 63.5% increase in urea prices, a 3.175% increase in DAP (diammonium phosphate) and MOP (muriate of potash) prices, and a 30.321% increase in the overall fertilizer price index."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "world_fertilizer",
+      "token": "30",
+      "relation": "exact",
+      "sentence": "The model's predictions suggest that the Middle East, which is a significant producer of fertilizers, will experience a 30% loss in production."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "world_fertilizer",
+      "token": "6",
+      "relation": "exact",
+      "sentence": "The US, on the other hand, is expected to see a 6% increase in fertilizer exports, while Russia and Algeria will experience 8.4% and 4.8% increases, respectively."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "world_fertilizer",
+      "token": "8.4",
+      "relation": "exact",
+      "sentence": "The US, on the other hand, is expected to see a 6% increase in fertilizer exports, while Russia and Algeria will experience 8.4% and 4.8% increases, respectively."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "world_fertilizer",
+      "token": "4.8",
+      "relation": "exact",
+      "sentence": "The US, on the other hand, is expected to see a 6% increase in fertilizer exports, while Russia and Algeria will experience 8.4% and 4.8% increases, respectively."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "world_helium_model",
+      "token": "0.3",
+      "relation": "exact",
+      "sentence": "The equilibrium price of helium is projected to increase by approximately 0.3% to $280.84 per million standard cubic feet (MSCF), a relatively modest increase compared to the baseline price."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "world_helium_model",
+      "token": "280.84",
+      "relation": "exact",
+      "sentence": "The equilibrium price of helium is projected to increase by approximately 0.3% to $280.84 per million standard cubic feet (MSCF), a relatively modest increase compared to the baseline price."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "world_helium_model",
+      "token": "9",
+      "relation": "x100",
+      "sentence": "The model output also indicates a 9% effective supply gap, which is likely to lead to rationing in the helium market."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "world_helium_model",
+      "token": "2.13",
+      "relation": "exact",
+      "sentence": "The demand rationing is estimated to be around 2.13 million million standard cubic feet (MMSCF), suggesting that a significant portion of global helium demand will be curtailed."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "world_helium_model",
+      "token": "31.98",
+      "relation": "x100",
+      "sentence": "The sector allocation share of helium demand reveals that MRI medical applications will be disproportionately affected, accounting for approximately 31.98% of the total demand rationing, followed closely by semiconductors at 27.98%."
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "world_helium_model",
+      "token": "27.98",
+      "relation": "x100",
+      "sentence": "The sector allocation share of helium demand reveals that MRI medical applications will be disproportionately affected, accounting for approximately 31.98% of the total demand rationing, followed closely by semiconductors at 27.98%."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "ais_project",
+      "token": "4",
+      "relation": "exact",
+      "sentence": "The Strait of Hormuz remains closed for 4 months, with no rerouting of ships via the Cape of Good Hope."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "ais_project",
+      "token": "4",
+      "relation": "exact",
+      "sentence": "However, the disruption duration of 4 months is likely to have significant economic implications, particularly for regions that rely heavily on oil and LNG imports."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "aisdb",
+      "token": "4",
+      "relation": "unmatched",
+      "sentence": "The closure of the Strait, which lasted for 4 months, resulted in a 9.5-day increase in transit time for vessels taking the Cape of Good Hope route, with a maximum additional transit time of 9.5 days."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "aisdb",
+      "token": "9.5",
+      "relation": "exact",
+      "sentence": "The closure of the Strait, which lasted for 4 months, resulted in a 9.5-day increase in transit time for vessels taking the Cape of Good Hope route, with a maximum additional transit time of 9.5 days."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "aisdb",
+      "token": "9.5",
+      "relation": "exact",
+      "sentence": "The closure of the Strait, which lasted for 4 months, resulted in a 9.5-day increase in transit time for vessels taking the Cape of Good Hope route, with a maximum additional transit time of 9.5 days."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "aisdb",
+      "token": "35.2",
+      "relation": "exact",
+      "sentence": "The model estimates that the fleet utilization drop for LNG carriers and tankers would be around 35.2% and 29.7%, respectively, indicating a significant reduction in the capacity of these vessels to transport goods."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "aisdb",
+      "token": "29.7",
+      "relation": "exact",
+      "sentence": "The model estimates that the fleet utilization drop for LNG carriers and tankers would be around 35.2% and 29.7%, respectively, indicating a significant reduction in the capacity of these vessels to transport goods."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "aisdb",
+      "token": "31.2",
+      "relation": "exact",
+      "sentence": "The effective fleet capacity loss is estimated to be around 31.2%, further exacerbating the disruption to global shipping."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "aisdb",
+      "token": "1.1869",
+      "relation": "exact",
+      "sentence": "The rerouting cost multiplier of 1.1869 suggests that the cost of transporting goods via alternative routes would be approximately 18.7% higher than usual."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "aisdb",
+      "token": "18.7",
+      "relation": "multiplier_to_pct",
+      "sentence": "The rerouting cost multiplier of 1.1869 suggests that the cost of transporting goods via alternative routes would be approximately 18.7% higher than usual."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "apsim",
+      "token": "8.3",
+      "relation": "exact",
+      "sentence": "The model output suggests that the Prolonged Contained Conflict scenario would have a significant impact on global fertilizer application, with a reduction of approximately 8.3% in fertilizer application."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "apsim",
+      "token": "8.8",
+      "relation": "sign_dropped",
+      "sentence": "This reduction is likely to affect crop yields, particularly for wheat, rice, and maize, with yield losses ranging from 8.8% to 12.3%."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "apsim",
+      "token": "12.3",
+      "relation": "sign_dropped",
+      "sentence": "This reduction is likely to affect crop yields, particularly for wheat, rice, and maize, with yield losses ranging from 8.8% to 12.3%."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "apsim",
+      "token": "10.8",
+      "relation": "exact",
+      "sentence": "The mean yield loss across all crops is estimated to be around 10.8%."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "argonne_abm",
+      "token": "0",
+      "relation": "exact",
+      "sentence": "The supply shock percentage is 0%, indicating that the disruption to global helium supply is minimal."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "argonne_abm",
+      "token": "4",
+      "relation": "exact",
+      "sentence": "The disruption duration is 4 months, which is consistent with the scenario description."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "argonne_abm",
+      "token": "-0.5",
+      "relation": "exact",
+      "sentence": "The effective elasticity of demand is -0.5, suggesting that consumers respond to the price increase by reducing their demand."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "argonne_abm",
+      "token": "0",
+      "relation": "exact",
+      "sentence": "The equilibrium price change percentage is 0%, indicating that the price of helium and semiconductors does not change significantly during the disruption."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "argonne_abm",
+      "token": "0",
+      "relation": "exact",
+      "sentence": "The unmet demand percentage is also 0%, suggesting that the disruption does not lead to a significant shortage of helium and semiconductors."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "argonne_abm",
+      "token": "0",
+      "relation": "exact",
+      "sentence": "The critical application failure rate and consumers in distress are both 0%, indicating that the disruption does not have a significant impact on critical applications or consumers."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "cwatm",
+      "token": "100",
+      "relation": "x100",
+      "sentence": "The desalination capacity factor is at 100%, indicating that desalination plants are operating at full capacity, and the demand factor is also at 100%, suggesting that water demand is met without any issues."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "cwatm",
+      "token": "100",
+      "relation": "x100",
+      "sentence": "The desalination capacity factor is at 100%, indicating that desalination plants are operating at full capacity, and the demand factor is also at 100%, suggesting that water demand is met without any issues."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "energy_flux_gas_power",
+      "token": "101.35",
+      "relation": "exact",
+      "sentence": "By 2035, the cumulative added capacity for the LNG system is projected to reach 101.35 GW, with a corresponding increase in incremental production of 7.6 Bcf per day at the mid-point estimate."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "energy_flux_gas_power",
+      "token": "7.6",
+      "relation": "exact",
+      "sentence": "By 2035, the cumulative added capacity for the LNG system is projected to reach 101.35 GW, with a corresponding increase in incremental production of 7.6 Bcf per day at the mid-point estimate."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "energy_flux_gas_power",
+      "token": "37.5",
+      "relation": "exact",
+      "sentence": "By 2035, DC capacity is projected to reach 37.5 GW, while non-DC capacity is expected to reach 63.85 GW."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "energy_flux_gas_power",
+      "token": "63.85",
+      "relation": "exact",
+      "sentence": "By 2035, DC capacity is projected to reach 37.5 GW, while non-DC capacity is expected to reach 63.85 GW."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "fed_oil",
+      "token": "60.5",
+      "relation": "exact",
+      "sentence": "The oil price is expected to increase by 60.5% due to the supply shock caused by the closure of the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "fed_oil",
+      "token": "-0.6806",
+      "relation": "exact",
+      "sentence": "This price hike is likely to have a ripple effect on the global economy, with the GDP impact peaking at -0.6806% in the first quarter after the conflict begins."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "fed_oil",
+      "token": "121",
+      "relation": "x100",
+      "sentence": "The Consumer Price Index (CPI) is expected to rise by 121% in the peak quarter, driven by the increased oil prices."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "fed_oil",
+      "token": "605",
+      "relation": "unmatched",
+      "sentence": "The Federal Funds Rate (FFR) is also expected to increase, peaking at 605 basis points in the first quarter."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "fed_oil",
+      "token": "34.03",
+      "relation": "x100",
+      "sentence": "The unemployment rate is expected to rise by 34.03% in the peak quarter, indicating a significant impact on the labor market."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "futures",
+      "token": "1.21",
+      "relation": "exact",
+      "sentence": "The forward price curves for both commodities show a steady increase over the forecast horizon, with peak price indices of 1.21 for both oil and LNG."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "futures",
+      "token": "21",
+      "relation": "exact",
+      "sentence": "The initial price shock of 21% for oil and 25% for LNG suggests a severe disruption to global supply chains, with the Strait of Hormuz closure having a major impact on global trade."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "futures",
+      "token": "25",
+      "relation": "unmatched",
+      "sentence": "The initial price shock of 21% for oil and 25% for LNG suggests a severe disruption to global supply chains, with the Strait of Hormuz closure having a major impact on global trade."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "lngst",
+      "token": "100",
+      "relation": "exact",
+      "sentence": "The Qatar export reduction is estimated at 100%, implying that Qatar, the world's largest LNG exporter, is effectively blockaded."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "lngst",
+      "token": "0",
+      "relation": "exact",
+      "sentence": "The UAE export reduction is estimated at 0%, indicating that the UAE is relatively insulated from the disruption."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "lngst",
+      "token": "20.37",
+      "relation": "exact",
+      "sentence": "The model also estimates a global supply shortfall of 20.37% and a supply shortfall of 36.667 billion cubic meters (bcm) over the 4-month disruption period."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "lngst",
+      "token": "36.667",
+      "relation": "exact",
+      "sentence": "The model also estimates a global supply shortfall of 20.37% and a supply shortfall of 36.667 billion cubic meters (bcm) over the 4-month disruption period."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "lngst",
+      "token": "4",
+      "relation": "exact",
+      "sentence": "The model also estimates a global supply shortfall of 20.37% and a supply shortfall of 36.667 billion cubic meters (bcm) over the 4-month disruption period."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "lngst",
+      "token": "110",
+      "relation": "exact",
+      "sentence": "This translates to an annualised supply shortfall of 110 bcm."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "lngst",
+      "token": "50.926",
+      "relation": "exact",
+      "sentence": "The implied price impulse is estimated at 50.926%, suggesting a significant increase in LNG prices."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "lngst",
+      "token": "5.188",
+      "relation": "exact",
+      "sentence": "The model also estimates the Henry Hub price to be $5.188 per million British thermal units (mmbtu), the TTF price to be $24.903 per mmbtu, and the JKM price to be $28.438 per mmbtu."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "lngst",
+      "token": "24.903",
+      "relation": "exact",
+      "sentence": "The model also estimates the Henry Hub price to be $5.188 per million British thermal units (mmbtu), the TTF price to be $24.903 per mmbtu, and the JKM price to be $28.438 per mmbtu."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "lngst",
+      "token": "28.438",
+      "relation": "exact",
+      "sentence": "The model also estimates the Henry Hub price to be $5.188 per million British thermal units (mmbtu), the TTF price to be $24.903 per mmbtu, and the JKM price to be $28.438 per mmbtu."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "marketsim",
+      "token": "50",
+      "relation": "exact",
+      "sentence": "The oil price shock is estimated to be around 50%, indicating a substantial increase in the cost of oil."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "marketsim",
+      "token": "20",
+      "relation": "exact",
+      "sentence": "The disruption to the natural gas market is less severe, with a price change of around 20%."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "marketsim",
+      "token": "4",
+      "relation": "exact",
+      "sentence": "The disruption duration is estimated to be around 4 months, which is consistent with the scenario description."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "marketsim",
+      "token": "50.9",
+      "relation": "exact",
+      "sentence": "The economic impact of the disruption is substantial, with a total consumer surplus loss of around $50.9 billion."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "marketsim",
+      "token": "32.4",
+      "relation": "exact",
+      "sentence": "This loss is primarily driven by the oil sector, with the transport sector being the hardest hit, accounting for around $32.4 billion of the loss."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "mpsge_jl",
+      "token": "60.5",
+      "relation": "exact",
+      "sentence": "The oil price shock is estimated to be around 60.5%, indicating a substantial increase in the cost of oil."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "mpsge_jl",
+      "token": "9.3",
+      "relation": "multiplier_to_pct",
+      "sentence": "The trade cost multiplier is expected to increase by 9.3%, suggesting that trade disruptions will lead to higher costs for goods and services."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "mpsge_jl",
+      "token": "126.4",
+      "relation": "exact",
+      "sentence": "The commodity price shocks also reveal significant increases in the prices of LNG (126.4%), fertilizer (23.8%), and capex (2.8%)."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "mpsge_jl",
+      "token": "23.8",
+      "relation": "exact",
+      "sentence": "The commodity price shocks also reveal significant increases in the prices of LNG (126.4%), fertilizer (23.8%), and capex (2.8%)."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "mpsge_jl",
+      "token": "2.8",
+      "relation": "exact",
+      "sentence": "The commodity price shocks also reveal significant increases in the prices of LNG (126.4%), fertilizer (23.8%), and capex (2.8%)."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "mpsge_jl",
+      "token": "4",
+      "relation": "exact",
+      "sentence": "The disruption duration is estimated to be around 4 months, which is consistent with the scenario description."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "mpsge_jl",
+      "token": "2.7",
+      "relation": "unmatched",
+      "sentence": "The MENA_GCC region is expected to experience a GDP impact of 2.7%, indicating that it may actually benefit from the conflict due to increased demand for its oil and gas exports."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "mpsge_jl",
+      "token": "-0.9",
+      "relation": "exact",
+      "sentence": "In contrast, the ROW region is expected to experience a GDP impact of -0.9%, indicating significant economic disruption."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "mpsge_jl",
+      "token": "-0.5",
+      "relation": "exact",
+      "sentence": "The US, CHN, IND, EU, SSA, and LAC regions are all expected to experience negative GDP impacts, ranging from -0.5% to -1.8%."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "mpsge_jl",
+      "token": "-1.8",
+      "relation": "exact",
+      "sentence": "The US, CHN, IND, EU, SSA, and LAC regions are all expected to experience negative GDP impacts, ranging from -0.5% to -1.8%."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "nrel",
+      "token": "126.4",
+      "relation": "exact",
+      "sentence": "The natural gas price increase is projected to be around 126.4%, indicating a substantial rise in the cost of this commodity."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "nrel",
+      "token": "56.9",
+      "relation": "exact",
+      "sentence": "The retail electricity price is expected to rise by 56.9%, with a retail passthrough coefficient of 0.5, suggesting that a portion of the increased natural gas costs will be passed on to consumers."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "nrel",
+      "token": "0.5",
+      "relation": "exact",
+      "sentence": "The retail electricity price is expected to rise by 56.9%, with a retail passthrough coefficient of 0.5, suggesting that a portion of the increased natural gas costs will be passed on to consumers."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "nrel",
+      "token": "22.6",
+      "relation": "sign_dropped",
+      "sentence": "The generation share of natural gas is projected to decrease by 22.6%, while coal and renewables see increases of 10% and 12.6%, respectively."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "nrel",
+      "token": "10",
+      "relation": "exact",
+      "sentence": "The generation share of natural gas is projected to decrease by 22.6%, while coal and renewables see increases of 10% and 12.6%, respectively."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "nrel",
+      "token": "12.6",
+      "relation": "exact",
+      "sentence": "The generation share of natural gas is projected to decrease by 22.6%, while coal and renewables see increases of 10% and 12.6%, respectively."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "nrel",
+      "token": "-0.45",
+      "relation": "exact",
+      "sentence": "However, the global impact on GDP is projected to be around -0.45%, with a consumption impact of -0.95%."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "nrel",
+      "token": "-0.95",
+      "relation": "exact",
+      "sentence": "However, the global impact on GDP is projected to be around -0.45%, with a consumption impact of -0.95%."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "nrel",
+      "token": "-0.95",
+      "relation": "exact",
+      "sentence": "The welfare change is also expected to be -0.95%, suggesting a significant reduction in overall well-being."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "poles_jrc",
+      "token": "128.4",
+      "relation": "exact",
+      "sentence": "The peak price of Brent crude oil is projected to reach $128.4 per barrel, representing a 60.5% increase from the baseline price."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "poles_jrc",
+      "token": "60.5",
+      "relation": "exact",
+      "sentence": "The peak price of Brent crude oil is projected to reach $128.4 per barrel, representing a 60.5% increase from the baseline price."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "poles_jrc",
+      "token": "4.32",
+      "relation": "exact",
+      "sentence": "The model also estimates that the supply loss due to the Strait of Hormuz closure would be approximately 4.32 million barrels per day (mbd), accounting for about 4.24% of the global oil supply."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "poles_jrc",
+      "token": "4.24",
+      "relation": "exact",
+      "sentence": "The model also estimates that the supply loss due to the Strait of Hormuz closure would be approximately 4.32 million barrels per day (mbd), accounting for about 4.24% of the global oil supply."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "poles_jrc",
+      "token": "4.32",
+      "relation": "exact",
+      "sentence": "This loss would be equivalent to rerouting 4.32 mbd of oil through alternative routes, with no substitution from other energy sources."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "poles_jrc",
+      "token": "4",
+      "relation": "exact",
+      "sentence": "The disruption would last for 4 months, causing economic disruption to grow throughout this period."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "pycge",
+      "token": "4",
+      "relation": "exact",
+      "sentence": "The Prolonged Contained Conflict scenario, where the Strait of Hormuz is closed for 4 months, results in significant economic disruption."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "pycge",
+      "token": "-0.88",
+      "relation": "exact",
+      "sentence": "The model predicts a global GDP impact of -0.88%, with a corresponding inflation rate of 2.24%."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "pycge",
+      "token": "2.24",
+      "relation": "exact",
+      "sentence": "The model predicts a global GDP impact of -0.88%, with a corresponding inflation rate of 2.24%."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "pycge",
+      "token": "2.59",
+      "relation": "exact",
+      "sentence": "The MENA_GCC region, which includes countries such as Saudi Arabia and the UAE, is expected to experience a GDP impact of 2.59%, making it the hardest hit region."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "pycge",
+      "token": "-1.41",
+      "relation": "exact",
+      "sentence": "In contrast, the SSA region, which includes countries in sub-Saharan Africa, is expected to experience a GDP impact of -1.41%, making it the second hardest hit region."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "pycge",
+      "token": "0.35",
+      "relation": "exact",
+      "sentence": "The sectoral output change also reveals significant disparities, with the energy sector experiencing a 0.35% increase in output, while the services sector experiences a -0.65% decline."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "pycge",
+      "token": "-0.65",
+      "relation": "exact",
+      "sentence": "The sectoral output change also reveals significant disparities, with the energy sector experiencing a 0.35% increase in output, while the services sector experiences a -0.65% decline."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "weap_mena",
+      "token": "30",
+      "relation": "exact",
+      "sentence": "The model outputs suggest that approximately 30% of global desalination capacity is lost, resulting in a 30% effective loss of desalination capacity."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "weap_mena",
+      "token": "30",
+      "relation": "exact",
+      "sentence": "The model outputs suggest that approximately 30% of global desalination capacity is lost, resulting in a 30% effective loss of desalination capacity."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "weap_mena",
+      "token": "30",
+      "relation": "exact",
+      "sentence": "This translates to a significant shortage of drinking water for tens of millions of people, with the population affected estimated to be around 30 million."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "weap_mena",
+      "token": "13.28",
+      "relation": "exact",
+      "sentence": "The unmet demand for water is substantial, with the aggregate unmet demand percentage standing at 13.28%."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "weap_mena",
+      "token": "18",
+      "relation": "exact",
+      "sentence": "This is broken down by country, with Qatar facing the highest unmet demand at 18%, followed by the UAE at 12.6% and Saudi Arabia at 6%."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "weap_mena",
+      "token": "12.6",
+      "relation": "exact",
+      "sentence": "This is broken down by country, with Qatar facing the highest unmet demand at 18%, followed by the UAE at 12.6% and Saudi Arabia at 6%."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "weap_mena",
+      "token": "6",
+      "relation": "exact",
+      "sentence": "This is broken down by country, with Qatar facing the highest unmet demand at 18%, followed by the UAE at 12.6% and Saudi Arabia at 6%."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "weap_mena",
+      "token": "82",
+      "relation": "exact",
+      "sentence": "The supply coverage percentage by country also reveals significant disparities, with Qatar's supply coverage at 82% and the UAE's at 87.4%, while Saudi Arabia's supply coverage is at 94%."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "weap_mena",
+      "token": "87.4",
+      "relation": "exact",
+      "sentence": "The supply coverage percentage by country also reveals significant disparities, with Qatar's supply coverage at 82% and the UAE's at 87.4%, while Saudi Arabia's supply coverage is at 94%."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "weap_mena",
+      "token": "94",
+      "relation": "exact",
+      "sentence": "The supply coverage percentage by country also reveals significant disparities, with Qatar's supply coverage at 82% and the UAE's at 87.4%, while Saudi Arabia's supply coverage is at 94%."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "world_fertilizer",
+      "token": "25",
+      "relation": "exact",
+      "sentence": "The model predicts a 25% increase in natural gas prices, which is a key input for fertilizer production."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "world_fertilizer",
+      "token": "49.75",
+      "relation": "exact",
+      "sentence": "This increase is likely to drive up fertilizer prices, with the model suggesting a 49.75% increase in nitrogen prices, a 2.488% increase in phosphate prices, and a 2.488% increase in potash prices."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "world_fertilizer",
+      "token": "2.488",
+      "relation": "exact",
+      "sentence": "This increase is likely to drive up fertilizer prices, with the model suggesting a 49.75% increase in nitrogen prices, a 2.488% increase in phosphate prices, and a 2.488% increase in potash prices."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "world_fertilizer",
+      "token": "2.488",
+      "relation": "exact",
+      "sentence": "This increase is likely to drive up fertilizer prices, with the model suggesting a 49.75% increase in nitrogen prices, a 2.488% increase in phosphate prices, and a 2.488% increase in potash prices."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "world_fertilizer",
+      "token": "23.756",
+      "relation": "exact",
+      "sentence": "The fertilizer price index is expected to rise by 23.756%."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "world_fertilizer",
+      "token": "30",
+      "relation": "exact",
+      "sentence": "The model predicts a 30% decline in Middle East exports, while the US, Russia, and Algeria are expected to see increases in their exports."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "world_helium_model",
+      "token": "280.0",
+      "relation": "exact",
+      "sentence": "The model output for the Prolonged Contained Conflict scenario suggests that the helium market experiences minimal disruption, with the equilibrium price remaining at $280.0 per million standard cubic feet (mscf), the same as the baseline price."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "world_helium_model",
+      "token": "32",
+      "relation": "x100",
+      "sentence": "The sectoral allocation of helium demand remains relatively stable, with the medical imaging (MRI) sector accounting for 32% of demand, followed by semiconductors at 28%."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "world_helium_model",
+      "token": "28",
+      "relation": "x100",
+      "sentence": "The sectoral allocation of helium demand remains relatively stable, with the medical imaging (MRI) sector accounting for 32% of demand, followed by semiconductors at 28%."
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "world_helium_model",
+      "token": "12",
+      "relation": "x100",
+      "sentence": "The aerospace defense sector, which is often sensitive to disruptions in the global helium supply, is allocated only 12% of demand."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "ais_project",
+      "token": "7",
+      "relation": "exact",
+      "sentence": "The Strait remains closed for 7 months, with no rerouting of ships via the Cape of Good Hope, implying that the disruption is severe and localized."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "ais_project",
+      "token": "1.0",
+      "relation": "exact",
+      "sentence": "The model output implies that the global fleet utilization and capacity are not significantly impacted, with a fleet utilization multiplier of 1.0 and an effective fleet capacity loss percentage of 0.0."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "ais_project",
+      "token": "0.0",
+      "relation": "exact",
+      "sentence": "The model output implies that the global fleet utilization and capacity are not significantly impacted, with a fleet utilization multiplier of 1.0 and an effective fleet capacity loss percentage of 0.0."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "ais_project",
+      "token": "1.0",
+      "relation": "exact",
+      "sentence": "The rerouting cost multiplier is also 1.0, indicating that the cost of rerouting ships is not a significant factor in this scenario."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "aisdb",
+      "token": "21",
+      "relation": "unmatched",
+      "sentence": "The closure of the Strait, which accounts for 21% of global oil supply and 25% of global LNG trade, is expected to last for 7 months, causing substantial economic disruption."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "aisdb",
+      "token": "25",
+      "relation": "unmatched",
+      "sentence": "The closure of the Strait, which accounts for 21% of global oil supply and 25% of global LNG trade, is expected to last for 7 months, causing substantial economic disruption."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "aisdb",
+      "token": "7",
+      "relation": "unmatched",
+      "sentence": "The closure of the Strait, which accounts for 21% of global oil supply and 25% of global LNG trade, is expected to last for 7 months, causing substantial economic disruption."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "aisdb",
+      "token": "31.15",
+      "relation": "exact",
+      "sentence": "The model estimates that the effective fleet capacity loss will be around 31.15%, with LNG carriers and tankers being the most affected vessel types, experiencing utilization drops of 35.19% and 29.69%, respectively."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "aisdb",
+      "token": "35.19",
+      "relation": "exact",
+      "sentence": "The model estimates that the effective fleet capacity loss will be around 31.15%, with LNG carriers and tankers being the most affected vessel types, experiencing utilization drops of 35.19% and 29.69%, respectively."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "aisdb",
+      "token": "29.69",
+      "relation": "exact",
+      "sentence": "The model estimates that the effective fleet capacity loss will be around 31.15%, with LNG carriers and tankers being the most affected vessel types, experiencing utilization drops of 35.19% and 29.69%, respectively."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "aisdb",
+      "token": "9.5",
+      "relation": "exact",
+      "sentence": "The model also suggests that alternative routes, such as the Cape of Good Hope, will be used to reroute vessels, resulting in an additional 9.5 days of transit time."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "aisdb",
+      "token": "1.1869",
+      "relation": "exact",
+      "sentence": "This rerouting will come at a cost, with a rerouting cost multiplier of 1.1869."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "aisdb",
+      "token": "200",
+      "relation": "exact",
+      "sentence": "Furthermore, the model estimates that war risk insurance premiums will increase by 200% due to the heightened risk of conflict."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "apsim",
+      "token": "10.8",
+      "relation": "exact",
+      "sentence": "The headline magnitude is a 10.8% reduction in crop yields across all simulated crops, with wheat, rice, and maize experiencing yield losses of 11.4%, 8.8%, and 12.3%, respectively."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "apsim",
+      "token": "11.4",
+      "relation": "sign_dropped",
+      "sentence": "The headline magnitude is a 10.8% reduction in crop yields across all simulated crops, with wheat, rice, and maize experiencing yield losses of 11.4%, 8.8%, and 12.3%, respectively."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "apsim",
+      "token": "8.8",
+      "relation": "sign_dropped",
+      "sentence": "The headline magnitude is a 10.8% reduction in crop yields across all simulated crops, with wheat, rice, and maize experiencing yield losses of 11.4%, 8.8%, and 12.3%, respectively."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "apsim",
+      "token": "12.3",
+      "relation": "sign_dropped",
+      "sentence": "The headline magnitude is a 10.8% reduction in crop yields across all simulated crops, with wheat, rice, and maize experiencing yield losses of 11.4%, 8.8%, and 12.3%, respectively."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "apsim",
+      "token": "8.3",
+      "relation": "exact",
+      "sentence": "This reduction is likely driven by a 8.3% reduction in fertilizer application, which is the primary factor contributing to the yield loss."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "argonne_abm",
+      "token": "9.3",
+      "relation": "exact",
+      "sentence": "The effective supply shock is estimated to be around 9.3%, indicating a substantial reduction in helium availability."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "argonne_abm",
+      "token": "7",
+      "relation": "exact",
+      "sentence": "The model also predicts a prolonged disruption, with the Strait of Hormuz remaining closed for approximately 7 months."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "argonne_abm",
+      "token": "19",
+      "relation": "exact",
+      "sentence": "This prolonged closure would lead to a substantial increase in helium prices, with an equilibrium price change of around 19%."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "argonne_abm",
+      "token": "61.9",
+      "relation": "x100",
+      "sentence": "The unmet demand for helium is estimated to be around 61.9%, indicating a significant shortage in the market."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "cwatm",
+      "token": "100",
+      "relation": "x100",
+      "sentence": "The desalination capacity factor is at 100%, implying that desalination plants, which are critical for providing drinking water in many regions, are operating at full capacity."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "cwatm",
+      "token": "100",
+      "relation": "x100",
+      "sentence": "The demand factor is also at 100%, indicating that water demand is not reduced due to the conflict."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "cwatm",
+      "token": "7",
+      "relation": "exact",
+      "sentence": "The disruption duration is 7 months, which is the duration of the conflict."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "energy_flux_gas_power",
+      "token": "101.35",
+      "relation": "exact",
+      "sentence": "By 2035, the cumulative added capacity for the LNG system is projected to reach 101.35 GW, with a blended production rate of 9.13 billion cubic feet per day."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "energy_flux_gas_power",
+      "token": "9.13",
+      "relation": "exact",
+      "sentence": "By 2035, the cumulative added capacity for the LNG system is projected to reach 101.35 GW, with a blended production rate of 9.13 billion cubic feet per day."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "fed_oil",
+      "token": "51.82",
+      "relation": "exact",
+      "sentence": "The oil price is expected to increase by 51.82% due to the supply shock caused by the closure of the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "fed_oil",
+      "token": "-0.8258",
+      "relation": "exact",
+      "sentence": "This price hike is likely to have far-reaching consequences for the global economy, including a peak GDP impact of -0.8258% and a peak CPI impact of 1.101%."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "fed_oil",
+      "token": "1.101",
+      "relation": "exact",
+      "sentence": "This price hike is likely to have far-reaching consequences for the global economy, including a peak GDP impact of -0.8258% and a peak CPI impact of 1.101%."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "fed_oil",
+      "token": "1.75",
+      "relation": "exact",
+      "sentence": "The model also projects a prolonged economic disruption, with the GDP impact lasting for approximately 1.75 quarters."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "fed_oil",
+      "token": "0.4129",
+      "relation": "exact",
+      "sentence": "The peak impact on the unemployment rate is expected to be 0.4129%, indicating a moderate increase in unemployment."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "fed_oil",
+      "token": "3.0505",
+      "relation": "exact",
+      "sentence": "The Federal Funds Rate is expected to increase to 3.0505% in the first quarter, before gradually decreasing to 2.4469% by the eighth quarter."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "fed_oil",
+      "token": "2.4469",
+      "relation": "exact",
+      "sentence": "The Federal Funds Rate is expected to increase to 3.0505% in the first quarter, before gradually decreasing to 2.4469% by the eighth quarter."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "futures",
+      "token": "9",
+      "relation": "exact",
+      "sentence": "The forward price curves for both commodities show a steady increase over the 9-month forecast horizon, with peak price indices of 1.21 for both Oil and LNG."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "futures",
+      "token": "1.21",
+      "relation": "exact",
+      "sentence": "The forward price curves for both commodities show a steady increase over the 9-month forecast horizon, with peak price indices of 1.21 for both Oil and LNG."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "futures",
+      "token": "121",
+      "relation": "x100",
+      "sentence": "This implies a substantial price increase, with Oil and LNG prices potentially reaching 121% of their initial values."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "futures",
+      "token": "21",
+      "relation": "exact",
+      "sentence": "The initial price shock of 21% for Oil and 25% for LNG, as well as the lack of time to normalization, indicate that the market is expected to take a long time to recover from the disruption caused by the conflict."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "futures",
+      "token": "25",
+      "relation": "unmatched",
+      "sentence": "The initial price shock of 21% for Oil and 25% for LNG, as well as the lack of time to normalization, indicate that the market is expected to take a long time to recover from the disruption caused by the conflict."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "lngst",
+      "token": "100",
+      "relation": "exact",
+      "sentence": "The Qatar export reduction is estimated at 100%, implying that Qatar, the world's largest LNG exporter, is effectively blockaded."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "lngst",
+      "token": "0",
+      "relation": "exact",
+      "sentence": "The UAE export reduction is estimated at 0%, indicating that the UAE is relatively insulated from the disruption."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "lngst",
+      "token": "64.167",
+      "relation": "exact",
+      "sentence": "The model also estimates a significant supply shortfall of 64.167 billion cubic meters (bcm) over the 7-month disruption period, which translates to an annualised supply shortfall of 110 bcm."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "lngst",
+      "token": "7",
+      "relation": "exact",
+      "sentence": "The model also estimates a significant supply shortfall of 64.167 billion cubic meters (bcm) over the 7-month disruption period, which translates to an annualised supply shortfall of 110 bcm."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "lngst",
+      "token": "110",
+      "relation": "exact",
+      "sentence": "The model also estimates a significant supply shortfall of 64.167 billion cubic meters (bcm) over the 7-month disruption period, which translates to an annualised supply shortfall of 110 bcm."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "lngst",
+      "token": "20.37",
+      "relation": "exact",
+      "sentence": "This represents a global supply shortfall of approximately 20.37%."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "lngst",
+      "token": "50.926",
+      "relation": "exact",
+      "sentence": "The implied price impulse is estimated at 50.926%, suggesting a substantial increase in LNG prices."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "lngst",
+      "token": "5.19",
+      "relation": "exact",
+      "sentence": "The model also estimates the Henry Hub price to be around $5.19 per million British thermal units (MMBTU), while the TTF and JKM prices are estimated to be around $24.90 and $28.40 per MMBTU, respectively."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "lngst",
+      "token": "24.90",
+      "relation": "exact",
+      "sentence": "The model also estimates the Henry Hub price to be around $5.19 per million British thermal units (MMBTU), while the TTF and JKM prices are estimated to be around $24.90 and $28.40 per MMBTU, respectively."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "lngst",
+      "token": "28.40",
+      "relation": "unmatched",
+      "sentence": "The model also estimates the Henry Hub price to be around $5.19 per million British thermal units (MMBTU), while the TTF and JKM prices are estimated to be around $24.90 and $28.40 per MMBTU, respectively."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "marketsim",
+      "token": "50",
+      "relation": "exact",
+      "sentence": "The Prolonged Escalated Conflict scenario results in a significant oil price shock of 50% and a 20% increase in natural gas prices."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "marketsim",
+      "token": "20",
+      "relation": "exact",
+      "sentence": "The Prolonged Escalated Conflict scenario results in a significant oil price shock of 50% and a 20% increase in natural gas prices."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "marketsim",
+      "token": "7",
+      "relation": "exact",
+      "sentence": "The Strait of Hormuz closure lasts for 7 months, causing a substantial disruption to global oil and gas supplies."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "marketsim",
+      "token": "82.1",
+      "relation": "exact",
+      "sentence": "The model estimates that the consumer surplus loss due to the oil price shock alone is approximately $82.1 billion, while the loss due to the gas price increase is around $6.9 billion."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "marketsim",
+      "token": "6.9",
+      "relation": "exact",
+      "sentence": "The model estimates that the consumer surplus loss due to the oil price shock alone is approximately $82.1 billion, while the loss due to the gas price increase is around $6.9 billion."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "marketsim",
+      "token": "89",
+      "relation": "exact",
+      "sentence": "The total consumer surplus loss is estimated to be around $89 billion."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "marketsim",
+      "token": "49.3",
+      "relation": "exact",
+      "sentence": "The producer surplus change for oil is estimated to be $49.3 billion, indicating that oil producers may benefit from the increased prices."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "marketsim",
+      "token": "35.6",
+      "relation": "sign_dropped",
+      "sentence": "However, the net welfare impact is estimated to be a loss of around $35.6 billion, suggesting that the overall economic impact of the conflict is negative."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "marketsim",
+      "token": "0.57",
+      "relation": "sign_dropped",
+      "sentence": "The model also estimates that the conflict leads to a reduction in oil demand of around 0.57 million barrels per day and a reduction in gas demand of around 1.76 billion cubic feet per day."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "marketsim",
+      "token": "1.76",
+      "relation": "sign_dropped",
+      "sentence": "The model also estimates that the conflict leads to a reduction in oil demand of around 0.57 million barrels per day and a reduction in gas demand of around 1.76 billion cubic feet per day."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "marketsim",
+      "token": "56.7",
+      "relation": "exact",
+      "sentence": "However, the sectoral breakdown of consumer surplus loss suggests that the transport sector is hit hardest by the oil price shock, with losses estimated to be around $56.7 billion."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "marketsim",
+      "token": "18.9",
+      "relation": "exact",
+      "sentence": "The industrial sector also experiences significant losses, with around $18.9 billion in consumer surplus loss."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "mpsge_jl",
+      "token": "51.82",
+      "relation": "exact",
+      "sentence": "The oil price shock is estimated to be around 51.82%, indicating a substantial increase in the cost of oil."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "mpsge_jl",
+      "token": "9.34",
+      "relation": "multiplier_to_pct",
+      "sentence": "The trade cost multiplier is expected to increase by 9.34%, suggesting that trade disruptions will lead to higher costs for goods and services."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "mpsge_jl",
+      "token": "126.39",
+      "relation": "exact",
+      "sentence": "The commodity price shocks also reveal significant increases in the prices of LNG (126.39%), fertilizer (23.76%), and helium (30.0%)."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "mpsge_jl",
+      "token": "23.76",
+      "relation": "exact",
+      "sentence": "The commodity price shocks also reveal significant increases in the prices of LNG (126.39%), fertilizer (23.76%), and helium (30.0%)."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "mpsge_jl",
+      "token": "30.0",
+      "relation": "exact",
+      "sentence": "The commodity price shocks also reveal significant increases in the prices of LNG (126.39%), fertilizer (23.76%), and helium (30.0%)."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "mpsge_jl",
+      "token": "7",
+      "relation": "exact",
+      "sentence": "The model output also suggests that the conflict will lead to a 7-month disruption in trade, resulting in a 1.42% decline in global GDP."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "mpsge_jl",
+      "token": "1.42",
+      "relation": "sign_dropped",
+      "sentence": "The model output also suggests that the conflict will lead to a 7-month disruption in trade, resulting in a 1.42% decline in global GDP."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "mpsge_jl",
+      "token": "4.38",
+      "relation": "exact",
+      "sentence": "The MENA_GCC region is expected to experience a 4.38% increase in GDP, likely due to its relatively low dependence on oil imports and its ability to reroute trade through alternative routes."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "mpsge_jl",
+      "token": "1.42",
+      "relation": "sign_dropped",
+      "sentence": "In contrast, the ROW region is expected to experience a 1.42% decline in GDP, similar to the global average."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "mpsge_jl",
+      "token": "2.99",
+      "relation": "unmatched",
+      "sentence": "The EU and IND regions are expected to experience significant declines in GDP, with the EU experiencing a 2.99% decline and IND experiencing a 2.87% decline."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "mpsge_jl",
+      "token": "2.87",
+      "relation": "exact",
+      "sentence": "The EU and IND regions are expected to experience significant declines in GDP, with the EU experiencing a 2.99% decline and IND experiencing a 2.87% decline."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "mpsge_jl",
+      "token": "1.87",
+      "relation": "sign_dropped",
+      "sentence": "The SSA region is also expected to experience a decline in GDP, with a 1.87% decline."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "nrel",
+      "token": "126.39",
+      "relation": "exact",
+      "sentence": "The natural gas price is expected to increase by 126.39%, indicating a substantial rise in the cost of this commodity."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "nrel",
+      "token": "-0.66",
+      "relation": "exact",
+      "sentence": "The model also suggests that the conflict will have a moderate impact on the global economy, with a GDP impact of -0.66% and a consumption impact of -1.32%."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "nrel",
+      "token": "-1.32",
+      "relation": "exact",
+      "sentence": "The model also suggests that the conflict will have a moderate impact on the global economy, with a GDP impact of -0.66% and a consumption impact of -1.32%."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "nrel",
+      "token": "1.65",
+      "relation": "exact",
+      "sentence": "The inflation rate is expected to rise by 1.65%, indicating a potential increase in the cost of living."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "nrel",
+      "token": "-0.79",
+      "relation": "exact",
+      "sentence": "The conflict's impact on the global economy is likely to be felt across various regions, with the ROW (Rest of the World) region experiencing a GDP impact of -0.79%."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "poles_jrc",
+      "token": "121.46",
+      "relation": "exact",
+      "sentence": "The peak price of Brent crude oil reaches $121.46 per barrel, a 51.82% increase from the baseline price of $80.00 per barrel."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "poles_jrc",
+      "token": "51.82",
+      "relation": "exact",
+      "sentence": "The peak price of Brent crude oil reaches $121.46 per barrel, a 51.82% increase from the baseline price of $80.00 per barrel."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "poles_jrc",
+      "token": "80.00",
+      "relation": "exact",
+      "sentence": "The peak price of Brent crude oil reaches $121.46 per barrel, a 51.82% increase from the baseline price of $80.00 per barrel."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "poles_jrc",
+      "token": "4.3",
+      "relation": "exact",
+      "sentence": "The model also estimates a supply loss of 4.3 million barrels per day (mbd), which accounts for approximately 4.22% of the global oil supply."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "poles_jrc",
+      "token": "4.22",
+      "relation": "exact",
+      "sentence": "The model also estimates a supply loss of 4.3 million barrels per day (mbd), which accounts for approximately 4.22% of the global oil supply."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "poles_jrc",
+      "token": "7",
+      "relation": "exact",
+      "sentence": "The disruption lasts for 7 months, causing widespread economic disruption."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "poles_jrc",
+      "token": "4.3",
+      "relation": "exact",
+      "sentence": "The rerouting of oil shipments and substitution of oil with alternative energy sources are estimated to mitigate some of the supply loss, with rerouting accounting for 4.3 mbd of the lost supply."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "pycge",
+      "token": "-1.0575",
+      "relation": "exact",
+      "sentence": "The model predicts a global GDP impact of -1.0575%, indicating a substantial contraction in economic activity."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "pycge",
+      "token": "2.0668",
+      "relation": "exact",
+      "sentence": "The model also predicts a 2.0668% increase in CPI inflation, suggesting that the conflict will lead to higher prices for consumers."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "pycge",
+      "token": "3.3161",
+      "relation": "exact",
+      "sentence": "The MENA_GCC region, which includes countries such as Saudi Arabia and the UAE, is expected to experience a GDP impact of 3.3161%, indicating a significant increase in economic activity."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "pycge",
+      "token": "-2.1479",
+      "relation": "exact",
+      "sentence": "In contrast, the IND region is expected to experience a GDP impact of -2.1479%, indicating a significant contraction in economic activity."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "pycge",
+      "token": "0.4612",
+      "relation": "exact",
+      "sentence": "The energy sector is expected to experience a 0.4612% increase in output, indicating a significant boost to economic activity."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "pycge",
+      "token": "-0.8404",
+      "relation": "exact",
+      "sentence": "In contrast, the services sector is expected to experience a -0.8404% decline in output, indicating a significant contraction in economic activity."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "weap_mena",
+      "token": "30",
+      "relation": "exact",
+      "sentence": "The model estimates that 30% of global desalination capacity is lost, resulting in a 30% effective loss of desalination capacity."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "weap_mena",
+      "token": "30",
+      "relation": "exact",
+      "sentence": "The model estimates that 30% of global desalination capacity is lost, resulting in a 30% effective loss of desalination capacity."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "weap_mena",
+      "token": "18",
+      "relation": "exact",
+      "sentence": "This is a critical concern, as the region heavily relies on desalination to meet its water needs, with countries such as Qatar, the UAE, and Saudi Arabia experiencing unmet demand of 18%, 12.6%, and 6% respectively."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "weap_mena",
+      "token": "12.6",
+      "relation": "exact",
+      "sentence": "This is a critical concern, as the region heavily relies on desalination to meet its water needs, with countries such as Qatar, the UAE, and Saudi Arabia experiencing unmet demand of 18%, 12.6%, and 6% respectively."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "weap_mena",
+      "token": "6",
+      "relation": "exact",
+      "sentence": "This is a critical concern, as the region heavily relies on desalination to meet its water needs, with countries such as Qatar, the UAE, and Saudi Arabia experiencing unmet demand of 18%, 12.6%, and 6% respectively."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "weap_mena",
+      "token": "28",
+      "relation": "exact",
+      "sentence": "The model suggests that the disruption lasts for approximately 28 weeks, affecting over 30 million people."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "weap_mena",
+      "token": "30",
+      "relation": "exact",
+      "sentence": "The model suggests that the disruption lasts for approximately 28 weeks, affecting over 30 million people."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "weap_mena",
+      "token": "371.73",
+      "relation": "exact",
+      "sentence": "The cumulative water deficit is substantial, with a 371.73% increase in unmet demand over the duration of the crisis."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "weap_mena",
+      "token": "42",
+      "relation": "x100",
+      "sentence": "This is likely to have severe economic and social consequences, particularly in countries with high desalination dependence, such as the UAE (42% dependence) and Qatar (60% dependence)."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "weap_mena",
+      "token": "60",
+      "relation": "x100",
+      "sentence": "This is likely to have severe economic and social consequences, particularly in countries with high desalination dependence, such as the UAE (42% dependence) and Qatar (60% dependence)."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "world_fertilizer",
+      "token": "25",
+      "relation": "exact",
+      "sentence": "The natural gas price is expected to increase by 25%, which is likely to have a ripple effect on the fertilizer production process, given that natural gas is a key input in the production of nitrogen-based fertilizers."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "world_fertilizer",
+      "token": "30",
+      "relation": "exact",
+      "sentence": "The model predicts a 30% loss in Middle Eastern fertilizer production, which is consistent with the scenario's assumption of a prolonged closure of the Strait of Hormuz, a critical shipping lane for the region."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "world_fertilizer",
+      "token": "49.75",
+      "relation": "exact",
+      "sentence": "The price of nitrogen-based fertilizers, such as urea, is expected to surge by 49.75%, while phosphate and potash prices are expected to increase by a relatively modest 2.48%."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "world_fertilizer",
+      "token": "2.48",
+      "relation": "unmatched",
+      "sentence": "The price of nitrogen-based fertilizers, such as urea, is expected to surge by 49.75%, while phosphate and potash prices are expected to increase by a relatively modest 2.48%."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "world_fertilizer",
+      "token": "23.76",
+      "relation": "exact",
+      "sentence": "The fertilizer price index is expected to increase by 23.76%, indicating a broad-based increase in fertilizer prices."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "world_helium_model",
+      "token": "364",
+      "relation": "exact",
+      "sentence": "The model predicts an equilibrium price of $364 per million standard cubic feet (mscf), a 30% increase from the baseline price of $280 per mscf."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "world_helium_model",
+      "token": "30",
+      "relation": "exact",
+      "sentence": "The model predicts an equilibrium price of $364 per million standard cubic feet (mscf), a 30% increase from the baseline price of $280 per mscf."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "world_helium_model",
+      "token": "280",
+      "relation": "exact",
+      "sentence": "The model predicts an equilibrium price of $364 per million standard cubic feet (mscf), a 30% increase from the baseline price of $280 per mscf."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "world_helium_model",
+      "token": "9",
+      "relation": "exact",
+      "sentence": "This price hike is driven by a 9% effective supply gap, which is likely due to the blockade of Qatar, the world's largest helium exporter, and the disruption of global helium supply chains."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "world_helium_model",
+      "token": "30",
+      "relation": "exact",
+      "sentence": "The sectoral allocation of helium demand reveals that the medical imaging (MRI) sector accounts for approximately 30% of total demand, followed by semiconductors at around 26%."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "world_helium_model",
+      "token": "26",
+      "relation": "x100",
+      "sentence": "The sectoral allocation of helium demand reveals that the medical imaging (MRI) sector accounts for approximately 30% of total demand, followed by semiconductors at around 26%."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "world_helium_model",
+      "token": "11",
+      "relation": "x100",
+      "sentence": "The aerospace defense sector also accounts for a significant share, at around 11%."
+    },
+    {
+      "scenario_id": "prolonged_escalated",
+      "model_id": "world_helium_model",
+      "token": "20",
+      "relation": "x100",
+      "sentence": "The rationing share by sector shows that the medical imaging sector is disproportionately affected by the supply shortage, with a rationing share of around 20%."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "ais_project",
+      "token": "5",
+      "relation": "unmatched",
+      "sentence": "The Swift Contained Conflict scenario, where the Strait of Hormuz is closed for 5 days, results in minimal economic disruption according to the model output."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "ais_project",
+      "token": "0.17",
+      "relation": "exact",
+      "sentence": "The headline magnitude is the disruption duration, which is approximately 0.17 months, or roughly 5 days."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "ais_project",
+      "token": "5",
+      "relation": "unmatched",
+      "sentence": "The headline magnitude is the disruption duration, which is approximately 0.17 months, or roughly 5 days."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "aisdb",
+      "token": "5",
+      "relation": "unmatched",
+      "sentence": "The closure of the Strait, which lasted for 5 days, resulted in minimal economic disruption, but the model suggests that alternative routes, such as the Cape of Good Hope, would have added 9.5 days to transit times."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "aisdb",
+      "token": "9.5",
+      "relation": "exact",
+      "sentence": "The closure of the Strait, which lasted for 5 days, resulted in minimal economic disruption, but the model suggests that alternative routes, such as the Cape of Good Hope, would have added 9.5 days to transit times."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "aisdb",
+      "token": "35.2",
+      "relation": "exact",
+      "sentence": "The model output also indicates that the fleet utilization drop would have been significant, with LNG carriers experiencing a 35.2% drop and tankers experiencing a 29.7% drop."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "aisdb",
+      "token": "29.7",
+      "relation": "exact",
+      "sentence": "The model output also indicates that the fleet utilization drop would have been significant, with LNG carriers experiencing a 35.2% drop and tankers experiencing a 29.7% drop."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "aisdb",
+      "token": "31.2",
+      "relation": "exact",
+      "sentence": "The effective fleet capacity loss would have been approximately 31.2%, further exacerbating the disruption."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "apsim",
+      "token": "5",
+      "relation": "unmatched",
+      "sentence": "The Swift Contained Conflict scenario, where the Strait of Hormuz is closed for 5 days, results in minimal economic disruption according to the apsim model."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "apsim",
+      "token": "5",
+      "relation": "unmatched",
+      "sentence": "The lack of impact on crop yields and fertilizer application is likely due to the short duration of the conflict and the fact that the Strait of Hormuz was reopened after 5 days."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "argonne_abm",
+      "token": "0",
+      "relation": "exact",
+      "sentence": "The model output for the Swift Contained Conflict scenario suggests that the disruption to the helium supply chain was minimal, with a supply shock of 0% and a disruption duration of 5 months."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "argonne_abm",
+      "token": "5",
+      "relation": "exact",
+      "sentence": "The model output for the Swift Contained Conflict scenario suggests that the disruption to the helium supply chain was minimal, with a supply shock of 0% and a disruption duration of 5 months."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "argonne_abm",
+      "token": "-0.5",
+      "relation": "exact",
+      "sentence": "The effective elasticity of demand for helium was -0.5, indicating that the market responded to the supply shock by reducing demand."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "argonne_abm",
+      "token": "0",
+      "relation": "exact",
+      "sentence": "However, the equilibrium price change was 0%, suggesting that the price of helium did not change significantly as a result of the disruption."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "argonne_abm",
+      "token": "0",
+      "relation": "exact",
+      "sentence": "The unmet demand was also 0%, indicating that the market was able to meet demand despite the supply shock."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "cwatm",
+      "token": "5",
+      "relation": "unmatched",
+      "sentence": "The disruption duration is a mere 5 days, which is remarkably short given the severity of the conflict."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "cwatm",
+      "token": "100",
+      "relation": "x100",
+      "sentence": "The model also indicates that the desalination capacity factor remains at 100%, implying that these critical facilities continue to operate at full capacity throughout the scenario."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "energy_flux_gas_power",
+      "token": "252,000",
+      "relation": "exact",
+      "sentence": "The total pipeline capacity is projected to reach 252,000 MW by 2035, with a cumulative added capacity of 101.35 GW by 2030 and 101.35 GW by 2035."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "energy_flux_gas_power",
+      "token": "101.35",
+      "relation": "exact",
+      "sentence": "The total pipeline capacity is projected to reach 252,000 MW by 2035, with a cumulative added capacity of 101.35 GW by 2030 and 101.35 GW by 2035."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "energy_flux_gas_power",
+      "token": "101.35",
+      "relation": "exact",
+      "sentence": "The total pipeline capacity is projected to reach 252,000 MW by 2035, with a cumulative added capacity of 101.35 GW by 2030 and 101.35 GW by 2035."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "energy_flux_gas_power",
+      "token": "10,135",
+      "relation": "exact",
+      "sentence": "The model's yearly results indicate that the added construction capacity will be around 10,135 MW in 2026, with a cumulative added capacity of 10.135 GW."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "energy_flux_gas_power",
+      "token": "10.135",
+      "relation": "exact",
+      "sentence": "The model's yearly results indicate that the added construction capacity will be around 10,135 MW in 2026, with a cumulative added capacity of 10.135 GW."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "energy_flux_gas_power",
+      "token": "101.35",
+      "relation": "exact",
+      "sentence": "This capacity will continue to increase, reaching 101.35 GW by 2035."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "energy_flux_gas_power",
+      "token": "0.558",
+      "relation": "exact",
+      "sentence": "The incremental BCF per day is projected to increase from 0.558 to 10.695 by 2035, indicating a significant increase in LNG supply."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "energy_flux_gas_power",
+      "token": "10.695",
+      "relation": "unmatched",
+      "sentence": "The incremental BCF per day is projected to increase from 0.558 to 10.695 by 2035, indicating a significant increase in LNG supply."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "energy_flux_gas_power",
+      "token": "9.130",
+      "relation": "unmatched",
+      "sentence": "The blended BCF per day is also projected to increase, reaching 9.130 by 2035."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "fed_oil",
+      "token": "5",
+      "relation": "x100",
+      "sentence": "The Swift Contained Conflict scenario, where the Strait of Hormuz is closed for 5 days, results in significant economic disruption."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "fed_oil",
+      "token": "54.79",
+      "relation": "exact",
+      "sentence": "The model output indicates that the global oil price increases by 54.79% due to the supply shock."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "fed_oil",
+      "token": "-0.6164",
+      "relation": "exact",
+      "sentence": "The model also projects a peak GDP impact of -0.6164% and a peak CPI impact of 1.0958% in the first quarter after the disruption."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "fed_oil",
+      "token": "1.0958",
+      "relation": "exact",
+      "sentence": "The model also projects a peak GDP impact of -0.6164% and a peak CPI impact of 1.0958% in the first quarter after the disruption."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "fed_oil",
+      "token": "0.5479",
+      "relation": "exact",
+      "sentence": "The peak FFR impact of 0.5479% and peak unemployment impact of 0.3082% indicate that the Federal Reserve may respond to the economic disruption by raising interest rates and that unemployment may increase slightly."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "fed_oil",
+      "token": "0.3082",
+      "relation": "exact",
+      "sentence": "The peak FFR impact of 0.5479% and peak unemployment impact of 0.3082% indicate that the Federal Reserve may respond to the economic disruption by raising interest rates and that unemployment may increase slightly."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "futures",
+      "token": "1.21",
+      "relation": "exact",
+      "sentence": "The model output for the Swift Contained Conflict scenario indicates a significant price shock for oil and LNG, with peak price indices of 1.21 for both commodities."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "futures",
+      "token": "5",
+      "relation": "exact",
+      "sentence": "The forward price curves for oil and LNG show a gradual decrease over the 5-month forecast horizon, but the initial price shock is substantial, with a 21% increase in oil supply disruption and 25% in LNG trade disruption."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "futures",
+      "token": "21",
+      "relation": "exact",
+      "sentence": "The forward price curves for oil and LNG show a gradual decrease over the 5-month forecast horizon, but the initial price shock is substantial, with a 21% increase in oil supply disruption and 25% in LNG trade disruption."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "futures",
+      "token": "25",
+      "relation": "unmatched",
+      "sentence": "The forward price curves for oil and LNG show a gradual decrease over the 5-month forecast horizon, but the initial price shock is substantial, with a 21% increase in oil supply disruption and 25% in LNG trade disruption."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "lngst",
+      "token": "5",
+      "relation": "unmatched",
+      "sentence": "The Swift Contained Conflict scenario, where the Strait of Hormuz is closed for 5 days, results in significant disruptions to the global LNG market."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "lngst",
+      "token": "20.37",
+      "relation": "exact",
+      "sentence": "The model predicts a relatively minor economic disruption, with a global supply shortfall of 20.37% and an implied price impulse of 50.926%."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "lngst",
+      "token": "50.926",
+      "relation": "exact",
+      "sentence": "The model predicts a relatively minor economic disruption, with a global supply shortfall of 20.37% and an implied price impulse of 50.926%."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "lngst",
+      "token": "3.458",
+      "relation": "exact",
+      "sentence": "This translates to a Henry Hub price of $3.458 per MMBtu, a TTF price of $16.602 per MMBtu, and a JKM price of $18.958 per MMBtu."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "lngst",
+      "token": "16.602",
+      "relation": "exact",
+      "sentence": "This translates to a Henry Hub price of $3.458 per MMBtu, a TTF price of $16.602 per MMBtu, and a JKM price of $18.958 per MMBtu."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "lngst",
+      "token": "18.958",
+      "relation": "exact",
+      "sentence": "This translates to a Henry Hub price of $3.458 per MMBtu, a TTF price of $16.602 per MMBtu, and a JKM price of $18.958 per MMBtu."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "marketsim",
+      "token": "5",
+      "relation": "exact",
+      "sentence": "The Swift Contained Conflict scenario, where the Strait of Hormuz is closed for 5 days, results in a 10% price shock for oil, a 5% price increase for natural gas, and a minimal economic disruption."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "marketsim",
+      "token": "10",
+      "relation": "exact",
+      "sentence": "The Swift Contained Conflict scenario, where the Strait of Hormuz is closed for 5 days, results in a 10% price shock for oil, a 5% price increase for natural gas, and a minimal economic disruption."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "marketsim",
+      "token": "5",
+      "relation": "exact",
+      "sentence": "The Swift Contained Conflict scenario, where the Strait of Hormuz is closed for 5 days, results in a 10% price shock for oil, a 5% price increase for natural gas, and a minimal economic disruption."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "marketsim",
+      "token": "436",
+      "relation": "unmatched",
+      "sentence": "The model estimates that the consumer surplus loss, which measures the total welfare loss to consumers, is approximately $436 billion."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "marketsim",
+      "token": "272",
+      "relation": "unmatched",
+      "sentence": "This loss is primarily driven by the oil price shock, with the transport sector bearing the brunt of the loss, accounting for $272 billion of the total."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "marketsim",
+      "token": "236",
+      "relation": "unmatched",
+      "sentence": "The producer surplus change, which measures the total welfare gain to producers, is estimated to be $236 billion for oil and $25 billion for gas."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "marketsim",
+      "token": "25",
+      "relation": "unmatched",
+      "sentence": "The producer surplus change, which measures the total welfare gain to producers, is estimated to be $236 billion for oil and $25 billion for gas."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "marketsim",
+      "token": "174",
+      "relation": "unmatched",
+      "sentence": "The net welfare impact, which takes into account both consumer and producer surplus changes, is estimated to be a loss of $174 billion."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "marketsim",
+      "token": "5",
+      "relation": "exact",
+      "sentence": "Additionally, the model's assumption of a contained conflict, where the closure is limited to 5 days, may not accurately reflect the potential consequences of a more prolonged or escalated conflict."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "mpsge_jl",
+      "token": "54.79",
+      "relation": "exact",
+      "sentence": "The headline magnitudes include a 54.79% oil price shock, a 50.93% LNG price shock, and a 1.09345 trade cost multiplier."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "mpsge_jl",
+      "token": "50.93",
+      "relation": "exact",
+      "sentence": "The headline magnitudes include a 54.79% oil price shock, a 50.93% LNG price shock, and a 1.09345 trade cost multiplier."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "mpsge_jl",
+      "token": "1.09345",
+      "relation": "exact",
+      "sentence": "The headline magnitudes include a 54.79% oil price shock, a 50.93% LNG price shock, and a 1.09345 trade cost multiplier."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "mpsge_jl",
+      "token": "-0.022",
+      "relation": "exact",
+      "sentence": "The US, China, and India are expected to experience the most significant economic contractions, with GDP impacts of -0.022%, -0.0353%, and -0.0495%, respectively."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "mpsge_jl",
+      "token": "-0.0353",
+      "relation": "exact",
+      "sentence": "The US, China, and India are expected to experience the most significant economic contractions, with GDP impacts of -0.022%, -0.0353%, and -0.0495%, respectively."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "mpsge_jl",
+      "token": "-0.0495",
+      "relation": "exact",
+      "sentence": "The US, China, and India are expected to experience the most significant economic contractions, with GDP impacts of -0.022%, -0.0353%, and -0.0495%, respectively."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "mpsge_jl",
+      "token": "0.0834",
+      "relation": "exact",
+      "sentence": "In contrast, the MENA_GCC region is projected to experience a GDP growth of 0.0834%, likely due to its relatively insulated position in the global economy."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "mpsge_jl",
+      "token": "0.0137",
+      "relation": "exact",
+      "sentence": "The energy sector is expected to experience a 0.0137% output increase, while the services sector is projected to decline by 0.0199%."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "mpsge_jl",
+      "token": "0.0199",
+      "relation": "sign_dropped",
+      "sentence": "The energy sector is expected to experience a 0.0137% output increase, while the services sector is projected to decline by 0.0199%."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "nrel",
+      "token": "5",
+      "relation": "exact",
+      "sentence": "The Swift Contained Conflict scenario, where the Strait of Hormuz is closed for 5 days, results in significant economic and energy market impacts."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "nrel",
+      "token": "50.9",
+      "relation": "exact",
+      "sentence": "The model predicts a 50.9% increase in natural gas prices, which is likely to have a ripple effect on the broader energy market."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "nrel",
+      "token": "25",
+      "relation": "unmatched",
+      "sentence": "This increase in natural gas prices is consistent with the scenario's disruption of approximately 25% of global LNG trade."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "nrel",
+      "token": "22.9",
+      "relation": "exact",
+      "sentence": "The model also forecasts a 22.9% increase in retail electricity prices, which is likely to be driven by the increased cost of natural gas used in power generation."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "nrel",
+      "token": "0.5",
+      "relation": "exact",
+      "sentence": "The retail passthrough coefficient of 0.5 suggests that 50% of the increase in natural gas prices is passed through to consumers in the form of higher electricity prices."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "nrel",
+      "token": "50",
+      "relation": "x100",
+      "sentence": "The retail passthrough coefficient of 0.5 suggests that 50% of the increase in natural gas prices is passed through to consumers in the form of higher electricity prices."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "nrel",
+      "token": "43",
+      "relation": "x100",
+      "sentence": "The generation share of natural gas in the power mix decreases from 43% to 31.8%, while the share of renewables increases from 21% to 26.1%."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "nrel",
+      "token": "31.8",
+      "relation": "x100",
+      "sentence": "The generation share of natural gas in the power mix decreases from 43% to 31.8%, while the share of renewables increases from 21% to 26.1%."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "nrel",
+      "token": "21",
+      "relation": "x100",
+      "sentence": "The generation share of natural gas in the power mix decreases from 43% to 31.8%, while the share of renewables increases from 21% to 26.1%."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "nrel",
+      "token": "26.1",
+      "relation": "x100",
+      "sentence": "The generation share of natural gas in the power mix decreases from 43% to 31.8%, while the share of renewables increases from 21% to 26.1%."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "nrel",
+      "token": "30",
+      "relation": "unmatched",
+      "sentence": "It is also worth noting that the model's outputs do not capture the potential impacts of the scenario on the global helium supply, which is disrupted by approximately 30%."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "poles_jrc",
+      "token": "5",
+      "relation": "unmatched",
+      "sentence": "The Swift Contained Conflict scenario, where the Strait of Hormuz is closed for 5 days, results in a significant spike in oil prices."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "poles_jrc",
+      "token": "123.83",
+      "relation": "exact",
+      "sentence": "The model predicts a peak price of $123.83 per barrel, a 54.79% increase from the baseline price of $80.00 per barrel."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "poles_jrc",
+      "token": "54.79",
+      "relation": "exact",
+      "sentence": "The model predicts a peak price of $123.83 per barrel, a 54.79% increase from the baseline price of $80.00 per barrel."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "poles_jrc",
+      "token": "80.00",
+      "relation": "exact",
+      "sentence": "The model predicts a peak price of $123.83 per barrel, a 54.79% increase from the baseline price of $80.00 per barrel."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "poles_jrc",
+      "token": "4.38",
+      "relation": "exact",
+      "sentence": "This price surge is likely driven by the disruption to global oil supply, with the model estimating a supply loss of 4.38 million barrels per day (mbd), accounting for 4.29% of the global oil supply."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "poles_jrc",
+      "token": "4.29",
+      "relation": "exact",
+      "sentence": "This price surge is likely driven by the disruption to global oil supply, with the model estimating a supply loss of 4.38 million barrels per day (mbd), accounting for 4.29% of the global oil supply."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "poles_jrc",
+      "token": "4.38",
+      "relation": "exact",
+      "sentence": "The model also estimates that 4.38 mbd of oil is rerouted to avoid the disrupted Strait of Hormuz, while no substitution is expected from other sources."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "poles_jrc",
+      "token": "0.42",
+      "relation": "exact",
+      "sentence": "The disruption duration is relatively short, lasting only 0.42 months."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "pycge",
+      "token": "-0.157",
+      "relation": "exact",
+      "sentence": "The model predicts a global GDP impact of -0.157%, with a corresponding inflation rate of 1.35%."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "pycge",
+      "token": "1.35",
+      "relation": "exact",
+      "sentence": "The model predicts a global GDP impact of -0.157%, with a corresponding inflation rate of 1.35%."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "pycge",
+      "token": "-0.2566",
+      "relation": "exact",
+      "sentence": "The SSA region is hit the hardest, with a GDP impact of -0.2566% and an inflation rate of 2.94%."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "pycge",
+      "token": "2.94",
+      "relation": "exact",
+      "sentence": "The SSA region is hit the hardest, with a GDP impact of -0.2566% and an inflation rate of 2.94%."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "pycge",
+      "token": "0.5394",
+      "relation": "exact",
+      "sentence": "In contrast, the MENA_GCC region is relatively insulated, with a GDP impact of 0.5394% and an inflation rate of 0.404%."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "pycge",
+      "token": "0.404",
+      "relation": "exact",
+      "sentence": "In contrast, the MENA_GCC region is relatively insulated, with a GDP impact of 0.5394% and an inflation rate of 0.404%."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "pycge",
+      "token": "0.074",
+      "relation": "exact",
+      "sentence": "The sectoral output also shows significant variations, with the energy sector experiencing a 0.074% increase in output, while the services sector experiences a 0.125% decline."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "pycge",
+      "token": "0.125",
+      "relation": "sign_dropped",
+      "sentence": "The sectoral output also shows significant variations, with the energy sector experiencing a 0.074% increase in output, while the services sector experiences a 0.125% decline."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "weap_mena",
+      "token": "5",
+      "relation": "x100",
+      "sentence": "The Swift Contained Conflict scenario, where the Strait of Hormuz is closed for 5 days, results in significant disruptions to global water supply."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "weap_mena",
+      "token": "30",
+      "relation": "exact",
+      "sentence": "The model outputs indicate that approximately 30% of global desalination capacity is lost, with the affected countries being Qatar, Saudi Arabia, and the UAE."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "weap_mena",
+      "token": "30",
+      "relation": "exact",
+      "sentence": "This translates to a 30% effective loss of desalination capacity, implying that these countries are unable to meet their water demands."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "weap_mena",
+      "token": "18",
+      "relation": "exact",
+      "sentence": "The unmet demand percentages for each country are substantial, with Qatar facing an unmet demand of 18%, Saudi Arabia 6%, and the UAE 12.6%."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "weap_mena",
+      "token": "6",
+      "relation": "exact",
+      "sentence": "The unmet demand percentages for each country are substantial, with Qatar facing an unmet demand of 18%, Saudi Arabia 6%, and the UAE 12.6%."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "weap_mena",
+      "token": "12.6",
+      "relation": "exact",
+      "sentence": "The unmet demand percentages for each country are substantial, with Qatar facing an unmet demand of 18%, Saudi Arabia 6%, and the UAE 12.6%."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "weap_mena",
+      "token": "5",
+      "relation": "x100",
+      "sentence": "The cumulative water deficit percentage over the 5-day period is approximately 13.28%, indicating a significant shortage of water in these regions."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "weap_mena",
+      "token": "13.28",
+      "relation": "exact",
+      "sentence": "The cumulative water deficit percentage over the 5-day period is approximately 13.28%, indicating a significant shortage of water in these regions."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "world_fertilizer",
+      "token": "5",
+      "relation": "exact",
+      "sentence": "The Swift Contained Conflict scenario, where the Strait of Hormuz is closed for 5 days, has a surprisingly minimal impact on the fertilizer market."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "world_fertilizer",
+      "token": "21",
+      "relation": "unmatched",
+      "sentence": "This implies that the disruption to global oil supply and LNG trade, which affects approximately 21% of global oil supply and 25% of global LNG trade, does not significantly affect the fertilizer market."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "world_fertilizer",
+      "token": "25",
+      "relation": "x100",
+      "sentence": "This implies that the disruption to global oil supply and LNG trade, which affects approximately 21% of global oil supply and 25% of global LNG trade, does not significantly affect the fertilizer market."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "world_helium_model",
+      "token": "5",
+      "relation": "exact",
+      "sentence": "The Swift Contained Conflict scenario, where the Strait of Hormuz is closed for 5 days, results in minimal economic disruption according to the world_helium_model."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "world_helium_model",
+      "token": "280",
+      "relation": "exact",
+      "sentence": "The model outputs suggest that the helium market remains in equilibrium, with an equilibrium price of $280 per million standard cubic feet (mscf) that is identical to the baseline price."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "world_helium_model",
+      "token": "32",
+      "relation": "x100",
+      "sentence": "The sector allocation shares indicate that the helium market is primarily driven by the MRI medical sector (32%), followed by semiconductors (28%), cryogenics research (20%), aerospace defense (12%), and other sectors (8%)."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "world_helium_model",
+      "token": "28",
+      "relation": "x100",
+      "sentence": "The sector allocation shares indicate that the helium market is primarily driven by the MRI medical sector (32%), followed by semiconductors (28%), cryogenics research (20%), aerospace defense (12%), and other sectors (8%)."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "world_helium_model",
+      "token": "20",
+      "relation": "x100",
+      "sentence": "The sector allocation shares indicate that the helium market is primarily driven by the MRI medical sector (32%), followed by semiconductors (28%), cryogenics research (20%), aerospace defense (12%), and other sectors (8%)."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "world_helium_model",
+      "token": "12",
+      "relation": "x100",
+      "sentence": "The sector allocation shares indicate that the helium market is primarily driven by the MRI medical sector (32%), followed by semiconductors (28%), cryogenics research (20%), aerospace defense (12%), and other sectors (8%)."
+    },
+    {
+      "scenario_id": "swift_contained",
+      "model_id": "world_helium_model",
+      "token": "8",
+      "relation": "x100",
+      "sentence": "The sector allocation shares indicate that the helium market is primarily driven by the MRI medical sector (32%), followed by semiconductors (28%), cryogenics research (20%), aerospace defense (12%), and other sectors (8%)."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "ais_project",
+      "token": "4",
+      "relation": "exact",
+      "sentence": "The Swift Escalated Conflict scenario, where the Strait of Hormuz is closed for 4 months, has significant implications for the global shipping system."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "ais_project",
+      "token": "0",
+      "relation": "exact",
+      "sentence": "The model output suggests that the closure of the Strait of Hormuz results in minimal disruption to the global shipping system, with the effective fleet capacity loss at 0%."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "ais_project",
+      "token": "4",
+      "relation": "exact",
+      "sentence": "However, the model output also indicates that the closure of the Strait of Hormuz leads to a significant increase in voyage days lost, with the disruption duration being 4 months."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "aisdb",
+      "token": "9.5",
+      "relation": "exact",
+      "sentence": "The headline magnitudes include a 9.5-day increase in transit time for vessels taking the Cape of Good Hope route, a 31.2% effective fleet capacity loss, and a 35.2% drop in fleet utilization for LNG carriers."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "aisdb",
+      "token": "31.2",
+      "relation": "exact",
+      "sentence": "The headline magnitudes include a 9.5-day increase in transit time for vessels taking the Cape of Good Hope route, a 31.2% effective fleet capacity loss, and a 35.2% drop in fleet utilization for LNG carriers."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "aisdb",
+      "token": "35.2",
+      "relation": "exact",
+      "sentence": "The headline magnitudes include a 9.5-day increase in transit time for vessels taking the Cape of Good Hope route, a 31.2% effective fleet capacity loss, and a 35.2% drop in fleet utilization for LNG carriers."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "aisdb",
+      "token": "1.1869",
+      "relation": "exact",
+      "sentence": "The model's outputs suggest that the rerouting of vessels would come at a significant cost, with a multiplier of 1.1869 indicating a substantial increase in expenses."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "aisdb",
+      "token": "200",
+      "relation": "exact",
+      "sentence": "Additionally, the war risk insurance premium would surge to 200%, further exacerbating the economic burden on shipping companies."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "token": "8.3",
+      "relation": "exact",
+      "sentence": "The model output suggests that fertilizer application would be reduced by approximately 8.3% and irrigation water by 9.1%."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "token": "9.1",
+      "relation": "exact",
+      "sentence": "The model output suggests that fertilizer application would be reduced by approximately 8.3% and irrigation water by 9.1%."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "token": "18.0",
+      "relation": "sign_dropped",
+      "sentence": "These reductions would likely lead to a decline in crop yields, with wheat, rice, and maize experiencing yield losses of 18.0%, 18.6%, and 21.1%, respectively."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "token": "18.6",
+      "relation": "sign_dropped",
+      "sentence": "These reductions would likely lead to a decline in crop yields, with wheat, rice, and maize experiencing yield losses of 18.0%, 18.6%, and 21.1%, respectively."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "token": "21.1",
+      "relation": "sign_dropped",
+      "sentence": "These reductions would likely lead to a decline in crop yields, with wheat, rice, and maize experiencing yield losses of 18.0%, 18.6%, and 21.1%, respectively."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "token": "19.2",
+      "relation": "exact",
+      "sentence": "The mean yield loss across all crops is estimated to be around 19.2%."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "token": "63",
+      "relation": "multiplier_to_pct",
+      "sentence": "The model also suggests that nitrogen (N) limited yields would account for around 63% of wheat, 47% of rice, and 58% of maize yields, while water limited yields would account for around 37% of wheat, 53% of rice, and 42% of maize yields."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "token": "47",
+      "relation": "multiplier_to_pct",
+      "sentence": "The model also suggests that nitrogen (N) limited yields would account for around 63% of wheat, 47% of rice, and 58% of maize yields, while water limited yields would account for around 37% of wheat, 53% of rice, and 42% of maize yields."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "token": "58",
+      "relation": "multiplier_to_pct",
+      "sentence": "The model also suggests that nitrogen (N) limited yields would account for around 63% of wheat, 47% of rice, and 58% of maize yields, while water limited yields would account for around 37% of wheat, 53% of rice, and 42% of maize yields."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "token": "37",
+      "relation": "multiplier_to_pct",
+      "sentence": "The model also suggests that nitrogen (N) limited yields would account for around 63% of wheat, 47% of rice, and 58% of maize yields, while water limited yields would account for around 37% of wheat, 53% of rice, and 42% of maize yields."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "token": "53",
+      "relation": "multiplier_to_pct",
+      "sentence": "The model also suggests that nitrogen (N) limited yields would account for around 63% of wheat, 47% of rice, and 58% of maize yields, while water limited yields would account for around 37% of wheat, 53% of rice, and 42% of maize yields."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "token": "42",
+      "relation": "multiplier_to_pct",
+      "sentence": "The model also suggests that nitrogen (N) limited yields would account for around 63% of wheat, 47% of rice, and 58% of maize yields, while water limited yields would account for around 37% of wheat, 53% of rice, and 42% of maize yields."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "token": "5",
+      "relation": "exact",
+      "sentence": "It is also worth noting that the model output suggests an increase in nitrogen use efficiency by around 5%, which could potentially mitigate some of the yield losses."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "argonne_abm",
+      "token": "30",
+      "relation": "exact",
+      "sentence": "The model output for the Swift Escalated Conflict scenario suggests that the global helium supply is severely disrupted, with a 30% supply shock initially expected, although the model ultimately computes an effective supply shock of 0%."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "argonne_abm",
+      "token": "0",
+      "relation": "exact",
+      "sentence": "The model output for the Swift Escalated Conflict scenario suggests that the global helium supply is severely disrupted, with a 30% supply shock initially expected, although the model ultimately computes an effective supply shock of 0%."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "argonne_abm",
+      "token": "4",
+      "relation": "exact",
+      "sentence": "The model also estimates that the disruption to the helium supply would last for approximately 4 months, with a relatively low standard deviation of 0.0, indicating a high degree of confidence in this estimate."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "argonne_abm",
+      "token": "0.0",
+      "relation": "exact",
+      "sentence": "The model also estimates that the disruption to the helium supply would last for approximately 4 months, with a relatively low standard deviation of 0.0, indicating a high degree of confidence in this estimate."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "argonne_abm",
+      "token": "20",
+      "relation": "exact",
+      "sentence": "Additionally, the model's estimates are based on a limited number of replications (20), which may not provide a comprehensive picture of the potential impacts."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "cwatm",
+      "token": "9.09",
+      "relation": "exact",
+      "sentence": "The unmet demand percentage is approximately 9.09%, suggesting that nearly 1 in 11 people globally will not have access to sufficient water."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "cwatm",
+      "token": "1",
+      "relation": "exact",
+      "sentence": "The unmet demand percentage is approximately 9.09%, suggesting that nearly 1 in 11 people globally will not have access to sufficient water."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "cwatm",
+      "token": "11",
+      "relation": "unmatched",
+      "sentence": "The unmet demand percentage is approximately 9.09%, suggesting that nearly 1 in 11 people globally will not have access to sufficient water."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "cwatm",
+      "token": "0.0",
+      "relation": "exact",
+      "sentence": "The mean discharge deviation percentage is 0.0%, indicating that the model did not detect any changes in water discharge."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "cwatm",
+      "token": "36.36",
+      "relation": "exact",
+      "sentence": "However, the cumulative water deficit percentage over 36.36 months implies a substantial long-term water shortage."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "cwatm",
+      "token": "4",
+      "relation": "exact",
+      "sentence": "This is consistent with the scenario's assumption of a 4-month closure of the Strait of Hormuz, which would severely impact the supply of desalinated water to the region."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "cwatm",
+      "token": "1.0",
+      "relation": "exact",
+      "sentence": "The desalination capacity factor is at 1.0, suggesting that all desalination capacity is utilized, but this is likely due to the model's assumption of a complete closure of the Strait of Hormuz rather than an actual increase in capacity."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "cwatm",
+      "token": "1.1",
+      "relation": "exact",
+      "sentence": "The demand factor is 1.1, indicating a 10% increase in water demand, which could be due to the disruption of other water sources or increased usage due to the crisis."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "cwatm",
+      "token": "10",
+      "relation": "multiplier_to_pct",
+      "sentence": "The demand factor is 1.1, indicating a 10% increase in water demand, which could be due to the disruption of other water sources or increased usage due to the crisis."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "energy_flux_gas_power",
+      "token": "101.35",
+      "relation": "exact",
+      "sentence": "The model output suggests that the cumulative added capacity for the LNG system will reach 101.35 GW by 2035, with a corresponding increase in incremental production."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "energy_flux_gas_power",
+      "token": "10.135",
+      "relation": "exact",
+      "sentence": "In 2026, the cumulative added capacity is only 10.135 GW, with a blended production of 0.913 Bcf per day."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "energy_flux_gas_power",
+      "token": "0.913",
+      "relation": "exact",
+      "sentence": "In 2026, the cumulative added capacity is only 10.135 GW, with a blended production of 0.913 Bcf per day."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "energy_flux_gas_power",
+      "token": "0.695",
+      "relation": "exact",
+      "sentence": "The model output also suggests that the DC capacity will be significantly affected, with a DC effective capacity of 0.695 in 2026."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "fed_oil",
+      "token": "58.25",
+      "relation": "exact",
+      "sentence": "The model output suggests that the global oil price increases by 58.25% due to the supply shock."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "fed_oil",
+      "token": "6.55",
+      "relation": "unmatched",
+      "sentence": "The disruption to the global economy is also reflected in the model's output for GDP, which is expected to decline by 6.55% at its peak."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "fed_oil",
+      "token": "1.165",
+      "relation": "exact",
+      "sentence": "The model also predicts a peak CPI impact of 1.165%, indicating that inflation will rise in response to the supply shock."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "futures",
+      "token": "1.21",
+      "relation": "exact",
+      "sentence": "The model output for the Swift Escalated Conflict scenario indicates significant price shocks for Oil and LNG, with peak price indices of 1.21 for both commodities."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "futures",
+      "token": "21",
+      "relation": "exact",
+      "sentence": "The initial price shock of 21% for Oil and 25% for LNG suggests a severe and immediate impact on global markets."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "futures",
+      "token": "25",
+      "relation": "unmatched",
+      "sentence": "The initial price shock of 21% for Oil and 25% for LNG suggests a severe and immediate impact on global markets."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "futures",
+      "token": "4",
+      "relation": "exact",
+      "sentence": "The time to normalization for both Oil and LNG is null, indicating that the model does not forecast a return to pre-crisis prices within the forecast horizon of 4 months."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "futures",
+      "token": "4",
+      "relation": "exact",
+      "sentence": "The forecast horizon of 4 months suggests that the model is focused on the short-term impact of the crisis, rather than long-term recovery."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "lngst",
+      "token": "1.5",
+      "relation": "exact",
+      "sentence": "The model also predicts a substantial increase in the spot price of LNG, with a multiplier of 1.5, indicating a significant price surge."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "lngst",
+      "token": "4",
+      "relation": "exact",
+      "sentence": "The disruption is expected to last for 4 months, causing a supply shortfall of approximately 36.67 billion cubic meters (bcm) and an annualised supply shortfall of 110 bcm."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "lngst",
+      "token": "36.67",
+      "relation": "exact",
+      "sentence": "The disruption is expected to last for 4 months, causing a supply shortfall of approximately 36.67 billion cubic meters (bcm) and an annualised supply shortfall of 110 bcm."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "lngst",
+      "token": "110",
+      "relation": "exact",
+      "sentence": "The disruption is expected to last for 4 months, causing a supply shortfall of approximately 36.67 billion cubic meters (bcm) and an annualised supply shortfall of 110 bcm."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "lngst",
+      "token": "20.37",
+      "relation": "exact",
+      "sentence": "This represents a global supply shortfall of around 20.37%."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "lngst",
+      "token": "50.93",
+      "relation": "exact",
+      "sentence": "The implied price impulse is also substantial, at 50.93%."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "marketsim",
+      "token": "50",
+      "relation": "exact",
+      "sentence": "The model outputs suggest that the global oil price increases by approximately 50% due to the disruption, while natural gas prices rise by 20%."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "marketsim",
+      "token": "20",
+      "relation": "exact",
+      "sentence": "The model outputs suggest that the global oil price increases by approximately 50% due to the disruption, while natural gas prices rise by 20%."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "marketsim",
+      "token": "4",
+      "relation": "exact",
+      "sentence": "The closure lasts for 4 months, causing a substantial loss in consumer surplus, estimated at $50.85 billion."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "marketsim",
+      "token": "50.85",
+      "relation": "exact",
+      "sentence": "The closure lasts for 4 months, causing a substantial loss in consumer surplus, estimated at $50.85 billion."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "marketsim",
+      "token": "46.93",
+      "relation": "exact",
+      "sentence": "This loss is primarily driven by the oil price shock, with the oil consumer surplus loss estimated at $46.93 billion."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "marketsim",
+      "token": "28.16",
+      "relation": "exact",
+      "sentence": "The producer surplus change also indicates a significant impact on the oil market, with an increase of $28.16 billion."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "marketsim",
+      "token": "20.34",
+      "relation": "sign_dropped",
+      "sentence": "However, the net welfare impact is negative, at -$20.34 billion, suggesting that the overall economic impact of the scenario is detrimental."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "marketsim",
+      "token": "0.57",
+      "relation": "sign_dropped",
+      "sentence": "The model also estimates that the oil demand destruction is approximately 0.57 million barrels per day, while the gas demand destruction is around 1.76 billion cubic feet per day."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "marketsim",
+      "token": "1.76",
+      "relation": "sign_dropped",
+      "sentence": "The model also estimates that the oil demand destruction is approximately 0.57 million barrels per day, while the gas demand destruction is around 1.76 billion cubic feet per day."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "marketsim",
+      "token": "277.57",
+      "relation": "unmatched",
+      "sentence": "Additionally, there is a significant amount of fuel switching from oil to gas, with an estimated 277.57 million MMBTU of oil demand being replaced by gas."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "marketsim",
+      "token": "32.38",
+      "relation": "exact",
+      "sentence": "However, the sectoral breakdown of the consumer surplus loss suggests that the transport sector is hit the hardest, with an estimated loss of $32.38 billion."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "marketsim",
+      "token": "10.79",
+      "relation": "exact",
+      "sentence": "The industrial sector also experiences a significant loss, at $10.79 billion."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "mpsge_jl",
+      "token": "-0.87",
+      "relation": "exact",
+      "sentence": "The model output suggests that the global GDP impact would be around -0.87%, with the US, China, India, and the EU experiencing negative impacts ranging from -0.7% to -1.8%."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "mpsge_jl",
+      "token": "-0.7",
+      "relation": "exact",
+      "sentence": "The model output suggests that the global GDP impact would be around -0.87%, with the US, China, India, and the EU experiencing negative impacts ranging from -0.7% to -1.8%."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "mpsge_jl",
+      "token": "-1.8",
+      "relation": "exact",
+      "sentence": "The model output suggests that the global GDP impact would be around -0.87%, with the US, China, India, and the EU experiencing negative impacts ranging from -0.7% to -1.8%."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "mpsge_jl",
+      "token": "2.7",
+      "relation": "exact",
+      "sentence": "On the other hand, the MENA_GCC region is expected to experience a positive GDP impact of 2.7%, likely due to the region's reliance on oil exports."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "mpsge_jl",
+      "token": "58.25",
+      "relation": "exact",
+      "sentence": "The model also predicts significant price shocks for various commodities, including a 58.25% increase in oil prices, a 126.39% increase in LNG prices, and a 23.76% increase in fertilizer prices."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "mpsge_jl",
+      "token": "126.39",
+      "relation": "exact",
+      "sentence": "The model also predicts significant price shocks for various commodities, including a 58.25% increase in oil prices, a 126.39% increase in LNG prices, and a 23.76% increase in fertilizer prices."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "mpsge_jl",
+      "token": "23.76",
+      "relation": "exact",
+      "sentence": "The model also predicts significant price shocks for various commodities, including a 58.25% increase in oil prices, a 126.39% increase in LNG prices, and a 23.76% increase in fertilizer prices."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "mpsge_jl",
+      "token": "9.34",
+      "relation": "multiplier_to_pct",
+      "sentence": "The trade cost multiplier is expected to increase by 9.34%, indicating a significant increase in trade costs due to the rerouting of ships around the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "mpsge_jl",
+      "token": "0.58",
+      "relation": "exact",
+      "sentence": "The energy sector is also expected to experience a positive output impact of 0.58%, likely due to the increased demand for oil and LNG."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "nrel",
+      "token": "126.4",
+      "relation": "exact",
+      "sentence": "The natural gas price increase is projected to be around 126.4%, indicating a substantial spike in the cost of this critical energy commodity."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "nrel",
+      "token": "56.9",
+      "relation": "exact",
+      "sentence": "This, in turn, is likely to have a ripple effect on the broader energy system, with the retail electricity price expected to rise by 56.9%."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "nrel",
+      "token": "-8.8",
+      "relation": "exact",
+      "sentence": "The model also suggests that the generation mix will shift, with natural gas-fired power plants seeing a decline in capacity utilization (-8.8%) and coal-fired plants experiencing an increase (15.1%)."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "nrel",
+      "token": "15.1",
+      "relation": "unmatched",
+      "sentence": "The model also suggests that the generation mix will shift, with natural gas-fired power plants seeing a decline in capacity utilization (-8.8%) and coal-fired plants experiencing an increase (15.1%)."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "nrel",
+      "token": "60.2",
+      "relation": "exact",
+      "sentence": "Renewables, on the other hand, are expected to see a significant boost in capacity utilization (60.2%)."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "nrel",
+      "token": "0.45",
+      "relation": "sign_dropped",
+      "sentence": "The economic impact of this scenario is also substantial, with the model projecting a 0.45% decline in GDP and a 1.26% increase in the Consumer Price Index (CPI) inflation rate."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "nrel",
+      "token": "1.26",
+      "relation": "exact",
+      "sentence": "The economic impact of this scenario is also substantial, with the model projecting a 0.45% decline in GDP and a 1.26% increase in the Consumer Price Index (CPI) inflation rate."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "nrel",
+      "token": "-0.95",
+      "relation": "exact",
+      "sentence": "The welfare impact is estimated to be around -0.95%, indicating a significant reduction in overall well-being."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "nrel",
+      "token": "-0.54",
+      "relation": "exact",
+      "sentence": "The global weighted GDP impact is slightly lower at -0.54%, suggesting that the effects of the conflict may be somewhat mitigated by the global economy's diversification."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "poles_jrc",
+      "token": "126.6",
+      "relation": "exact",
+      "sentence": "The peak price of Brent crude oil reaches $126.6 per barrel, a 58.25% increase from the baseline price of $80.0 per barrel."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "poles_jrc",
+      "token": "58.25",
+      "relation": "exact",
+      "sentence": "The peak price of Brent crude oil reaches $126.6 per barrel, a 58.25% increase from the baseline price of $80.0 per barrel."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "poles_jrc",
+      "token": "80.0",
+      "relation": "exact",
+      "sentence": "The peak price of Brent crude oil reaches $126.6 per barrel, a 58.25% increase from the baseline price of $80.0 per barrel."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "poles_jrc",
+      "token": "4",
+      "relation": "exact",
+      "sentence": "This price spike is likely driven by the 4-month closure of the Strait of Hormuz, which accounts for approximately 21% of global oil supply."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "poles_jrc",
+      "token": "21",
+      "relation": "unmatched",
+      "sentence": "This price spike is likely driven by the 4-month closure of the Strait of Hormuz, which accounts for approximately 21% of global oil supply."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "poles_jrc",
+      "token": "4.32",
+      "relation": "exact",
+      "sentence": "The model estimates that the supply loss due to the disruption amounts to 4.32 million barrels per day (mbd), which is 4.235% of the global oil supply."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "poles_jrc",
+      "token": "4.235",
+      "relation": "exact",
+      "sentence": "The model estimates that the supply loss due to the disruption amounts to 4.32 million barrels per day (mbd), which is 4.235% of the global oil supply."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "poles_jrc",
+      "token": "4.32",
+      "relation": "exact",
+      "sentence": "The rerouting of oil shipments and substitution of oil with alternative energy sources are estimated to mitigate some of the supply loss, with 4.32 mbd of oil being rerouted and 0 mbd being substituted."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "poles_jrc",
+      "token": "0",
+      "relation": "exact",
+      "sentence": "The rerouting of oil shipments and substitution of oil with alternative energy sources are estimated to mitigate some of the supply loss, with 4.32 mbd of oil being rerouted and 0 mbd being substituted."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "poles_jrc",
+      "token": "4",
+      "relation": "exact",
+      "sentence": "The disruption duration of 4 months is consistent with the scenario description, where the conflict escalates in February 2026 and a ceasefire is announced in June 2026."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "pycge",
+      "token": "-0.8527",
+      "relation": "exact",
+      "sentence": "The model output suggests that the global GDP impact could be as high as -0.8527% and the global CPI inflation could increase by 2.1817%."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "pycge",
+      "token": "2.1817",
+      "relation": "exact",
+      "sentence": "The model output suggests that the global GDP impact could be as high as -0.8527% and the global CPI inflation could increase by 2.1817%."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "pycge",
+      "token": "2.5054",
+      "relation": "exact",
+      "sentence": "The MENA_GCC region is projected to experience the largest GDP impact, with a 2.5054% increase, likely due to the region's reliance on oil exports and its proximity to the conflict zone."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "pycge",
+      "token": "-3.0285",
+      "relation": "exact",
+      "sentence": "In contrast, the SSA region is expected to be hit hardest by the conflict, with a -3.0285% decline in GDP, possibly due to its high dependence on imported goods and its vulnerability to global price shocks."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "pycge",
+      "token": "4.1518",
+      "relation": "exact",
+      "sentence": "The SSA region also experiences the highest CPI inflation, with a 4.1518% increase, likely driven by the region's limited ability to produce its own food and other essential goods."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "pycge",
+      "token": "0.34",
+      "relation": "exact",
+      "sentence": "The sectoral output also reveals significant disparities, with the energy sector experiencing a 0.34% increase in output, likely due to the region's reliance on oil exports."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "pycge",
+      "token": "0.6267",
+      "relation": "sign_dropped",
+      "sentence": "In contrast, the services sector is expected to decline by 0.6267%, possibly due to the region's high dependence on international trade and tourism."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "weap_mena",
+      "token": "30",
+      "relation": "exact",
+      "sentence": "The model predicts a 30% loss in desalination capacity, which translates to a 30% effective loss in water supply for the affected regions."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "weap_mena",
+      "token": "30",
+      "relation": "exact",
+      "sentence": "The model predicts a 30% loss in desalination capacity, which translates to a 30% effective loss in water supply for the affected regions."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "weap_mena",
+      "token": "212.42",
+      "relation": "exact",
+      "sentence": "The model's outputs suggest that the water deficit will be substantial, with a cumulative water deficit of 212.42% over 16 weeks."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "weap_mena",
+      "token": "16",
+      "relation": "exact",
+      "sentence": "The model's outputs suggest that the water deficit will be substantial, with a cumulative water deficit of 212.42% over 16 weeks."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "weap_mena",
+      "token": "13.28",
+      "relation": "exact",
+      "sentence": "This implies that the affected regions will experience severe water shortages, with unmet demand reaching 13.28% of total demand."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "weap_mena",
+      "token": "30",
+      "relation": "exact",
+      "sentence": "The population affected by this shortage is estimated to be around 30 million people."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "world_fertilizer",
+      "token": "25",
+      "relation": "exact",
+      "sentence": "The model predicts a 25% increase in natural gas prices, which is a key input for fertilizer production."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "world_fertilizer",
+      "token": "30",
+      "relation": "exact",
+      "sentence": "This price hike is likely to lead to a 30% loss in Middle Eastern fertilizer production, as the region is heavily reliant on natural gas for its fertilizer manufacturing."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "world_fertilizer",
+      "token": "49.75",
+      "relation": "exact",
+      "sentence": "The model also forecasts a 49.75% increase in nitrogen prices, which is a critical component of fertilizers."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "world_fertilizer",
+      "token": "23.76",
+      "relation": "exact",
+      "sentence": "This price surge is likely to have a ripple effect on the entire fertilizer market, leading to a 23.76% increase in the overall fertilizer price index."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "world_fertilizer",
+      "token": "49.75",
+      "relation": "exact",
+      "sentence": "The prices of specific fertilizers such as urea, DAP, and MOP are also expected to rise by 49.75%, 2.49%, and 2.49%, respectively."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "world_fertilizer",
+      "token": "2.49",
+      "relation": "exact",
+      "sentence": "The prices of specific fertilizers such as urea, DAP, and MOP are also expected to rise by 49.75%, 2.49%, and 2.49%, respectively."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "world_fertilizer",
+      "token": "2.49",
+      "relation": "exact",
+      "sentence": "The prices of specific fertilizers such as urea, DAP, and MOP are also expected to rise by 49.75%, 2.49%, and 2.49%, respectively."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "world_fertilizer",
+      "token": "30",
+      "relation": "exact",
+      "sentence": "The scenario assumptions drive a significant disruption in global trade flows, with Middle Eastern exports declining by 30%."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "world_fertilizer",
+      "token": "6",
+      "relation": "exact",
+      "sentence": "In contrast, US, Russian, and Algerian exports are expected to increase by 6%, 8.4%, and 4.8%, respectively."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "world_fertilizer",
+      "token": "8.4",
+      "relation": "exact",
+      "sentence": "In contrast, US, Russian, and Algerian exports are expected to increase by 6%, 8.4%, and 4.8%, respectively."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "world_fertilizer",
+      "token": "4.8",
+      "relation": "exact",
+      "sentence": "In contrast, US, Russian, and Algerian exports are expected to increase by 6%, 8.4%, and 4.8%, respectively."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "world_helium_model",
+      "token": "4",
+      "relation": "exact",
+      "sentence": "This is likely because the model assumes that the disruption is short-lived, lasting only 4 months, and that the helium supply chain is resilient enough to withstand the closure of the Strait of Hormuz."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "world_helium_model",
+      "token": "32",
+      "relation": "x100",
+      "sentence": "The sectoral allocation of helium demand is also relatively unchanged, with the medical imaging (MRI) sector accounting for 32% of demand, semiconductors for 28%, and cryogenics research for 20%."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "world_helium_model",
+      "token": "28",
+      "relation": "x100",
+      "sentence": "The sectoral allocation of helium demand is also relatively unchanged, with the medical imaging (MRI) sector accounting for 32% of demand, semiconductors for 28%, and cryogenics research for 20%."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "world_helium_model",
+      "token": "20",
+      "relation": "x100",
+      "sentence": "The sectoral allocation of helium demand is also relatively unchanged, with the medical imaging (MRI) sector accounting for 32% of demand, semiconductors for 28%, and cryogenics research for 20%."
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "world_helium_model",
+      "token": "14.85",
+      "relation": "x100",
+      "sentence": "However, the rationing share by sector indicates that the aerospace defense sector is disproportionately affected by the disruption, with a rationing share of 14.85%."
+    }
+  ]
+}

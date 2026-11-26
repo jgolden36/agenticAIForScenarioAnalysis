@@ -72,6 +72,27 @@ rules:
       World Fertilizer Model and GTAP CGE should agree on direction
       and approximate magnitude of fertilizer price changes.
 
+  # --- APSIM-GTAP (AgResilience) cross-checks ---
+  - model_a: apsim_gtap
+    model_b: pycge
+    variable_a: us_gdp_pct
+    variable_b: gdp_impact_pct
+    tolerance_pct: 50.0
+    description: >
+      US GDP from the coupled GTAPv7 model (Gulf output losses, annualised)
+      against the macro kernel's reference-economy GDP response. Different
+      mechanisms (quantity shock in GE vs price-elasticity kernel), so the
+      tolerance is wide; a flag means the two disagree on order of magnitude.
+
+  - model_a: apsim_gtap
+    model_b: apsim
+    variable_a: us_maize_yield_change_pct
+    variable_b: mean_yield_pct_change
+    tolerance_pct: 50.0
+    description: >
+      Maize yield change from the APSIM emulator at the GTAP-crop fixed point
+      against the Mitscherlich/FAO reduction's mean crop yield change.
+
   # --- CGE cross-validation ---
   - model_a: opencge
     model_b: pycge

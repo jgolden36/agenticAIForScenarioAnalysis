@@ -31,11 +31,25 @@ timeout_seconds: 14400      # 4 hours
 # Productivity / capital-quality sensitivity coefficients.
 # Each commodity maps to two coefficients:
 #   Z_mult_per_pct        — multiplicative adjustment to aggregate Z per 1% price shock
-#   delta_tau_per_pct     — additive adjustment to delta_tau_annual per 1% price shock
+#   delta_tau_per_pct     — additive adjustment to OG-Core's ECONOMIC depreciation
+#                           rate delta_annual per 1% price shock (capital-quality
+#                           drag). Historical key name; it is NOT applied to the
+#                           tax depreciation rate delta_tau_annual.
+#                           (`delta_per_pct` is accepted as an alias.)
 #
 # Default values are calibrated from BLS factor-share tables and are
 # intentionally small (<0.1% Z impact per 1% commodity price shock).
 # Tune these to your scenario or replace with empirical elasticities.
+#
+# Productivity shocks (Z) last only for the disruption window, weighted by
+# the share of each model year the disruption covers. The capital-quality
+# drag goes into OG-Core's delta_annual, a single rate for every year, so it
+# is PERMANENT and lowers the long-run steady state. It is therefore applied
+# only in scenarios that stipulate lasting infrastructure damage (decision
+# 2026-11-13); remove this key to apply it everywhere (pre-November runs).
+capital_drag_scenarios:
+  - infrastructure_collapse
+
 shock_to_productivity:
   oil:
     Z_mult_per_pct: -0.0008
@@ -49,3 +63,10 @@ shock_to_productivity:
   helium:
     Z_mult_per_pct: -0.0001
     delta_tau_per_pct: 0.000005
+  # Fires only under infrastructure_collapse (water rule in
+  # configs/upstream_forwarding_mapping.yaml). Matches the code default in
+  # OpenCGEConfig; without this entry the YAML replaced the defaults and the
+  # water shock was silently dropped.
+  water:
+    Z_mult_per_pct: -0.0012
+    delta_tau_per_pct: 0.00008

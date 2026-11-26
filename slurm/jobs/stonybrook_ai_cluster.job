@@ -1164,12 +1164,14 @@ if [[ "$HORMUZ_AUTO_BUILD" == "1" ]]; then
             echo "[vendor]   - TEMOA already vendored"
         fi
 
-        # AEO2025 macro tables for MAM. The XLSX is a free EIA
-        # download. We try the URL pattern advertised on
-        # https://www.eia.gov/outlooks/aeo/tables_ref.php; users may
-        # override via HORMUZ_AEO_XLSX_URL if EIA reorganises the path.
-        _aeo_dest="${PROJECT_ROOT}/data/eia/AEO2025_Tables_19_20.xlsx"
-        _aeo_url="${HORMUZ_AEO_XLSX_URL:-https://www.eia.gov/outlooks/aeo/excel/aeotab_19.xlsx}"
+        # AEO2025 reference-case Table 20 (Macroeconomic Indicators) for
+        # MAM, a free EIA download. The archive URL pins the AEO2025
+        # edition. (The earlier default .../aeo/excel/aeotab_19.xlsx served
+        # AEO2021 Table 19, CO2 emissions, so MAM ingested no macro data;
+        # the old AEO2025_Tables_19_20.xlsx file name is no longer used.)
+        # Override via HORMUZ_AEO_XLSX_URL if EIA reorganises the path.
+        _aeo_dest="${PROJECT_ROOT}/data/eia/AEO2025_Table20_ref2025.xlsx"
+        _aeo_url="${HORMUZ_AEO_XLSX_URL:-https://www.eia.gov/outlooks/archive/aeo25/excel/aeotab20.xlsx}"
         if [[ ! -f "$_aeo_dest" ]]; then
             echo "[vendor]   - downloading AEO2025 macro XLSX -> ${_aeo_dest}"
             mkdir -p "${PROJECT_ROOT}/data/eia"

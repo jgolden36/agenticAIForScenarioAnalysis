@@ -303,6 +303,7 @@ The `world_helium_model` adapter sits at `AnalyticalLevel.COMMODITY`; `argonne_a
 | World Fertilizer Model | Market equilibrium | Pure Python (analytical MVP) + GAMS (upstream) | `src/models/fertilizer/world_fertilizer.py` | **Real (analytical MVP mode)** + config-aware GAMS path | Global fertilizer supply-demand dynamics. Closed-form NG-feedstock + ME-production-loss pass-through to nitrogen / phosphate / potash prices, FAO 2024 trade-share-weighted index, AR(1) forward curves. Real GAMS World Fertilizer Model path activates when a `GAMSConfig` and the `.gms` file are supplied. |
 | GTAP | CGE | GEMPACK (upstream) | `src/models/fertilizer/gtap.py` | Stub | Global agricultural and commodity trade flows |
 | APSIM | Crop simulation | Pure Python (analytical MVP) + Native (.NET / CLI) | `src/models/fertilizer/apsim.py` | **Real (analytical MVP mode)** | Physical crop yield response to input disruption. Sits at `COMMODITY_DOWNSTREAM`: consumes `world_fertilizer.fertilizer_price_index_pct` (via `price_to_demand_reduction` with own-price demand elasticity 0.35, Hendricks & Smith 2018) and `cwatm.unmet_demand_pct` (fallbacks: `weap_mena`, `sahysmod`) through `configs/upstream_forwarding_mapping.yaml`, so the fertilizer→food linkage is wired even when the LLM did not extract a demand-side response from the narrative. Closed-form Mitscherlich N-response + FAO water-yield curves per crop (wheat / rice / maize / soybean / barley); produces yield change and N-use-efficiency outputs. Real APSIM Next Generation invocation path preserved in docs. |
+| APSIM-GTAP (AgResilience) | CGE + crop emulator, coupled | Julia GTAPv7 (JuMP/Ipopt) + Python/PyTorch APSIM maize emulator, subprocess in the AgResilience env | `src/models/fertilizer/apsim_gtap.py` + `apsim_gtap_driver.py` | **Real (config-aware)** | Added November 2026 from the AgResilience project (`~/Agresiliency`, branch `experiments-and-slurm-setup`). Sits at `LONG_RUN_MACRO_STRATEGIC`. Gulf chemicals and extraction output losses (`production_shock` on `chm`/`extract` in the GTAP West Asia composite `wasia`, annualised by duration/12) plus a `tms` rerouting wedge on Gulf exports (`trade_cost_multiplier` forwarded from `aisdb`, `combine: first`) drive an 18-region x 8-sector GTAPv7 solve; the US chemicals consumption change sets field nitrogen, the APSIM maize emulator returns a yield ratio that is fed back as a US grain productivity shock, iterated to a fixed point. Reports regional GDP, grain/food/chemical prices, US maize yield, the one-pass vs fixed-point gap (`open_loop_gap`) and a zero-shock residual gate. Activates with `configs/model_configs/apsim_gtap.yaml` (cluster only; licensed GTAP data); otherwise SKIPPED. Executor input perturbation is disabled for it; parametric bands come from `slurm/jobs/apsim_gtap_ssa.sbatch`. |
 | Futures forecasting models | Time series | Pure Python AR(1) (analytical MVP) or pandas / statsmodels | `src/models/fertilizer/futures.py` | **Real (analytical MVP mode)** | Commodity futures price trajectory forecasting. Pure-Python AR(1) mean-reversion with commodity-specific half-lives gives the FERTILIZER_AGRICULTURE system a runnable model on the cluster with no `statsmodels` dependency. |
 
 ### Shipping Models
@@ -338,14 +339,14 @@ The derived-macro augmentation runs `src/models/macro/macro_kernel.py :: derive_
 
 The authoritative per-model record is `src/models/implementation_info.py` (`IMPLEMENTATION_INFO`), rendered into the README tables by `python slurm/scripts/build_model_inventory.py --update-readme` and checked by `tests/test_docs/test_readme_inventory_sync.py`. Each entry declares the `ImplementationMode` the adapter uses when it runs without extra configuration (`mode_when_executed`), the modes it can reach with configuration (`modes_available`), its platform, upstream reference, calibration sources, key equations, limitations and license notes. Every execution record now carries the mode actually used (`implementation_mode`), so a run-specific inventory can state which cells ran the upstream model and which ran a reduction.
 
-Counts by default mode (34 adapters):
+Counts by default mode (35 adapters):
 
-- **full_upstream** (12): bornstein_krusell_rebelo, energy_flux_gas_power, energy_flux_lng_profits, ggm, magpie, messageix, miragrodep, opencge, osemosys, sahysmod, simrlfab, temoa
+- **full_upstream** (13): apsim_gtap, bornstein_krusell_rebelo, energy_flux_gas_power, energy_flux_lng_profits, ggm, magpie, messageix, miragrodep, opencge, osemosys, sahysmod, simrlfab, temoa
 - **published_output_ingestion** (2): mam, nems
 - **analytical_reduction** (16): ais_project, aisdb, apsim, argonne_abm, cwatm, fed_oil, futures, lngst, marketsim, mpsge_jl, nrel, poles_jrc, pycge, weap_mena, world_fertilizer, world_helium_model
 - **stub** (4): capri, gtap, simple_g, watergap2
 
-Status labels in the inventory: Config-aware stub (1); Real (8); Real (analytical MVP) (9); Real (analytical MVP) + config-aware full path (7); Real (config-aware) (4); Real (published-output ingestion) + optional full path (2); Stub (3).
+Status labels in the inventory: Config-aware stub (1); Real (8); Real (analytical MVP) (9); Real (analytical MVP) + config-aware full path (7); Real (config-aware) (5); Real (published-output ingestion) + optional full path (2); Stub (3).
 
 In rendered reports an analytical reduction is marked with a dagger and published-output ingestion with a double dagger (`src/synthesis/synthesizer.py :: implementation_marker`), so a reader never mistakes a reduction for the upstream model.
 
@@ -484,6 +485,8 @@ hormuz-pipeline/
 │   │   │   ├── world_fertilizer.py
 │   │   │   ├── gtap.py
 │   │   │   ├── apsim.py
+│   │   │   ├── apsim_gtap.py          # AgResilience GTAPv7 + APSIM emulator (NEW)
+│   │   │   ├── apsim_gtap_driver.py   # runs in the agres env; fixed point
 │   │   │   └── futures.py
 │   │   ├── shipping/                  # Shipping model adapters
 │   │   │   ├── __init__.py

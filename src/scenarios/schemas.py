@@ -34,7 +34,12 @@ class ScenarioNarrative(BaseModel):
 
 
 class ScenarioSet(BaseModel):
-    """The complete set of generated scenario narratives."""
+    """The complete set of generated scenario narratives.
+
+    ``scenarios`` is required and non-empty: a structured reply truncated at
+    the output-token cap can carry only ``crisis_description``, and an empty
+    default would let it parse as a valid set with no scenarios.
+    """
 
     crisis_description: str
-    scenarios: list[ScenarioNarrative] = Field(default_factory=list)
+    scenarios: list[ScenarioNarrative] = Field(min_length=1)

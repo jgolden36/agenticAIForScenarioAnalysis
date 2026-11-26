@@ -1,0 +1,338 @@
+backend,week,token,substantive,matched,context
+anthropic-opus-4-8,2026-02-15,02,False,True,"rump publicly confirmed on Friday (2026-02-20/21) that he is ""considering"" a limit"
+anthropic-opus-4-8,2026-02-15,20,False,True,"p publicly confirmed on Friday (2026-02-20/21) that he is ""considering"" a limited "
+anthropic-opus-4-8,2026-02-15,21,False,True,"ublicly confirmed on Friday (2026-02-20/21) that he is ""considering"" a limited str"
+anthropic-opus-4-8,2026-02-15,12,False,True,"enei. US officials cited the June 2025 ""12-day war"" and Israeli precedent for targ"
+anthropic-opus-4-8,2026-02-15,"32,000",True,True," publicly disputes a Western claim that 32,000 Iranians were killed in recent protests"
+anthropic-opus-4-8,2026-02-15,02,False,True,"of the Strait of Hormuz"" beginning 2026-02-16. During the drill it conducted the f"
+anthropic-opus-4-8,2026-02-15,16,False,True,"the Strait of Hormuz"" beginning 2026-02-16. During the drill it conducted the firs"
+anthropic-opus-4-8,2026-02-15,3,False,True,cted the first test of the naval Sayyad-3G (also rendered Sayyad-3J) air defense 
+anthropic-opus-4-8,2026-02-15,3,False,True,"e naval Sayyad-3G (also rendered Sayyad-3J) air defense missile, launched from th"
+anthropic-opus-4-8,2026-02-15,150,True,True,rtical-launch capability and a reported 150-kilometer range. Reports describe Iran 
+anthropic-opus-4-8,2026-02-15,1,False,True,"d referenced hypersonic weapons (Fattah-1 glide vehicle, Abu Mahdi cruise missile"
+anthropic-opus-4-8,2026-02-15,18,True,True,"n nearly seven months and is up roughly 18% since the end of 2025, a sharp reversa"
+anthropic-opus-4-8,2026-02-15,"5,000",True,True,"rs rushed to hedge Iran risk. Gold hit $5,000 as investors moved into safe havens; th"
+anthropic-opus-4-8,2026-02-15,20,False,True,ultiple outlets emphasized that roughly 20-21% of global oil transits the Strait o
+anthropic-opus-4-8,2026-02-15,21,True,True,iple outlets emphasized that roughly 20-21% of global oil transits the Strait of H
+anthropic-opus-4-8,2026-02-15,120,True,True,ure via the Chabahar port investment (~$120 million) was flagged as a secondary con
+anthropic-opus-4-8,2026-02-15,7,False,True, - Brent crude: highest level in nearly 7 months; up ~18% since end of 2025   - G
+anthropic-opus-4-8,2026-02-15,18,True,True,": highest level in nearly 7 months; up ~18% since end of 2025   - Gold: $5,000 (sa"
+anthropic-opus-4-8,2026-02-15,"5,000",True,True,"s; up ~18% since end of 2025   - Gold: $5,000 (safe-haven buying amid Iran-US tension"
+anthropic-opus-4-8,2026-02-15,20,False,True,lobal oil transiting Strait of Hormuz: ~20-21% (per coverage)   - Sayyad-3G/3J nav
+anthropic-opus-4-8,2026-02-15,21,True,True,al oil transiting Strait of Hormuz: ~20-21% (per coverage)   - Sayyad-3G/3J naval 
+anthropic-opus-4-8,2026-02-15,3,False,True,rmuz: ~20-21% (per coverage)   - Sayyad-3G/3J naval air defense missile: reported
+anthropic-opus-4-8,2026-02-15,3,False,True,z: ~20-21% (per coverage)   - Sayyad-3G/3J naval air defense missile: reported 15
+anthropic-opus-4-8,2026-02-15,150,True,True,"/3J naval air defense missile: reported 150 km range, vertical launch   - US milita"
+anthropic-opus-4-8,2026-02-15,120,True,True,3   - India Chabahar port investment: ~$120 million   - Contested protest death cla
+anthropic-opus-4-8,2026-02-15,"32,000",True,True,"lion   - Contested protest death claim: 32,000 Iranians (disputed by Tehran)  Observed"
+anthropic-opus-4-8,2026-02-15,18.0,True,True,:   - brent_change_since_year_end_pct = 18.0 %   - gold_spot_usd_oz = 5000.0 USD/oz 
+anthropic-opus-4-8,2026-02-15,5000.0,True,True,end_pct = 18.0 %   - gold_spot_usd_oz = 5000.0 USD/oz   - hormuz_oil_share_pct = 20.0 
+anthropic-opus-4-8,2026-02-15,20.0,True,True,000.0 USD/oz   - hormuz_oil_share_pct = 20.0 %   - sayyad3g_range_km = 150.0 km   - 
+anthropic-opus-4-8,2026-02-15,150.0,True,True,re_pct = 20.0 %   - sayyad3g_range_km = 150.0 km   - india_chabahar_investment_usd_m 
+anthropic-opus-4-8,2026-02-15,120.0,True,True,m   - india_chabahar_investment_usd_m = 120.0 USD million   - contested_protest_death
+anthropic-opus-4-8,2026-02-15,32000.0,True,True, million   - contested_protest_deaths = 32000.0 persons  Scenario signals:   - Swift cl
+anthropic-opus-4-8,2026-02-15,3,False,True," A2/AD network (mines, missiles, Sayyad-3G) and 'carrier-killer' posturing sugges"
+anthropic-opus-4-8,2026-02-15,"5,000",True,True,"s/commodities: Gold (safe-haven asset, $5,000), Qatar explicitly under-covered this w"
+anthropic-opus-4-8,2026-02-15,3,False,True,"rier target of Iranian threats), Sayyad-3G/3J naval air defense missile, Fattah-1"
+anthropic-opus-4-8,2026-02-15,3,False,True,"r target of Iranian threats), Sayyad-3G/3J naval air defense missile, Fattah-1 hy"
+anthropic-opus-4-8,2026-02-15,1,False,True,"3G/3J naval air defense missile, Fattah-1 hypersonic glide vehicle; Abu Mahdi cru"
+anthropic-opus-4-8,2026-02-15,25,True,True,"rt status, despite baseline centrality (25% of global LNG trade)., No specific tan"
+anthropic-opus-4-8,2026-02-15,30,True,True,"ons., No helium supply impact figures (~30% baseline) referenced in sampled articl"
+anthropic-opus-4-8,2026-02-15,7,False,True,"bbl) not stated — only relative moves ('7-month high', '+18%')., Casualty figures"
+anthropic-opus-4-8,2026-02-15,+18,True,True,"— only relative moves ('7-month high', '+18%')., Casualty figures from any direct U"
+anthropic-opus-4-8,2026-02-15,"32,000",True,True,"ambiguous in the sampled coverage., The 32,000 protest-death figure is contested betwe"
+anthropic-opus-4-8,2026-02-22,02,False,True,"y kills Supreme Leader Khamenei on 2026-02-28/03-01, triggering Iranian missile re"
+anthropic-opus-4-8,2026-02-22,28,False,True,"ills Supreme Leader Khamenei on 2026-02-28/03-01, triggering Iranian missile retal"
+anthropic-opus-4-8,2026-02-22,03,False,True,"s Supreme Leader Khamenei on 2026-02-28/03-01, triggering Iranian missile retaliat"
+anthropic-opus-4-8,2026-02-22,01,False,True,"upreme Leader Khamenei on 2026-02-28/03-01, triggering Iranian missile retaliation"
+anthropic-opus-4-8,2026-02-22,02,False,True,"k broke into open war. On Saturday 2026-02-28, the United States and Israel launch"
+anthropic-opus-4-8,2026-02-22,28,False,True,"roke into open war. On Saturday 2026-02-28, the United States and Israel launched "
+anthropic-opus-4-8,2026-02-22,03,False,True,"ontinued into a second day (Sunday 2026-03-01), with Israel reporting attacks on I"
+anthropic-opus-4-8,2026-02-22,01,False,True,"inued into a second day (Sunday 2026-03-01), with Israel reporting attacks on Iran"
+anthropic-opus-4-8,2026-02-22,"32,000",True,False,"'s deployable fleet to the theater. The 32,000 protest-death figure from the prior wee"
+anthropic-opus-4-8,2026-02-22,27,False,True,"her — figures conflict), one killed and 27 injured in a strike on a residential bu"
+anthropic-opus-4-8,2026-02-22,20,False,True,ered under Iranian missile fire for the 20th time in 24 hours. Iran's Revolutionar
+anthropic-opus-4-8,2026-02-22,24,False,True,anian missile fire for the 20th time in 24 hours. Iran's Revolutionary Guard claim
+anthropic-opus-4-8,2026-02-22,20,True,True,ted Brent crude could jump by around US$20/bbl on Monday as risk premiums are rapi
+anthropic-opus-4-8,2026-02-22,"5,500",True,True," nearly double. Gold was reported at US$5,500/oz (up from ~$5,000 the prior week), wi"
+anthropic-opus-4-8,2026-02-22,"5,000",True,True," was reported at US$5,500/oz (up from ~$5,000 the prior week), with an analyst citing"
+anthropic-opus-4-8,2026-02-22,20,True,True, levels were stated — only the Rystad +$20 projection and relative moves.  Second-
+anthropic-opus-4-8,2026-02-22,3,False,True,"y indicators:   - US combat casualties: 3 killed, 5 critically injured (first sin"
+anthropic-opus-4-8,2026-02-22,5,False,True,"rs:   - US combat casualties: 3 killed, 5 critically injured (first since Operati"
+anthropic-opus-4-8,2026-02-22,"5,500",True,True,"Epic Fury', per US CENTCOM)   - Gold: ~$5,500/oz (up from ~$5,000 prior week; analyst"
+anthropic-opus-4-8,2026-02-22,"5,000",True,True,"ENTCOM)   - Gold: ~$5,500/oz (up from ~$5,000 prior week; analyst attribution to safe"
+anthropic-opus-4-8,2026-02-22,20,True,True,"en flows)   - Brent crude: projected +~$20/bbl on Monday (Rystad Energy forecast, "
+anthropic-opus-4-8,2026-02-22,3,False,True, blocked from Strait of Hormuz by Iran: 3   - US naval commitment: ~1/3 of US Nav
+anthropic-opus-4-8,2026-02-22,1,False,True,uz by Iran: 3   - US naval commitment: ~1/3 of US Navy's deployable fleet (per on
+anthropic-opus-4-8,2026-02-22,3,False,True, by Iran: 3   - US naval commitment: ~1/3 of US Navy's deployable fleet (per one 
+anthropic-opus-4-8,2026-02-22,1,False,True," op-ed)   - Tel Aviv strike casualties: 1 killed, 27 injured   - Beit Shemesh str"
+anthropic-opus-4-8,2026-02-22,27,False,True,"- Tel Aviv strike casualties: 1 killed, 27 injured   - Beit Shemesh strike casualt"
+anthropic-opus-4-8,2026-02-22,6,False,True,red   - Beit Shemesh strike casualties: 6 killed (one source) vs. 8 killed (anoth
+anthropic-opus-4-8,2026-02-22,8,False,True,e casualties: 6 killed (one source) vs. 8 killed (another source) — contradiction
+anthropic-opus-4-8,2026-02-22,20,False,True,  - Iranian missile alerts over Israel: 20 in 24 hours (IDF)   - Malaysia RON95 pr
+anthropic-opus-4-8,2026-02-22,24,False,True,anian missile alerts over Israel: 20 in 24 hours (IDF)   - Malaysia RON95 price (h
+anthropic-opus-4-8,2026-02-22,20,False,True,lobal oil transiting Strait of Hormuz: ~20-21% (baseline/prior coverage)  Observed
+anthropic-opus-4-8,2026-02-22,21,True,True,al oil transiting Strait of Hormuz: ~20-21% (baseline/prior coverage)  Observed in
+anthropic-opus-4-8,2026-02-22,3.0,True,True,chine-readable):   - us_troops_killed = 3.0 persons   - us_troops_critically_injure
+anthropic-opus-4-8,2026-02-22,5.0,True,True,sons   - us_troops_critically_injured = 5.0 persons   - gold_spot_usd_oz = 5500.0 U
+anthropic-opus-4-8,2026-02-22,5500.0,True,True,ed = 5.0 persons   - gold_spot_usd_oz = 5500.0 USD/oz   - brent_projected_jump_usd_bbl
+anthropic-opus-4-8,2026-02-22,20.0,True,True,D/oz   - brent_projected_jump_usd_bbl = 20.0 USD/bbl   - pnsc_vessels_blocked_hormuz
+anthropic-opus-4-8,2026-02-22,3.0,True,True,D/bbl   - pnsc_vessels_blocked_hormuz = 3.0 vessels   - tel_aviv_strike_killed = 1.
+anthropic-opus-4-8,2026-02-22,1.0,True,True,.0 vessels   - tel_aviv_strike_killed = 1.0 persons   - tel_aviv_strike_injured = 2
+anthropic-opus-4-8,2026-02-22,27.0,True,True,0 persons   - tel_aviv_strike_injured = 27.0 persons   - beit_shemesh_strike_killed_
+anthropic-opus-4-8,2026-02-22,6.0,True,True,ns   - beit_shemesh_strike_killed_low = 6.0 persons   - beit_shemesh_strike_killed_
+anthropic-opus-4-8,2026-02-22,8.0,True,True,s   - beit_shemesh_strike_killed_high = 8.0 persons   - israel_missile_alerts_24h =
+anthropic-opus-4-8,2026-02-22,20.0,True,True,persons   - israel_missile_alerts_24h = 20.0 alerts   - malaysia_ron95_price_myr_lit
+anthropic-opus-4-8,2026-02-22,1.99,True,True,ts   - malaysia_ron95_price_myr_litre = 1.99 MYR/litre   - hormuz_oil_share_pct = 20
+anthropic-opus-4-8,2026-02-22,20.0,True,True,99 MYR/litre   - hormuz_oil_share_pct = 20.0 %  Scenario signals:   - Swift closure:
+anthropic-opus-4-8,2026-02-22,3,False,True,"— Disruption is now real (Iran blocking 3 PNSC vessels, Malaysia/India advisories"
+anthropic-opus-4-8,2026-02-22,25,True,True,"a on Qatari LNG export status or flows (25% of global LNG trade baseline)., No spe"
+anthropic-opus-4-8,2026-02-22,3,False,True,"transit counts (vessels/day) beyond the 3 PNSC vessels blocked., No war-risk/mari"
+anthropic-opus-4-8,2026-02-22,30,True,True,"ons., No helium supply impact figures (~30% baseline)., No realized Brent/WTI spot"
+anthropic-opus-4-8,2026-02-22,20,True,True,I spot price in $/bbl — only Rystad's +$20 Monday projection and 'gas could double
+anthropic-opus-4-8,2026-02-22,6,False,True,", Contradiction on Beit Shemesh deaths (6 vs. 8) and ambiguity on whether the str"
+anthropic-opus-4-8,2026-02-22,8,False,True,radiction on Beit Shemesh deaths (6 vs. 8) and ambiguity on whether the strait is
+anthropic-opus-4-8,2026-03-01,100,True,True,"r enters its second week as Brent tops $100/bbl for the first time in 3.5 years, Ku"
+anthropic-opus-4-8,2026-03-01,3.5,True,True,"ent tops $100/bbl for the first time in 3.5 years, Kuwait declares force majeure on"
+anthropic-opus-4-8,2026-03-01,03,False,True,eventh US service member on Sunday 2026-03-08 (up from 3 killed the prior week). W
+anthropic-opus-4-8,2026-03-01,08,False,True,nth US service member on Sunday 2026-03-08 (up from 3 killed the prior week). War 
+anthropic-opus-4-8,2026-03-01,3,False,True,ce member on Sunday 2026-03-08 (up from 3 killed the prior week). War Secretary P
+anthropic-opus-4-8,2026-03-01,150,True,True,"e, that Iranian authorities said killed 150; Trump also raised the prospect of targ"
+anthropic-opus-4-8,2026-03-01,56,False,True,"ounced on Sunday that Mojtaba Khamenei, 56, son of the slain Supreme Leader, was n"
+anthropic-opus-4-8,2026-03-01,100,True,True,cisively higher. Brent crude surpassed $100/bbl on Sunday for the first time in mor
+anthropic-opus-4-8,2026-03-01,36,True,True,following a week in which US crude rose 36% and Brent rose 28%. US retail gasoline
+anthropic-opus-4-8,2026-03-01,28,True,True, which US crude rose 36% and Brent rose 28%. US retail gasoline reached a national
+anthropic-opus-4-8,2026-03-01,3.41,True,True,"gasoline reached a national average of $3.41/gallon, up 43 cents (roughly 14%) week-"
+anthropic-opus-4-8,2026-03-01,43,False,True," a national average of $3.41/gallon, up 43 cents (roughly 14%) week-over-week, wit"
+anthropic-opus-4-8,2026-03-01,14,True,True,"e of $3.41/gallon, up 43 cents (roughly 14%) week-over-week, with experts warning "
+anthropic-opus-4-8,2026-03-01,4,True,True,with experts warning it could approach $4/gallon within a week. Kuwait declared f
+anthropic-opus-4-8,2026-03-01,250,True,True,nce: a reported combined buffer of over 250 million barrels of crude and products (
+anthropic-opus-4-8,2026-03-01,"4,000",True,True,"million barrels of crude and products (~4,000 crore litres), equivalent to seven to e"
+anthropic-opus-4-8,2026-03-01,100,True,True,indicators:   - Brent crude: surpassed $100/bbl Sunday 2026-03-08 (first time in >3
+anthropic-opus-4-8,2026-03-01,03,False,True,t crude: surpassed $100/bbl Sunday 2026-03-08 (first time in >3.5 years; highest s
+anthropic-opus-4-8,2026-03-01,08,False,True,rude: surpassed $100/bbl Sunday 2026-03-08 (first time in >3.5 years; highest sinc
+anthropic-opus-4-8,2026-03-01,3.5,True,True,0/bbl Sunday 2026-03-08 (first time in >3.5 years; highest since 2022); +28% over t
+anthropic-opus-4-8,2026-03-01,+28,True,True,ime in >3.5 years; highest since 2022); +28% over the prior week   - US (WTI) crude
+anthropic-opus-4-8,2026-03-01,+36,True,True,over the prior week   - US (WTI) crude: +36% over the prior week   - US retail gaso
+anthropic-opus-4-8,2026-03-01,3.41,True,True,"the prior week   - US retail gasoline: $3.41/gallon national average, +$0.43 w/w (~+"
+anthropic-opus-4-8,2026-03-01,0.43,True,True,"oline: $3.41/gallon national average, +$0.43 w/w (~+14%); warned to approach $4/gall"
+anthropic-opus-4-8,2026-03-01,+14,True,True,"1/gallon national average, +$0.43 w/w (~+14%); warned to approach $4/gallon within "
+anthropic-opus-4-8,2026-03-01,4,True,True,+$0.43 w/w (~+14%); warned to approach $4/gallon within a week   - US service mem
+anthropic-opus-4-8,2026-03-01,7,False,True,ervice members killed in war with Iran: 7 cumulative (up from 3 the prior week)  
+anthropic-opus-4-8,2026-03-01,3,False,True,in war with Iran: 7 cumulative (up from 3 the prior week)   - Kuwait: declared fo
+anthropic-opus-4-8,2026-03-01,150,True,True,ut   - Minab (Hormozgan) school strike: 150 killed (per Iranian authorities; Trump 
+anthropic-opus-4-8,2026-03-01,1,False,True,horities; Trump blames Iran)   - Dubai: 1 killed in reported strike   - Iranian m
+anthropic-opus-4-8,2026-03-01,12,False,True,  - Iranian missile volleys at Israel: ~12 (one account; no injuries reported)   -
+anthropic-opus-4-8,2026-03-01,250,True,True,"ed)   - India strategic energy buffer: >250 million barrels (~4,000 crore litres; 7"
+anthropic-opus-4-8,2026-03-01,"4,000",True,True,"c energy buffer: >250 million barrels (~4,000 crore litres; 7-8 weeks of coverage)   "
+anthropic-opus-4-8,2026-03-01,7,False,True,"0 million barrels (~4,000 crore litres; 7-8 weeks of coverage)   - Iran successio"
+anthropic-opus-4-8,2026-03-01,8,False,True,"million barrels (~4,000 crore litres; 7-8 weeks of coverage)   - Iran succession:"
+anthropic-opus-4-8,2026-03-01,56,False,True, Iran succession: Mojtaba Khamenei (age 56) named new supreme leader   - Share of 
+anthropic-opus-4-8,2026-03-01,20,False,True,lobal oil transiting Strait of Hormuz: ~20-21% (baseline)  Observed indicators (ma
+anthropic-opus-4-8,2026-03-01,21,True,True,al oil transiting Strait of Hormuz: ~20-21% (baseline)  Observed indicators (machi
+anthropic-opus-4-8,2026-03-01,100.0,True,True,ine-readable):   - brent_spot_usd_bbl = 100.0 USD/bbl (+28.0% w/w)   - wti_weekly_cha
+anthropic-opus-4-8,2026-03-01,+28.0,True,True,  - brent_spot_usd_bbl = 100.0 USD/bbl (+28.0% w/w)   - wti_weekly_change_pct = 36.0 
+anthropic-opus-4-8,2026-03-01,36.0,True,True,+28.0% w/w)   - wti_weekly_change_pct = 36.0 %   - us_gasoline_usd_gal = 3.41 USD/ga
+anthropic-opus-4-8,2026-03-01,3.41,True,True,_pct = 36.0 %   - us_gasoline_usd_gal = 3.41 USD/gal   - us_gasoline_change_usd_gal_
+anthropic-opus-4-8,2026-03-01,0.43,True,True,al   - us_gasoline_change_usd_gal_wow = 0.43 USD/gal   - us_troops_killed = 7.0 pers
+anthropic-opus-4-8,2026-03-01,7.0,True,True,w = 0.43 USD/gal   - us_troops_killed = 7.0 persons   - minab_school_strike_killed 
+anthropic-opus-4-8,2026-03-01,150.0,True,True,ersons   - minab_school_strike_killed = 150.0 persons   - dubai_strike_killed = 1.0 p
+anthropic-opus-4-8,2026-03-01,1.0,True,True,150.0 persons   - dubai_strike_killed = 1.0 persons   - iran_missile_volleys_at_isr
+anthropic-opus-4-8,2026-03-01,12.0,True,True,ns   - iran_missile_volleys_at_israel = 12.0 volleys   - india_energy_buffer_mbbl = 
+anthropic-opus-4-8,2026-03-01,250.0,True,True, volleys   - india_energy_buffer_mbbl = 250.0 million barrels   - mojtaba_khamenei_ag
+anthropic-opus-4-8,2026-03-01,56.0,True,True,lion barrels   - mojtaba_khamenei_age = 56.0 years   - hormuz_oil_share_pct = 20.0 %
+anthropic-opus-4-8,2026-03-01,20.0,True,True,= 56.0 years   - hormuz_oil_share_pct = 20.0 %  Scenario signals:   - Swift closure:
+anthropic-opus-4-8,2026-03-01,3.5,True,True,"ope for a quick resolution'; Brent at a 3.5-year high, Kuwait's force majeure, and "
+anthropic-opus-4-8,2026-03-01,7,False,True,"alination plant, a casualty in Dubai, a 7th US combat death, Trump threatening to"
+anthropic-opus-4-8,2026-03-01,3,False,True,"AISED/CONFIRMED — Rising US death toll (3 to 7), Israel's first strikes on Irania"
+anthropic-opus-4-8,2026-03-01,7,False,True,"/CONFIRMED — Rising US death toll (3 to 7), Israel's first strikes on Iranian oil"
+anthropic-opus-4-8,2026-03-01,250,True,True,Puri (India Petroleum Minister) / India 250Mbbl strategic buffer / non-Hormuz route
+anthropic-opus-4-8,2026-03-01,150,True,True,"rone), Minab / Hormozgan school strike (150 killed), Dubai (1 killed), Nitrogen-bas"
+anthropic-opus-4-8,2026-03-01,1,False,True,"zgan school strike (150 killed), Dubai (1 killed), Nitrogen-based fertiliser supp"
+anthropic-opus-4-8,2026-03-01,25,True,True,"agging potential loss of Qatari supply (25% of global LNG baseline)., No specific "
+anthropic-opus-4-8,2026-03-01,30,True,True,"ost., No helium supply impact figures (~30% baseline)., Whether the strait is full"
+anthropic-opus-4-8,2026-03-01,60,False,True,"ly contradictory across sources., Only ~60 of 243 articles were shown in-prompt; r"
+anthropic-opus-4-8,2026-03-01,243,True,False,"tradictory across sources., Only ~60 of 243 articles were shown in-prompt; remainin"
+anthropic-opus-4-8,2026-03-08,7,False,True,"f the week (prior cumulative figure was 7 killed). Israel announced ""wide-scale"" "
+anthropic-opus-4-8,2026-03-08,52,False,True,"es from Iran and Lebanon. The US flew B-52 night missions under ""Operation Epic Fu"
+anthropic-opus-4-8,2026-03-08,10,False,True,ercepted and destroyed multiple drones (10 in one account) over Riyadh and eastern
+anthropic-opus-4-8,2026-03-08,1,False,True,s several West Asian countries. Formula 1 called off its April Bahrain and Saudi 
+anthropic-opus-4-8,2026-03-08,100,True,True," Iranian accounts say killed ""more than 100."" Separately, US-China trade talks open"
+anthropic-opus-4-8,2026-03-08,100,True,True,"iewed articles, so the previous week's $100/bbl Brent print cannot be confirmed or "
+anthropic-opus-4-8,2026-03-08,60,False,True,not be confirmed or updated here. Only ~60 of 273 items were shown in-prompt.  Key
+anthropic-opus-4-8,2026-03-08,273,True,True, confirmed or updated here. Only ~60 of 273 items were shown in-prompt.  Key indica
+anthropic-opus-4-8,2026-03-08,6,False,True,ers killed in refueling-aircraft crash: 6 (named by DoD this week; prior cumulati
+anthropic-opus-4-8,2026-03-08,7,False,True,his week; prior cumulative war toll was 7 killed)   - Saudi drones intercepted ov
+anthropic-opus-4-8,2026-03-08,10,False,True,pted over Riyadh/eastern regions: up to 10 (IRGC denies involvement)   - Countries
+anthropic-opus-4-8,2026-03-08,7,False,True, by Iranian drones (NBC investigation): 7 (including US bases)   - Minab (Shajare
+anthropic-opus-4-8,2026-03-08,100,True,True,") girls' school strike toll: ""more than 100"" per Iranian accounts (vs. 150 reported"
+anthropic-opus-4-8,2026-03-08,150,True,True,"ore than 100"" per Iranian accounts (vs. 150 reported last week)   - IEA strategic r"
+anthropic-opus-4-8,2026-03-08,6.0,True,True,:   - us_troops_killed_aircraft_crash = 6.0 persons   - saudi_drones_intercepted_ri
+anthropic-opus-4-8,2026-03-08,10.0,True,True,s   - saudi_drones_intercepted_riyadh = 10.0 drones   - iran_drone_strike_countries 
+anthropic-opus-4-8,2026-03-08,7.0,True,True,rones   - iran_drone_strike_countries = 7.0 countries   - minab_school_strike_kille
+anthropic-opus-4-8,2026-03-08,100.0,True,True,ntries   - minab_school_strike_killed = 100.0 persons  Scenario signals:   - Swift cl
+anthropic-opus-4-8,2026-03-08,52,False,True,"ONFIRMED/RAISED — Six more US deaths, B-52 missions under ""Operation Epic Fury,"" d"
+anthropic-opus-4-8,2026-03-08,52,False,True,"arship request, Operation Epic Fury / B-52 Stratofortress deployments (CENTCOM), U"
+anthropic-opus-4-8,2026-03-08,1,False,True,"ush Goyal safe-passage request, Formula 1 (cancelled April Bahrain & Saudi races)"
+anthropic-opus-4-8,2026-03-08,100,True,True, sampled coverage this week; the prior $100/bbl Brent print could not be confirmed 
+anthropic-opus-4-8,2026-03-08,25,True,True,"t volumes or confirmed blockade status (25% of global LNG baseline)., No war-risk/"
+anthropic-opus-4-8,2026-03-08,100,True,True,mains contested: Minab school toll now '100+' (down from 150 last week) with author
+anthropic-opus-4-8,2026-03-08,150,True,True,Minab school toll now '100+' (down from 150 last week) with authorship disputed; 'n
+anthropic-opus-4-8,2026-03-08,30,True,True,"d-population quantification this week (~30% helium, desalination baselines)., Trum"
+anthropic-opus-4-8,2026-03-08,60,False,True," unverified in sampled coverage., Only ~60 of 273 articles reviewed in-prompt; man"
+anthropic-opus-4-8,2026-03-08,273,True,True,"ified in sampled coverage., Only ~60 of 273 articles reviewed in-prompt; many feed "
+groq-gpt-oss-20b,2026-03-08,6,False,True,ey indicators:   - American casualties: 6 persons (plane crash)   - Strait of Hor
+groq-gpt-oss-20b,2026-03-08,6.0,True,True,ne-readable):   - american_casualties = 6.0 persons  Scenario signals:   - Scenario
+groq-gpt-oss-20b,2026-03-08,52,False,True,"tors/commodities: US Central Command, B-52 Stratofortress, Iranian Space Research "
+anthropic-opus-4-8,2026-03-15,48,False,True,"infrastructure standoff: Trump issued a 48-hour ultimatum to ""obliterate"" Iran's p"
+anthropic-opus-4-8,2026-03-15,3.91,True,True,"per in, and US pump prices appeared at $3.91/gal as both sides nonetheless began exp"
+anthropic-opus-4-8,2026-03-15,48,False,True,", March 22, President Trump gave Iran a 48-hour ultimatum to fully reopen the Stra"
+anthropic-opus-4-8,2026-03-15,100,True,True,"lear research center) and injuring over 100, with 11 seriously.  The conflict pulle"
+anthropic-opus-4-8,2026-03-15,11,False,True,"rch center) and injuring over 100, with 11 seriously.  The conflict pulled in more"
+anthropic-opus-4-8,2026-03-15,24,False,True,"ché and four other embassy staff within 24 hours, citing recent attacks. The UK de"
+anthropic-opus-4-8,2026-03-15,3.91,True,True,S gasoline hit a nationwide average of $3.91 per gallon. Malaysia's PM Anwar said go
+anthropic-opus-4-8,2026-03-15,77,True,True,ted crude import dependence rising from 77% (2013-14) to ~87% (2025-26) and LNG de
+anthropic-opus-4-8,2026-03-15,14,False,True,import dependence rising from 77% (2013-14) to ~87% (2025-26) and LNG dependence f
+anthropic-opus-4-8,2026-03-15,87,True,True,ependence rising from 77% (2013-14) to ~87% (2025-26) and LNG dependence from 30% 
+anthropic-opus-4-8,2026-03-15,26,False,True,"rising from 77% (2013-14) to ~87% (2025-26) and LNG dependence from 30% to 47%, an"
+anthropic-opus-4-8,2026-03-15,30,True,True," ~87% (2025-26) and LNG dependence from 30% to 47%, and officials prioritised PNG "
+anthropic-opus-4-8,2026-03-15,47,True,True,"2025-26) and LNG dependence from 30% to 47%, and officials prioritised PNG connect"
+anthropic-opus-4-8,2026-03-15,"23,000",True,True,"n wrote to PM Modi raising concern over 23,000 Indians stranded in the conflict zone; "
+anthropic-opus-4-8,2026-03-15,22,False,True,ct zone; separately officials confirmed 22 Indian ships and 611 sailors in the Per
+anthropic-opus-4-8,2026-03-15,611,True,True,officials confirmed 22 Indian ships and 611 sailors in the Persian Gulf were safe. 
+anthropic-opus-4-8,2026-03-15,60,False,True,rage remained heavily duplicated: only ~60 of 275 items were shown in-prompt.  Key
+anthropic-opus-4-8,2026-03-15,275,True,False,emained heavily duplicated: only ~60 of 275 items were shown in-prompt.  Key indica
+anthropic-opus-4-8,2026-03-15,3.91,True,True,eadable):   - us_gasoline_avg_usd_gal = 3.91 USD/gal   - trump_hormuz_ultimatum_hour
+anthropic-opus-4-8,2026-03-15,48.0,True,True,/gal   - trump_hormuz_ultimatum_hours = 48.0 hours   - israel_injured_arad_dimona = 
+anthropic-opus-4-8,2026-03-15,100.0,True,True, hours   - israel_injured_arad_dimona = 100.0 persons   - israel_seriously_injured_ar
+anthropic-opus-4-8,2026-03-15,11.0,True,True, israel_seriously_injured_arad_dimona = 11.0 persons   - malaysia_fuel_subsidy_rm_bl
+anthropic-opus-4-8,2026-03-15,3.2,True,True,sons   - malaysia_fuel_subsidy_rm_bln = 3.2 RM billion   - india_crude_import_depen
+anthropic-opus-4-8,2026-03-15,87.0,True,True,  - india_crude_import_dependence_pct = 87.0 %   - india_lng_import_dependence_pct =
+anthropic-opus-4-8,2026-03-15,47.0,True,True,%   - india_lng_import_dependence_pct = 47.0 %   - indians_stranded_conflict_zone = 
+anthropic-opus-4-8,2026-03-15,23000.0,True,True, %   - indians_stranded_conflict_zone = 23000.0 persons   - indian_ships_persian_gulf_s
+anthropic-opus-4-8,2026-03-15,22.0,True,True,ns   - indian_ships_persian_gulf_safe = 22.0 ships   - indian_sailors_persian_gulf_s
+anthropic-opus-4-8,2026-03-15,611.0,True,True,   - indian_sailors_persian_gulf_safe = 611.0 persons   - saudi_iran_embassy_staff_ex
+anthropic-opus-4-8,2026-03-15,5.0,True,True,  - saudi_iran_embassy_staff_expelled = 5.0 persons  Scenario signals:   - Escalate
+anthropic-opus-4-8,2026-03-15,60,False,True,or potential talks Coverage gaps: Only ~60 of 275 items shown in-prompt; heavy wir
+anthropic-opus-4-8,2026-03-15,275,True,False,ential talks Coverage gaps: Only ~60 of 275 items shown in-prompt; heavy wire-dupli
+anthropic-opus-4-8,2026-03-15,48,False,True,"heavy wire-duplicate repetition of the ""48-hour ultimatum"" story reduces effective"
+anthropic-opus-4-8,2026-03-22,"2,500",True,True,"flict and threatened Red Sea shipping, ~2,500 US Marines arrived amid Pentagon planni"
+anthropic-opus-4-8,2026-03-22,12,False,True,"abia intercepted almost a dozen (nearly 12) drones, and Israel continued striking "
+anthropic-opus-4-8,2026-03-22,"2,500",True,True,"operations track emerged. Approximately 2,500 US Marines arrived in the region (one r"
+anthropic-opus-4-8,2026-03-22,"3,500",True,True," region (one report cited an additional 3,500 troops, and another referenced up to 10"
+anthropic-opus-4-8,2026-03-22,"10,000",True,True,"00 troops, and another referenced up to 10,000 troops ""ready""), and the Pentagon — per"
+anthropic-opus-4-8,2026-03-22,20,False,True,"ls per day — framed by one headline as ""20 more ships"" — through the strait, descr"
+anthropic-opus-4-8,2026-03-22,"94,000",True,True,"rs (BW TYR and BW ELM) with a combined ~94,000 MT of LPG safely transited toward India"
+anthropic-opus-4-8,2026-03-22,70,False,True,"ee. Separately, reports indicated up to 70 Britons were detained in the UAE over p"
+anthropic-opus-4-8,2026-03-22,27,False,True, crude deliveries for April–May running 27 million barrels below demand; Thailand 
+anthropic-opus-4-8,2026-03-22,3,False,True,rew sought by Bangkok (Mayurina Naree): 3  Observed indicators (machine-readable)
+anthropic-opus-4-8,2026-03-22,2500.0,True,True,dable):   - us_marines_arrived_region = 2500.0 troops   - us_additional_troops_arrived
+anthropic-opus-4-8,2026-03-22,3500.0,True,True,oops   - us_additional_troops_arrived = 3500.0 troops   - us_troops_ready_ground_assau
+anthropic-opus-4-8,2026-03-22,10000.0,True,True,ps   - us_troops_ready_ground_assault = 10000.0 troops   - pakistani_vessels_per_day_ho
+anthropic-opus-4-8,2026-03-22,2.0,True,True,   - pakistani_vessels_per_day_hormuz = 2.0 vessels/day   - lpg_transited_to_india_
+anthropic-opus-4-8,2026-03-22,94000.0,True,True,els/day   - lpg_transited_to_india_mt = 94000.0 MT   - thailand_crude_shortfall_apr_may
+anthropic-opus-4-8,2026-03-22,27000000.0,True,False, thailand_crude_shortfall_apr_may_bbl = 27000000.0 barrels   - saudi_drone_interceptions =
+anthropic-opus-4-8,2026-03-22,12.0,True,True,barrels   - saudi_drone_interceptions = 12.0 drones   - brits_detained_uae_strike_ph
+anthropic-opus-4-8,2026-03-22,70.0,True,True,   - brits_detained_uae_strike_photos = 70.0 persons   - thai_crew_sought_mayurina_n
+anthropic-opus-4-8,2026-03-22,3.0,True,True,s   - thai_crew_sought_mayurina_naree = 3.0 persons  Scenario signals:   - Scenario
+anthropic-opus-4-8,2026-03-22,60,False,True, Naree (Thai crew) Coverage gaps: Only ~60 of 266 items shown in-prompt; heavy wir
+anthropic-opus-4-8,2026-03-22,266,True,False, (Thai crew) Coverage gaps: Only ~60 of 266 items shown in-prompt; heavy wire dupli
+anthropic-opus-4-8,2026-03-29,100,True,True,"Headline: WTI ""above $100"" and Thai diesel figures are the only h"
+anthropic-opus-4-8,2026-03-29,48,False,True,tum diplomacy. President Trump issued a 48-hour deadline — expiring Tuesday (April
+anthropic-opus-4-8,2026-03-29,15,False,True,"re.""  Militarily, Iran shot down a US F-15E fighter jet over southwestern Iran and"
+anthropic-opus-4-8,2026-03-29,200,True,True,"s were dire: one report said fewer than 200 ships had managed to transit Hormuz, wi"
+anthropic-opus-4-8,2026-03-29,100,True,True,"The Economist reported WTI crude above $100/bbl, up from below $60 a few months ear"
+anthropic-opus-4-8,2026-03-29,60,True,True,"TI crude above $100/bbl, up from below $60 a few months earlier. Thailand's diesel"
+anthropic-opus-4-8,2026-03-29,50.54,True,True,ailand's diesel pump price hit a record 50.54 baht/litre after eight consecutive rise
+anthropic-opus-4-8,2026-03-29,8,False,True,"was likely to hold rates at its April 6–8 meeting and flagged an ""imminent"" downw"
+anthropic-opus-4-8,2026-03-29,10,False,True,"es ""one-sixth of humanity"" (India) and ~10 million Indians living in the Gulf at r"
+anthropic-opus-4-8,2026-03-29,201,True,False,"mp ultimatum, downed jet, rescue), with 201 of 261 items omitted from the prompt.  "
+anthropic-opus-4-8,2026-03-29,261,True,False,"matum, downed jet, rescue), with 201 of 261 items omitted from the prompt.  Key ind"
+anthropic-opus-4-8,2026-03-29,100,True,True,"meter name=""headline"">WTI crude: above $100/bbl (up from below $60 ""a few months ag"
+anthropic-opus-4-8,2026-03-29,60,True,True,"I crude: above $100/bbl (up from below $60 ""a few months ago"") — The Economist  Ob"
+anthropic-opus-4-8,2026-03-29,100.0,True,True,chine-readable):   - wti_spot_usd_bbl = 100.0 USD/bbl   - trump_ultimatum_hours = 48.
+anthropic-opus-4-8,2026-03-29,48.0,True,True,0.0 USD/bbl   - trump_ultimatum_hours = 48.0 hours   - ships_transited_hormuz_total 
+anthropic-opus-4-8,2026-03-29,200.0,True,True,ours   - ships_transited_hormuz_total = 200.0 vessels   - thailand_diesel_pump_price_
+anthropic-opus-4-8,2026-03-29,50.54,True,True,  - thailand_diesel_pump_price_baht_l = 50.54 baht/litre   - us_aircraft_shot_down = 
+anthropic-opus-4-8,2026-03-29,1.0,True,True, baht/litre   - us_aircraft_shot_down = 1.0 aircraft   - hormuz_global_oil_share_pc
+anthropic-opus-4-8,2026-03-29,20.0,True,True,craft   - hormuz_global_oil_share_pct = 20.0 %   - indians_in_gulf_at_risk = 1000000
+anthropic-opus-4-8,2026-03-29,10000000.0,True,False, = 20.0 %   - indians_in_gulf_at_risk = 10000000.0 persons  Scenario signals:   - <paramet
+anthropic-opus-4-8,2026-03-29,48,False,True, (escalated conflict): RAISED — Trump's 48-hour ultimatum and explicit threats to 
+anthropic-opus-4-8,2026-03-29,15,False,True,"edly desalination), Iran downing a US F-15E, and Iranian drone strikes on a Bahrai"
+anthropic-opus-4-8,2026-03-29,60,False,True," gaps: <parameter name=""headline"">Only ~60 of 261 items shown; heavy wire duplicat"
+anthropic-opus-4-8,2026-03-29,261,True,False," <parameter name=""headline"">Only ~60 of 261 items shown; heavy wire duplication of "
+anthropic-opus-4-8,2026-03-29,15,False,True,"cation of the Trump ultimatum, downed F-15E and rescue reduces unique coverage."
+groq-gpt-oss-120b,2026-03-29,100,True,True,"Headline: Oil prices hit $100/bbl as US threats intensify, while Iraq"
+groq-gpt-oss-120b,2026-03-29,100,True,True,"ntermediate (WTI) crude reported above $100 per barrel, up from sub-$60 levels a fe"
+groq-gpt-oss-120b,2026-03-29,60,True,True,"ted above $100 per barrel, up from sub-$60 levels a few months earlier. The price "
+groq-gpt-oss-120b,2026-03-29,48,False,True,"ed States escalated rhetoric, issuing a 48‑hour ultimatum to Iran and threatening "
+groq-gpt-oss-120b,2026-03-29,200,True,True,onstrained: reports indicate fewer than 200 vessels have managed to pass through th
+groq-gpt-oss-120b,2026-03-29,20,True,True,"in the past month, far below the normal 20% share of global oil flows. Nonetheless"
+groq-gpt-oss-120b,2026-03-29,50.54,True,True,"diesel price reached a historic high of 50.54 baht per litre, reflecting global fuel "
+groq-gpt-oss-120b,2026-03-29,10,False,True,secure its energy supply. Approximately 10 million Indian expatriates remain in th
+groq-gpt-oss-120b,2026-03-29,100,True,True,.  Key indicators:   - WTI spot price: $100/bbl (reported above $100)   - Thai dies
+groq-gpt-oss-120b,2026-03-29,100,True,True,I spot price: $100/bbl (reported above $100)   - Thai diesel price: 50.54 baht/litr
+groq-gpt-oss-120b,2026-03-29,50.54,True,True,rted above $100)   - Thai diesel price: 50.54 baht/litre (record high)   - Indian exp
+groq-gpt-oss-120b,2026-03-29,"10,000,000",True,False,"d high)   - Indian expatriates in Gulf: 10,000,000 people   - Iraq exemption from Hormuz r"
+groq-gpt-oss-120b,2026-03-29,1,False,True,nted   - French CMA CGM vessel transit: 1 vessel on 2 April  Observed indicators 
+groq-gpt-oss-120b,2026-03-29,100.0,True,True,chine-readable):   - wti_spot_usd_bbl = 100.0 USD/bbl   - thai_diesel_price_baht_per_
+groq-gpt-oss-120b,2026-03-29,50.54,True,True,   - thai_diesel_price_baht_per_litre = 50.54 baht/litre   - indian_expats_gulf = 100
+groq-gpt-oss-120b,2026-03-29,10000000.0,True,False,.54 baht/litre   - indian_expats_gulf = 10000000.0 people   - iraq_exempt_status = 1.0 bin
+groq-gpt-oss-120b,2026-03-29,1.0,True,True,00000.0 people   - iraq_exempt_status = 1.0 binary   - french_cma_cgm_transit = 1.0
+groq-gpt-oss-120b,2026-03-29,1.0,True,True,1.0 binary   - french_cma_cgm_transit = 1.0 vessels  Scenario signals:   - Scenario
+anthropic-opus-4-8,2026-04-05,800,True,True, 7 but Hormuz stays effectively closed (800+ vessels still stranded); oil hovers ne
+anthropic-opus-4-8,2026-04-05,100,True,True,ssels still stranded); oil hovers near $100/bbl and US March CPI posted its largest
+anthropic-opus-4-8,2026-04-05,800,True,True, severe. Pole Star Global reported over 800 vessels remain stranded despite the cea
+anthropic-opus-4-8,2026-04-05,"1,927",True,True," Union Shipping Ministry said more than 1,927 Indian seafarers had been repatriated s"
+anthropic-opus-4-8,2026-04-05,124,True,True," seafarers had been repatriated so far (124 in the last 24 hours), with no incident"
+anthropic-opus-4-8,2026-04-05,24,False,True,"een repatriated so far (124 in the last 24 hours), with no incident involving an I"
+anthropic-opus-4-8,2026-04-05,24,False,True,g an Indian-flagged vessel in the prior 24 hours. European airports (via Ryanair) 
+anthropic-opus-4-8,2026-04-05,100,True,True,"downgraded growth. Oil stayed close to $100/bbl (FTSE 100 Live noted a ""record Nort"
+anthropic-opus-4-8,2026-04-05,100,True,True,"wth. Oil stayed close to $100/bbl (FTSE 100 Live noted a ""record North Sea oil pric"
+anthropic-opus-4-8,2026-04-05,100,True,True,"d North Sea oil price"" with Brent near $100), gaining further ahead of the Pakistan"
+anthropic-opus-4-8,2026-04-05,80,True,True,gapore. India's Morbi ceramic-tile hub (80%+ of India's tiles) sat idle amid the g
+anthropic-opus-4-8,2026-04-05,100,True,True,"h.  Key indicators:   - Oil price near $100/bbl, close to a ""record North Sea oil p"
+anthropic-opus-4-8,2026-04-05,100,True,True,"to a ""record North Sea oil price"" (FTSE 100 Live, 10 April)   - Vessels stranded in"
+anthropic-opus-4-8,2026-04-05,800,True,True,Vessels stranded in/around Hormuz: over 800 (Pole Star Global)   - Indian seafarers
+anthropic-opus-4-8,2026-04-05,"1,927",True,True,"Indian seafarers repatriated: more than 1,927 total, 124 in last 24 hours (India Ship"
+anthropic-opus-4-8,2026-04-05,124,True,True,"ers repatriated: more than 1,927 total, 124 in last 24 hours (India Shipping Minist"
+anthropic-opus-4-8,2026-04-05,24,False,True,"ted: more than 1,927 total, 124 in last 24 hours (India Shipping Ministry)   - Cea"
+anthropic-opus-4-8,2026-04-05,3,False,True,)   - Jet-fuel supply warning horizon: ~3 weeks before UK/EU flight cancellations
+anthropic-opus-4-8,2026-04-05,100.0,True,True,ine-readable):   - brent_spot_usd_bbl = 100.0 USD/bbl   - vessels_stranded_hormuz = 8
+anthropic-opus-4-8,2026-04-05,800.0,True,True,0 USD/bbl   - vessels_stranded_hormuz = 800.0 vessels   - indian_seafarers_repatriate
+anthropic-opus-4-8,2026-04-05,1927.0,True,True, - indian_seafarers_repatriated_total = 1927.0 persons   - indian_seafarers_repatriate
+anthropic-opus-4-8,2026-04-05,124.0,True,True,   - indian_seafarers_repatriated_24h = 124.0 persons   - kuwait_drone_attacks = 7.0 
+anthropic-opus-4-8,2026-04-05,7.0,True,True,24.0 persons   - kuwait_drone_attacks = 7.0 attacks   - ceasefire_duration_weeks = 
+anthropic-opus-4-8,2026-04-05,2.0,True,True, attacks   - ceasefire_duration_weeks = 2.0 weeks   - jet_fuel_shortage_warning_wee
+anthropic-opus-4-8,2026-04-05,3.0,True,True,s   - jet_fuel_shortage_warning_weeks = 3.0 weeks  Scenario signals:   - Scenario A
+anthropic-opus-4-8,2026-04-05,800,True,True,"effectively closed after the ceasefire, 800+ vessels stranded, IRGC issuing route c"
+anthropic-opus-4-8,2026-04-05,100,True,True,"week — oil described only as ""close to $100/bbl"" and a ""record North Sea oil price"""
+anthropic-opus-4-8,2026-04-05,228,True,False,"ins ambiguous., Heavy wire duplication; 228 of 288 items omitted from the prompt., "
+anthropic-opus-4-8,2026-04-05,288,True,False,"iguous., Heavy wire duplication; 228 of 288 items omitted from the prompt., No upda"
+groq-gpt-oss-120b,2026-04-05,800,True,True,"nd Iran refuses reopening, keeping over 800 vessels stranded and oil price hovering"
+groq-gpt-oss-120b,2026-04-05,100,True,True,s stranded and oil price hovering near $100/bbl.  During the week of 5–10 April 202
+groq-gpt-oss-120b,2026-04-05,100,True,True,". Brent and WTI prices stayed close to $100 per barrel, with multiple reports notin"
+groq-gpt-oss-120b,2026-04-05,100,True,True,"ple reports noting the price ""close to $100 a barrel"" as the strait remained effect"
+groq-gpt-oss-120b,2026-04-05,21,True,True,"supplies, which still represent roughly 21% of world oil flow.   Shipping disrupti"
+groq-gpt-oss-120b,2026-04-05,800,True,True,ole Star Global reported that more than 800 vessels remained stranded in the Hormuz
+groq-gpt-oss-120b,2026-04-05,"1,927",True,True,"of Indian seafarers repatriated rose to 1,927 overall, with 124 returned in the previ"
+groq-gpt-oss-120b,2026-04-05,124,True,True,"repatriated rose to 1,927 overall, with 124 returned in the previous 24 hours.   Re"
+groq-gpt-oss-120b,2026-04-05,24,False,True,"rall, with 124 returned in the previous 24 hours.   Regional security remained vol"
+groq-gpt-oss-120b,2026-04-05,100,True,True, Key indicators:   - Oil price (spot): $100/bbl (close to $100 per barrel)   - Stra
+groq-gpt-oss-120b,2026-04-05,100,True,True,- Oil price (spot): $100/bbl (close to $100 per barrel)   - Stranded vessels in Hor
+groq-gpt-oss-120b,2026-04-05,800,True,True,arrel)   - Stranded vessels in Hormuz: >800 vessels   - Indian seafarers repatriate
+groq-gpt-oss-120b,2026-04-05,"1,927",True,True,"ssels   - Indian seafarers repatriated: 1,927 total, 124 in last 24h   - Kuwait drone"
+groq-gpt-oss-120b,2026-04-05,124,True,True,"ian seafarers repatriated: 1,927 total, 124 in last 24h   - Kuwait drone attacks: 7"
+groq-gpt-oss-120b,2026-04-05,24,False,True,"s repatriated: 1,927 total, 124 in last 24h   - Kuwait drone attacks: 7 attacks re"
+groq-gpt-oss-120b,2026-04-05,7,False,True,4 in last 24h   - Kuwait drone attacks: 7 attacks reported   - Fuel protest durat
+groq-gpt-oss-120b,2026-04-05,4,False,True,d   - Fuel protest duration in Ireland: 4 days   - War duration referenced: 39 da
+groq-gpt-oss-120b,2026-04-05,39,False,True,nd: 4 days   - War duration referenced: 39 days  Observed indicators (machine-read
+groq-gpt-oss-120b,2026-04-05,100.0,True,True,hine-readable):   - oil_price_usd_bbl = 100.0 USD/bbl   - vessels_stranded = 800.0 ve
+groq-gpt-oss-120b,2026-04-05,800.0,True,True, = 100.0 USD/bbl   - vessels_stranded = 800.0 vessels   - indian_seafarers_repatriate
+groq-gpt-oss-120b,2026-04-05,1927.0,True,True,sels   - indian_seafarers_repatriated = 1927.0 people   - indian_seafarers_last_24h = 
+groq-gpt-oss-120b,2026-04-05,124.0,True,True, people   - indian_seafarers_last_24h = 124.0 people   - kuwait_drone_attacks = 7.0 a
+groq-gpt-oss-120b,2026-04-05,7.0,True,True,124.0 people   - kuwait_drone_attacks = 7.0 attacks   - fuel_protest_days_ireland =
+groq-gpt-oss-120b,2026-04-05,4.0,True,True,attacks   - fuel_protest_days_ireland = 4.0 days   - war_duration_days = 39.0 days 
+groq-gpt-oss-120b,2026-04-05,39.0,True,True,land = 4.0 days   - war_duration_days = 39.0 days  Scenario signals:   - Scenario A 
+groq-gpt-oss-120b,2026-04-05,800,True,True," closure): Probability increased – over 800 vessels remain stranded, oil prices sta"
+groq-gpt-oss-120b,2026-04-05,100,True,True," remain stranded, oil prices stay near $100/bbl, and Iran continues to refuse reope"

@@ -56,17 +56,21 @@ HEADLINE_KEYS: dict[str, list[str]] = {
                   "gas_demand_destruction_bcfd", "consumer_surplus_loss_oil_bn_usd", "consumer_surplus_loss_gas_bn_usd"],
     "fed_oil": ["peak_gdp_impact_pct", "peak_cpi_impact_pp", "peak_ffr_impact_pp", "peak_unemployment_impact_pp",
                 "fevd_oil_share", "oil_price_change_pct"],
-    "lngst": ["ttf_price", "jkm_price", "henry_hub_price", "implied_price_impulse_pct", "global_supply_shortfall_pct",
+    "lngst": ["ttf_price", "jkm_price", "henry_hub_price", "ttf_price_change_pct", "implied_price_impulse_pct",
+              "global_supply_shortfall_pct",
               "supply_shortfall_bcm"],
     "energy_flux_gas_power": ["by_2030_new_gw", "by_2030_bcf_per_day_mid", "by_2035_new_gw", "total_pipeline_mw"],
-    "energy_flux_lng_profits": ["total_war_profit_bn_usd", "incremental_margin_bn_usd", "peak_month_margin_usd_mmbtu"],
+    "energy_flux_lng_profits": ["windfall_from_price_rise_usd", "total_windfall_usd", "peak_monthly_windfall",
+                                "average_ttf_netback",
+                                "average_jkm_netback", "weeks_to_match_ukraine_windfall"],
     "world_helium_model": ["effective_supply_gap_pct", "price_change_pct", "equilibrium_price_usd_per_mscf",
                            "inventory_drawdown_months", "demand_rationing_mmscf"],
     "argonne_abm": ["price_change_pct", "price_change_pct_mean", "price_change_pct_std", "effective_supply_gap_pct"],
-    "simrlfab": ["throughput_loss_pct", "fab_utilization_crisis", "wafer_starts_change_pct"],
+    "simrlfab": ["machines_working", "machines_broken", "finished_orders", "order_waiting_time", "alpha"],
     "world_fertilizer": ["fertilizer_price_index_pct", "nitrogen_price_pct", "phosphate_price_pct", "potash_price_pct",
                          "price_urea_pct", "price_dap_pct", "price_mop_pct"],
     "apsim": ["mean_yield_pct_change", "crop_yield_loss_pct", "n_use_efficiency_change_pct"],
+    "apsim_gtap": ["us_gdp_pct", "gulf_gdp_pct", "us_maize_yield_change_pct", "us_gro_price_pct"],
     "futures": ["initial_price_shock_pct", "forecast_horizon_months"],
     "aisdb": ["rerouting_cost_multiplier", "war_risk_insurance_premium_pct", "effective_fleet_capacity_loss_pct",
               "max_additional_transit_days"],
@@ -80,10 +84,11 @@ HEADLINE_KEYS: dict[str, list[str]] = {
               "welfare_pct_change", "wage_impact_pct", "interest_rate_impact_pct"],
     "mpsge_jl": ["gdp_impact_pct", "gdp_impact_pct_world_weighted", "cpi_inflation_pct", "consumption_impact_pct",
                  "welfare_pct_change", "wage_impact_pct", "interest_rate_impact_pct", "trade_cost_multiplier"],
-    "opencge": ["gdp_impact_pct", "cpi_inflation_pct", "consumption_impact_pct", "welfare_pct_change"],
+    "opencge": ["gdp_impact_pct", "wage_impact_pct", "welfare_pct_change", "cpi_inflation_pct", "consumption_impact_pct"],
     "nrel": ["gdp_impact_pct", "gdp_impact_pct_world_weighted", "cpi_inflation_pct", "retail_electricity_price_change_pct",
              "co2_emissions_pct_change", "coal_dispatch_gain_pp", "renewables_dispatch_gain_pp", "welfare_pct_change"],
-    "mam": ["gdp_impact_pct", "cpi_inflation_pct", "unemployment_rate_pct", "real_gdp_bn_usd"],
+    "mam": ["gdp_growth_pct", "cpi_inflation_pct", "unemployment_rate_pct", "real_gdp_bn_usd",
+            "federal_funds_rate_pct"],
     "nems": ["gdp_impact_pct", "cpi_inflation_pct", "oil_price_usd_per_bbl"],
     "miragrodep": ["gdp_impact_pct", "welfare_pct_change", "agricultural_output_pct_change"],
     "osemosys": ["gdp_impact_pct", "cpi_inflation_pct", "total_system_cost_change_pct", "welfare_pct_change"],
@@ -192,8 +197,15 @@ def outcome_from_output(
     value_str = format_value(value)
     unit_str = f" {unit}" if unit else ""
     mode = implementation_mode or "unknown"
+    who = model_id
+    if mode == "analytical_reduction":
+        from src.models.implementation_info import IMPLEMENTATION_INFO
+
+        info = IMPLEMENTATION_INFO.get(model_id)
+        if info is not None and info.display_name_reduced:
+            who = f"{model_id} ({info.display_name_reduced}, not the named model)"
     narrative = (
-        f"{model_id} reports {key} = {value_str}{unit_str} under {scenario_label}. "
+        f"{who} reports {key} = {value_str}{unit_str} under {scenario_label}. "
         "Value copied verbatim from the model output; no interpretation applied."
     )
     reliability = f"implementation mode: {mode}"

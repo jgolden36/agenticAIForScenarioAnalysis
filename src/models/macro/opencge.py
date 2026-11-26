@@ -11,7 +11,7 @@ dictionaries.
 OG-Core has no commodity sectors out of the box: it operates on aggregate
 production with optional multi-industry extensions. Pipeline commodity
 shocks are therefore mapped to **exogenous productivity (``Z``) and
-capital-quality (``delta_tau_annual``) adjustments** via a config-driven
+capital-quality (economic depreciation ``delta_annual``) adjustments** via a config-driven
 ``shock_to_productivity`` table. The mapping table is loaded from
 ``configs/model_configs/opencge.yaml`` so analysts can tune the elasticity
 of macro outcomes to commodity-tier shocks without code changes.
@@ -26,6 +26,7 @@ Real implementation requirements:
 from __future__ import annotations
 
 import logging
+import os
 import pickle
 import time
 from pathlib import Path
@@ -121,7 +122,19 @@ class OpenCGEConfig(BaseModel):
             "Per-commodity sensitivity coefficients translating a 1% commodity "
             "price (or, for 'water', unmet-demand) shock into multiplicative "
             "adjustments on aggregate productivity (Z) and capital-quality "
-            "(delta_tau_annual)."
+            "(economic depreciation delta_annual; the key name "
+            "delta_tau_per_pct is historical)."
+        ),
+    )
+    capital_drag_scenarios: list[str] | None = Field(
+        default=None,
+        description=(
+            "Scenario ids under which the capital-quality drag (delta_annual) "
+            "is applied. OG-Core's delta_annual is one scalar for every year, "
+            "so the drag is permanent and lowers the long-run steady state; "
+            "it suits lasting infrastructure damage, not a temporary closure. "
+            "None applies it in every scenario; a list restricts it (the "
+            "shipped opencge.yaml uses [infrastructure_collapse])."
         ),
     )
     skip_baseline_if_present: bool = Field(
@@ -365,54 +378,200 @@ class OpenCGEAdapter(ModelAdapter):
         all_shocks["oil"] = float(params["oil_price_shock_pct"])
 
         # Aggregate productivity / capital-quality adjustments.
+        # ``delta_tau_per_pct`` is the historical config key name; the
+        # adjustment is applied to OG-Core's *economic* depreciation rate
+        # ``delta_annual`` (a capital-quality drag), not to the tax
+        # depreciation rate ``delta_tau_annual``. ``delta_per_pct`` is
+        # accepted as the clearer alias.
         z_mult = 1.0
-        delta_tau_adj = 0.0
+        delta_adj = 0.0
         applied: dict[str, dict[str, float]] = {}
         for commodity, shock_pct in all_shocks.items():
             coeffs = mapping.get(commodity)
             if coeffs is None:
                 continue
             z_delta = coeffs.get("Z_mult_per_pct", 0.0) * shock_pct
-            dt_delta = coeffs.get("delta_tau_per_pct", 0.0) * shock_pct
+            d_coef = coeffs.get("delta_per_pct", coeffs.get("delta_tau_per_pct", 0.0))
+            d_delta = d_coef * shock_pct
             z_mult *= (1.0 + z_delta)
-            delta_tau_adj += dt_delta
+            delta_adj += d_delta
             applied[commodity] = {
                 "shock_pct": shock_pct,
                 "Z_delta": z_delta,
-                "delta_tau_delta": dt_delta,
+                "delta_annual_delta": d_delta,
             }
+
+        # delta_annual is a scalar in OG-Core, so any drag is permanent:
+        # apply it only in scenarios configured as lasting capital damage.
+        drag_scenarios = self._config.capital_drag_scenarios
+        capital_drag_applied = drag_scenarios is None or scenario_id in drag_scenarios
+        if not capital_drag_applied:
+            delta_adj = 0.0
+            for rec in applied.values():
+                rec["delta_annual_delta"] = 0.0
 
         duration_years = float(params["disruption_duration_months"]) / 12.0
 
         # Construct an OG-Core reform dict. Keys match OG-Core's
-        # Specifications attribute names; year arrays are length-T_full
-        # vectors but OG-Core accepts scalar broadcasting.
+        # Specifications parameter names (ogcore default_parameters.json):
+        #   Z         float, number_dims 2 -> [[year0_ind0, ...], [year1...], ...]
+        #             (years x M industries, M=1 by default; OG-Core extends a
+        #             short list with its last row).
+        #   maxiter   int, max TPI iterations.
+        # ``delta_annual`` (a scalar) is filled in at execute() time as
+        # baseline value + delta_adj, because the baseline value comes from
+        # the Specifications object.
+        if duration_years < 25:
+            z_path = [[z] for z in self._duration_weighted_z(z_mult, duration_years)]
+            z_path += [[1.0]] * (25 - len(z_path))
+        else:
+            z_path = [[z_mult]]
         reform_dict: dict[str, Any] = {
-            "Z": z_mult,
-            "delta_tau_annual": delta_tau_adj,
+            "Z": z_path,
             "start_year": self._config.baseline_year,
             "budget_balance": self._config.budget_balance,
+            "maxiter": int(self._config.time_path_iter),
         }
 
-        # Translate disruption duration into a temporary shock window:
-        # OG-Core accepts year-indexed parameter arrays. We model the shock
-        # as decaying linearly back to baseline over `duration_years` years.
-        if duration_years < 25:  # only build vector for sub-budget-window shocks
-            shock_window_years = max(1, int(round(duration_years)))
-            # Z_path = z_mult during shock window, then 1.0 (baseline)
-            z_path = [z_mult] * shock_window_years + [1.0] * (
-                25 - shock_window_years
-            )
-            reform_dict["Z"] = z_path
+        # Reform solves are keyed by run id when one is set, so two runs
+        # (e.g. the two supplementary runs) do not overwrite each other's
+        # OG-Core pickles. The baseline is shared: it carries no shock.
+        import os
 
+        run_id = os.environ.get("HORMUZ_RUN_ID")
+        reform_base = self._config.reform_dir / run_id if run_id else self._config.reform_dir
         return {
             "scenario_id": scenario_id,
             "reform_dict": reform_dict,
+            "delta_annual_adj": delta_adj,
+            "capital_drag_applied": capital_drag_applied,
             "duration_years": duration_years,
             "applied_shocks": applied,
             "baseline_dir": str(self._config.baseline_dir),
-            "reform_dir": str(self._config.reform_dir / scenario_id),
+            "reform_dir": str(reform_base / scenario_id),
         }
+
+    @staticmethod
+    def _duration_weighted_z(z_mult: float, duration_years: float) -> list[float]:
+        """Annual Z values for a disruption lasting ``duration_years``.
+
+        OG-Core is annual, so each model year gets the shock weighted by the
+        fraction of that year the disruption lasts: full years carry
+        ``z_mult``, the final partial year ``1 + (z_mult - 1) * fraction``.
+        A 5-month disruption is therefore a 5/12-weighted year-1 shock, not
+        a full year at full strength (runs before 2026-11-13 rounded the
+        window up to one full year). Returns at least one value.
+        """
+        d = max(0.0, float(duration_years))
+        full = int(d)
+        frac = d - full
+        path = [float(z_mult)] * full
+        if frac > 1e-9 or not path:
+            path.append(1.0 + (float(z_mult) - 1.0) * frac)
+        return path
+
+    @staticmethod
+    def _delta_annual_update(base: float, adj: float) -> float:
+        """Baseline economic depreciation plus the shock drag, kept in [0, 1]."""
+        return float(min(1.0, max(0.0, float(base) + float(adj))))
+
+    _SHARED_SETTINGS: tuple[str, ...] = ("start_year", "budget_balance", "maxiter")
+    _BASELINE_STAMP = "pipeline_baseline_settings.json"
+    _BASELINE_MARKER = "BASELINE_SOLVE_IN_PROGRESS.json"
+
+    @classmethod
+    def _write_baseline_marker(cls, baseline_dir: Path) -> None:
+        import json
+        import socket
+
+        (baseline_dir / cls._BASELINE_MARKER).write_text(json.dumps({
+            "job_id": os.environ.get("SLURM_JOB_ID"),
+            "host": socket.gethostname(),
+            "pid": os.getpid(),
+            "started": time.time(),
+        }), encoding="utf-8")
+
+    @classmethod
+    def _live_baseline_marker(cls, baseline_dir: Path, max_age_s: float = 48 * 3600) -> str | None:
+        """Describe the job solving ``baseline_dir`` if it is still alive, else None.
+
+        A marker naming a Slurm job is live while ``squeue`` lists that job;
+        otherwise a marker from this host is live while its pid exists. A
+        marker older than ``max_age_s`` is treated as stale.
+        """
+        import json
+        import socket
+        import subprocess
+
+        path = baseline_dir / cls._BASELINE_MARKER
+        if not path.exists():
+            return None
+        try:
+            m = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return None
+        if time.time() - float(m.get("started") or path.stat().st_mtime) > max_age_s:
+            return None
+        job = m.get("job_id")
+        if job and str(job) != os.environ.get("SLURM_JOB_ID"):
+            try:
+                out = subprocess.run(["squeue", "-h", "-j", str(job), "-o", "%T"],
+                                     capture_output=True, text=True, timeout=30).stdout.strip()
+            except (OSError, subprocess.SubprocessError):
+                return f"slurm job {job} (squeue unavailable; assuming live)"
+            return f"slurm job {job} {out}" if out else None
+        pid = m.get("pid")
+        if pid and m.get("host") == socket.gethostname() and int(pid) != os.getpid():
+            if os.name == "nt":  # os.kill(pid, 0) terminates the process on Windows
+                return f"pid {pid} on {m.get('host')}"
+            try:
+                os.kill(int(pid), 0)
+            except OSError:
+                return None
+            return f"pid {pid} on {m.get('host')}"
+        return None
+
+    @classmethod
+    def _write_baseline_stamp(cls, baseline_dir: Path, shared: dict[str, Any]) -> None:
+        import json
+
+        (baseline_dir / cls._BASELINE_STAMP).write_text(
+            json.dumps(shared, sort_keys=True), encoding="utf-8"
+        )
+
+    @classmethod
+    def _baseline_complete(
+        cls,
+        baseline_dir: Path,
+        solution_method: str,
+        shared: dict[str, Any] | None = None,
+    ) -> bool:
+        """True when the cached baseline has every file the reform needs.
+
+        A TPI reform needs the baseline transition path as well as the
+        steady state; the earlier check looked only for ``SS_vars.pkl``,
+        so a baseline cached from an SS-only run silently produced no
+        GDP / wage / consumption paths. When ``shared`` settings are
+        given, the baseline must also carry a stamp written with the same
+        settings (a cache solved with different settings is re-solved).
+        """
+        import json
+
+        if not (baseline_dir / "SS" / "SS_vars.pkl").exists():
+            return False
+        if solution_method == "TPI" and not (baseline_dir / "TPI" / "TPI_vars.pkl").exists():
+            return False
+        if shared is not None:
+            stamp = baseline_dir / cls._BASELINE_STAMP
+            if not stamp.exists():
+                return False
+            try:
+                return json.loads(stamp.read_text(encoding="utf-8")) == json.loads(
+                    json.dumps(shared, sort_keys=True)
+                )
+            except (OSError, ValueError):
+                return False
+        return True
 
     # ------------------------------------------------------------------
     # Execution
@@ -474,17 +633,53 @@ class OpenCGEAdapter(ModelAdapter):
             )
             self._apply_calibration(p_baseline)
 
-            baseline_done = (baseline_dir / "SS" / "SS_vars.pkl").exists()
-            if not baseline_done or not self._config.skip_baseline_if_present:
+            # Settings shared by baseline and reform, so the two solves
+            # differ only in the shock.
+            shared = {
+                k: reform_dict[k]
+                for k in self._SHARED_SETTINGS
+                if k in reform_dict
+            }
+            if shared:
+                p_baseline.update_specifications(shared)
+            baseline_done = self._baseline_complete(
+                baseline_dir, self._config.solution_method, shared
+            )
+            require_cached = os.environ.get("HORMUZ_OPENCGE_REQUIRE_BASELINE") == "1"
+            if require_cached and not baseline_done:
+                # Parallel reform cells share one baseline directory; a cell
+                # must never start solving (and overwriting) it on its own.
+                raise RuntimeError(
+                    f"OpenCGE baseline cache at {baseline_dir} is incomplete or was solved with "
+                    f"different settings ({shared}); HORMUZ_OPENCGE_REQUIRE_BASELINE=1 forbids "
+                    "re-solving it here. Solve the baseline in a single job first."
+                )
+            if not require_cached and (not baseline_done or not self._config.skip_baseline_if_present):
+                # The baseline directory is shared by every job on the
+                # cluster; refuse to start while another live job is solving
+                # it (run 89206 vs revision job 89217, 2026-11-08).
+                busy = self._live_baseline_marker(baseline_dir)
+                if busy:
+                    raise RuntimeError(
+                        f"OpenCGE baseline at {baseline_dir} is being solved by another job ({busy}); "
+                        "not starting a second solve into the same directory."
+                    )
+                self._write_baseline_marker(baseline_dir)
+                (baseline_dir / self._BASELINE_STAMP).unlink(missing_ok=True)
                 logger.info(
                     "OpenCGE: running baseline (this may take 30+ minutes)..."
                 )
-                runner(p_baseline, time_path=False, client=client)
-                runner(
-                    p_baseline,
-                    time_path=(self._config.solution_method == "TPI"),
-                    client=client,
-                )
+                try:
+                    # runner(time_path=True) solves the steady state first and
+                    # then the transition path, so one call covers both.
+                    runner(
+                        p_baseline,
+                        time_path=(self._config.solution_method == "TPI"),
+                        client=client,
+                    )
+                    self._write_baseline_stamp(baseline_dir, shared)
+                finally:
+                    (baseline_dir / self._BASELINE_MARKER).unlink(missing_ok=True)
 
             # 2. Build reform Specifications and apply the reform_dict.
             p_reform = Specifications(
@@ -494,7 +689,13 @@ class OpenCGEAdapter(ModelAdapter):
                 num_workers=self._config.num_workers,
             )
             self._apply_calibration(p_reform)
-            p_reform.update_specifications(reform_dict)
+            reform_update = dict(reform_dict)
+            base_delta = getattr(p_reform, "delta_annual", 0.05)
+            delta_adj = float(inputs.get("delta_annual_adj", 0.0) or 0.0)
+            reform_update["delta_annual"] = self._delta_annual_update(
+                base_delta, delta_adj
+            )
+            p_reform.update_specifications(reform_update)
 
             # 3. Run reform.
             logger.info(
@@ -502,9 +703,11 @@ class OpenCGEAdapter(ModelAdapter):
                 scenario_id,
                 self._config.time_path_iter,
             )
-            runner(p_reform, time_path=False, client=client)
-            if self._config.solution_method == "TPI":
-                runner(p_reform, time_path=True, client=client)
+            runner(
+                p_reform,
+                time_path=(self._config.solution_method == "TPI"),
+                client=client,
+            )
 
             elapsed = time.time() - start
 
@@ -512,6 +715,10 @@ class OpenCGEAdapter(ModelAdapter):
             outputs = self._read_outputs(baseline_dir, reform_dir)
             outputs["_applied_shocks"] = inputs.get("applied_shocks", {})
             outputs["_duration_years"] = inputs.get("duration_years")
+            outputs["_capital_drag_applied"] = bool(inputs.get("capital_drag_applied", True))
+            outputs["_z_path_shock_years"] = [
+                row[0] for row in reform_dict.get("Z", []) if row and row[0] != 1.0
+            ]
 
             # OG-Core is single-country (US) by construction. Surface
             # the headline US response as a one-row ``regional_vars``
@@ -529,7 +736,7 @@ class OpenCGEAdapter(ModelAdapter):
                 compute_regional_macro_outcomes,
             )
             outputs["regional_context_vars"] = compute_regional_macro_outcomes(
-                applied, duration_months, regime="long_run"
+                self._kernel_shocks(applied), duration_months, regime="long_run"
             )
             outputs["_regional_source"] = "ogcore_us_native_plus_kernel_context"
 
@@ -635,6 +842,24 @@ class OpenCGEAdapter(ModelAdapter):
         return out
 
     @staticmethod
+    def _kernel_shocks(applied: dict[str, Any]) -> dict[str, float]:
+        """Reduce ``applied_shocks`` to the ``commodity -> percent`` map the kernel takes.
+
+        ``translate_inputs`` records each commodity as a dict
+        (``shock_pct``, ``Z_delta``, ``delta_annual_delta``). The kernel
+        silently drops non-numeric values, so passing the dicts through
+        produced an all-zero ``regional_context_vars`` table in both
+        supplementary runs (supp_full_20260504_222710 and
+        supp_full_mkt_20260504_222710).
+        """
+        shocks: dict[str, float] = {}
+        for commodity, rec in (applied or {}).items():
+            value = rec.get("shock_pct") if isinstance(rec, dict) else rec
+            if isinstance(value, (int, float)) and not isinstance(value, bool):
+                shocks[commodity] = float(value)
+        return shocks
+
+    @staticmethod
     def _build_us_regional_row(outputs: dict[str, Any]) -> list[dict[str, Any]]:
         """Build a single-row ``regional_vars`` table for OG-Core's US response.
 
@@ -668,13 +893,25 @@ class OpenCGEAdapter(ModelAdapter):
             logger.warning("Failed to load %s: %s", path, exc)
             return None
 
+    # OG-Core >= 0.10 saves steady-state aggregates under short keys
+    # ("Y", "C", ...; see ogcore/SS.py SS_solver ``output``). Older
+    # releases used "Yss"/"Css"; the "_ss" spellings are kept as a last
+    # fallback because the adapter originally read them.
+    _SS_KEYS: tuple[str, ...] = ("Y", "C", "K", "L", "w", "r", "BQ", "I", "G", "D")
+
     @staticmethod
-    def _summarize_ss(ss: dict[str, Any]) -> dict[str, Any]:
-        """Reduce a SS_vars dict to scalar / 1-D summaries for serialization."""
+    def _ss_value(ss: dict[str, Any], key: str) -> Any:
+        for candidate in (key, f"{key}ss", f"{key}_ss"):
+            if candidate in ss and ss[candidate] is not None:
+                return ss[candidate]
+        return None
+
+    @classmethod
+    def _summarize_ss(cls, ss: dict[str, Any]) -> dict[str, Any]:
+        """Reduce a SS_vars dict to scalar summaries for serialization."""
         summary: dict[str, Any] = {}
-        for key in ("Y_ss", "C_ss", "K_ss", "L_ss", "w_ss", "r_ss",
-                    "BQ_ss", "T_H_ss", "Iss"):
-            v = ss.get(key)
+        for key in cls._SS_KEYS:
+            v = cls._ss_value(ss, key)
             if v is None:
                 continue
             try:
@@ -713,18 +950,20 @@ class OpenCGEAdapter(ModelAdapter):
                 out.append(round((r[i] - b[i]) / b[i] * 100.0, 4))
         return out
 
-    @staticmethod
+    @classmethod
     def _compute_welfare_change(
+        cls,
         ss_baseline: dict[str, Any],
         ss_reform: dict[str, Any],
     ) -> float | None:
-        """Compute Hicksian-equivalent welfare change at steady state.
+        """Steady-state aggregate-consumption change, a first-order welfare proxy.
 
-        Uses aggregate consumption as a proxy (true EV requires the full
-        utility function and lifetime path; this is a first-order summary).
+        This is not a Hicksian equivalent variation (that needs the full
+        utility function and lifetime paths); it is reported as
+        ``welfare_pct_change`` for comparability with the other CGEs.
         """
-        cb = ss_baseline.get("C_ss")
-        cr = ss_reform.get("C_ss")
+        cb = cls._ss_value(ss_baseline, "C")
+        cr = cls._ss_value(ss_reform, "C")
         if cb is None or cr is None:
             return None
         try:

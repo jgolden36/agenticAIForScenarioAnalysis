@@ -1,0 +1,65 @@
+# Elasticity knobs for scripts/revision/elasticity_lhs.py (port of the
+# AgResilience E9 Latin-hypercube sensitivity analysis).
+#
+# Every knob is multiplied by a factor drawn in [low, high] (default
+# 0.5-1.5, as in E9). Two kinds:
+#   constant    a module-level calibration constant read at call time
+#               (module + attribute); restored after every draw
+#   forwarding  a transform argument of an upstream-forwarding rule in
+#               configs/upstream_forwarding_mapping.yaml (model, param,
+#               source_index, field)
+#
+# `models` is the analytical chain the draws run: commodity models with the
+# analyst-baseline inputs, then the forwarding barrier, then the downstream
+# and macro models (the same order the pipeline uses).
+# `outputs` are the headline outputs whose bands, first-order indices and
+# cross-scenario orderings are reported.
+
+seed: 20261010
+n_draws: 500
+low: 0.5
+high: 1.5
+
+models:
+  - poles_jrc
+  - world_fertilizer
+  - futures
+  - world_helium_model
+  - lngst
+  - aisdb
+  - ais_project
+  - cwatm
+  - apsim
+  - argonne_abm
+  - marketsim
+  - fed_oil
+  - nrel
+  - pycge
+  - mpsge_jl
+
+knobs:
+  - {name: gdp_elasticity_oil, kind: constant, module: src.models.macro.macro_kernel, attribute: GDP_ELASTICITY_TO_OIL_PCT,
+     source: "Hamilton (2003; 2009) -0.025 pp GDP per 1% oil"}
+  - {name: cpi_elasticity_oil, kind: constant, module: src.models.macro.macro_kernel, attribute: CPI_ELASTICITY_TO_OIL_PCT,
+     source: "Blanchard & Gali (2007) 0.04 pp CPI per 1% oil"}
+  - {name: gdp_elasticity_lng, kind: constant, module: src.models.macro.macro_kernel, attribute: GDP_ELASTICITY_TO_LNG_PCT}
+  - {name: gdp_elasticity_fertilizer, kind: constant, module: src.models.macro.macro_kernel, attribute: GDP_ELASTICITY_TO_FERTILIZER_PCT}
+  - {name: cpi_elasticity_fertilizer, kind: constant, module: src.models.macro.macro_kernel, attribute: CPI_ELASTICITY_TO_FERTILIZER_PCT}
+  - {name: oil_demand_elasticity, kind: constant, module: src.models.oil.poles_jrc, attribute: _ELASTICITY_DEMAND,
+     source: "POLES-JRC reduction short-run demand elasticity -0.06"}
+  - {name: oil_supply_elasticity, kind: constant, module: src.models.oil.poles_jrc, attribute: _ELASTICITY_SUPPLY}
+  - {name: gas_to_nitrogen_passthrough, kind: constant, module: src.models.fertilizer.world_fertilizer, attribute: _NG_PASSTHROUGH_TO_NITROGEN}
+  - {name: me_loss_to_nitrogen_passthrough, kind: constant, module: src.models.fertilizer.world_fertilizer, attribute: _ME_LOSS_PASSTHROUGH_TO_NITROGEN}
+  - {name: freight_elasticity, kind: constant, module: src.models.shipping.aisdb, attribute: _FREIGHT_ELASTICITY}
+  - {name: trade_cost_to_capex, kind: constant, module: src.models.macro.mpsge_jl, attribute: _TRADE_COST_TO_CAPEX_PASSTHROUGH}
+  - {name: fertilizer_demand_elasticity, kind: forwarding, model: apsim, param: fertilizer_application_reduction_pct,
+     source_index: 0, field: elasticity, source: "Hendricks & Smith (2018) own-price elasticity 0.35"}
+
+outputs:
+  pycge: [gdp_impact_pct, cpi_inflation_pct]
+  mpsge_jl: [gdp_impact_pct]
+  fed_oil: [peak_gdp_impact_pct]
+  poles_jrc: [peak_price_change_pct]
+  world_fertilizer: [fertilizer_price_index_pct]
+  apsim: [mean_yield_pct_change]
+  marketsim: [consumer_surplus_loss_bn_usd]

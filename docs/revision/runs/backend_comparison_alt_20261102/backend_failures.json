@@ -1,0 +1,137 @@
+{
+  "batch": "alt_20261102",
+  "summary": [
+    {
+      "tag": "groq-qwen3.8-27b",
+      "model": "qwen/qwen3.8-27b",
+      "runs": 8,
+      "ok": 8,
+      "failed_at_brief": 0,
+      "failed_at_scenarios": 0,
+      "error_classes": {}
+    },
+    {
+      "tag": "anthropic-haiku-4-5",
+      "model": "claude-haiku-4-5-20251001",
+      "runs": 8,
+      "ok": 1,
+      "failed_at_brief": 7,
+      "failed_at_scenarios": 0,
+      "error_classes": {
+        "brief_schema_validation": 7
+      }
+    },
+    {
+      "tag": "groq-qwen3.6-27b",
+      "model": "qwen/qwen3.6-27b",
+      "runs": 8,
+      "ok": 1,
+      "failed_at_brief": 0,
+      "failed_at_scenarios": 7,
+      "error_classes": {
+        "scenario_count_short": 6,
+        "scenario_schema_validation": 1
+      }
+    }
+  ],
+  "failures": [
+    {
+      "tag": "groq-qwen3.6-27b",
+      "week": "20260215",
+      "stage": "scenarios",
+      "error_class": "scenario_count_short",
+      "error": "ValueError: Scenario generation returned 4 of 5 scenarios; the reply may have been truncated at the output-token cap (PIPELINE_LLM_MAX_COMPLETION_TOKENS)."
+    },
+    {
+      "tag": "groq-qwen3.6-27b",
+      "week": "20260222",
+      "stage": "scenarios",
+      "error_class": "scenario_count_short",
+      "error": "ValueError: Scenario generation returned 4 of 5 scenarios; the reply may have been truncated at the output-token cap (PIPELINE_LLM_MAX_COMPLETION_TOKENS)."
+    },
+    {
+      "tag": "groq-qwen3.6-27b",
+      "week": "20260301",
+      "stage": "scenarios",
+      "error_class": "scenario_count_short",
+      "error": "ValueError: Scenario generation returned 4 of 5 scenarios; the reply may have been truncated at the output-token cap (PIPELINE_LLM_MAX_COMPLETION_TOKENS)."
+    },
+    {
+      "tag": "groq-qwen3.6-27b",
+      "week": "20260308",
+      "stage": "scenarios",
+      "error_class": "scenario_count_short",
+      "error": "ValueError: Scenario generation returned 4 of 5 scenarios; the reply may have been truncated at the output-token cap (PIPELINE_LLM_MAX_COMPLETION_TOKENS)."
+    },
+    {
+      "tag": "groq-qwen3.6-27b",
+      "week": "20260315",
+      "stage": "scenarios",
+      "error_class": "scenario_count_short",
+      "error": "ValueError: Scenario generation returned 4 of 5 scenarios; the reply may have been truncated at the output-token cap (PIPELINE_LLM_MAX_COMPLETION_TOKENS)."
+    },
+    {
+      "tag": "groq-qwen3.6-27b",
+      "week": "20260329",
+      "stage": "scenarios",
+      "error_class": "scenario_count_short",
+      "error": "ValueError: Scenario generation returned 4 of 5 scenarios; the reply may have been truncated at the output-token cap (PIPELINE_LLM_MAX_COMPLETION_TOKENS)."
+    },
+    {
+      "tag": "groq-qwen3.6-27b",
+      "week": "20260405",
+      "stage": "scenarios",
+      "error_class": "scenario_schema_validation",
+      "error": "langchain_core.exceptions.OutputParserException: Failed to parse ScenarioSet from completion [{\"crisis_description\": \"In February 2026, the Strait of Hormuz \u2014 the world's most critical oil and LNG chokepoint \u2014 is closed to commercial shipping following a military escalation between Iran and a US/Isr"
+    },
+    {
+      "tag": "anthropic-haiku-4-5",
+      "week": "20260222",
+      "stage": "brief",
+      "error_class": "brief_schema_validation",
+      "error": "pydantic_core._pydantic_core.ValidationError: 1 validation error for WeeklyBrief: observed_indicators"
+    },
+    {
+      "tag": "anthropic-haiku-4-5",
+      "week": "20260301",
+      "stage": "brief",
+      "error_class": "brief_schema_validation",
+      "error": "pydantic_core._pydantic_core.ValidationError: 1 validation error for WeeklyBrief: observed_indicators"
+    },
+    {
+      "tag": "anthropic-haiku-4-5",
+      "week": "20260308",
+      "stage": "brief",
+      "error_class": "brief_schema_validation",
+      "error": "pydantic_core._pydantic_core.ValidationError: 1 validation error for WeeklyBrief: observed_indicators"
+    },
+    {
+      "tag": "anthropic-haiku-4-5",
+      "week": "20260315",
+      "stage": "brief",
+      "error_class": "brief_schema_validation",
+      "error": "pydantic_core._pydantic_core.ValidationError: 1 validation error for WeeklyBrief: observed_indicators"
+    },
+    {
+      "tag": "anthropic-haiku-4-5",
+      "week": "20260322",
+      "stage": "brief",
+      "error_class": "brief_schema_validation",
+      "error": "pydantic_core._pydantic_core.ValidationError: 1 validation error for WeeklyBrief: observed_indicators"
+    },
+    {
+      "tag": "anthropic-haiku-4-5",
+      "week": "20260329",
+      "stage": "brief",
+      "error_class": "brief_schema_validation",
+      "error": "pydantic_core._pydantic_core.ValidationError: 1 validation error for WeeklyBrief: observed_indicators"
+    },
+    {
+      "tag": "anthropic-haiku-4-5",
+      "week": "20260405",
+      "stage": "brief",
+      "error_class": "brief_schema_validation",
+      "error": "pydantic_core._pydantic_core.ValidationError: 1 validation error for WeeklyBrief: observed_indicators"
+    }
+  ]
+}

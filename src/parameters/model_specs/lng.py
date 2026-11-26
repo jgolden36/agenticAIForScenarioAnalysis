@@ -207,7 +207,9 @@ LNG_MODEL_SPECS: dict[str, dict] = {
             },
         ],
         "output_variables": [
-            {"name": "total_windfall_usd", "description": "Cumulative windfall over duration", "unit": "USD"},
+            {"name": "total_windfall_usd", "description": "Cumulative windfall over duration, against the workbook's fixed pre-crisis cargo profit", "unit": "USD"},
+            {"name": "windfall_at_flat_start_prices_usd", "description": "The same calculation with hub prices and freight held at the schedule start (no scenario rise)", "unit": "USD"},
+            {"name": "windfall_from_price_rise_usd", "description": "total_windfall_usd minus windfall_at_flat_start_prices_usd: the windfall due to the scenario's rise in hub prices and freight", "unit": "USD"},
             {"name": "peak_monthly_windfall", "description": "Largest single-month windfall", "unit": "USD"},
             {"name": "peak_month", "description": "Month of peak windfall", "unit": "month"},
             {"name": "weeks_to_match_ukraine_windfall", "description": "Weeks to match Ukraine-era windfall ($83.7B)", "unit": "weeks"},

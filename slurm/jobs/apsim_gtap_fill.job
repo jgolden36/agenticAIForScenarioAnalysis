@@ -1,0 +1,149 @@
+#!/bin/bash
+# ==================================================================
+# APSIM-GTAP (AgResilience) cells for existing runs, no LLM. CPU only.
+#
+# Modes (HORMUZ_APSIM_GTAP_MODE):
+#   gate  one scenario (swift_contained) of the May run: checks that the
+#         GTAP server starts, the zero-shock residual is <= 1e-4 % and the
+#         GTAP-crop fixed point converges. Writes nothing into any run's
+#         state; results in docs/revision/runs/apsim_gtap_gate/.
+#   fill  all scenarios of the May run (from data/pipeline_state_may_filled)
+#         and of Run A, each merged into a NEW copy of that run's state:
+#           data/pipeline_state_may_apsimgtap/
+#           data/pipeline_state_runA_apsimgtap/
+#         Source state directories are only read.
+#
+# Prerequisites (checked before anything runs):
+#   configs/model_configs/apsim_gtap.yaml (cluster-only; copy the .example)
+#   ~/Agresiliency on branch experiments-and-slurm-setup with the
+#   shock-repair-v2 calibration and src/tools/saved_artifacts/, the agres
+#   env's python, and ~/.juliaup/bin/julia.
+#
+# Never run this concurrently with a job that writes data/outputs (it does
+# not write there, but the merge copies state files that such a job could
+# be rewriting).
+#
+#   sbatch --exclude=orion,tesla1,tesla2,h100 --export=ALL,HORMUZ_APSIM_GTAP_MODE=gate slurm/jobs/apsim_gtap_fill.job
+#   sbatch --exclude=orion,tesla1,tesla2,h100 --export=ALL,HORMUZ_APSIM_GTAP_MODE=fill slurm/jobs/apsim_gtap_fill.job
+#
+# Toggles: HORMUZ_MAY_STATE_DIR (data/pipeline_state_may_filled),
+# HORMUZ_RUNA_STATE_DIR (data/pipeline_state), HORMUZ_MAY_RUN_ID,
+# HORMUZ_RUNA_RUN_ID, HORMUZ_CONDA_ENV (hormuz).
+# ==================================================================
+#SBATCH --job-name=hormuz-apsim-gtap
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=32G
+#SBATCH --time=24:00:00
+#SBATCH --output=slurm/logs/apsim_gtap_fill-%j.out
+#SBATCH --error=slurm/logs/apsim_gtap_fill-%j.err
+#SBATCH --mail-type=END,FAIL
+
+set -uo pipefail
+
+PROJECT_ROOT="${SLURM_SUBMIT_DIR:-$(pwd)}"
+cd "$PROJECT_ROOT"
+
+MODE="${HORMUZ_APSIM_GTAP_MODE:-gate}"
+MAY_RUN_ID="${HORMUZ_MAY_RUN_ID:-20260504_222710}"
+RUNA_RUN_ID="${HORMUZ_RUNA_RUN_ID:-rev_20261102_llama8b_r2}"
+MAY_STATE="${HORMUZ_MAY_STATE_DIR:-${PROJECT_ROOT}/data/pipeline_state_may_filled}"
+RUNA_STATE="${HORMUZ_RUNA_STATE_DIR:-${PROJECT_ROOT}/data/pipeline_state}"
+FILL_STATE="${PROJECT_ROOT}/data/pipeline_state_apsimgtap_fills"
+
+LOG_DIR="${PROJECT_ROOT}/slurm/logs/apsim_gtap_${MODE}"
+mkdir -p "$LOG_DIR"
+export HORMUZ_LOG_DIR="$LOG_DIR"
+export HORMUZ_STATE_DIR="$LOG_DIR"   # bash-failure records stay out of data/pipeline_state
+source "${PROJECT_ROOT}/slurm/jobs/_common.sh"
+
+export HORMUZ_CONDA_ENV="${HORMUZ_CONDA_ENV:-hormuz}"
+export WANDB_MODE=disabled
+export CUDA_VISIBLE_DEVICES=""
+
+echo "================================================================"
+echo "  APSIM-GTAP ${MODE} job   ${SLURM_JOB_ID:-local} on $(hostname)"
+echo "  May:   ${MAY_RUN_ID}  state ${MAY_STATE}"
+echo "  Run A: ${RUNA_RUN_ID}  state ${RUNA_STATE}"
+echo "  Started at: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+echo "================================================================"
+
+if command -v module >/dev/null 2>&1; then
+    timeout --preserve-status 60s bash -c "module load anaconda3 </dev/null" 2>/dev/null || true
+fi
+# Nodes without the anaconda module (e.g. orion): fall back to ~/miniconda3,
+# where the hormuz env lives.
+if ! command -v conda >/dev/null 2>&1 && [[ -z "${CONDA_EXE:-}" && -x "$HOME/miniconda3/bin/conda" ]]; then
+    export CONDA_EXE="$HOME/miniconda3/bin/conda"
+fi
+if ! hormuz_activate_conda "${HORMUZ_CONDA_ENV}"; then
+    echo "[setup] ERROR: could not activate conda env '${HORMUZ_CONDA_ENV}'"
+    exit 1
+fi
+record_runtime_inventory "apsim_gtap_${MODE}"
+
+# ------------------------------------------------------------------
+# Pre-flight: config and AgResilience assets.
+# ------------------------------------------------------------------
+CFG="${PROJECT_ROOT}/configs/model_configs/apsim_gtap.yaml"
+if [[ ! -f "$CFG" && -z "${HORMUZ_APSIM_GTAP_ROOT:-}" ]]; then
+    echo "[preflight] ERROR: ${CFG} missing (copy apsim_gtap.yaml.example and edit paths)."
+    exit 1
+fi
+python - <<'EOF'
+import sys
+from pathlib import Path
+from src.models.registry import build_default_registry, default_config_dir
+a = build_default_registry(default_config_dir()).get("apsim_gtap")
+cfg = a.agres_config
+if cfg is None:
+    sys.exit("[preflight] apsim_gtap config did not load")
+checks = {
+    "agres_root/src/tools/gtap_server.jl": cfg.agres_root / "src" / "tools" / "gtap_server.jl",
+    "emulator artifacts": cfg.agres_root / "src" / "tools" / "saved_artifacts",
+    "gtap_calib_file": cfg.gtap_calib_file,
+    "python_executable": Path(cfg.python_executable),
+    "julia_executable": Path(cfg.julia_executable),
+}
+bad = [k for k, p in checks.items() if p is None or not Path(p).exists()]
+for k, p in checks.items():
+    print(f"[preflight] {k}: {p} {'OK' if k not in bad else 'MISSING'}")
+sys.exit(1 if bad else 0)
+EOF
+if [[ $? -ne 0 ]]; then
+    echo "[preflight] ERROR: AgResilience assets missing; nothing was run."
+    exit 1
+fi
+git -C "$(python -c 'from src.models.registry import build_default_registry, default_config_dir; print(build_default_registry(default_config_dir()).get("apsim_gtap").agres_config.agres_root)')" \
+    log -1 --format='[preflight] AgResilience commit %h %ad %s' --date=short 2>/dev/null || true
+
+RC=0
+case "$MODE" in
+    gate)
+        python scripts/revision/run_apsim_gtap_fill.py \
+            --source-run-id "$MAY_RUN_ID" --state-dir "$MAY_STATE" \
+            --fill-run-id "gate_apsimgtap_${MAY_RUN_ID}" \
+            --fill-state-dir "${PROJECT_ROOT}/data/pipeline_state_apsimgtap_gate" \
+            --report-dir "${PROJECT_ROOT}/docs/revision/runs/apsim_gtap_gate" \
+            --scenarios swift_contained || RC=$?
+        cat "${PROJECT_ROOT}/docs/revision/runs/apsim_gtap_gate/apsim_gtap_fill.md" 2>/dev/null || true
+        ;;
+    fill)
+        python scripts/revision/run_apsim_gtap_fill.py \
+            --source-run-id "$MAY_RUN_ID" --state-dir "$MAY_STATE" \
+            --fill-run-id "fill_apsimgtap_${MAY_RUN_ID}" --fill-state-dir "$FILL_STATE" \
+            --merge-out-state-dir "${PROJECT_ROOT}/data/pipeline_state_may_apsimgtap" \
+            --report-dir "${PROJECT_ROOT}/docs/revision/runs/${MAY_RUN_ID}_apsimgtap" || RC=$?
+        python scripts/revision/run_apsim_gtap_fill.py \
+            --source-run-id "$RUNA_RUN_ID" --state-dir "$RUNA_STATE" \
+            --fill-run-id "fill_apsimgtap_${RUNA_RUN_ID}" --fill-state-dir "$FILL_STATE" \
+            --merge-out-state-dir "${PROJECT_ROOT}/data/pipeline_state_runA_apsimgtap" \
+            --report-dir "${PROJECT_ROOT}/docs/revision/runs/${RUNA_RUN_ID}_apsimgtap" || RC=$?
+        ;;
+    *)
+        echo "unknown HORMUZ_APSIM_GTAP_MODE=${MODE} (gate|fill)"; exit 2 ;;
+esac
+
+echo "[done] ${MODE} rc=${RC} at $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+exit "$RC"

@@ -415,6 +415,18 @@ models:
       swift_escalated: {fertilizer_application_reduction_pct: 10.0, irrigation_water_reduction_pct: 5.0}
       prolonged_escalated: {fertilizer_application_reduction_pct: 15.0, irrigation_water_reduction_pct: 12.0}
       infrastructure_collapse: {fertilizer_application_reduction_pct: 20.0, irrigation_water_reduction_pct: 35.0}
+  apsim_gtap:
+    # Gulf losses mirror world_fertilizer.middle_east_production_loss_pct and
+    # poles_jrc.supply_loss_mbd; trade_cost_multiplier is replaced by
+    # aisdb.rerouting_cost_multiplier when forwarding is on.
+    default:
+      coupling_elasticity: 1.0
+    by_scenario:
+      swift_contained: {middle_east_fertilizer_production_loss_pct: 60.0, gulf_oil_supply_loss_mbd: 14.0, trade_cost_multiplier: 1.4, disruption_duration_months: 1.25}
+      prolonged_contained: {middle_east_fertilizer_production_loss_pct: 70.0, gulf_oil_supply_loss_mbd: 15.0, trade_cost_multiplier: 1.5, disruption_duration_months: 4.5}
+      swift_escalated: {middle_east_fertilizer_production_loss_pct: 70.0, gulf_oil_supply_loss_mbd: 16.0, trade_cost_multiplier: 1.6, disruption_duration_months: 1.5}
+      prolonged_escalated: {middle_east_fertilizer_production_loss_pct: 80.0, gulf_oil_supply_loss_mbd: 17.0, trade_cost_multiplier: 1.7, disruption_duration_months: 6.0}
+      infrastructure_collapse: {middle_east_fertilizer_production_loss_pct: 85.0, gulf_oil_supply_loss_mbd: 13.5, trade_cost_multiplier: 1.8, disruption_duration_months: 12.0}
   futures:
     default:
       commodities: ["wheat", "corn", "soybeans", "natural_gas", "urea"]

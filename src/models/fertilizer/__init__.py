@@ -1,12 +1,13 @@
 """Fertilizer and agriculture domain model adapters.
 
 Adapters for CAPRI, MAgPIE, SIMPLE-G, World Fertilizer Model, GTAP, APSIM,
-and futures forecasting models. These models assess fertilizer price shocks,
+the coupled APSIM-GTAP model (AgResilience) and futures forecasting models. These models assess fertilizer price shocks,
 crop yield impacts, agricultural trade disruptions, and commodity futures
 trajectories under Strait of Hormuz closure scenarios.
 """
 
 from src.models.fertilizer.apsim import APSIMAdapter
+from src.models.fertilizer.apsim_gtap import APSIMGTAPAdapter
 from src.models.fertilizer.capri import CAPRIAdapter
 from src.models.fertilizer.futures import FuturesAdapter
 from src.models.fertilizer.gtap import GTAPAdapter
@@ -21,5 +22,6 @@ __all__ = [
     "WorldFertilizerAdapter",
     "GTAPAdapter",
     "APSIMAdapter",
+    "APSIMGTAPAdapter",
     "FuturesAdapter",
 ]

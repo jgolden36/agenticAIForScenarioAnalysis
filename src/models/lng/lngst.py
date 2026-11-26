@@ -293,11 +293,21 @@ class LNGSTAdapter(ExcelAdapter):
         )
         impulse = shortfall_pct / max(_LNG_SUPPLY_ELASTICITY, 0.01) / 100.0
 
+        from src.models.market_calibration import active_calibration
+
+        cal = active_calibration()
         hub_price = {
             "henry_hub": _HENRY_HUB_BASELINE,
             "ttf": _TTF_BASELINE,
             "jkm": _JKM_BASELINE,
         }
+        if cal is not None:
+            # JKM spot is not public; the Japan LNG import price is the proxy.
+            hub_price = {
+                "henry_hub": cal.baseline("henry_hub", _HENRY_HUB_BASELINE),
+                "ttf": cal.baseline("ttf", _TTF_BASELINE),
+                "jkm": cal.baseline("lng_japan", _JKM_BASELINE),
+            }
         hub_new = {}
         for hub, baseline in hub_price.items():
             passthrough = _HUB_SHORTFALL_PASSTHROUGH[hub]
@@ -323,9 +333,25 @@ class LNGSTAdapter(ExcelAdapter):
             "ttf_price": hub_new["ttf"],
             "jkm_price": hub_new["jkm"],
             "lng_price_usd_mmbtu": lng_price_usd_mmbtu,
+            # Percent change against this run's own hub baselines, so the
+            # macro forwarding rules need no fixed baseline (they used to
+            # convert Energy Flux's netback, a margin, against 10.0).
+            "ttf_price_change_pct": round((hub_new["ttf"] / hub_price["ttf"] - 1.0) * 100.0, 3),
+            "jkm_price_change_pct": round((hub_new["jkm"] / hub_price["jkm"] - 1.0) * 100.0, 3),
+            "henry_hub_price_change_pct": round(
+                (hub_new["henry_hub"] / hub_price["henry_hub"] - 1.0) * 100.0, 3
+            ),
+            "hub_price_change_pct": {
+                hub: round((hub_new[hub] / hub_price[hub] - 1.0) * 100.0, 3)
+                for hub in hub_price
+            },
             "hub_baseline_prices": hub_price,
             "hub_passthrough_coefficients": dict(_HUB_SHORTFALL_PASSTHROUGH),
         }
+        if cal is not None:
+            outputs["_calibration"] = cal.provenance(
+                {"hub_baseline_prices": hub_price, "jkm_proxy": "lng_japan"}
+            )
 
         return ModelOutput(
             model_id=self.model_id,

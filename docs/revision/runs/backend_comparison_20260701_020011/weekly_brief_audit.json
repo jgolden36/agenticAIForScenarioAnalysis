@@ -1,0 +1,45 @@
+{
+  "summary": [
+    {
+      "backend": "anthropic-sonnet-4-6",
+      "tokens": 394,
+      "matched": 386,
+      "substantive": 219,
+      "substantive_matched": 211,
+      "briefs": 8,
+      "match_rate": 0.9797,
+      "substantive_match_rate": 0.9635
+    },
+    {
+      "backend": "groq-gpt-oss-120b",
+      "tokens": 141,
+      "matched": 139,
+      "substantive": 97,
+      "substantive_matched": 95,
+      "briefs": 6,
+      "match_rate": 0.9858,
+      "substantive_match_rate": 0.9794
+    },
+    {
+      "backend": "groq-gpt-oss-20b",
+      "tokens": 86,
+      "matched": 85,
+      "substantive": 60,
+      "substantive_matched": 59,
+      "briefs": 6,
+      "match_rate": 0.9884,
+      "substantive_match_rate": 0.9833
+    },
+    {
+      "backend": "groq-llama4-scout",
+      "tokens": 54,
+      "matched": 54,
+      "substantive": 41,
+      "substantive_matched": 41,
+      "briefs": 7,
+      "match_rate": 1.0,
+      "substantive_match_rate": 1.0
+    }
+  ],
+  "weeks_without_articles": []
+}

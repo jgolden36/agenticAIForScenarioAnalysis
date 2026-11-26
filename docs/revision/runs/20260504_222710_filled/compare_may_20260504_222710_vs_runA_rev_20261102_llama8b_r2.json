@@ -1,0 +1,308 @@
+{
+  "label_a": "may_20260504_222710",
+  "label_b": "runA_rev_20261102_llama8b_r2",
+  "dir_a": "data/20260504_222710",
+  "dir_b": "data/reports/rev_20261102_llama8b_r2",
+  "tolerance_pct": 0.5,
+  "output_keys": 1643,
+  "output_categories": {
+    "only_in_b": 658,
+    "identical": 675,
+    "only_in_a": 5,
+    "differs": 145,
+    "within_tolerance": 160
+  },
+  "input_keys": 30,
+  "input_categories": {
+    "identical": 30
+  },
+  "cells_compared": 89,
+  "cells_with_identical_inputs": 5,
+  "determinism_violations": [],
+  "status_pairs": {
+    "absent->completed": 40,
+    "absent->failed": 14,
+    "absent->skipped": 16,
+    "completed->completed": 44,
+    "completed->skipped": 5,
+    "failed->failed": 18,
+    "skipped->skipped": 32
+  },
+  "largest_output_differences": [
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "apsim",
+      "output_key": "crop_yield_loss_pct",
+      "group": "outputs",
+      "value_may_20260504_222710": -0.0,
+      "value_runA_rev_20261102_llama8b_r2": 10.813,
+      "abs_diff": 10.813,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "apsim",
+      "output_key": "fertilizer_application_reduction_pct",
+      "group": "outputs",
+      "value_may_20260504_222710": 0.0,
+      "value_runA_rev_20261102_llama8b_r2": 8.3146,
+      "abs_diff": 8.3146,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "apsim",
+      "output_key": "mean_yield_pct_change",
+      "group": "outputs",
+      "value_may_20260504_222710": 0.0,
+      "value_runA_rev_20261102_llama8b_r2": -10.813,
+      "abs_diff": -10.813,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "apsim",
+      "output_key": "n_limited_yield_share_by_crop.maize",
+      "group": "outputs",
+      "value_may_20260504_222710": 0.0,
+      "value_runA_rev_20261102_llama8b_r2": 1.0,
+      "abs_diff": 1.0,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "apsim",
+      "output_key": "n_limited_yield_share_by_crop.rice",
+      "group": "outputs",
+      "value_may_20260504_222710": 0.0,
+      "value_runA_rev_20261102_llama8b_r2": 1.0,
+      "abs_diff": 1.0,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "apsim",
+      "output_key": "n_limited_yield_share_by_crop.wheat",
+      "group": "outputs",
+      "value_may_20260504_222710": 0.0,
+      "value_runA_rev_20261102_llama8b_r2": 1.0,
+      "abs_diff": 1.0,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "apsim",
+      "output_key": "n_use_efficiency_change_pct",
+      "group": "outputs",
+      "value_may_20260504_222710": 0.0,
+      "value_runA_rev_20261102_llama8b_r2": 4.989,
+      "abs_diff": 4.989,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "apsim",
+      "output_key": "yield_pct_change_by_crop.maize",
+      "group": "outputs",
+      "value_may_20260504_222710": -0.0,
+      "value_runA_rev_20261102_llama8b_r2": -12.274,
+      "abs_diff": -12.274,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "apsim",
+      "output_key": "yield_pct_change_by_crop.rice",
+      "group": "outputs",
+      "value_may_20260504_222710": -0.0,
+      "value_runA_rev_20261102_llama8b_r2": -8.767,
+      "abs_diff": -8.767,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "prolonged_contained",
+      "model_id": "apsim",
+      "output_key": "yield_pct_change_by_crop.wheat",
+      "group": "outputs",
+      "value_may_20260504_222710": -0.0,
+      "value_runA_rev_20261102_llama8b_r2": -11.397,
+      "abs_diff": -11.397,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "output_key": "crop_yield_loss_pct",
+      "group": "outputs",
+      "value_may_20260504_222710": -0.0,
+      "value_runA_rev_20261102_llama8b_r2": 19.226,
+      "abs_diff": 19.226,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "output_key": "fertilizer_application_reduction_pct",
+      "group": "outputs",
+      "value_may_20260504_222710": 0.0,
+      "value_runA_rev_20261102_llama8b_r2": 8.3146,
+      "abs_diff": 8.3146,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "output_key": "irrigation_water_reduction_pct",
+      "group": "outputs",
+      "value_may_20260504_222710": 0.0,
+      "value_runA_rev_20261102_llama8b_r2": 9.091,
+      "abs_diff": 9.091,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "output_key": "mean_yield_pct_change",
+      "group": "outputs",
+      "value_may_20260504_222710": 0.0,
+      "value_runA_rev_20261102_llama8b_r2": -19.226,
+      "abs_diff": -19.226,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "output_key": "n_limited_yield_share_by_crop.maize",
+      "group": "outputs",
+      "value_may_20260504_222710": 0.0,
+      "value_runA_rev_20261102_llama8b_r2": 0.582,
+      "abs_diff": 0.582,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "output_key": "n_limited_yield_share_by_crop.rice",
+      "group": "outputs",
+      "value_may_20260504_222710": 0.0,
+      "value_runA_rev_20261102_llama8b_r2": 0.472,
+      "abs_diff": 0.472,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "output_key": "n_limited_yield_share_by_crop.wheat",
+      "group": "outputs",
+      "value_may_20260504_222710": 0.0,
+      "value_runA_rev_20261102_llama8b_r2": 0.633,
+      "abs_diff": 0.633,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "output_key": "n_use_efficiency_change_pct",
+      "group": "outputs",
+      "value_may_20260504_222710": 0.0,
+      "value_runA_rev_20261102_llama8b_r2": 4.989,
+      "abs_diff": 4.989,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "output_key": "water_limited_yield_share_by_crop.maize",
+      "group": "outputs",
+      "value_may_20260504_222710": 0.0,
+      "value_runA_rev_20261102_llama8b_r2": 0.418,
+      "abs_diff": 0.418,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "output_key": "water_limited_yield_share_by_crop.rice",
+      "group": "outputs",
+      "value_may_20260504_222710": 0.0,
+      "value_runA_rev_20261102_llama8b_r2": 0.528,
+      "abs_diff": 0.528,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "output_key": "water_limited_yield_share_by_crop.wheat",
+      "group": "outputs",
+      "value_may_20260504_222710": 0.0,
+      "value_runA_rev_20261102_llama8b_r2": 0.367,
+      "abs_diff": 0.367,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "output_key": "yield_pct_change_by_crop.maize",
+      "group": "outputs",
+      "value_may_20260504_222710": -0.0,
+      "value_runA_rev_20261102_llama8b_r2": -21.085,
+      "abs_diff": -21.085,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "output_key": "yield_pct_change_by_crop.rice",
+      "group": "outputs",
+      "value_may_20260504_222710": -0.0,
+      "value_runA_rev_20261102_llama8b_r2": -18.588,
+      "abs_diff": -18.588,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "swift_escalated",
+      "model_id": "apsim",
+      "output_key": "yield_pct_change_by_crop.wheat",
+      "group": "outputs",
+      "value_may_20260504_222710": -0.0,
+      "value_runA_rev_20261102_llama8b_r2": -18.006,
+      "abs_diff": -18.006,
+      "rel_diff_pct": 100.0,
+      "category": "differs"
+    },
+    {
+      "scenario_id": "infrastructure_collapse",
+      "model_id": "mpsge_jl",
+      "output_key": "commodity_price_shocks.capex",
+      "group": "outputs",
+      "value_may_20260504_222710": 5.607000000000001,
+      "value_runA_rev_20261102_llama8b_r2": 2.8035000000000005,
+      "abs_diff": -2.8035,
+      "rel_diff_pct": 50.0,
+      "category": "differs"
+    }
+  ]
+}

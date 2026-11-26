@@ -1,0 +1,11 @@
+# Provenance chain: `oil_price_shock_pct` from `mpsge_jl` (scenario swift_escalated)
+
+Run `20260504_222710`; chain links found: narrative=yes, parameters=yes, model_run=yes, synthesis=yes (complete)
+
+| step | content |
+|---|---|
+| 1. Scenario narrative (Swift Escalated Conflict) | **trade_disruption_spec**: "The closure disrupts approximately 21% of global oil supply and 25% of global LNG trade."<br>**disruption_duration_months**: "The closure lasted for 4 months, causing significant economic disruption." |
+| 2. Extracted parameters (analyst validation: approved) | `oil_price_shock_pct` = 0 percent (confidence low)<br>`trade_disruption_spec` = {'corridors': ['Strait of Hormuz'], 'volume_disruption_pct': 0.21} spec (confidence high)<br>`commodity_price_shocks` = {'oil': 0, 'lng': 25, 'fertilizer': 0, 'helium': 30, 'water': 0} dict[str, percent] (confidence high)<br>`disruption_duration_months` = 4 months (confidence high) |
+| 3. Adapter inputs (upstream forwarding overrides) | `oil_price_shock_pct`: LLM-extracted 0 -> upstream 58.25 from `poles_jrc.peak_price_change_pct` via identity; deviation 200% (flagged at 50%) (source completed in this run)<br>`commodity_price_shocks`[lng]: LLM-extracted 25 -> upstream 126.391 from `lngst.ttf_price` via level_to_pct; deviation 133.946% (flagged at 50%) (source completed in this run)<br>`commodity_price_shocks`[helium]: LLM-extracted 30 -> upstream 0 from `world_helium_model.price_change_pct` via identity; deviation 200% (flagged at 50%) (source completed in this run)<br>`commodity_price_shocks`[fertilizer]: LLM-extracted 0 -> upstream 23.756 from `world_fertilizer.fertilizer_price_index_pct` via identity; deviation 200% (flagged at 50%) (source completed in this run)<br>`trade_disruption_spec`[trade_cost_multiplier]: LLM-extracted None -> upstream 1.1869 from `aisdb.rerouting_cost_multiplier` via identity; deviation None% (not flagged at 50%) (source completed in this run) |
+| 4. Model output | `mpsge_jl.oil_price_shock_pct` = 58.25 (status completed; runtime 0.000338s) |
+| 5. Synthesis | [long_run/macro] value {mpsge_jl: 58.25, pycge: 58.25}: "The oil price shock is expected to be 58.25% due to the Strait of Hormuz closure." |

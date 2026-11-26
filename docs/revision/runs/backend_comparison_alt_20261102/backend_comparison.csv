@@ -1,0 +1,11 @@
+backend,run_id,week,cells_attempted,denominator_basis,grid_cells,completed,failed,skipped,synthesis_outcomes,sections_failed,sections_total,clean_synthesis,model_runtime_sum_s,model_span_s,param_llm_s,s_per_completed_model,review_mode,failure_reasons
+anthropic-haiku-4-5,cmp_alt_20261102_anthropic-haiku-4-5_20260215,cmp_alt_20261102_anthropic-haiku-4-5_20260215,170,parameter_sets,170,90,31,49,893,0,30,True,44.919,40.778,1739.576,0.4991,auto_approved,
+groq-qwen3.6-27b,cmp_alt_20261102_groq-qwen3.6-27b_20260322,cmp_alt_20261102_groq-qwen3.6-27b_20260322,170,parameter_sets,170,81,23,47,361,0,30,True,40.984,33.985,2891.673,0.506,auto_approved,
+groq-qwen3.8-27b,cmp_alt_20261102_groq-qwen3.8-27b_20260215,cmp_alt_20261102_groq-qwen3.8-27b_20260215,170,parameter_sets,170,17,2,9,0,0,30,False,0.069,6.823,1946.412,0.0041,auto_approved,
+groq-qwen3.8-27b,cmp_alt_20261102_groq-qwen3.8-27b_20260222,cmp_alt_20261102_groq-qwen3.8-27b_20260222,170,parameter_sets,170,24,4,8,0,0,30,False,0.085,7.873,607.254,0.0035,auto_approved,
+groq-qwen3.8-27b,cmp_alt_20261102_groq-qwen3.8-27b_20260301,cmp_alt_20261102_groq-qwen3.8-27b_20260301,170,parameter_sets,170,19,0,3,0,0,30,False,0.071,5.192,849.615,0.0037,auto_approved,
+groq-qwen3.8-27b,cmp_alt_20261102_groq-qwen3.8-27b_20260308,cmp_alt_20261102_groq-qwen3.8-27b_20260308,170,parameter_sets,170,15,3,5,0,0,30,False,0.067,6.062,1252.392,0.0045,auto_approved,
+groq-qwen3.8-27b,cmp_alt_20261102_groq-qwen3.8-27b_20260315,cmp_alt_20261102_groq-qwen3.8-27b_20260315,170,parameter_sets,170,27,2,6,0,0,30,False,0.091,8.018,951.754,0.0034,auto_approved,
+groq-qwen3.8-27b,cmp_alt_20261102_groq-qwen3.8-27b_20260322,cmp_alt_20261102_groq-qwen3.8-27b_20260322,170,parameter_sets,170,12,1,2,0,0,30,False,0.038,4.598,2548.225,0.0032,auto_approved,
+groq-qwen3.8-27b,cmp_alt_20261102_groq-qwen3.8-27b_20260329,cmp_alt_20261102_groq-qwen3.8-27b_20260329,170,parameter_sets,170,6,1,6,0,0,30,False,0.028,4.421,2879.828,0.0047,auto_approved,
+groq-qwen3.8-27b,cmp_alt_20261102_groq-qwen3.8-27b_20260405,cmp_alt_20261102_groq-qwen3.8-27b_20260405,170,parameter_sets,170,14,1,1,0,0,30,False,0.045,5.496,1734.329,0.0032,auto_approved,

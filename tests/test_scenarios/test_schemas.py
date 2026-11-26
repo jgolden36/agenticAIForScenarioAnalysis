@@ -1,6 +1,10 @@
 """Tests for scenario narrative schemas."""
 
+import pytest
+from pydantic import ValidationError
+
 from src.common.types import Scenario
+from src.scenarios.generator import require_scenario_count
 from src.scenarios.schemas import QuantitativeAssumption, ScenarioNarrative, ScenarioSet
 
 
@@ -44,3 +48,22 @@ def test_scenario_set():
 
     # 4 matrix quadrants (A-D) + 1 prescribed tail-risk (E: infrastructure_collapse)
     assert len(scenario_set.scenarios) == 5
+
+
+@pytest.mark.parametrize("payload", [{"crisis_description": "x"}, {"crisis_description": "x", "scenarios": []}])
+def test_scenario_set_rejects_empty_reply(payload):
+    """A truncated structured reply must fail, not parse as zero scenarios."""
+    with pytest.raises(ValidationError):
+        ScenarioSet(**payload)
+
+
+def _narrative(scenario_id):
+    return ScenarioNarrative(scenario_id=scenario_id, label="l", description="d", narrative_timeline="t")
+
+
+def test_require_scenario_count():
+    """Module 1 raises on a partial set and accepts a complete one."""
+    partial = ScenarioSet(crisis_description="x", scenarios=[_narrative(Scenario.A)])
+    with pytest.raises(ValueError, match="1 of 5"):
+        require_scenario_count(partial, 5)
+    require_scenario_count(partial, 1)

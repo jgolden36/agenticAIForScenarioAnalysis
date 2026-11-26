@@ -70,6 +70,13 @@ class MAMConfig(BaseModel):
         default=2025,
         description="AEO release year (matches the file naming and table structure)",
     )
+    reference_year: int = Field(
+        default=2026,
+        description=(
+            "Calendar year whose values are reported as headline scalars "
+            "(the crisis year). Year-on-year growth rates use reference_year-1."
+        ),
+    )
     scenario_sheet_mapping: dict[str, str] = Field(
         default_factory=dict,
         description=(
@@ -104,28 +111,59 @@ class MAMConfig(BaseModel):
 # Constants
 # ---------------------------------------------------------------------------
 
-# AEO Tables 19 (macro reference) and 20 (macro alternative cases) variable
-# names normalised into pipeline-standard keys.
-AEO_VARIABLE_MAPPING: dict[str, str] = {
-    # AEO label                      -> pipeline standard key
-    "Real GDP (billion 2017 dollars)":          "gdp_real_billion_usd",
-    "Real GDP growth rate (percent)":           "gdp_growth_pct",
-    "Consumer Price Index, all urban":          "cpi_index",
-    "CPI inflation (percent)":                  "cpi_inflation_pct",
-    "Unemployment rate (percent)":              "unemployment_rate_pct",
-    "Industrial production index":              "industrial_production_index",
-    "Real disposable personal income":          "disposable_income_real",
-    "Real disposable income growth (percent)":  "disposable_income_growth_pct",
-    "Federal funds rate (percent)":             "federal_funds_rate_pct",
-    "3-month Treasury bill rate (percent)":     "interest_rate_3m",
-    "10-year Treasury note rate (percent)":     "interest_rate_10y",
-    "Population (millions)":                    "population_millions",
-    "Total non-farm employment (millions)":     "non_farm_employment_millions",
-    "Real consumption expenditures":            "real_consumption",
-    "Real fixed investment":                    "real_investment",
-    "Real exports":                             "real_exports",
-    "Real imports":                             "real_imports",
+# AEO Table 20 ("Macroeconomic Indicators") rows, keyed by the EIA series
+# key in column A (stable across AEO2021-AEO2026 releases). Column B holds
+# the indented row label; the year columns follow and the last column is
+# the compound growth rate, which is NOT a year value.
+#
+# NOTE: the legacy URL .../aeo/excel/aeotab_19.xlsx (with underscore)
+# serves AEO2021 Table 19 (CO2 emissions by end use). That file is what
+# the cluster job ingested before November 2026, so MAM's "completed"
+# cells on runs 20260504_222710 et al. contained no macro data. The AEO2025
+# reference-case Table 20 is
+# https://www.eia.gov/outlooks/archive/aeo25/excel/aeotab20.xlsx.
+AEO_TABLE20_SERIES: dict[str, str] = {
+    "MEI000:ba_RealGrossDome": "real_gdp_bn_2012usd",
+    "MEI000:ba_RealConsumpti": "real_consumption_bn_2012usd",
+    "MEI000:ba_RealInvestmen": "real_business_fixed_investment_bn_2012usd",
+    "MEI000:ba_RealGovernmen": "real_government_spending_bn_2012usd",
+    "MEI000:ba_RealExports": "real_exports_bn_2012usd",
+    "MEI000:ba_RealImports": "real_imports_bn_2012usd",
+    "MEI000:da_GDPChain-Type": "gdp_price_index",
+    "MEI000:da_ConsumerPrice": "cpi_all_urban_index",
+    "MEI000:da_ConEnCom&Serv": "cpi_energy_index",
+    "MEI000:da_FuelandPower": "wpi_fuel_and_power_index",
+    "MEI000:ea_FederalFundsR": "federal_funds_rate_pct",
+    "MEI000:ea_10-YearTreasu": "treasury_10y_pct",
+    "MEI000:ja_Manufacturing": "manufacturing_shipments_bn_2012usd",
+    "MEI000:ja_EnergyIntensi": "energy_intensive_shipments_bn_2012usd",
+    "MEI000:ka_Employment,No": "nonfarm_employment_millions",
+    "MEI000:ka_Employment,Ma": "manufacturing_employment_millions",
+    "MEI000:ka_LaborForce": "labor_force_millions",
+    "MEI000:fa_UnemploymentR": "unemployment_rate_pct",
+    "MEI000:ba_RealDisposabl": "real_disposable_income_bn_2012usd",
 }
+
+# Label fallback (normalised: lower case, whitespace collapsed) for files
+# whose series keys are missing.
+AEO_TABLE20_LABELS: dict[str, str] = {
+    "real gross domestic product": "real_gdp_bn_2012usd",
+    "real consumption": "real_consumption_bn_2012usd",
+    "real business fixed investment": "real_business_fixed_investment_bn_2012usd",
+    "real government spending": "real_government_spending_bn_2012usd",
+    "real exports": "real_exports_bn_2012usd",
+    "real imports": "real_imports_bn_2012usd",
+    "all-urban": "cpi_all_urban_index",
+    "federal funds rate": "federal_funds_rate_pct",
+    "10-year treasury note": "treasury_10y_pct",
+    "employment, nonfarm": "nonfarm_employment_millions",
+    "unemployment rate (percentage)": "unemployment_rate_pct",
+    "unemployment rate (percent)": "unemployment_rate_pct",
+    "real disposable personal income": "real_disposable_income_bn_2012usd",
+}
+
+# Backwards-compatible name (older code imported it).
+AEO_VARIABLE_MAPPING = AEO_TABLE20_SERIES
 
 
 # ---------------------------------------------------------------------------
@@ -268,6 +306,13 @@ class MAMAdapter(ModelAdapter):
                 "xlsx_path": str(self._config.aeo_macro_xlsx_path),
                 "sheet_name": sheet,
                 "aeo_year": self._config.aeo_year,
+                "reference_year": self._config.reference_year,
+                # Ingestion returns EIA's published path; scenario shocks
+                # (including forwarded ones) are recorded as ignored.
+                "ignored_shock_inputs": sorted(
+                    k for k in params
+                    if k not in ("scenario_id",) and not k.startswith("_")
+                ),
             }
 
         # EViews subprocess
@@ -321,10 +366,39 @@ class MAMAdapter(ModelAdapter):
             ) from exc
 
         rows = self._read_xlsx_sheet(xlsx_path, sheet_name)
-        outputs = self._standardize_aeo_rows(rows)
+        table = self._describe_aeo_table(rows)
+        if table["table_number"] != 20:
+            # A wrong file (e.g. the AEO2021 Table 19 CO2 workbook the old
+            # vendoring URL served) must not produce a "completed" cell
+            # with no macro data in it.
+            raise ValueError(
+                f"{xlsx_path} is not AEO Table 20 (Macroeconomic Indicators): "
+                f"found table title {table['title']!r}, report {table['report']!r}. "
+                "Download https://www.eia.gov/outlooks/archive/aeo25/excel/aeotab20.xlsx."
+            )
+        outputs = self._standardize_aeo_rows(
+            rows, reference_year=int(inputs.get("reference_year") or 2026)
+        )
+        if not any(k in outputs for k in AEO_TABLE20_SERIES.values()):
+            raise ValueError(f"No Table 20 series recognised in {xlsx_path}")
         outputs["_source_xlsx"] = str(xlsx_path)
         outputs["_source_sheet"] = sheet_name
         outputs["_aeo_year"] = inputs.get("aeo_year")
+        outputs["_aeo_report"] = table["report"]
+        outputs["_aeo_scenario"] = table["scenario"]
+        outputs["_baseline_only"] = True
+        outputs["_note"] = (
+            "Published EIA AEO reference-case macro path. It does not respond "
+            "to the scenario's shocks; use it as the no-crisis baseline."
+        )
+        if inputs.get("ignored_shock_inputs"):
+            outputs["_ignored_shock_inputs"] = list(inputs["ignored_shock_inputs"])
+        if table["report"] and str(inputs.get("aeo_year")) not in str(table["report"]):
+            # e.g. the legacy .../aeo/excel/aeotab_20.xlsx URL serves AEO2021.
+            raise ValueError(
+                f"{xlsx_path} is from {table['report']!r}, but MAMConfig.aeo_year is "
+                f"{inputs.get('aeo_year')}. Use the matching edition's Table 20."
+            )
 
         return ModelOutput(
             model_id=self.model_id,
@@ -356,55 +430,124 @@ class MAMAdapter(ModelAdapter):
         return rows
 
     @staticmethod
-    def _standardize_aeo_rows(rows: list[list[Any]]) -> dict[str, Any]:
-        """Match AEO row labels against AEO_VARIABLE_MAPPING.
+    def _describe_aeo_table(rows: list[list[Any]]) -> dict[str, Any]:
+        """Read the table number, title, report and scenario from the header block."""
+        import re
 
-        AEO macro tables typically have:
-            row 0..k: title / header rows (years across columns)
-            row k+1..N: one variable per row, with the AEO label in column 0.
+        info: dict[str, Any] = {"table_number": None, "title": None, "report": None, "scenario": None}
+        for row in rows[:20]:
+            cells = [c for c in row if c is not None]
+            for j, c in enumerate(row):
+                if not isinstance(c, str):
+                    continue
+                s = c.strip()
+                if info["table_number"] is None:
+                    m = re.match(r"^(\d{1,3})\.\s+(\S.*)$", s)
+                    if m:
+                        info["table_number"] = int(m.group(1))
+                        info["title"] = m.group(2).strip()
+                nxt = row[j + 1] if j + 1 < len(row) else None
+                if s == "Report" and isinstance(nxt, str):
+                    info["report"] = nxt.strip()
+                if s == "Scenario" and isinstance(nxt, str):
+                    info["scenario"] = nxt.strip()
+            del cells
+        return info
+
+    @staticmethod
+    def _norm_label(s: str) -> str:
+        return " ".join(str(s).strip().lower().split())
+
+    @classmethod
+    def _standardize_aeo_rows(
+        cls, rows: list[list[Any]], reference_year: int = 2026,
+    ) -> dict[str, Any]:
+        """Parse AEO Table 20 rows into year-aligned paths and headline scalars.
+
+        Layout (AEO2021-AEO2026): column A = EIA series key
+        (``MEI000:ba_RealGrossDome``), column B = indented label, then one
+        column per year, then a compound-growth column. Values are aligned
+        to the year header by column index, so the growth column and blank
+        cells never enter a path.
+
+        For each recognised series ``k`` the output carries ``k`` (list of
+        values in year order) and ``k_by_year`` ({year: value}). Headline
+        scalars for the reference year:
+        ``real_gdp_bn_usd`` (billion 2012 USD), ``gdp_growth_pct``,
+        ``cpi_inflation_pct`` (all-urban CPI, y/y), ``unemployment_rate_pct``,
+        ``federal_funds_rate_pct``.
         """
         if not rows:
             return {}
 
-        # Find the header row that contains year integers.
-        header_row_idx = 0
-        years: list[int] = []
-        for i, row in enumerate(rows[:30]):
-            year_cells = [c for c in row if isinstance(c, int) and 2000 <= c <= 2100]
-            if len(year_cells) >= 5:
-                header_row_idx = i
-                years = year_cells
+        header_row_idx = None
+        year_cols: dict[int, int] = {}
+        for i, row in enumerate(rows[:40]):
+            cols = {
+                j: int(c) for j, c in enumerate(row)
+                if isinstance(c, (int, float)) and not isinstance(c, bool)
+                and float(c).is_integer() and 2000 <= int(c) <= 2100
+            }
+            if len(cols) >= 5:
+                header_row_idx, year_cols = i, cols
                 break
+        if header_row_idx is None:
+            return {"_years": [], "_parse_error": "no year header row found"}
 
+        years = [year_cols[j] for j in sorted(year_cols)]
         out: dict[str, Any] = {"_years": years}
         unmapped: list[str] = []
 
         for row in rows[header_row_idx + 1:]:
-            if not row or row[0] is None:
+            if not row:
                 continue
-            label = str(row[0]).strip()
-            std_key = AEO_VARIABLE_MAPPING.get(label)
+            series = str(row[0]).strip() if row[0] is not None else ""
+            label = str(row[1]).strip() if len(row) > 1 and row[1] is not None else ""
+            std_key = AEO_TABLE20_SERIES.get(series) or AEO_TABLE20_LABELS.get(cls._norm_label(label))
             if std_key is None:
-                unmapped.append(label)
+                if series:
+                    unmapped.append(f"{series} | {label}")
                 continue
-
-            values: list[float] = []
-            for cell in row[1:]:
-                if cell is None or cell == "":
+            by_year: dict[int, float] = {}
+            for j, yr in year_cols.items():
+                if j >= len(row):
                     continue
-                try:
-                    values.append(float(cell))
-                except (TypeError, ValueError):
-                    continue
-
-            if not values:
+                cell = row[j]
+                if isinstance(cell, (int, float)) and not isinstance(cell, bool):
+                    by_year[yr] = float(cell)
+            if not by_year:
                 continue
+            out[std_key] = [by_year[y] for y in years if y in by_year]
+            out[f"{std_key}_by_year"] = {str(y): v for y, v in sorted(by_year.items())}
 
-            # Store both the path and a year-1 scalar for cross-model consistency.
-            out[std_key] = values
-            if len(values) > 0:
-                out[f"{std_key}_year1"] = values[0]
+        def _level(key: str, yr: int) -> float | None:
+            return (out.get(f"{key}_by_year") or {}).get(str(yr))
 
+        def _growth(key: str) -> float | None:
+            cur, prev = _level(key, reference_year), _level(key, reference_year - 1)
+            if cur is None or prev in (None, 0):
+                return None
+            return round((cur / prev - 1.0) * 100.0, 4)
+
+        headline = {
+            "real_gdp_bn_usd": _level("real_gdp_bn_2012usd", reference_year),
+            "gdp_growth_pct": _growth("real_gdp_bn_2012usd"),
+            "cpi_inflation_pct": _growth("cpi_all_urban_index"),
+            "unemployment_rate_pct": _level("unemployment_rate_pct", reference_year),
+            "federal_funds_rate_pct": _level("federal_funds_rate_pct", reference_year),
+            "treasury_10y_pct": _level("treasury_10y_pct", reference_year),
+            "real_consumption_growth_pct": _growth("real_consumption_bn_2012usd"),
+            "nonfarm_employment_millions": _level("nonfarm_employment_millions", reference_year),
+        }
+        for k, v in headline.items():
+            if v is not None:
+                out[k] = v
+        out["_reference_year"] = reference_year
+        out["_units"] = {
+            "real_gdp_bn_usd": "billion 2012 chain-weighted USD",
+            "gdp_growth_pct": "percent, year on year",
+            "cpi_inflation_pct": "percent, year on year (CPI all-urban)",
+        }
         if unmapped:
             out["_unmapped_aeo_labels"] = unmapped[:50]
         return out

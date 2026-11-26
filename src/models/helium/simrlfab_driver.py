@@ -20,9 +20,11 @@ The driver:
 
 The driver intentionally has no dependency on the orchestration pipeline so
 it can be vendored next to the SimRLFab repo if desired.
-"""
 
-from __future__ import annotations
+Keep this file Python 3.6 compatible: SimRLFab's pinned stack
+(tensorforce 0.5.4) runs on 3.6, where ``from __future__ import
+annotations`` is a SyntaxError.
+"""
 
 import argparse
 import json
@@ -50,12 +52,17 @@ def _parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def _install_overrides(overrides, agent_type, agent_config_path):
+def _install_overrides(overrides, agent_type, agent_config_path, seed=None):
     """Monkey-patch SimRLFab's parameter initialization.
 
     Applies the parameter overrides described in ``overrides`` to every
     SimRLFab simulation created inside this process. Must be called before
     ``ProductionEnv`` is instantiated.
+
+    ``seed`` replaces SimRLFab's hardcoded SEED=10. ``Time_calc`` seeds the
+    numpy streams (process, failure, repair, order generation) from
+    ``parameters['SEED'] + episode`` after this hook has run, so setting it
+    here changes every stochastic stream. None keeps the upstream seed.
     """
     from production.envs import initialize_env as ie
 
@@ -83,6 +90,9 @@ def _install_overrides(overrides, agent_type, agent_config_path):
             if 0 <= idx < parameters["NUM_MACHINES"]:
                 parameters["MTOL"][idx] = mtol
 
+        if seed is not None:
+            parameters["SEED"] = int(seed)
+
         return parameters
 
     def patched_extend_agent(parameters):
@@ -101,6 +111,7 @@ def _install_overrides(overrides, agent_type, agent_config_path):
         "mtog_per_source": mtog_per_source,
         "agent_type": agent_type,
         "agent_config_path": agent_config_path,
+        "seed": seed,
     }
 
 
@@ -213,6 +224,7 @@ def main() -> int:
     agent_type = str(config.get("agent_type", "FIFO")).upper()
     agent_config_path = config.get("agent_config_path")
     overrides = config.get("simrlfab_overrides", {})
+    seed = config.get("seed")
 
     simrlfab_path = os.path.abspath(args.simrlfab_path)
     if simrlfab_path not in sys.path:
@@ -232,7 +244,7 @@ def main() -> int:
     applied_overrides: dict = {}
 
     try:
-        applied_overrides = _install_overrides(overrides, agent_type, agent_config_path)
+        applied_overrides = _install_overrides(overrides, agent_type, agent_config_path, seed)
         resolved_agent_config = _resolve_agent_config(
             agent_type, agent_config_path, simrlfab_path
         )

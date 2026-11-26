@@ -138,6 +138,36 @@ class ImplementationMode(str, Enum):
     UNKNOWN = "unknown"
 
 
+class ParameterProvenance(str, Enum):
+    """Where a model's parameters come from, independent of how it runs.
+
+    ``ImplementationMode`` says whether the upstream model's own code ran.
+    This enum says whose numbers the adapter's default path uses, which
+    matters most for the closed-form approximations: a stand-in calibrated
+    to the named model's own published estimates is closer to that model
+    than one calibrated to unrelated studies.
+
+    ``UPSTREAM_MODEL`` — the upstream model's own calibration / data
+    (full runs, published-output ingestion).
+    ``OWN_MODEL_PUBLISHED`` — a closed-form approximation using the named
+    model's own published estimates for its core response.
+    ``MIXED`` — the named model's published numbers adjust a response whose
+    core comes from other literature.
+    ``OTHER_LITERATURE`` — a closed-form stand-in whose parameters come from
+    studies other than the named model.
+    ``MARKET_DATA_ESTIMATED`` — parameters estimated from observed market
+    data (src/models/market_calibration.py).
+    ``NOT_APPLICABLE`` — stubs.
+    """
+
+    UPSTREAM_MODEL = "upstream_model"
+    OWN_MODEL_PUBLISHED = "own_model_published"
+    MIXED = "mixed"
+    OTHER_LITERATURE = "other_literature"
+    MARKET_DATA_ESTIMATED = "market_data_estimated"
+    NOT_APPLICABLE = "not_applicable"
+
+
 class UncertaintyMethod(str, Enum):
     """How an adapter's output uncertainty was quantified.
 

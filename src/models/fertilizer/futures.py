@@ -233,12 +233,30 @@ class FuturesAdapter(ModelAdapter):
         if horizon <= 0:
             horizon = 1
 
+        from src.models.market_calibration import (
+            FUTURES_HALF_LIFE_SERIES,
+            active_calibration,
+        )
+
+        cal = active_calibration()
+        half_lives: dict[str, float] = {}
+        half_life_source: dict[str, str] = {}
+        for commodity in commodities:
+            lit = _HALF_LIFE_MONTHS.get(commodity, _DEFAULT_HALF_LIFE_MONTHS)
+            series = FUTURES_HALF_LIFE_SERIES.get(commodity)
+            if cal is not None and series and series in cal.half_lives_months:
+                half_lives[commodity] = cal.half_life(series, lit)
+                half_life_source[commodity] = f"estimated:{series}"
+            else:
+                half_lives[commodity] = lit
+                half_life_source[commodity] = "literature"
+
         forward_price_curves: dict[str, list[float]] = {}
         peak_index: dict[str, float] = {}
         time_to_normalisation: dict[str, int | None] = {}
 
         for commodity in commodities:
-            tau = _HALF_LIFE_MONTHS.get(commodity, _DEFAULT_HALF_LIFE_MONTHS)
+            tau = half_lives[commodity]
             curve: list[float] = []
             normalised_at: int | None = None
             for month in range(horizon):
@@ -264,6 +282,15 @@ class FuturesAdapter(ModelAdapter):
             "initial_price_shock_pct": shock_pct,
             "commodities": commodities,
         }
+        if cal is not None:
+            outputs["_calibration"] = cal.provenance({
+                "half_lives_months": half_lives,
+                "half_life_source": half_life_source,
+                "half_life_se_months": {
+                    c: cal.half_life_se_months.get(FUTURES_HALF_LIFE_SERIES.get(c, ""))
+                    for c in commodities
+                },
+            })
 
         return ModelOutput(
             model_id=self.model_id,
@@ -276,7 +303,7 @@ class FuturesAdapter(ModelAdapter):
                     "CBOT/NYMEX/CME post-shock decay 2010–2023 "
                     "(2010 grain spike, 2014 wheat shock, 2022 fertilizer crunch)."
                 ),
-                "half_lives_months": dict(_HALF_LIFE_MONTHS),
+                "half_lives_months": dict(half_lives) if cal is not None else dict(_HALF_LIFE_MONTHS),
                 "normalisation_tolerance_pct": _NORMALISATION_TOLERANCE_PCT,
             },
         )

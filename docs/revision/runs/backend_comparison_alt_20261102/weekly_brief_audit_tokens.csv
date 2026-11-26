@@ -1,0 +1,516 @@
+backend,week,token,substantive,matched,context
+anthropic-haiku-4-5,2026-02-15,3,False,True,"16, successfully test-firing the Sayyad-3G naval air defense missile from the Sha"
+anthropic-haiku-4-5,2026-02-15,150,True,True,"rtical launch capability and a reported 150-kilometer range. Iranian officials, inc"
+anthropic-haiku-4-5,2026-02-15,18,True,True,"s, with the oil market up approximately 18% since year-end 2026, driven by Iran ri"
+anthropic-haiku-4-5,2026-02-15,"5,000",True,True,"ly shock concerns. Gold prices reached $5,000/oz as investors sought safe havens. Oil"
+anthropic-haiku-4-5,2026-02-15,21,True,True,the closure would disrupt approximately 21% of global oil supply and 25% of global
+anthropic-haiku-4-5,2026-02-15,25,True,True,"roximately 21% of global oil supply and 25% of global LNG trade, with Qatar—the wo"
+anthropic-haiku-4-5,2026-02-15,120,True,True,habahar port investment (approximately $120 million for upgrades) faces uncertainty
+anthropic-haiku-4-5,2026-02-15,12,False,True,following Israeli precedent from recent 12-day operations.  Humanitarian and Broad
+anthropic-haiku-4-5,2026-02-15,30,True,True,ving tens of millions and approximately 30% of global helium supply. Bangladesh's 
+anthropic-haiku-4-5,2026-02-15,18,True,True, indicators:   - <item>Brent crude: up ~18% since end of 2025 (year-to-date rally)
+anthropic-haiku-4-5,2026-02-15,"5,000",True,True,"</item>   - <item>Gold prices: reached $5,000/oz</item>   - <item>Oil prices: jumped "
+anthropic-haiku-4-5,2026-02-15,7,False,True,ices: jumped to highest level in nearly 7 months</item>   - <item>Sayyad-3G missi
+anthropic-haiku-4-5,2026-02-15,3,False,True,nearly 7 months</item>   - <item>Sayyad-3G missile range: 150 kilometers</item>  
+anthropic-haiku-4-5,2026-02-15,150,True,True,tem>   - <item>Sayyad-3G missile range: 150 kilometers</item>   - <item>India's Cha
+anthropic-haiku-4-5,2026-02-15,120,True,True,tem>India's Chabahar port investment: ~$120 million for upgrades</item>   - <item>G
+anthropic-haiku-4-5,2026-02-15,21,True,True,oil supply disruption risk (baseline): ~21% if Strait closed</item>   - <item>Glob
+anthropic-haiku-4-5,2026-02-15,25,True,True, LNG trade disruption risk (baseline): ~25% if Strait closed</item>   - <item>Glob
+anthropic-haiku-4-5,2026-02-15,30,True,True,obal helium supply at risk (baseline): ~30%</item>   - </indicators>   - <paramete
+anthropic-haiku-4-5,2026-02-15,3,False,True,>  New actors/commodities: <item>Sayyad-3G and Sayyad-3J naval air defense missil
+anthropic-haiku-4-5,2026-02-15,3,False,True,commodities: <item>Sayyad-3G and Sayyad-3J naval air defense missiles (Iranian sy
+anthropic-haiku-4-5,2026-02-15,1,False,True,"ems, newly tested)</item>, <item>Fattah-1 hypersonic missiles (Iranian capability"
+anthropic-haiku-4-5,2026-02-15,30,True,True,"e at risk)</item>, <item>Helium supply (30% global supply at risk per baseline)</i"
+groq-qwen3.6-27b,2026-02-15,12,False,True,f individual-leader strikes used in the 12-day war. Congress is expected to vote o
+groq-qwen3.6-27b,2026-02-15,3,False,True,"y), the IRGC Navy test-fired the Sayyad-3G naval air-defense missile from the Sha"
+groq-qwen3.6-27b,2026-02-15,150,True,True, vertical-launch system with a reported 150-kilometre range. The IRGC also conducte
+groq-qwen3.6-27b,2026-02-15,3,False,True,rational use of the longer-range Sayyad-3J variant. Iran has reportedly built a m
+groq-qwen3.6-27b,2026-02-15,1,False,True,"uld face destruction, citing the Fattah-1 hypersonic glide vehicle and Abu Mahdi "
+groq-qwen3.6-27b,2026-02-15,18,True,True,"ARKETS: Brent crude is up approximately 18% since the end of 2025, marking the str"
+groq-qwen3.6-27b,2026-02-15,"5,000",True,True,"t start to a year since 2022. Gold hit $5,000/oz as investors sought safe havens. Oil"
+groq-qwen3.6-27b,2026-02-15,20,True,True,e Strait of Hormuz as carrying 'roughly 20%' of global oil flows (the baseline fig
+groq-qwen3.6-27b,2026-02-15,21,True,True,lobal oil flows (the baseline figure is 21%); no specific Brent spot price level w
+groq-qwen3.6-27b,2026-02-15,120,True,True,k as an import-dependent economy; its ~$120 million investment in the Chabahar port
+groq-qwen3.6-27b,2026-02-15,75,True,True,"' signed a partnership to contribute US$75 million toward Gaza reconstruction, dra"
+groq-qwen3.6-27b,2026-02-15,18,True,True,.  Key indicators:   - Brent crude: up ~18% YTD (strongest start to a year since 2
+groq-qwen3.6-27b,2026-02-15,"5,000",True,True,"olute price stated this week   - Gold: $5,000/oz (safe-haven bid)   - Sayyad-3G naval"
+groq-qwen3.6-27b,2026-02-15,3,False,True,": $5,000/oz (safe-haven bid)   - Sayyad-3G naval air-defense missile range: 150 k"
+groq-qwen3.6-27b,2026-02-15,150,True,True,yad-3G naval air-defense missile range: 150 km (tested 16 Feb in Hormuz)   - US mil
+groq-qwen3.6-27b,2026-02-15,20,True,True, of Hormuz oil share: cited as 'roughly 20%' in one article (baseline: 21%)   - In
+groq-qwen3.6-27b,2026-02-15,21,True,True,'roughly 20%' in one article (baseline: 21%)   - India's Chabahar port investment:
+groq-qwen3.6-27b,2026-02-15,120,True,True,  - India's Chabahar port investment: ~$120 million (2016 agreement)   - FIFA Gaza 
+groq-qwen3.6-27b,2026-02-15,75,True,True,FA Gaza reconstruction contribution: US$75 million   - Iranian protest deaths clai
+groq-qwen3.6-27b,2026-02-15,"32,000",True,True,"anian protest deaths claimed by Tehran: 32,000 (unverified; no independent confirmatio"
+groq-qwen3.6-27b,2026-02-15,18.0,True,True,e-readable):   - brent_ytd_change_pct = 18.0 %   - gold_spot_usd_oz = 5000.0 USD/oz 
+groq-qwen3.6-27b,2026-02-15,5000.0,True,True,nge_pct = 18.0 %   - gold_spot_usd_oz = 5000.0 USD/oz   - sayyad_3g_range_km = 150.0 k
+groq-qwen3.6-27b,2026-02-15,150.0,True,True, 5000.0 USD/oz   - sayyad_3g_range_km = 150.0 km   - chabahar_indian_investment_usd_m
+groq-qwen3.6-27b,2026-02-15,120.0,True,True,   - chabahar_indian_investment_usd_m = 120.0 USD million   - fifa_gaza_contribution_
+groq-qwen3.6-27b,2026-02-15,75.0,True,True,lion   - fifa_gaza_contribution_usd_m = 75.0 USD million   - hormuz_oil_share_pct = 
+groq-qwen3.6-27b,2026-02-15,20.0,True,True, USD million   - hormuz_oil_share_pct = 20.0 %  Scenario signals:   - A (Swift closu
+groq-qwen3.6-27b,2026-02-15,3,False,True,and sustained naval air-defense (Sayyad-3G/3J) is consistent with a strategy to e
+groq-qwen3.6-27b,2026-02-15,3,False,True, sustained naval air-defense (Sayyad-3G/3J) is consistent with a strategy to endu
+groq-qwen3.6-27b,2026-02-15,1,False,True,nflict.  New actors/commodities: Fattah-1 hypersonic glide vehicle (Iranian 'carr
+groq-qwen3.6-27b,2026-02-15,3,False,True,"le (Iranian naval strike asset), Sayyad-3J long-range naval air-defense missile ("
+groq-qwen3.6-27b,2026-02-15,18,True,True,tated in this week's articles—only the ~18% YTD change. A specific USD/bbl figure 
+groq-qwen3.6-27b,2026-02-15,196,True,False,", or pipeline rerouting) appears in the 196 articles., No desalination-plant outage"
+groq-qwen3.6-27b,2026-02-15,"32,000",True,True," ('largest since 2003,' 'armada')., The 32,000 Iranian protest-death figure is attribu"
+groq-qwen3.6-27b,2026-02-15,21,True,True, The discrepancy between the baseline's 21% oil-share figure and one article's 'ro
+groq-qwen3.6-27b,2026-02-15,20,True,True,share figure and one article's 'roughly 20%' is unresolved; no authoritative sourc
+groq-qwen3.8-27b,2026-02-15,22,False,True,"ive combat reported  The week of Feb 15-22, 2026, was dominated by escalating rhet"
+groq-qwen3.6-27b,2026-02-22,20,False,True, missile barrages: the IDF reported its 20th incoming missile attack in 24 hours. 
+groq-qwen3.6-27b,2026-02-22,24,False,True,ted its 20th incoming missile attack in 24 hours. Strikes hit the Israeli towns of
+groq-qwen3.6-27b,2026-02-22,6,False,True," hit the Israeli towns of Beit Shemesh (6 or 8 killed, depending on source) and T"
+groq-qwen3.6-27b,2026-02-22,8,False,True,"the Israeli towns of Beit Shemesh (6 or 8 killed, depending on source) and Tel Av"
+groq-qwen3.6-27b,2026-02-22,1,False,True,"led, depending on source) and Tel Aviv (1 killed, 27 injured), the UAE's Zayed Po"
+groq-qwen3.6-27b,2026-02-22,27,False,True,"ding on source) and Tel Aviv (1 killed, 27 injured), the UAE's Zayed Port, and US "
+groq-qwen3.6-27b,2026-02-22,20,True,True,nt crude could jump by approximately US$20 per barrel on Monday as risk premiums a
+groq-qwen3.6-27b,2026-02-22,"5,500",True,True,"could roughly double. Gold surged to US$5,500 per ounce, up from US$5,000 the prior w"
+groq-qwen3.6-27b,2026-02-22,"5,000",True,True,"urged to US$5,500 per ounce, up from US$5,000 the prior week, as investors fled into "
+groq-qwen3.6-27b,2026-02-22,20,True,True,is week's coverage; only the projected $20 move and qualitative 'sharp rise' langu
+groq-qwen3.6-27b,2026-02-22,226,True,False,-rerouting data appeared in this week's 226 articles. The baseline disruption to ro
+groq-qwen3.6-27b,2026-02-22,25,True,True,les. The baseline disruption to roughly 25% of global LNG trade is implied by the 
+groq-qwen3.6-27b,2026-02-22,3,False,True,"indicators:   - US military casualties: 3 killed, 5 critically injured (first US "
+groq-qwen3.6-27b,2026-02-22,5,False,True,":   - US military casualties: 3 killed, 5 critically injured (first US deaths of "
+groq-qwen3.6-27b,2026-02-22,"5,500",True,True,"c Fury', 1 Mar)   - Gold spot price: US$5,500/oz (up from US$5,000/oz prior week; +10"
+groq-qwen3.6-27b,2026-02-22,"5,000",True,True,"old spot price: US$5,500/oz (up from US$5,000/oz prior week; +10% w/w)   - Brent crud"
+groq-qwen3.6-27b,2026-02-22,+10,True,True,"500/oz (up from US$5,000/oz prior week; +10% w/w)   - Brent crude projected jump: ~"
+groq-qwen3.6-27b,2026-02-22,20,True,True,"/w)   - Brent crude projected jump: ~US$20/barrel (Rystad Energy, 1 Mar; no absolu"
+groq-qwen3.6-27b,2026-02-22,20,False,True,"   - Iranian missile attacks on Israel: 20 in 24 hours (IDF, 1 Mar)   - Beit Sheme"
+groq-qwen3.6-27b,2026-02-22,24,False,True,"ranian missile attacks on Israel: 20 in 24 hours (IDF, 1 Mar)   - Beit Shemesh, Is"
+groq-qwen3.6-27b,2026-02-22,6,False,True," (IDF, 1 Mar)   - Beit Shemesh, Israel: 6 killed (one source) / 8 killed (another"
+groq-qwen3.6-27b,2026-02-22,8,False,True,"hemesh, Israel: 6 killed (one source) / 8 killed (another source) in Iranian miss"
+groq-qwen3.6-27b,2026-02-22,1,False,True,"an missile strike   - Tel Aviv, Israel: 1 killed, 27 injured in Iranian missile s"
+groq-qwen3.6-27b,2026-02-22,27,False,True," strike   - Tel Aviv, Israel: 1 killed, 27 injured in Iranian missile strike   - P"
+groq-qwen3.6-27b,2026-02-22,3,False,True,ls blocked by Iran in Strait of Hormuz: 3   - US Navy deployment: roughly one-thi
+groq-qwen3.6-27b,2026-02-22,5500.0,True,True,chine-readable):   - gold_spot_usd_oz = 5500.0 USD/oz (+10.0% w/w)   - brent_projected
+groq-qwen3.6-27b,2026-02-22,+10.0,True,True,:   - gold_spot_usd_oz = 5500.0 USD/oz (+10.0% w/w)   - brent_projected_jump_usd_bbl 
+groq-qwen3.6-27b,2026-02-22,20.0,True,True,w/w)   - brent_projected_jump_usd_bbl = 20.0 USD/bbl   - us_military_killed = 3.0 pe
+groq-qwen3.6-27b,2026-02-22,3.0,True,True,= 20.0 USD/bbl   - us_military_killed = 3.0 personnel   - us_military_critically_in
+groq-qwen3.6-27b,2026-02-22,5.0,True,True,el   - us_military_critically_injured = 5.0 personnel   - iranian_missile_attacks_o
+groq-qwen3.6-27b,2026-02-22,20.0,True,True,iranian_missile_attacks_on_israel_24h = 20.0 attacks   - beit_shemesh_killed = 8.0 p
+groq-qwen3.6-27b,2026-02-22,8.0,True,True, 20.0 attacks   - beit_shemesh_killed = 8.0 persons   - tel_aviv_killed = 1.0 perso
+groq-qwen3.6-27b,2026-02-22,1.0,True,True,led = 8.0 persons   - tel_aviv_killed = 1.0 persons   - tel_aviv_injured = 27.0 per
+groq-qwen3.6-27b,2026-02-22,27.0,True,True,ed = 1.0 persons   - tel_aviv_injured = 27.0 persons   - pnsic_vessels_blocked_hormu
+groq-qwen3.6-27b,2026-02-22,3.0,True,True,sons   - pnsic_vessels_blocked_hormuz = 3.0 vessels   - ron95_price_myrm_litre = 1.
+groq-qwen3.6-27b,2026-02-22,1.99,True,True,.0 vessels   - ron95_price_myrm_litre = 1.99 MYR/litre  Scenario signals:   - A (Swi
+groq-qwen3.6-27b,2026-02-22,20,True,True,t price is stated; only a projected ~US$20/barrel jump (Rystad Energy) and qualita
+groq-qwen3.6-27b,2026-02-22,3,False,True,lane data for the Strait of Hormuz. The 3 blocked PNSC vessels are the only speci
+groq-qwen3.6-27b,2026-02-22,226,True,False,"ipeline-rerouting figures appear in the 226 articles., No desalination-plant outage"
+groq-qwen3.6-27b,2026-02-22,6,False,True,"s are contradictory: one source reports 6 killed, another reports 8. No independe"
+groq-qwen3.6-27b,2026-02-22,8,False,True,"ource reports 6 killed, another reports 8. No independent confirmation is provide"
+groq-qwen3.8-27b,2026-02-22,3,False,True,"ed in the first US military casualties (3 killed, 5 critically injured) and signi"
+groq-qwen3.8-27b,2026-02-22,5,False,True,"first US military casualties (3 killed, 5 critically injured) and significant civ"
+groq-qwen3.8-27b,2026-02-22,8,False,True,ivilian casualties in Israel (including 8 killed in Beit Shemesh and 1 in Tel Avi
+groq-qwen3.8-27b,2026-02-22,1,False,True,(including 8 killed in Beit Shemesh and 1 in Tel Aviv). Commercial shipping in th
+groq-qwen3.8-27b,2026-02-22,20,True,True,"ng sharply, with analysts predicting a $20/barrel jump, and global air travel in t"
+groq-qwen3.6-27b,2026-03-01,100,True,True,Headline: Brent crude tops $100/barrel for the first time since 2022 as
+groq-qwen3.6-27b,2026-03-01,7,False,True,amenei named Iran's new supreme leader; 7th US service member killed; Bahrain rep
+groq-qwen3.6-27b,2026-03-01,150,True,True,", which Iranian authorities said killed 150 people; no independent confirmation of "
+groq-qwen3.6-27b,2026-03-01,56,False,True,"TV announced that Mojtaba Khamenei, the 56-year-old son of the slain Supreme Leade"
+groq-qwen3.6-27b,2026-03-01,100,True,True,ND MARKETS: Crude oil prices surpassed $100 per barrel for the first time in more t
+groq-qwen3.6-27b,2026-03-01,36,True,True,ears on 8 March. US crude prices jumped 36% and Brent crude rose 28% over the prio
+groq-qwen3.6-27b,2026-03-01,28,True,True, prices jumped 36% and Brent crude rose 28% over the prior week. Brent reached its
+groq-qwen3.6-27b,2026-03-01,3.41,True,True,"US national average gasoline price hit $3.41 per gallon, up 43 cents from the prior "
+groq-qwen3.6-27b,2026-03-01,43,False,True,"gasoline price hit $3.41 per gallon, up 43 cents from the prior week, with experts"
+groq-qwen3.6-27b,2026-03-01,4,True,True,with experts warning it could approach $4 as soon as the following week. Kuwait d
+groq-qwen3.6-27b,2026-03-01,250,True,True,"ssion, citing a combined buffer of over 250 million barrels (approximately 4,000 cr"
+groq-qwen3.6-27b,2026-03-01,"4,000",True,True,"over 250 million barrels (approximately 4,000 crore litres) providing seven to eight "
+groq-qwen3.6-27b,2026-03-01,100,True,True,indicators:   - Brent crude: surpassed $100/barrel (first time in 3.5+ years; highe
+groq-qwen3.6-27b,2026-03-01,3.5,True,True,e: surpassed $100/barrel (first time in 3.5+ years; highest since 2022 Russia-Ukrai
+groq-qwen3.6-27b,2026-03-01,+36,True,True,e invasion)   - US crude weekly change: +36% (w/w)   - Brent crude weekly change: +
+groq-qwen3.6-27b,2026-03-01,+28,True,True,6% (w/w)   - Brent crude weekly change: +28% (w/w)   - US national average gasoline
+groq-qwen3.6-27b,2026-03-01,3.41,True,True,w/w)   - US national average gasoline: $3.41/gallon (+$0.43 w/w); projected to appro
+groq-qwen3.6-27b,2026-03-01,0.43,True,True,ional average gasoline: $3.41/gallon (+$0.43 w/w); projected to approach $4/gallon n
+groq-qwen3.6-27b,2026-03-01,4,True,True,on (+$0.43 w/w); projected to approach $4/gallon next week   - US military killed
+groq-qwen3.6-27b,2026-03-01,7,False,True,"ek   - US military killed (cumulative): 7 service members   - Minab, Hormozgan sc"
+groq-qwen3.6-27b,2026-03-01,150,True,True,"ers   - Minab, Hormozgan school strike: 150 killed (per Iranian authorities; attrib"
+groq-qwen3.6-27b,2026-03-01,1,False,True,p; unverified independently)   - Dubai: 1 killed (Iranian missile/drone strike)  
+groq-qwen3.6-27b,2026-03-01,12,False,True,   - Iranian missile volleys at Israel: 12 ('a dozen') in the reporting period; no
+groq-qwen3.6-27b,2026-03-01,250,True,True,"ated)   - India crude + refined buffer: 250 million barrels (~4,000 crore litres); "
+groq-qwen3.6-27b,2026-03-01,"4,000",True,True,"+ refined buffer: 250 million barrels (~4,000 crore litres); 7–8 weeks coverage   - M"
+groq-qwen3.6-27b,2026-03-01,7,False,True," million barrels (~4,000 crore litres); 7–8 weeks coverage   - Mojtaba Khamenei: "
+groq-qwen3.6-27b,2026-03-01,8,False,True,"illion barrels (~4,000 crore litres); 7–8 weeks coverage   - Mojtaba Khamenei: 56"
+groq-qwen3.6-27b,2026-03-01,56,False,True,"–8 weeks coverage   - Mojtaba Khamenei: 56 years old, named Supreme Leader 8 March"
+groq-qwen3.6-27b,2026-03-01,2,False,True,ng as 'CHINA OWNER_ALL CREW' in Hormuz: 2 observed  Observed indicators (machine-
+groq-qwen3.6-27b,2026-03-01,100.0,True,True,ine-readable):   - brent_spot_usd_bbl = 100.0 USD/bbl (+28.0% w/w)   - us_crude_weekl
+groq-qwen3.6-27b,2026-03-01,+28.0,True,True,  - brent_spot_usd_bbl = 100.0 USD/bbl (+28.0% w/w)   - us_crude_weekly_change_pct = 
+groq-qwen3.6-27b,2026-03-01,36.0,True,True,% w/w)   - us_crude_weekly_change_pct = 36.0 %   - brent_weekly_change_pct = 28.0 % 
+groq-qwen3.6-27b,2026-03-01,28.0,True,True, = 36.0 %   - brent_weekly_change_pct = 28.0 %   - us_gas_avg_usd_gallon = 3.41 USD/
+groq-qwen3.6-27b,2026-03-01,3.41,True,True,ct = 28.0 %   - us_gas_avg_usd_gallon = 3.41 USD/gallon   - us_gas_weekly_change_usd
+groq-qwen3.6-27b,2026-03-01,0.43,True,True,n   - us_gas_weekly_change_usd_gallon = 0.43 USD/gallon   - us_military_killed_cumul
+groq-qwen3.6-27b,2026-03-01,7.0,True,True,lon   - us_military_killed_cumulative = 7.0 personnel   - minab_school_killed = 150
+groq-qwen3.6-27b,2026-03-01,150.0,True,True,7.0 personnel   - minab_school_killed = 150.0 persons   - dubai_killed = 1.0 persons 
+groq-qwen3.6-27b,2026-03-01,1.0,True,True,lled = 150.0 persons   - dubai_killed = 1.0 persons   - iran_missile_volleys_at_isr
+groq-qwen3.6-27b,2026-03-01,12.0,True,True,ns   - iran_missile_volleys_at_israel = 12.0 volleys   - india_crude_buffer_million_
+groq-qwen3.6-27b,2026-03-01,250.0,True,True, - india_crude_buffer_million_barrels = 250.0 million barrels   - mojtaba_khamenei_ag
+groq-qwen3.6-27b,2026-03-01,56.0,True,True,lion barrels   - mojtaba_khamenei_age = 56.0 years   - china_linked_vessels_identify
+groq-qwen3.6-27b,2026-03-01,2.0,True,True,ina_linked_vessels_identifying_hormuz = 2.0 vessels  Scenario signals:   - A (Swift
+groq-qwen3.6-27b,2026-03-01,150,True,True,"tion plants (Bahrain), a school (Minab, 150 killed), oil depots, and a death in Dub"
+groq-qwen3.6-27b,2026-03-01,1,False,True,he most consistent with this scenario: (1) Mojtaba Khamenei's succession signals 
+groq-qwen3.6-27b,2026-03-01,2,False,True,re that would enable rapid settlement; (2) Kuwait's force majeure and expected UA
+groq-qwen3.6-27b,2026-03-01,3,False,True,"is becoming structural, not transient; (3) Israel's expansion into oil-infrastruc"
+groq-qwen3.6-27b,2026-03-01,4,False,True,s and the threshold for de-escalation; (4) the desalination-plant strike in Bahra
+groq-qwen3.6-27b,2026-03-01,5,False,True,xpanding into civilian infrastructure; (5) no diplomatic off-ramp is visible—Wang
+groq-qwen3.6-27b,2026-03-01,6,False,True, positions but no mediation framework; (6) the US is deepening its commitment (7t
+groq-qwen3.6-27b,2026-03-01,7,False,True,"(6) the US is deepening its commitment (7th fatality, Hegseth's naval-war rhetori"
+groq-qwen3.6-27b,2026-03-01,56,False,True,"a Khamenei (new Iranian Supreme Leader, 56, son of slain Ayatollah Ali Khamenei), "
+groq-qwen3.6-27b,2026-03-01,150,True,True,"nab, Hormozgan province (school strike, 150 killed per Iranian authorities), Dubai "
+groq-qwen3.6-27b,2026-03-01,1,False,True,"killed per Iranian authorities), Dubai (1 killed in Iranian strike), Pete Hegseth"
+groq-qwen3.6-27b,2026-03-01,100,True,True, stated; only the threshold 'surpassed $100' and weekly percentage changes (Brent +
+groq-qwen3.6-27b,2026-03-01,+28,True,True,"0' and weekly percentage changes (Brent +28%, US crude +36%) are given. A precise s"
+groq-qwen3.6-27b,2026-03-01,+36,True,True,"ercentage changes (Brent +28%, US crude +36%) are given. A precise spot price is ne"
+groq-qwen3.6-27b,2026-03-01,150,True,True,"k's coverage., The Minab school strike (150 killed) is attributed to Iran by Trump "
+groq-qwen3.8-27b,2026-03-01,100,True,True,Headline: Oil breaches $100 as Israel strikes Iranian oil depots; M
+groq-qwen3.8-27b,2026-03-01,7,False,True,reme Leader; US military deaths rise to 7  The conflict has entered its second we
+groq-qwen3.8-27b,2026-03-01,100,True,True,mpact. Crude oil prices have surpassed $100 per barrel for the first time in over t
+groq-qwen3.8-27b,2026-03-01,28,True,True,"er three years, with Brent crude rising 28% and US crude jumping 36% in the previo"
+groq-qwen3.8-27b,2026-03-01,36,True,True,t crude rising 28% and US crude jumping 36% in the previous week. Israel launched 
+groq-qwen3.8-27b,2026-03-01,250,True,True,"ice spikes, and India is relying on its 250-million-barrel buffer and non-Hormuz su"
+groq-qwen3.6-27b,2026-03-08,13,False,True,umulative US fatality count to at least 13. Israel announced a 'barrage of new str
+groq-qwen3.6-27b,2026-03-08,52,False,True,dad. CENTCOM confirmed a US Air Force B-52 Stratofortress took off for a night mis
+groq-qwen3.6-27b,2026-03-08,100,True,True,"This week's reporting states 'more than 100 people' were killed, most of them stude"
+groq-qwen3.6-27b,2026-03-08,150,True,True,"them students, which conflicts with the 150 figure reported by Iranian authorities "
+groq-qwen3.6-27b,2026-03-08,6,False,True,ers killed in refueling aircraft crash: 6 (new this week; cumulative US fatalitie
+groq-qwen3.6-27b,2026-03-08,13,False,True,; cumulative US fatalities now at least 13)   - Senior Iranian intelligence offici
+groq-qwen3.6-27b,2026-03-08,2,False,True, officials killed in Tehran IDF strike: 2   - Countries hit by Iranian drone stri
+groq-qwen3.6-27b,2026-03-08,7,False,True,nian drone strikes (NBC investigation): 7   - Drones intercepted over Riyadh/east
+groq-qwen3.6-27b,2026-03-08,10,False,True,epted over Riyadh/eastern Saudi Arabia: 10 (one source) vs. 4 (another source) — c
+groq-qwen3.6-27b,2026-03-08,4,False,True,stern Saudi Arabia: 10 (one source) vs. 4 (another source) — contradictory   - IE
+groq-qwen3.6-27b,2026-03-08,2,False,True,es cancelled: Bahrain and Saudi Arabia (2 events)   - Minab school casualties: 'm
+groq-qwen3.6-27b,2026-03-08,100,True,True,"  - Minab school casualties: 'more than 100' (this week) vs. 150 (last week, per Ir"
+groq-qwen3.6-27b,2026-03-08,150,True,True,"alties: 'more than 100' (this week) vs. 150 (last week, per Iranian authorities) — "
+groq-qwen3.6-27b,2026-03-08,6.0,True,True,):   - us_military_killed_plane_crash = 6.0 personnel   - iran_intelligence_officia
+groq-qwen3.6-27b,2026-03-08,2.0,True,True,_intelligence_officials_killed_tehran = 2.0 persons   - iran_drone_strikes_countrie
+groq-qwen3.6-27b,2026-03-08,7.0,True,True,   - iran_drone_strikes_countries_hit = 7.0 countries   - saudi_drones_intercepted_
+groq-qwen3.6-27b,2026-03-08,10.0,True,True, saudi_drones_intercepted_riyadh_east = 10.0 drones   - minab_school_killed = 100.0 
+groq-qwen3.6-27b,2026-03-08,100.0,True,True,"= 10.0 drones   - minab_school_killed = 100.0 persons (minimum, 'more than 100')  Sce"
+groq-qwen3.6-27b,2026-03-08,100,True,True,"ed = 100.0 persons (minimum, 'more than 100')  Scenario signals:   - A (Swift closu"
+groq-qwen3.6-27b,2026-03-08,52,False,True,"le escalation remains high-intensity (B-52 deployments, Kharg Island threats, inte"
+groq-qwen3.6-27b,2026-03-08,1,False,True,UPPORTED and reinforced. Key evidence: (1) Iran's FM denies ceasefire request; Tr
+groq-qwen3.6-27b,2026-03-08,2,False,True,rejects talks and demands 'surrender'; (2) Rezaee declares Hormuz 'will remain cl
+groq-qwen3.6-27b,2026-03-08,3,False,True, declares Hormuz 'will remain closed'; (3) IEA announces largest-ever reserves re
+groq-qwen3.6-27b,2026-03-08,4,False,True,"elease, implying prolonged supply gap; (4) S&P Global calls the release a 'limite"
+groq-qwen3.6-27b,2026-03-08,5,False,True,limited solution' if closure persists; (5) target set expanded to space infrastru
+groq-qwen3.6-27b,2026-03-08,6,False,True,"igence officials, and seven countries; (6) 6 more US service members killed; (7) "
+groq-qwen3.6-27b,2026-03-08,6,False,True,"nce officials, and seven countries; (6) 6 more US service members killed; (7) F1 "
+groq-qwen3.6-27b,2026-03-08,7,False,True, (6) 6 more US service members killed; (7) F1 cancels Gulf events; (8) no allied 
+groq-qwen3.6-27b,2026-03-08,8,False,True,rs killed; (7) F1 cancels Gulf events; (8) no allied warship commitment materiali
+groq-qwen3.6-27b,2026-03-08,9,False,True,mitment materialised (France refused); (9) Trump's unverified claim that the new 
+groq-qwen3.6-27b,2026-03-08,1,False,True,"ing; fuel subsidy strain), F1 / Formula 1 (April Bahrain and Saudi Arabia races c"
+groq-qwen3.6-27b,2026-03-08,52,False,True, Fury (US military operation name for B-52 missions) Coverage gaps: No specific Br
+groq-qwen3.6-27b,2026-03-08,25,True,True,ipeline-rerouting figures. The baseline 25% global LNG disruption is unquantified 
+groq-qwen3.6-27b,2026-03-08,10,False,True,"dh metropolitan area,' another reports '10 drones over Riyadh and eastern regions."
+groq-qwen3.6-27b,2026-03-08,100,True,True,: this week's article states 'more than 100 people' killed; last week's brief recor
+groq-qwen3.6-27b,2026-03-08,150,True,True,ple' killed; last week's brief recorded 150 per Iranian authorities. No independent
+groq-qwen3.6-27b,2026-03-08,52,False,True,aircraft deployment counts beyond the B-52 mention; the 6 killed in the aircraft c
+groq-qwen3.6-27b,2026-03-08,6,False,True,ent counts beyond the B-52 mention; the 6 killed in the aircraft crash are named 
+groq-qwen3.8-27b,2026-03-08,13,False,True,Headline: US military deaths rise to 13 as B-52s deploy; Iran denies ceasefire 
+groq-qwen3.8-27b,2026-03-08,52,False,True,"ine: US military deaths rise to 13 as B-52s deploy; Iran denies ceasefire request,"
+groq-qwen3.8-27b,2026-03-08,13,False,True,ing the total US military death toll to 13 (7 from the previous week + 6 new). US 
+groq-qwen3.8-27b,2026-03-08,7,False,True,the total US military death toll to 13 (7 from the previous week + 6 new). US Air
+groq-qwen3.8-27b,2026-03-08,6,False,True, toll to 13 (7 from the previous week + 6 new). US Air Force B-52 Stratofortress 
+groq-qwen3.8-27b,2026-03-08,52,False,True, previous week + 6 new). US Air Force B-52 Stratofortress bombers have been deploy
+groq-qwen3.8-27b,2026-03-08,10,False,True,"als in Tehran. Saudi Arabia intercepted 10 drones over Riyadh and eastern regions,"
+groq-qwen3.6-27b,2026-03-15,48,False,True,Headline: Trump issues 48-hour ultimatum to reopen Hormuz or face
+groq-qwen3.6-27b,2026-03-15,100,True,True,"t destructive missile attack on Israel (100+ injured), strikes UAE, and vows to tar"
+groq-qwen3.6-27b,2026-03-15,48,False,True,", 22 March, President Trump gave Iran a 48-hour ultimatum to fully reopen the Stra"
+groq-qwen3.6-27b,2026-03-15,100,True,True,"ry's main nuclear research center; over 100 Israelis were injured, 11 seriously. Th"
+groq-qwen3.6-27b,2026-03-15,11,False,True,"center; over 100 Israelis were injured, 11 seriously. The UAE reported its air def"
+groq-qwen3.6-27b,2026-03-15,48,False,True, said Trump 'speaks for himself' on the 48-hour deadline. Saudi Arabia opened King
+groq-qwen3.6-27b,2026-03-15,24,False,True," others) persona non grata, giving them 24 hours to leave. A Qatari military helic"
+groq-qwen3.6-27b,2026-03-15,48,False,True," minister distanced London from Trump's 48-hour deadline, saying he 'speaks for hi"
+groq-qwen3.6-27b,2026-03-15,3.91,True,True,nationwide average gasoline prices hit $3.91 per gallon. Malaysian Prime Minister An
+groq-qwen3.6-27b,2026-03-15,77,True,True,"dia's crude import dependence rose from 77% (2013-14) to nearly 87% (2025-26), and"
+groq-qwen3.6-27b,2026-03-15,14,False,True,"e import dependence rose from 77% (2013-14) to nearly 87% (2025-26), and LNG impor"
+groq-qwen3.6-27b,2026-03-15,87,True,True,"dence rose from 77% (2013-14) to nearly 87% (2025-26), and LNG import dependence f"
+groq-qwen3.6-27b,2026-03-15,26,False,True," from 77% (2013-14) to nearly 87% (2025-26), and LNG import dependence from 30% to"
+groq-qwen3.6-27b,2026-03-15,30,True,True,"025-26), and LNG import dependence from 30% to 47%, per a Congress MP. Pakistan's "
+groq-qwen3.6-27b,2026-03-15,47,True,True,", and LNG import dependence from 30% to 47%, per a Congress MP. Pakistan's economi"
+groq-qwen3.6-27b,2026-03-15,30,True,True,. India's rising LNG import dependence (30% to 47%) underscores growing vulnerabil
+groq-qwen3.6-27b,2026-03-15,47,True,True,'s rising LNG import dependence (30% to 47%) underscores growing vulnerability.  S
+groq-qwen3.6-27b,2026-03-15,22,False,True,AE; crew were safe. India confirmed all 22 Indian ships and 611 sailors in the Per
+groq-qwen3.6-27b,2026-03-15,611,True,True,India confirmed all 22 Indian ships and 611 sailors in the Persian Gulf are safe. T
+groq-qwen3.6-27b,2026-03-15,"23,000",True,True," wrote to PM Modi raising concerns over 23,000 Indian seafarers stranded in the West A"
+groq-qwen3.6-27b,2026-03-15,100,True,True,ures were reported.  HUMANITARIAN: Over 100 Israelis were injured (11 seriously) in
+groq-qwen3.6-27b,2026-03-15,11,False,True,TARIAN: Over 100 Israelis were injured (11 seriously) in the Arad/Dimona missile s
+groq-qwen3.6-27b,2026-03-15,"23,000",True,True,"ly) in the Arad/Dimona missile strikes. 23,000 Indian seafarers are reported stranded "
+groq-qwen3.6-27b,2026-03-15,3.91,True,True, US nationwide average gasoline price: $3.91/gallon   - Israeli injured in Arad/Dimo
+groq-qwen3.6-27b,2026-03-15,100,True,True,injured in Arad/Dimona missile strikes: 100+ (11 seriously)   - Malaysian governmen
+groq-qwen3.6-27b,2026-03-15,11,False,True,d in Arad/Dimona missile strikes: 100+ (11 seriously)   - Malaysian government sub
+groq-qwen3.6-27b,2026-03-15,1,False,True,3.2 billion (up from ~RM700 million in <1 week)   - Indian ships in Persian Gulf:
+groq-qwen3.6-27b,2026-03-15,22,False,True,week)   - Indian ships in Persian Gulf: 22 (all confirmed safe)   - Indian sailors
+groq-qwen3.6-27b,2026-03-15,611,True,True,fe)   - Indian sailors in Persian Gulf: 611 (all confirmed safe)   - Indian seafare
+groq-qwen3.6-27b,2026-03-15,"23,000",True,True,"rs stranded in West Asia conflict zone: 23,000   - Iranian embassy staffers declared p"
+groq-qwen3.6-27b,2026-03-15,5,False,True,ared persona non grata by Saudi Arabia: 5 (24-hour deadline)   - Trump ultimatum 
+groq-qwen3.6-27b,2026-03-15,24,False,True,d persona non grata by Saudi Arabia: 5 (24-hour deadline)   - Trump ultimatum to r
+groq-qwen3.6-27b,2026-03-15,48,False,True,)   - Trump ultimatum to reopen Hormuz: 48 hours   - India crude oil import depend
+groq-qwen3.6-27b,2026-03-15,87,True,True,  - India crude oil import dependence: ~87% (up from 77% in 2013-14)   - India LNG
+groq-qwen3.6-27b,2026-03-15,77,True,True,de oil import dependence: ~87% (up from 77% in 2013-14)   - India LNG import depen
+groq-qwen3.6-27b,2026-03-15,14,False,True,t dependence: ~87% (up from 77% in 2013-14)   - India LNG import dependence: 47% (
+groq-qwen3.6-27b,2026-03-15,47,True,True,13-14)   - India LNG import dependence: 47% (up from 30%)   - Strait of Hormuz sta
+groq-qwen3.6-27b,2026-03-15,30,True,True,dia LNG import dependence: 47% (up from 30%)   - Strait of Hormuz status: 'effecti
+groq-qwen3.6-27b,2026-03-15,3.91,True,True,dable):   - us_gas_price_national_avg = 3.91 USD/gallon   - israeli_injured_arad_dim
+groq-qwen3.6-27b,2026-03-15,100.0,True,True,"allon   - israeli_injured_arad_dimona = 100.0 persons (minimum, 'over 100')   - israe"
+groq-qwen3.6-27b,2026-03-15,100,True,True,"_dimona = 100.0 persons (minimum, 'over 100')   - israeli_seriously_injured_arad_di"
+groq-qwen3.6-27b,2026-03-15,11.0,True,True,israeli_seriously_injured_arad_dimona = 11.0 persons   - malaysia_fuel_subsidies = 3
+groq-qwen3.6-27b,2026-03-15,3.2,True,True,0 persons   - malaysia_fuel_subsidies = 3.2 billion MYR   - indian_ships_persian_gu
+groq-qwen3.6-27b,2026-03-15,22.0,True,True,ion MYR   - indian_ships_persian_gulf = 22.0 vessels   - indian_sailors_persian_gulf
+groq-qwen3.6-27b,2026-03-15,611.0,True,True,ssels   - indian_sailors_persian_gulf = 611.0 persons   - indian_seafarers_stranded_w
+groq-qwen3.6-27b,2026-03-15,23000.0,True,True,- indian_seafarers_stranded_west_asia = 23000.0 persons   - iran_embassy_staff_persona_
+groq-qwen3.6-27b,2026-03-15,5.0,True,True,embassy_staff_persona_non_grata_saudi = 5.0 persons   - trump_ultimatum_hours = 48.
+groq-qwen3.6-27b,2026-03-15,48.0,True,True,5.0 persons   - trump_ultimatum_hours = 48.0 hours   - india_crude_import_dependence
+groq-qwen3.6-27b,2026-03-15,87.0,True,True,urs   - india_crude_import_dependence = 87.0 %   - india_lng_import_dependence = 47.
+groq-qwen3.6-27b,2026-03-15,47.0,True,True,7.0 %   - india_lng_import_dependence = 47.0 %  Scenario signals:   - A (Swift closu
+groq-qwen3.6-27b,2026-03-15,48,False,True,eek four with no de-escalation. Trump's 48-hour ultimatum is a coercive escalation
+groq-qwen3.6-27b,2026-03-15,48,False,True,LY STRENGTHENED but still unlikely. The 48-hour ultimatum introduces a potential t
+groq-qwen3.6-27b,2026-03-15,1,False,True,UPPORTED and reinforced. Key evidence: (1) Trump's 48-hour ultimatum to 'oblitera
+groq-qwen3.6-27b,2026-03-15,48,False,True,d reinforced. Key evidence: (1) Trump's 48-hour ultimatum to 'obliterate' power pl
+groq-qwen3.6-27b,2026-03-15,2,False,True,ltimatum to 'obliterate' power plants; (2) Iran's military threat to 'completely 
+groq-qwen3.6-27b,2026-03-15,3,False,True,ination infrastructure 'irreversibly'; (3) Iran's most destructive attack yet on 
+groq-qwen3.6-27b,2026-03-15,100,True,True, most destructive attack yet on Israel (100+ injured); (4) UAE and Bahrain now dire
+groq-qwen3.6-27b,2026-03-15,4,False,True,e attack yet on Israel (100+ injured); (4) UAE and Bahrain now direct targets; (5
+groq-qwen3.6-27b,2026-03-15,5,False,True,4) UAE and Bahrain now direct targets; (5) Saudi Arabia expelling 5 Iranian diplo
+groq-qwen3.6-27b,2026-03-15,5,False,True,ect targets; (5) Saudi Arabia expelling 5 Iranian diplomats and opening King Fahd
+groq-qwen3.6-27b,2026-03-15,6,False,True, and opening King Fahd Air Base to US; (6) UK deploying HMS Anson with Tomahawks;
+groq-qwen3.6-27b,2026-03-15,7,False,True,UK deploying HMS Anson with Tomahawks; (7) G7 emergency energy-security statement
+groq-qwen3.6-27b,2026-03-15,8,False,True,"7 emergency energy-security statement; (8) 23,000 Indian seafarers stranded; (9) "
+groq-qwen3.6-27b,2026-03-15,"23,000",True,True,"mergency energy-security statement; (8) 23,000 Indian seafarers stranded; (9) Malaysia"
+groq-qwen3.6-27b,2026-03-15,9,False,True," (8) 23,000 Indian seafarers stranded; (9) Malaysian subsidies quadrupled in a we"
+groq-qwen3.6-27b,2026-03-15,10,False,True,aysian subsidies quadrupled in a week; (10) US reviewing ground-troop deployment o
+groq-qwen3.6-27b,2026-03-15,11,False,True,ewing ground-troop deployment options; (11) no confirmed ceasefire channel despite
+groq-qwen3.6-27b,2026-03-15,"23,000",True,True,"fire), Forward Seamen's Union of India (23,000 seafarers stranded), MT Aqua Titan (Rus"
+groq-qwen3.6-27b,2026-03-15,22,False,True,"ia Shipping Ministry Special Secretary; 22 ships/611 sailors safe), K P Fabian (fo"
+groq-qwen3.6-27b,2026-03-15,611,True,True,"ng Ministry Special Secretary; 22 ships/611 sailors safe), K P Fabian (former diplo"
+groq-qwen3.6-27b,2026-03-15,77,True,True,"i (Congress MP; India import dependence 77%→87% crude, 30%→47% LNG), Kanimozhi (DM"
+groq-qwen3.6-27b,2026-03-15,87,True,True,"ongress MP; India import dependence 77%→87% crude, 30%→47% LNG), Kanimozhi (DMK MP"
+groq-qwen3.6-27b,2026-03-15,30,True,True," India import dependence 77%→87% crude, 30%→47% LNG), Kanimozhi (DMK MP; LPG short"
+groq-qwen3.6-27b,2026-03-15,47,True,True,"ia import dependence 77%→87% crude, 30%→47% LNG), Kanimozhi (DMK MP; LPG shortage "
+groq-qwen3.6-27b,2026-03-15,3.91,True,True,e appears in this week's articles. The $3.91/gallon US retail gas price is the only 
+groq-qwen3.6-27b,2026-03-15,22,False,True,. The only shipping data points are the 22 Indian ships/611 sailors confirmed safe
+groq-qwen3.6-27b,2026-03-15,611,True,True,"ing data points are the 22 Indian ships/611 sailors confirmed safe, the bulk carrie"
+groq-qwen3.6-27b,2026-03-15,25,True,True,ipeline-rerouting figures. The baseline 25% global LNG disruption remains unquanti
+groq-qwen3.6-27b,2026-03-15,52,False,True,yment counts beyond HMS Anson and the B-52 reference from last week; the 'ground t
+groq-qwen3.6-27b,2026-03-15,48,False,True," power plants (the stated target of the 48-hour ultimatum)., The 215 additional ar"
+groq-qwen3.6-27b,2026-03-15,215,True,False," target of the 48-hour ultimatum)., The 215 additional articles in the week's corpu"
+groq-qwen3.8-27b,2026-03-15,48,False,True,Headline: Trump issues 48-hour ultimatum to reopen Hormuz or 'obl
+groq-qwen3.8-27b,2026-03-15,48,False,True,inetic action. President Trump issued a 48-hour ultimatum to Iran to fully reopen 
+groq-qwen3.8-27b,2026-03-15,100,True,True,"ive attack yet on Israel, injuring over 100 people in the southern cities of Arad a"
+groq-qwen3.8-27b,2026-03-15,3.91,True,True,"widening, with US gas prices averaging $3.91 per gallon, Malaysian subsidies soaring"
+groq-qwen3.8-27b,2026-03-15,22,False,True,"g to RM3.2 billion, and India reporting 22 ships and 611 sailors safe in the Persi"
+groq-qwen3.8-27b,2026-03-15,611,True,True,"llion, and India reporting 22 ships and 611 sailors safe in the Persian Gulf while "
+groq-qwen3.8-27b,2026-03-15,"23,000",True,True," sailors safe in the Persian Gulf while 23,000 Indian seafarers remain stranded in the"
+groq-qwen3.6-27b,2026-03-22,"10,000",True,True,"for weeks of ground operations in Iran (10,000 troops ready) and Pakistan hosts a four"
+groq-qwen3.6-27b,2026-03-22,"2,500",True,True," closure. Simultaneously, approximately 2,500 US Marines arrived in the region, joine"
+groq-qwen3.6-27b,2026-03-22,"3,500",True,True,"arines arrived in the region, joined by 3,500 additional US forces, bringing the tota"
+groq-qwen3.6-27b,2026-03-22,"6,000",True,False,"es, bringing the total surge to roughly 6,000 troops. The Washington Post reported th"
+groq-qwen3.6-27b,2026-03-22,"10,000",True,True,"eks of ground operations in Iran,' with 10,000 troops ready and plans ranging from tar"
+groq-qwen3.6-27b,2026-03-22,20,False,True,tan also reported that Iran would allow 20 additional ships (two Pakistani-flagged
+groq-qwen3.6-27b,2026-03-22,27,False,True,"e deliveries for April and May that are 27 million barrels below demand, and urged"
+groq-qwen3.6-27b,2026-03-22,25,True,True, referenced qualitatively. The baseline 25% global LNG disruption from the Qatari 
+groq-qwen3.6-27b,2026-03-22,20,False,True,and Pakistan reported Iran would permit 20 additional ships (two Pakistani-flagged
+groq-qwen3.6-27b,2026-03-22,"94,000",True,True," BW TYR and BW ELM, carrying a combined 94,000 MT of LPG, safely transited the region "
+groq-qwen3.6-27b,2026-03-22,70,False,True,"res were reported.  HUMANITARIAN: Up to 70 British nationals (tourists, expats, an"
+groq-qwen3.6-27b,2026-03-22,"23,000",True,False,"reported in the available articles. The 23,000 Indian seafarers stranded in the West A"
+groq-qwen3.6-27b,2026-03-22,"2,500",True,True,"rs:   - US Marines deployed to region: ~2,500   - Additional US forces arrived: 3,500"
+groq-qwen3.6-27b,2026-03-22,"3,500",True,True,"2,500   - Additional US forces arrived: 3,500   - US troops ready for ground operatio"
+groq-qwen3.6-27b,2026-03-22,"10,000",True,True," US troops ready for ground operations: 10,000   - Combined LPG cargo transited to Ind"
+groq-qwen3.6-27b,2026-03-22,"94,000",True,True,"o transited to India (BW TYR + BW ELM): 94,000 MT   - Additional ships Iran will allow"
+groq-qwen3.6-27b,2026-03-22,20,False,True,l ships Iran will allow through Hormuz: 20 (2 Pakistani-flagged/day)   - Thailand 
+groq-qwen3.6-27b,2026-03-22,2,False,True,ips Iran will allow through Hormuz: 20 (2 Pakistani-flagged/day)   - Thailand con
+groq-qwen3.6-27b,2026-03-22,27,False,True, confirmed crude shortfall (April–May): 27 million barrels below demand   - Britis
+groq-qwen3.6-27b,2026-03-22,70,False,True, in UAE over drone-strike photos: up to 70   - War duration: 5th week (month-long)
+groq-qwen3.6-27b,2026-03-22,5,False,True,rike photos: up to 70   - War duration: 5th week (month-long)   - Saudi Arabia dr
+groq-qwen3.6-27b,2026-03-22,12,False,True, drones intercepted: 'almost a dozen' (~12)   - Houthi missile/drone attacks on Is
+groq-qwen3.6-27b,2026-03-22,2,False,True,Houthi missile/drone attacks on Israel: 2 (first since conflict began)  Observed 
+groq-qwen3.6-27b,2026-03-22,2500.0,True,True,able):   - us_marines_deployed_region = 2500.0 personnel   - us_additional_forces_arri
+groq-qwen3.6-27b,2026-03-22,3500.0,True,True,nnel   - us_additional_forces_arrived = 3500.0 personnel   - us_troops_ready_ground_op
+groq-qwen3.6-27b,2026-03-22,10000.0,True,True,sonnel   - us_troops_ready_ground_ops = 10000.0 personnel   - lpg_cargo_transited_india
+groq-qwen3.6-27b,2026-03-22,94000.0,True,True,nnel   - lpg_cargo_transited_india_mt = 94000.0 MT   - hormuz_additional_ships_allowed 
+groq-qwen3.6-27b,2026-03-22,20.0,True,True,T   - hormuz_additional_ships_allowed = 20.0 vessels   - hormuz_pakistani_vessels_pe
+groq-qwen3.6-27b,2026-03-22,2.0,True,True,   - hormuz_pakistani_vessels_per_day = 2.0 vessels/day   - thailand_crude_shortfal
+groq-qwen3.6-27b,2026-03-22,27.0,True,True,   - thailand_crude_shortfall_apr_may = 27.0 million barrels   - brits_detained_uae_
+groq-qwen3.6-27b,2026-03-22,70.0,True,True,s   - brits_detained_uae_drone_photos = 70.0 persons   - war_week_number = 5.0 weeks
+groq-qwen3.6-27b,2026-03-22,5.0,True,True,os = 70.0 persons   - war_week_number = 5.0 weeks   - houthi_missile_attacks_on_isr
+groq-qwen3.6-27b,2026-03-22,2.0,True,True,   - houthi_missile_attacks_on_israel = 2.0 attacks  Scenario signals:   - A (Swift
+groq-qwen3.6-27b,2026-03-22,1,False,True,er tenable. The conflict now involves: (1) Houthi attacks on Israel and threats t
+groq-qwen3.6-27b,2026-03-22,2,False,True,srael and threats to Red Sea shipping; (2) US preparing ground operations in Iran
+groq-qwen3.6-27b,2026-03-22,"10,000",True,True,"US preparing ground operations in Iran (10,000 troops, weeks of operations); (3) Iran "
+groq-qwen3.6-27b,2026-03-22,3,False,True," (10,000 troops, weeks of operations); (3) Iran threatening to strike the Abraham"
+groq-qwen3.6-27b,2026-03-22,4,False,True,to strike the Abraham Lincoln carrier; (4) Saudi Arabia intercepting drones; (5) 
+groq-qwen3.6-27b,2026-03-22,5,False,True, (4) Saudi Arabia intercepting drones; (5) Israel striking Tehran; (6) thousands 
+groq-qwen3.6-27b,2026-03-22,6,False,True,ng drones; (5) Israel striking Tehran; (6) thousands of cyberattacks; (7) Ukraine
+groq-qwen3.6-27b,2026-03-22,7,False,True,Tehran; (6) thousands of cyberattacks; (7) Ukraine signing defence pacts with Gul
+groq-qwen3.6-27b,2026-03-22,20,False,True,); Iran allowing humanitarian ships and 20 additional vessels through Hormuz; Vanc
+groq-qwen3.6-27b,2026-03-22,"10,000",True,True,"eous military escalation (Houthi entry, 10,000-troop ground ops preparation, Iran's ca"
+groq-qwen3.6-27b,2026-03-22,1,False,True, and further reinforced. Key evidence: (1) Houthi entry with missile strikes on I
+groq-qwen3.6-27b,2026-03-22,2,False,True,ed Sea/Bab el-Mandeb shipping threats; (2) Pentagon preparing 'weeks of ground op
+groq-qwen3.6-27b,2026-03-22,"10,000",True,True,"aring 'weeks of ground operations' with 10,000 troops ready; (3) 2,500 Marines + 3,500"
+groq-qwen3.6-27b,2026-03-22,3,False,True," operations' with 10,000 troops ready; (3) 2,500 Marines + 3,500 additional US fo"
+groq-qwen3.6-27b,2026-03-22,"3,500",True,True,"0,000 troops ready; (3) 2,500 Marines + 3,500 additional US forces deployed; (4) Iran"
+groq-qwen3.6-27b,2026-03-22,4,False,True,"+ 3,500 additional US forces deployed; (4) Iran vowing to strike Abraham Lincoln;"
+groq-qwen3.6-27b,2026-03-22,5,False,True,Iran vowing to strike Abraham Lincoln; (5) Iran warning Gulf states it will 'puni
+groq-qwen3.6-27b,2026-03-22,6,False,True,l 'punish' them for hosting US forces; (6) Saudi Arabia intercepting drones; (7) 
+groq-qwen3.6-27b,2026-03-22,7,False,True, (6) Saudi Arabia intercepting drones; (7) Israel striking Tehran; (8) thousands 
+groq-qwen3.6-27b,2026-03-22,8,False,True,ng drones; (7) Israel striking Tehran; (8) thousands of cyberattacks; (9) Thailan
+groq-qwen3.6-27b,2026-03-22,9,False,True,Tehran; (8) thousands of cyberattacks; (9) Thailand 27-million-barrel crude short
+groq-qwen3.6-27b,2026-03-22,27,False,True,thousands of cyberattacks; (9) Thailand 27-million-barrel crude shortfall; (10) Ma
+groq-qwen3.6-27b,2026-03-22,10,False,True,and 27-million-barrel crude shortfall; (10) Maersk suspending operations; (11) 'wo
+groq-qwen3.6-27b,2026-03-22,11,False,True,ll; (10) Maersk suspending operations; (11) 'worst global energy supply shock in h
+groq-qwen3.6-27b,2026-03-22,12,False,True,gy supply shock in history' (analyst); (12) Bangladesh deploying military to fuel 
+groq-qwen3.6-27b,2026-03-22,13,False,True,esh deploying military to fuel depots; (13) 70 Brits detained in UAE; (14) Ukraine
+groq-qwen3.6-27b,2026-03-22,70,False,True,deploying military to fuel depots; (13) 70 Brits detained in UAE; (14) Ukraine–Gul
+groq-qwen3.6-27b,2026-03-22,14,False,True,depots; (13) 70 Brits detained in UAE; (14) Ukraine–Gulf defence pacts linking the
+groq-qwen3.6-27b,2026-03-22,"94,000",True,True,"age, BW TYR and BW ELM (LPG carriers) – 94,000 MT combined cargo transited to India, B"
+groq-qwen3.6-27b,2026-03-22,70,False,True,"CS 'lost opportunity' commentary, UAE – 70 British nationals detained over drone-s"
+groq-qwen3.6-27b,2026-03-22,27,False,True," only oil-market figures are Thailand's 27-million-barrel shortfall and the 94,000"
+groq-qwen3.6-27b,2026-03-22,"94,000",True,True,"d's 27-million-barrel shortfall and the 94,000 MT LPG transit., No tanker transit coun"
+groq-qwen3.6-27b,2026-03-22,20,False,True," Hormuz. The only shipping data are the 20 additional ships Iran will allow, the 2"
+groq-qwen3.6-27b,2026-03-22,2,False,True,"0 additional ships Iran will allow, the 2 LPG carriers (94,000 MT), and Maersk's "
+groq-qwen3.6-27b,2026-03-22,"94,000",True,True,"ps Iran will allow, the 2 LPG carriers (94,000 MT), and Maersk's suspension., No Qatar"
+groq-qwen3.6-27b,2026-03-22,20,False,True,"ming or in progress., No details on the 20 additional ships Iran will allow throug"
+groq-qwen3.6-27b,2026-03-22,"23,000",True,False,"gged vessels a day')., No update on the 23,000 Indian seafarers stranded in the West A"
+groq-qwen3.6-27b,2026-03-22,48,False,True,"lants (the stated target of last week's 48-hour ultimatum)., No desalination-plant"
+groq-qwen3.6-27b,2026-03-22,"3,500",True,True,"n-plant status or damage reports., The '3,500 additional' US forces figure is ambiguo"
+groq-qwen3.6-27b,2026-03-22,"10,000",True,True,"2,500 Marines or includes them, and the 10,000-troop figure from the headline may enco"
+groq-qwen3.6-27b,2026-03-22,206,True,False,"ls or Israeli interception counts., The 206 additional articles in the week's corpu"
+groq-qwen3.6-27b,2026-03-22,20,False,True,neously allowing humanitarian ships and 20 additional vessels through Hormuz (dipl
+groq-qwen3.6-27b,2026-03-22,"10,000",True,True,"pares 'weeks of ground operations' with 10,000 troops. The two tracks are in tension, "
+groq-qwen3.6-27b,2026-03-29,48,False,True,Headline: Trump issues a 48-hour ultimatum to Iran to reopen the St
+groq-qwen3.6-27b,2026-03-29,15,False,True,"and bridges, as Iran shoots down a US F-15E, Iranian drones hit Bahrain's petroche"
+groq-qwen3.6-27b,2026-03-29,15,False,True,sharp escalation. Iran shot down a US F-15E fighter jet over southwestern Iran; US
+groq-qwen3.6-27b,2026-03-29,48,False,True,"icly disputed. President Trump issued a 48-hour ultimatum (deadline Tuesday, April"
+groq-qwen3.6-27b,2026-03-29,48,False,True,"tion channel emerged this week, and the 48-hour military deadline undercuts the di"
+groq-qwen3.6-27b,2026-03-29,100,True,True," AND MARKETS: The Economist headlined '$100 oil,' noting WTI crude has surged from "
+groq-qwen3.6-27b,2026-03-29,60,True,True,noting WTI crude has surged from below $60/bbl a few months ago to above $100/bbl.
+groq-qwen3.6-27b,2026-03-29,100,True,True,elow $60/bbl a few months ago to above $100/bbl. Thailand's diesel pump price hit a
+groq-qwen3.6-27b,2026-03-29,50.54,True,True,ailand's diesel pump price hit a record 50.54 baht/litre after eight consecutive pric
+groq-qwen3.6-27b,2026-03-29,8,False,True,ted to hold rates steady at its April 6-8 MPC meeting amid rising inflation risks
+groq-qwen3.6-27b,2026-03-29,25,True,True,"ight, and foreign exchange, with nearly 25% of GDP under direct threat from sector"
+groq-qwen3.6-27b,2026-03-29,25,True,True,act details were provided. The baseline 25% global LNG disruption from the Qatari 
+groq-qwen3.6-27b,2026-03-29,200,True,True,week's reporting.  SHIPPING: Fewer than 200 ships have managed to transit the Strai
+groq-qwen3.6-27b,2026-03-29,200,True,True,ported beyond the aggregate 'fewer than 200' figure.  HUMANITARIAN: Marooned crews 
+groq-qwen3.6-27b,2026-03-29,10,False,True,njay Sudhir highlighted the survival of 10 million Indians living in the Gulf as a
+groq-qwen3.6-27b,2026-03-29,100,True,True,indicators:   - WTI crude price: above $100/bbl (up from below $60/bbl a few months
+groq-qwen3.6-27b,2026-03-29,60,True,True,e price: above $100/bbl (up from below $60/bbl a few months ago)   - Thai diesel p
+groq-qwen3.6-27b,2026-03-29,50.54,True,True,"months ago)   - Thai diesel pump price: 50.54 baht/litre (record high, after 8 consec"
+groq-qwen3.6-27b,2026-03-29,8,False,True,"e: 50.54 baht/litre (record high, after 8 consecutive rises)   - Total ships tran"
+groq-qwen3.6-27b,2026-03-29,200,True,True,nsited Hormuz since closure: fewer than 200   - Normal oil flow through Hormuz: 20%
+groq-qwen3.6-27b,2026-03-29,20,True,True,200   - Normal oil flow through Hormuz: 20% of world's oil (per this week's articl
+groq-qwen3.6-27b,2026-03-29,21,True,True,er this week's article; baseline states 21%)   - Indians living in the Gulf: 10 mi
+groq-qwen3.6-27b,2026-03-29,10,False,True,es 21%)   - Indians living in the Gulf: 10 million   - Bangladesh GDP under direct
+groq-qwen3.6-27b,2026-03-29,25,True,True, - Bangladesh GDP under direct threat: ~25%   - Trump ultimatum deadline: 48 hours
+groq-qwen3.6-27b,2026-03-29,48,False,True,"eat: ~25%   - Trump ultimatum deadline: 48 hours (Tuesday, April 7)   - US F-15E s"
+groq-qwen3.6-27b,2026-03-29,15,False,True,"e: 48 hours (Tuesday, April 7)   - US F-15E shot down by Iran: 1 aircraft, 1 crew "
+groq-qwen3.6-27b,2026-03-29,1,False,True,"pril 7)   - US F-15E shot down by Iran: 1 aircraft, 1 crew member (colonel) rescu"
+groq-qwen3.6-27b,2026-03-29,1,False,True,"US F-15E shot down by Iran: 1 aircraft, 1 crew member (colonel) rescued   - Indon"
+groq-qwen3.6-27b,2026-03-29,3,False,True, peacekeepers injured in Lebanon blast: 3   - War duration: 6th week (began Febru
+groq-qwen3.6-27b,2026-03-29,6,False,True,"d in Lebanon blast: 3   - War duration: 6th week (began February 28, 2026)  Obser"
+groq-qwen3.6-27b,2026-03-29,100.0,True,True,hine-readable):   - wti_crude_usd_bbl = 100.0 USD/bbl   - thai_diesel_price_baht_litr
+groq-qwen3.6-27b,2026-03-29,50.54,True,True,/bbl   - thai_diesel_price_baht_litre = 50.54 baht/litre   - hormuz_total_transits_si
+groq-qwen3.6-27b,2026-03-29,200.0,True,True,"- hormuz_total_transits_since_closure = 200.0 vessels (cumulative, 'fewer than')   - "
+groq-qwen3.6-27b,2026-03-29,20.0,True,True, - hormuz_normal_share_global_oil_pct = 20.0 %   - indians_in_gulf_population = 1000
+groq-qwen3.6-27b,2026-03-29,10000000.0,True,False,20.0 %   - indians_in_gulf_population = 10000000.0 persons   - bangladesh_gdp_under_threat
+groq-qwen3.6-27b,2026-03-29,25.0,True,True,s   - bangladesh_gdp_under_threat_pct = 25.0 %   - thai_diesel_price_rises_count = 8
+groq-qwen3.6-27b,2026-03-29,8.0,True,True,0 %   - thai_diesel_price_rises_count = 8.0 consecutive rises   - indonesian_peacek
+groq-qwen3.6-27b,2026-03-29,3.0,True,True,donesian_peacekeepers_injured_lebanon = 3.0 persons   - us_f15e_shot_down_count = 1
+groq-qwen3.6-27b,2026-03-29,1.0,True,True,0 persons   - us_f15e_shot_down_count = 1.0 aircraft   - war_week_number = 6.0 week
+groq-qwen3.6-27b,2026-03-29,6.0,True,True,nt = 1.0 aircraft   - war_week_number = 6.0 weeks  Scenario signals:   - A (Swift c
+groq-qwen3.6-27b,2026-03-29,48,False,True,"Week six with no de-escalation. Trump's 48-hour ultimatum is a coercive deadline, "
+groq-qwen3.6-27b,2026-03-29,15,False,True,tion facilities). Iran shot down a US F-15E. The conflict now involves strikes on 
+groq-qwen3.6-27b,2026-03-29,48,False,True,LY STRENGTHENED but still unlikely. The 48-hour ultimatum creates a hard deadline 
+groq-qwen3.6-27b,2026-03-29,15,False,True,"the simultaneous military escalation (F-15E shootdown, Bahrain drone strike, threa"
+groq-qwen3.6-27b,2026-03-29,48,False,True, public defiance make resolution within 48 hours improbable. The week ends before 
+groq-qwen3.6-27b,2026-03-29,1,False,True, and further reinforced. Key evidence: (1) Iran shot down a US F-15E; (2) Iranian
+groq-qwen3.6-27b,2026-03-29,15,False,True,Key evidence: (1) Iran shot down a US F-15E; (2) Iranian drones struck Bahrain's G
+groq-qwen3.6-27b,2026-03-29,2,False,True,idence: (1) Iran shot down a US F-15E; (2) Iranian drones struck Bahrain's GPIP p
+groq-qwen3.6-27b,2026-03-29,3,False,True,uck Bahrain's GPIP petrochemical firm; (3) Trump's 48-hour ultimatum to bomb powe
+groq-qwen3.6-27b,2026-03-29,48,False,True,'s GPIP petrochemical firm; (3) Trump's 48-hour ultimatum to bomb power plants and
+groq-qwen3.6-27b,2026-03-29,4,False,True,atum to bomb power plants and bridges; (4) Trump claiming US strikes already dest
+groq-qwen3.6-27b,2026-03-29,5,False,True, destroyed an Iranian civilian bridge; (5) Hegseth pushing to target desalination
+groq-qwen3.6-27b,2026-03-29,6,False,True,ing to target desalination facilities; (6) Iran disputing the crew rescue; (7) Ch
+groq-qwen3.6-27b,2026-03-29,7,False,True,s; (6) Iran disputing the crew rescue; (7) China condemning US strikes on civilia
+groq-qwen3.6-27b,2026-03-29,8,False,True,US strikes on civilian infrastructure; (8) WTI above $100/bbl; (9) Thai diesel at
+groq-qwen3.6-27b,2026-03-29,100,True,True,civilian infrastructure; (8) WTI above $100/bbl; (9) Thai diesel at record 50.54 ba
+groq-qwen3.6-27b,2026-03-29,9,False,True,nfrastructure; (8) WTI above $100/bbl; (9) Thai diesel at record 50.54 baht/litre
+groq-qwen3.6-27b,2026-03-29,50.54,True,True,ove $100/bbl; (9) Thai diesel at record 50.54 baht/litre; (10) fewer than 200 total t
+groq-qwen3.6-27b,2026-03-29,10,False,True,hai diesel at record 50.54 baht/litre; (10) fewer than 200 total transits since cl
+groq-qwen3.6-27b,2026-03-29,200,True,True,ecord 50.54 baht/litre; (10) fewer than 200 total transits since closure; (11) maro
+groq-qwen3.6-27b,2026-03-29,11,False,True,than 200 total transits since closure; (11) marooned crews with dwindling supplies
+groq-qwen3.6-27b,2026-03-29,12,False,True,arooned crews with dwindling supplies; (12) 10 million Indians in the Gulf at risk
+groq-qwen3.6-27b,2026-03-29,10,False,True,ned crews with dwindling supplies; (12) 10 million Indians in the Gulf at risk; (1
+groq-qwen3.6-27b,2026-03-29,13,False,True,0 million Indians in the Gulf at risk; (13) Bangladesh 25% GDP under threat; (14) 
+groq-qwen3.6-27b,2026-03-29,25,True,True,ns in the Gulf at risk; (13) Bangladesh 25% GDP under threat; (14) SBI flagging im
+groq-qwen3.6-27b,2026-03-29,14,False,True, (13) Bangladesh 25% GDP under threat; (14) SBI flagging imminent global GDP downw
+groq-qwen3.6-27b,2026-03-29,15,False,True,imminent global GDP downward revision; (15) worldwide energy policy shift (rationi
+groq-qwen3.6-27b,2026-03-29,15,False,True,"US-Iran peace talks (alongside Oman), F-15E (US fighter jet) – shot down by Iran o"
+groq-qwen3.6-27b,2026-03-29,48,False,True,"ief) – urged Gulf/UN intervention after 48-hour ultimatum, Abdul Majid Hakeem Ilah"
+groq-qwen3.6-27b,2026-03-29,10,False,True,"hir (Former Indian Ambassador to UAE) – 10 million Indians in Gulf, Hormuz must op"
+groq-qwen3.6-27b,2026-03-29,100,True,True,ears; only WTI is referenced as 'above $100/bbl' in The Economist headline. The exa
+groq-qwen3.6-27b,2026-03-29,200,True,True,"igures beyond the aggregate 'fewer than 200' total since closure., No insurance-pre"
+groq-qwen3.6-27b,2026-03-29,15,False,True,"on Bahrain's GPIP., No details on the F-15E shootdown: exact location, circumstanc"
+groq-qwen3.6-27b,2026-03-29,"23,000",True,False,"hing to target them)., No update on the 23,000 Indian seafarers stranded (reported two"
+groq-qwen3.6-27b,2026-03-29,10,False,True, stranded (reported two weeks ago); the 10 million Indians in the Gulf is a broade
+groq-qwen3.6-27b,2026-03-29,20,False,True," imports., No data on the status of the 20 additional ships Iran allowed through H"
+groq-qwen3.6-27b,2026-03-29,20,True,True,"s)., Contradiction: One article states '20% of the world's oil flows through' Horm"
+groq-qwen3.6-27b,2026-03-29,21,True,True, the baseline crisis description states 21%. The discrepancy is minor but unexplai
+groq-qwen3.6-27b,2026-03-29,48,False,True,n Iran; no source clarifies whether the 48-hour deadline is a genuine negotiation 
+groq-qwen3.6-27b,2026-03-29,15,False,True,n: Iran disputes the US rescue of the F-15E crew member while the US confirms it; 
+groq-qwen3.6-27b,2026-03-29,201,True,False,"ndependent verification available., The 201 additional articles in the week's corpu"
+groq-qwen3.8-27b,2026-03-29,48,False,True,Headline: Trump issues 48-hour ultimatum to reopen Hormuz; US res
+groq-qwen3.8-27b,2026-03-29,48,False,True,n hostilities. President Trump issued a 48-hour ultimatum to Iran to reopen the St
+groq-qwen3.8-27b,2026-03-29,15,False,True,"escue of a second crew member from an F-15E fighter jet shot down by Iran, an even"
+groq-qwen3.8-27b,2026-03-29,50.54,True,True, diesel prices hitting a record high of 50.54 baht per litre and global GDP forecasts
+groq-qwen3.6-27b,2026-04-05,39,False,True, The conflict entered its seventh week (39 days from the February 28 start) with a
+groq-qwen3.6-27b,2026-04-05,48,False,True,"Iran on April 7, effectively ending the 48-hour ultimatum cycle from the prior wee"
+groq-qwen3.6-27b,2026-04-05,100,True,True,"a oil hit a record price, with the FTSE 100 reporting the price 'close to $100 a ba"
+groq-qwen3.6-27b,2026-04-05,100,True,True,FTSE 100 reporting the price 'close to $100 a barrel.' Asian stock markets were mos
+groq-qwen3.6-27b,2026-04-05,800,True,True,rice data was provided.  SHIPPING: Over 800 vessels remain stranded in the Strait o
+groq-qwen3.6-27b,2026-04-05,"1,927",True,True," market volatility.  HUMANITARIAN: Over 1,927 Indian seafarers have been repatriated "
+groq-qwen3.6-27b,2026-04-05,124,True,True,"have been repatriated so far, including 124 in the last 24 hours, per India's Union"
+groq-qwen3.6-27b,2026-04-05,24,False,True,"iated so far, including 124 in the last 24 hours, per India's Union Shipping Minis"
+groq-qwen3.6-27b,2026-04-05,80,True,True,"c tile manufacturing hub producing over 80% of national output, has been 'unusuall"
+groq-qwen3.6-27b,2026-04-05,100,True,True," North Sea (Brent) oil price: close to $100/bbl (record high, per FTSE 100)   - Ves"
+groq-qwen3.6-27b,2026-04-05,100,True,True,"lose to $100/bbl (record high, per FTSE 100)   - Vessels stranded in Strait of Horm"
+groq-qwen3.6-27b,2026-04-05,800,True,True,sels stranded in Strait of Hormuz: over 800 (Pole Star Global)   - Indian seafarers
+groq-qwen3.6-27b,2026-04-05,"1,927",True,True,"- Indian seafarers repatriated to date: 1,927 (including 124 in last 24 hours)   - Ku"
+groq-qwen3.6-27b,2026-04-05,124,True,True,"s repatriated to date: 1,927 (including 124 in last 24 hours)   - Kuwait drone atta"
+groq-qwen3.6-27b,2026-04-05,24,False,True,"d to date: 1,927 (including 124 in last 24 hours)   - Kuwait drone attacks since T"
+groq-qwen3.6-27b,2026-04-05,7,False,True, - Kuwait drone attacks since Thursday: 7 (blamed on Iran/militia allies; IRGC de
+groq-qwen3.6-27b,2026-04-05,39,False,True, allies; IRGC denies)   - War duration: 39 days (Feb 28 – Apr 7 ceasefire announce
+groq-qwen3.6-27b,2026-04-05,2,False,True,e announcement)   - Ceasefire duration: 2 weeks (announced April 7)   - UK/EU air
+groq-qwen3.6-27b,2026-04-05,3,False,True,  - UK/EU airport jet-fuel risk window: 3 weeks before potential cancellations   
+groq-qwen3.6-27b,2026-04-05,4,False,True,"ancellations   - Ireland fuel protests: 4th day, motorways blocked, spread to Nor"
+groq-qwen3.6-27b,2026-04-05,4,False,True,S CPI March: largest increase in nearly 4 years (no specific % stated)   - Indian
+groq-qwen3.6-27b,2026-04-05,80,True,True,")   - Indian ceramic tile hub (Morbi): ~80% of national production, 'unusually qui"
+groq-qwen3.6-27b,2026-04-05,1,False,True,"onal production, 'unusually quiet' for ~1 month  Observed indicators (machine-rea"
+groq-qwen3.6-27b,2026-04-05,100.0,True,True,ble):   - north_sea_oil_price_usd_bbl = 100.0 USD/bbl   - hormuz_stranded_vessels = 8
+groq-qwen3.6-27b,2026-04-05,800.0,True,True,0 USD/bbl   - hormuz_stranded_vessels = 800.0 vessels   - indian_seafarers_repatriate
+groq-qwen3.6-27b,2026-04-05,1927.0,True,True,dian_seafarers_repatriated_cumulative = 1927.0 persons   - indian_seafarers_repatriate
+groq-qwen3.6-27b,2026-04-05,124.0,True,True,   - indian_seafarers_repatriated_24h = 124.0 persons   - kuwait_drone_attacks_since_
+groq-qwen3.6-27b,2026-04-05,7.0,True,True,- kuwait_drone_attacks_since_thursday = 7.0 attacks   - war_duration_days = 39.0 da
+groq-qwen3.6-27b,2026-04-05,39.0,True,True,y = 7.0 attacks   - war_duration_days = 39.0 days   - ceasefire_duration_weeks = 2.0
+groq-qwen3.6-27b,2026-04-05,2.0,True,True,9.0 days   - ceasefire_duration_weeks = 2.0 weeks   - hormuz_reopening_airport_dead
+groq-qwen3.6-27b,2026-04-05,3.0,True,True,rmuz_reopening_airport_deadline_weeks = 3.0 weeks   - ireland_fuel_protest_days = 4
+groq-qwen3.6-27b,2026-04-05,4.0,True,True,0 weeks   - ireland_fuel_protest_days = 4.0 days  Scenario signals:   - A (Swift cl
+groq-qwen3.6-27b,2026-04-05,7,False,True,"trait remains closed, Kuwait was hit by 7 drone attacks, and Israel-Hezbollah fig"
+groq-qwen3.6-27b,2026-04-05,800,True,True,ntained. The two-week timeframe and the 800+ stranded vessels imply prolonged closu
+groq-qwen3.6-27b,2026-04-05,800,True,True,"is. However, the strait remains closed (800+ vessels stranded), Kuwait was hit by 7"
+groq-qwen3.6-27b,2026-04-05,7,False,True,"0+ vessels stranded), Kuwait was hit by 7 drones, Lebanon fighting continues, and"
+groq-qwen3.6-27b,2026-04-05,3,False,True,ning of lasting economic damage and the 3-week airport fuel deadline keep the pro
+groq-qwen3.6-27b,2026-04-05,7,False,True,"rolled leadership, Kuwait – targeted by 7 drone attacks blamed on Iran/militia al"
+groq-qwen3.6-27b,2026-04-05,800,True,True,"obal – shipping analysis firm reporting 800+ stranded vessels, Ryanair – warned of "
+groq-qwen3.6-27b,2026-04-05,80,True,True,ndia) – ceramic tile manufacturing hub (80% of national production) affected by en
+groq-qwen3.6-27b,2026-04-05,100,True,True,price figure is stated; only 'close to $100 a barrel' and 'record' are given. The e
+groq-qwen3.6-27b,2026-04-05,100,True,True,rice for this week; last week's 'above $100/bbl' is not updated with a specific fig
+groq-qwen3.6-27b,2026-04-05,25,True,True,"ces, or pipeline-rerouting figures. The 25% global LNG disruption from the baselin"
+groq-qwen3.6-27b,2026-04-05,800,True,True,nsit counts or AIS lane data beyond the 800+ stranded vessel figure. The IRGC route
+groq-qwen3.6-27b,2026-04-05,7,False,True,"ge, or production-loss figures from the 7 Kuwait drone attacks., No details on th"
+groq-qwen3.6-27b,2026-04-05,10,False,True,"us or damage reports., No update on the 10 million Indians in the Gulf (broader po"
+groq-qwen3.6-27b,2026-04-05,"1,927",True,True," population figure from last week); the 1,927 seafarer repatriation figure is seafare"
+groq-qwen3.6-27b,2026-04-05,20,False,True,"e is seafarer-specific., No data on the 20 Pakistani-flagged vessels Iran allowed "
+groq-qwen3.6-27b,2026-04-05,7,False,True,wait blames Iran and militia allies for 7 drone attacks; IRGC denies launching an
+groq-qwen3.6-27b,2026-04-05,228,True,False,"bility within the same news cycle., The 228 additional articles in the week's corpu"
+groq-qwen3.6-27b,2026-04-05,100,True,True,"only that it is a record and 'close to $100.', No data on the status of the 200+ ve"
+groq-qwen3.6-27b,2026-04-05,200,True,True,"to $100.', No data on the status of the 200+ vessels that had transited since closu"
+groq-qwen3.6-27b,2026-04-05,800,True,True,closure (last week's figure) versus the 800+ now stranded; the relationship between
+groq-qwen3.8-27b,2026-04-05,800,True,True,"rts warning of jet fuel shortages. Over 800 vessels remain stranded in the region, "

@@ -912,8 +912,9 @@ if [[ "$HORMUZ_AUTO_BUILD" == "1" ]]; then
             echo "[vendor]   - TEMOA already vendored"
         fi
 
-        _aeo_dest="${PROJECT_ROOT}/data/eia/AEO2025_Tables_19_20.xlsx"
-        _aeo_url="${HORMUZ_AEO_XLSX_URL:-https://www.eia.gov/outlooks/aeo/excel/aeotab_19.xlsx}"
+        # AEO2025 reference-case Table 20 (see stonybrook_ai_cluster.job).
+        _aeo_dest="${PROJECT_ROOT}/data/eia/AEO2025_Table20_ref2025.xlsx"
+        _aeo_url="${HORMUZ_AEO_XLSX_URL:-https://www.eia.gov/outlooks/archive/aeo25/excel/aeotab20.xlsx}"
         if [[ ! -f "$_aeo_dest" ]]; then
             echo "[vendor]   - downloading AEO2025 macro XLSX -> ${_aeo_dest}"
             mkdir -p "${PROJECT_ROOT}/data/eia"

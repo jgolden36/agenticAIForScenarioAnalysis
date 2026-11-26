@@ -451,7 +451,13 @@ class EnergyFluxLNGProfitsAdapter(ExcelAdapter):
 
     @property
     def analytical_level(self) -> AnalyticalLevel:
-        return AnalyticalLevel.COMMODITY
+        # COMMODITY_DOWNSTREAM (not COMMODITY) so the upstream-forwarding
+        # barrier can fill ttf_peak_price / jkm_peak_price / hh_crisis_price
+        # from LNGST's computed hub prices (configs/upstream_forwarding_mapping.yaml).
+        # Forwarding only flows from earlier levels, so two COMMODITY
+        # models cannot feed each other. Macro models still read this
+        # model's outputs: the macro barrier reads every earlier tier.
+        return AnalyticalLevel.COMMODITY_DOWNSTREAM
 
     @property
     def description(self) -> str:
@@ -504,8 +510,15 @@ class EnergyFluxLNGProfitsAdapter(ExcelAdapter):
         dur = params.get("disruption_duration_months", 12)
         if not isinstance(dur, (int, float)):
             errors.append("'disruption_duration_months' must be numeric")
-        elif dur < 1 or dur > 12:
-            errors.append(f"'disruption_duration_months' must be 1–12; got {dur}")
+        elif dur < 1:
+            errors.append(f"'disruption_duration_months' must be >= 1; got {dur}")
+        elif dur > 12:
+            # The workbook covers a 12-month window; longer disruptions are
+            # evaluated over that window (translate_inputs caps and records it).
+            warnings.append(
+                f"'disruption_duration_months' is {dur}; the workbook horizon "
+                "is 12 months, so the windfall is computed over 12 months"
+            )
 
         if has_schedule:
             sched = params["price_schedule"]
@@ -561,14 +574,60 @@ class EnergyFluxLNGProfitsAdapter(ExcelAdapter):
                 except (TypeError, ValueError):
                     pass
 
+        dur = translated.get("disruption_duration_months")
+        if isinstance(dur, (int, float)) and dur > 12:
+            translated["_duration_capped_from_months"] = dur
+            translated["disruption_duration_months"] = 12
+
         if "price_schedule" not in translated:
+            # Schedule start: explicit baseline_* inputs (workbook Inputs!B14:B16)
+            # if given; else observed pre-crisis prices when market
+            # calibration is on (the same values LNGST uses, so the two
+            # models start from one baseline); else the workbook's spot
+            # defaults.
+            from src.models.market_calibration import active_calibration
+
+            cal = active_calibration()
+            spot = dict(_DEFAULT_SPOT_PRICES)
+            if cal is not None:
+                spot.update(
+                    ttf=cal.baseline("ttf", spot["ttf"]),
+                    jkm=cal.baseline("lng_japan", spot["jkm"]),
+                    hh=cal.baseline("henry_hub", spot["hh"]),
+                )
+                translated["_calibration"] = cal.provenance(
+                    {"schedule_start": {k: spot[k] for k in ("ttf", "jkm", "hh")},
+                     "jkm_proxy": "lng_japan"}
+                )
+            starts = {
+                "ttf": float(translated.get("baseline_ttf", spot["ttf"])),
+                "jkm": float(translated.get("baseline_jkm", spot["jkm"])),
+                "hh": float(translated.get("baseline_hh", spot["hh"])),
+            }
+            peaks = {
+                "ttf": float(translated["ttf_peak_price"]),
+                "jkm": float(translated["jkm_peak_price"]),
+                "hh": float(translated["hh_crisis_price"]),
+            }
+            # A peak below the schedule start would make the "spike" slope
+            # downward (e.g. LNGST's TTF baseline is 11 vs the workbook's
+            # 16.98 spot). Start such hubs at the peak instead and record it.
+            clamped = {
+                hub: {"start": starts[hub], "peak": peaks[hub]}
+                for hub in starts if peaks[hub] < starts[hub]
+            }
+            for hub in clamped:
+                starts[hub] = peaks[hub]
+            if clamped:
+                translated["_schedule_start_clamped"] = clamped
+            translated["_schedule_start"] = dict(starts)
             translated["price_schedule"] = generate_price_schedule(
-                baseline_ttf=_DEFAULT_SPOT_PRICES["ttf"],
-                baseline_jkm=_DEFAULT_SPOT_PRICES["jkm"],
-                baseline_hh=_DEFAULT_SPOT_PRICES["hh"],
-                peak_ttf=translated["ttf_peak_price"],
-                peak_jkm=translated["jkm_peak_price"],
-                peak_hh=translated["hh_crisis_price"],
+                baseline_ttf=starts["ttf"],
+                baseline_jkm=starts["jkm"],
+                baseline_hh=starts["hh"],
+                peak_ttf=peaks["ttf"],
+                peak_jkm=peaks["jkm"],
+                peak_hh=peaks["hh"],
                 peak_month=translated.get("peak_month", 7),
             )
         else:
@@ -600,23 +659,56 @@ class EnergyFluxLNGProfitsAdapter(ExcelAdapter):
         return self._execute_python(inputs)
 
     def _execute_python(self, inputs: dict[str, Any]) -> ModelOutput:
-        result = compute_windfall(
-            price_schedule=inputs["price_schedule"],
-            baseline_eu_cargo_profit=inputs.get(
-                "baseline_eu_cargo_profit", _DEFAULT_BASELINE_CARGO_PROFIT["eu"]
-            ),
-            baseline_asia_cargo_profit=inputs.get(
-                "baseline_asia_cargo_profit", _DEFAULT_BASELINE_CARGO_PROFIT["asia"]
-            ),
-            liquefaction_toll=inputs.get("liquefaction_toll", _DEFAULT_LIQ_TOLL),
-            cargo_size_mmbtu=inputs.get("cargo_size_mmbtu", _DEFAULT_CARGO_MMBTU),
-            cargo_size_bcf=inputs.get("cargo_size_bcf", _DEFAULT_CARGO_BCF),
-            monthly_export_bcf=inputs.get("monthly_export_bcf", _DEFAULT_EXPORT_BCF),
-            eu_share=inputs.get("eu_share", _DEFAULT_EU_SHARE),
-            asia_share=inputs.get("asia_share", _DEFAULT_ASIA_SHARE),
-            duration_months=inputs.get("disruption_duration_months", 12),
-        )
-        return self.parse_outputs(result)
+        def windfall(schedule: list[PriceScheduleRow]) -> LNGProfitsResult:
+            return compute_windfall(
+                price_schedule=schedule,
+                baseline_eu_cargo_profit=inputs.get(
+                    "baseline_eu_cargo_profit", _DEFAULT_BASELINE_CARGO_PROFIT["eu"]
+                ),
+                baseline_asia_cargo_profit=inputs.get(
+                    "baseline_asia_cargo_profit", _DEFAULT_BASELINE_CARGO_PROFIT["asia"]
+                ),
+                liquefaction_toll=inputs.get("liquefaction_toll", _DEFAULT_LIQ_TOLL),
+                cargo_size_mmbtu=inputs.get("cargo_size_mmbtu", _DEFAULT_CARGO_MMBTU),
+                cargo_size_bcf=inputs.get("cargo_size_bcf", _DEFAULT_CARGO_BCF),
+                monthly_export_bcf=inputs.get("monthly_export_bcf", _DEFAULT_EXPORT_BCF),
+                eu_share=inputs.get("eu_share", _DEFAULT_EU_SHARE),
+                asia_share=inputs.get("asia_share", _DEFAULT_ASIA_SHARE),
+                duration_months=inputs.get("disruption_duration_months", 12),
+            )
+
+        result = windfall(inputs["price_schedule"])
+        out = self.parse_outputs(result)
+
+        # The workbook measures windfall against a fixed pre-crisis cargo
+        # profit, not against the schedule's own start, so a path that never
+        # leaves its start prices still reports a windfall (positive from
+        # the workbook's March 2026 spot, negative from observed pre-crisis
+        # prices). Subtracting a path with hub prices and freight held at
+        # the schedule start leaves the windfall due to the scenario's rise
+        # in hub prices and freight, which does not depend on the reference.
+        start = inputs.get("_schedule_start")
+        if start is not None:
+            flat = windfall(generate_price_schedule(
+                baseline_ttf=start["ttf"], baseline_jkm=start["jkm"], baseline_hh=start["hh"],
+                peak_ttf=start["ttf"], peak_jkm=start["jkm"], peak_hh=start["hh"],
+                peak_month=inputs.get("peak_month", 7),
+                peak_freight_eu=1.30, peak_freight_asia=1.40,
+            ))
+            out.outputs["windfall_at_flat_start_prices_usd"] = flat.total_windfall_usd
+            out.outputs["windfall_from_price_rise_usd"] = (
+                result.total_windfall_usd - flat.total_windfall_usd
+            )
+            out.outputs["_schedule_start"] = start
+
+        # Audit trail for the input adjustments made in translate_inputs.
+        for key in ("_schedule_start_clamped", "_duration_capped_from_months", "_calibration"):
+            if key in inputs:
+                out.outputs[key] = inputs[key]
+        for key in ("ttf_peak_price", "jkm_peak_price", "hh_crisis_price"):
+            if key in inputs:
+                out.outputs.setdefault("_input_peak_prices", {})[key] = inputs[key]
+        return out
 
     def _execute_via_excel(self, inputs: dict[str, Any]) -> ModelOutput:
         """Drive the actual workbook via xlwings for full recalculation.
